@@ -145,6 +145,8 @@ plots = {
     # event
     'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
+    'mass'                  : {'xaxis': 'm_{4l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
+    'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
 }
 
 # signal region
@@ -158,6 +160,18 @@ for plot in plots:
         savename = '{0}/{1}'.format(cat,plot)
         hpp4lPlotter.plot(plotnames,savename,**plots[plot])
 
+#rocplots = {
+#    'st' : {'legendpos':34,'numcol':3,'invert':False},
+#}
+#
+#for plot,kwargs in rocplots.iteritems():
+#    sig = {'HppHmm500GeV':'default/{0}'.format(plot)}
+#    bg = {}
+#    for s in samples:
+#        bg[s] = 'default/{0}'.format(plot)
+#    hpp4lPlotter.plotROC(sig, bg, 'roc_{0}'.format(plot), **kwargs)
+
+
 if blind:
     hpp4lPlotter.addHistogram('data',sigMap['data'])
 
@@ -165,8 +179,8 @@ if blind:
 # partially blinded plots
 if blind:
     blinders = {
-        'hppMass': [150,1200],
-        'hmmMass': [150,1200],
+        'hppMass': [100,1200],
+        'hmmMass': [100,1200],
     }
     
     for plot in blinders:
@@ -232,6 +246,8 @@ lowmass_cust = {
     'mllMinusMZ'           : {'rangex': [0,60]},
     # event
     'met'                  : {'rangex': [0,200]},
+    'mass'                 : {'rangex': [0,400], 'rebin':20},
+    'st'                   : {'rangex': [0,400], 'rebin':20},
 }
 
 for plot in plots:
@@ -263,21 +279,23 @@ norm_cust = {
     # hpp
     'hppMass'               : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
     'hppPt'                 : {'yaxis': 'Unit normalized', 'rebin': 20, 'numcol': 2},
-    'hppDeltaR'             : {'yaxis': 'Unit normalized', 'rebin': 5},
-    'hppLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 1},
-    'hppSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 1},
+    'hppDeltaR'             : {'yaxis': 'Unit normalized', 'rebin': 10},
+    'hppLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 5},
+    'hppSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 5},
     # hmm
     'hmmMass'               : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
     'hmmPt'                 : {'yaxis': 'Unit normalized', 'rebin': 20, 'numcol': 2},
-    'hmmDeltaR'             : {'yaxis': 'Unit normalized', 'rebin': 5},
-    'hmmLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 1},
-    'hmmSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 1},
+    'hmmDeltaR'             : {'yaxis': 'Unit normalized', 'rebin': 10},
+    'hmmLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 5},
+    'hmmSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 5},
     # z
     'zMass'                 : {'yaxis': 'Unit normalized', 'rebin': 20, 'numcol': 2},
     'mllMinusMZ'            : {'yaxis': 'Unit normalized', 'rebin': 1},
     # event
     'met'                   : {'yaxis': 'Unit normalized', 'rebin': 1},
     'numVertices'           : {'yaxis': 'Unit normalized'},
+    'mass'                  : {'yaxis': 'Unit normalized', 'rebin': 10},
+    'st'                    : {'yaxis': 'Unit normalized', 'rebin': 10},
 }
 
 for plot in plots:
@@ -313,9 +331,37 @@ sigColors = {
     1500: ROOT.TColor.GetColor('#FFCCCC'),
 }
 
-masses = [200,300,400,500,600,700,800,900,1000]
+#masses = [200,300,400,500,600,700,800,900,1000]
+masses = [200,400,600,800,1000]
 for mass in masses:
     hpp4lPlotter.addHistogram('HppHmm{0}GeV'.format(mass),sigMap['HppHmm{0}GeV'.format(mass)],signal=True,style={'linecolor': sigColors[mass]})
+
+catRebin = {
+    'I'  : 1,
+    'II' : 5,
+    'III': 10,
+    'IV' : 10,
+    'V'  : 20,
+    'VI' : 50,
+}
+
+genRebin = {
+    'ee' : 1,
+    'em' : 1,
+    'et' : 5,
+    'mm' : 1,
+    'mt' : 5,
+    'tt' : 10,
+}
+
+genDecayMap = {
+    'ee' : ['ee'],
+    'em' : ['em'],
+    'et' : ['ee','em','et'],
+    'mm' : ['mm'],
+    'mt' : ['em','mm','mt'],
+    'tt' : ['ee','em','et','mm','mt','tt'],
+}
 
 for plot in norm_cust:
     plotname = 'default/{0}'.format(plot)
@@ -328,9 +374,25 @@ for plot in norm_cust:
         for subcat in subCatChannels[cat]:
             plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
         savename = 'signal/{0}/{1}'.format(cat,plot)
-        hpp4lPlotter.plotNormalized(plotnames,savename,**kwargs)
+        catkwargs = deepcopy(kwargs)
+        if cat in catRebin and 'rebin' in catkwargs and plot in ['hppMass','hmmMass']: catkwargs['rebin'] = catkwargs['rebin'] * catRebin[cat]
+        hpp4lPlotter.plotNormalized(plotnames,savename,**catkwargs)
     if 'hpp' in plot: # plot just the channels of the type
         for higgsChan in ['ee','em','et','mm','mt','tt']:
-            plotnames = ['default/{0}/{1}'.format(chan,plot) for chan in chans if chan[:2]==higgsChan]
+            # reco
+            plotnames = ['default/{0}/{1}'.format(chan,plot) for chan in chans if chan[:2]==higgsChan] + ['default/{0}/{1}'.format(chan,plot.replace('hpp','hmm')) for chan in chans if chan[2:]==higgsChan]
             savename = 'signal/{0}/{1}'.format(higgsChan,plot)
-            hpp4lPlotter.plotNormalized(plotnames,savename,**kwargs)
+            genkwargs = deepcopy(kwargs)
+            if higgsChan in genRebin and 'rebin' in genkwargs and plot in ['hppMass','hmmMass']: genkwargs['rebin'] = genkwargs['rebin'] * genRebin[higgsChan]
+            hpp4lPlotter.plotNormalized(plotnames,savename,**genkwargs)
+            # and the gen truth
+            plotnames = []
+            for gen in chans:
+                for reco in chans:
+                    if reco[:2] in genDecayMap[gen[:2]] and gen[:2]==higgsChan:
+                        plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot)] 
+                    if reco[2:] in genDecayMap[gen[2:]] and gen[2:]==higgsChan:
+                        plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot.replace('hpp','hmm'))] 
+            if plotnames:
+                savename = 'signal/{0}/{1}_genMatched'.format(higgsChan,plot)
+                #hpp4lPlotter.plotNormalized(plotnames,savename,**genkwargs)

@@ -148,6 +148,8 @@ plots = {
     # event
     'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
+    'mass'                  : {'xaxis': 'm_{3l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
+    'st'                    : {'xaxis': '#Sigma p_{T} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
 }
 
 # signal region

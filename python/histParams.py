@@ -138,6 +138,7 @@ params = {
         'zSubLeadingLeptonEta'  : {'variable': 'z2_eta',                         'binning': [500, -2.5, 2.5], 'selection': 'z_mass>0.',},
         # event
         'mass'                  : {'variable': '4l_mass',                        'binning': [2000, 0, 2000]},
+        'st'                    : {'variable': 'hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt','binning': [2000, 0, 2000]},
     },
     # overrides for Hpp3l
     'Hpp3l' : {
@@ -173,6 +174,7 @@ params = {
         'wLeptonEta'            : {'variable': 'w1_eta',                         'binning': [500, -2.5, 2.5], 'selection': 'z_mass>0.',},
         # event
         'mass'                  : {'variable': '3l_mass',                        'binning': [2000, 0, 2000]},
+        'st'                    : {'variable': 'hpp1_pt+hpp2_pt+hm1_pt',         'binning': [2000, 0, 2000]},
     },
 }
 
@@ -528,7 +530,7 @@ for sel in sels:
 #############
 ### hpp4l ###
 #############
-hpp4lBaseCut = 'hpp1_passMedium==1 && hpp2_passMedium==1 && hmm1_passMedium==1 && hmm2_passMedium==1 && hpp_deltaR>0.02 && hmm_deltaR>0.02'
+hpp4lBaseCut = 'hpp1_passMedium==1 && hpp2_passMedium==1 && hmm1_passMedium==1 && hmm2_passMedium==1 && hpp_deltaR>0.02 && hmm_deltaR>0.02 && hpp_mass>12. && hmm_mass>12. && (z_mass>0 ? z_mass>12. : 1)'
 hpp4lLowMassControl = '{0} && (hpp_mass<100 || hmm_mass<100)'.format(hpp4lBaseCut)
 hpp4lMatchSign = 'hpp1_genCharge==hpp1_charge && hpp2_genCharge==hpp2_charge && hmm1_genCharge==hmm1_charge && hmm2_genCharge==hmm2_charge'
 hpp4lScaleFactor = 'hpp1_mediumScale*hpp2_mediumScale*hmm1_mediumScale*hmm2_mediumScale*genWeight*pileupWeight*triggerEfficiency'
@@ -562,16 +564,32 @@ genChans = getGenChannels('Hpp4l')
 genChannelsPP = genChans['PP']
 genChannelsAP = genChans['AP']
 
+genDecayMap = {
+    'ee' : ['ee'],
+    'em' : ['em'],
+    'et' : ['ee','em','et'],
+    'mm' : ['mm'],
+    'mt' : ['em','mm','mt'],
+    'tt' : ['ee','em','et','mm','mt','tt'],
+}
+
 hpp4l_pp_selections = {}
 hpp4l_ap_selections = {}
 sels = selectionParams['Hpp4l'].keys()
 for sel in sels:
     for chan in genChannelsPP:
+        baseSel = sel.split('/')[0]
+        reco = sel.split('/')[-1]
+        if baseSel=='lowmass': continue
+        if reco in channels:
+            if reco[:2] not in genDecayMap[chan[:2]]: continue
+            if reco[2:] not in genDecayMap[chan[2:]]: continue
         name = '{0}/gen_{1}'.format(sel,chan)
         hpp4l_pp_selections[name] = deepcopy(selectionParams['Hpp4l'][sel])
         args = hpp4l_pp_selections[name]['args']
         hpp4l_pp_selections[name]['args'][0] = args[0] + ' && ' + 'genChannel=="{0}"'.format(chan)
-        hpp4l_pp_selections[name]['kwargs']['countOnly'] = True
+        hpp4l_pp_selections[name]['kwargs']['countOnly'] = False if baseSel=='default' else True
+        #hpp4l_pp_selections[name]['kwargs']['countOnly'] = True
     for chan in genChannelsAP:
         name = '{0}/gen_{1}'.format(sel,chan)
         hpp4l_ap_selections[name] = deepcopy(selectionParams['Hpp4l'][sel])
@@ -586,7 +604,7 @@ for mass in masses:
 #############
 ### hpp3l ###
 #############
-hpp3lBaseCut = 'hpp1_passMedium==1 && hpp2_passMedium==1 && hm1_passMedium==1 && hpp_deltaR>0.02'
+hpp3lBaseCut = 'hpp1_passMedium==1 && hpp2_passMedium==1 && hm1_passMedium==1 && hpp_deltaR>0.02 && hpp_mass>12. && (z_mass>0 ? z_mass>12. : 1)'
 hpp3lLowMassControl = '{0} && hpp_mass<100'.format(hpp3lBaseCut)
 hpp3lScaleFactor = 'hpp1_mediumScale*hpp2_mediumScale*hm1_mediumScale*genWeight*pileupWeight*triggerEfficiency'
 selectionParams['Hpp3l'] = {
