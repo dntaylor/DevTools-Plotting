@@ -123,7 +123,7 @@ for cat in cats:
         countVars += [['default/{0}/count'.format(chan) for chan in subCatChannels[cat][subCat]]]
 countLabels = ['Total'] + subCatLabels
 savename = 'individualSubCategories'
-hpp3lPlotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,ymax=1e6,ymin=0.001)
+hpp3lPlotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,ymax=1e7,ymin=0.001)
 
 
 
@@ -236,6 +236,7 @@ lowmass_cust = {
     'wMass'                : {'rangex': [0,200]},
     # event
     'met'                  : {'rangex': [0,200]},
+    'mass'                 : {'rangex': [0,400]},
 }
 
 for plot in plots:

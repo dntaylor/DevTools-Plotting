@@ -226,7 +226,7 @@ for cat in cats:
         countVars += [['lowmass/{0}/count'.format(chan) for chan in subCatChannels[cat][subCat]]]
 countLabels = ['Total'] + subCatLabels
 savename = 'lowmass/individualSubCategories'
-hpp4lPlotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,ymax=10e6,ymin=0.001)
+hpp4lPlotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,ymax=1e4,ymin=0.001)
 
 
 
@@ -246,8 +246,8 @@ lowmass_cust = {
     'mllMinusMZ'           : {'rangex': [0,60]},
     # event
     'met'                  : {'rangex': [0,200]},
-    'mass'                 : {'rangex': [0,400], 'rebin':20},
-    'st'                   : {'rangex': [0,400], 'rebin':20},
+    'mass'                 : {'rangex': [0,600], 'rebin':25, 'xaxis': 'Events / 25 GeV'},
+    'st'                   : {'rangex': [0,400], 'rebin':25, 'xaxis': 'Events / 25 GeV'},
 }
 
 for plot in plots:
@@ -389,10 +389,10 @@ for plot in norm_cust:
             plotnames = []
             for gen in chans:
                 for reco in chans:
-                    if reco[:2] in genDecayMap[gen[:2]] and gen[:2]==higgsChan:
+                    if reco[:2] in genDecayMap[gen[:2]] and reco[2:] in genDecayMap[gen[2:]] and gen[:2]==higgsChan:
                         plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot)] 
-                    if reco[2:] in genDecayMap[gen[2:]] and gen[2:]==higgsChan:
-                        plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot.replace('hpp','hmm'))] 
+                    #if reco[:2] in genDecayMap[gen[:2]] and reco[2:] in genDecayMap[gen[2:]] and gen[2:]==higgsChan:
+                    #    plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot.replace('hpp','hmm'))] 
             if plotnames:
                 savename = 'signal/{0}/{1}_genMatched'.format(higgsChan,plot)
-                #hpp4lPlotter.plotNormalized(plotnames,savename,**genkwargs)
+                hpp4lPlotter.plotNormalized(plotnames,savename,**genkwargs)
