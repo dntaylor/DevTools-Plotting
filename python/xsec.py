@@ -16,6 +16,24 @@ xsecs = {
     'QCD_Pt-15to3000_TuneCUETP8M1_Flat_13TeV_pythia8'                  : 1.,
     'QCD_Pt-20toInf_MuEnrichedPt15_TuneCUETP8M1_13TeV_pythia8'         : 720648000 * PB,
 
+    'QCD_Pt_5to10_TuneCUETP8M1_13TeV_pythia8'                          : 61018300000           * PB,
+    'QCD_Pt_10to15_TuneCUETP8M1_13TeV_pythia8'                         :  5887580000           * PB,
+    'QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8'                         :  1837410000           * PB,
+    'QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8'                         :   140932000           * PB,
+    'QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8'                         :    19204300           * PB,
+    'QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8'                        :     2762530           * PB,
+    'QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8'                       :      471100           * PB,
+    'QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8'                       :      117276           * PB,
+    'QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8'                       :        7823           * PB,
+    'QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8'                       :         648.2         * PB,
+    'QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8'                       :         186.9         * PB,
+    'QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8'                      :          32.293       * PB,
+    'QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8'                     :           9.4183      * PB,
+    'QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8'                     :           0.84265     * PB,
+    'QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8'                     :           0.114943    * PB,
+    'QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8'                     :           0.00682981  * PB,
+    'QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8'                      :           0.000165445 * PB,
+
     'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'      :  18610.       * PB, # already NNLO
     'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'          :   6025.2      * PB,
 
