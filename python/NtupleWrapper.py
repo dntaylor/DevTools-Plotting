@@ -14,6 +14,8 @@ from DevTools.Plotter.xsec import getXsec
 from DevTools.Plotter.utilities import getLumi, isData, hashFile, hashString, python_mkdir, getTreeName, getNtupleDirectory
 from DevTools.Plotter.histParams import getHistParams, getHistParams2D, getHistSelections
 
+CMSSW_BASE = os.environ['CMSSW_BASE']
+
 class NtupleWrapper(object):
     '''Wrapper for access to ntuples'''
 
@@ -22,13 +24,11 @@ class NtupleWrapper(object):
         self.analysis = analysis
         self.sample = sample
         # backup passing custom parameters
-        self.ntuple = kwargs.pop('ntuple','ntuples/{0}/{1}.root'.format(self.analysis,self.sample))
+        self.ntuple = kwargs.pop('ntuple','{0}/src/ntuples/{1}/{2}.root'.format(CMSSW_BASE,self.analysis,self.sample))
         self.ntupleDirectory = kwargs.pop('ntupleDirectory','{0}/{1}'.format(getNtupleDirectory(self.analysis),self.sample))
         self.treeName = kwargs.pop('treeName',getTreeName(self.analysis))
         self.flat = kwargs.pop('flat','flat/{0}/{1}.root'.format(self.analysis,self.sample))
         # get stuff needed to flatten
-        self.intLumi = getLumi()
-        self.xsec = getXsec(self.sample)
         self.histParams = getHistParams(self.analysis)
         self.histParams2D = getHistParams2D(self.analysis)
         self.selections = getHistSelections(self.analysis,self.sample)
@@ -59,6 +59,8 @@ class NtupleWrapper(object):
             summedWeights += tfile.Get("summedWeights").GetBinContent(1)
             tfile.Close()
             tchain.Add(f)
+        self.intLumi = getLumi()
+        self.xsec = getXsec(self.sample)
         self.sampleLumi = float(summedWeights)/self.xsec if self.xsec else 0.
         self.sampleTree = tchain
         self.files = allFiles
@@ -148,12 +150,9 @@ class NtupleWrapper(object):
         datascalefactor = kwargs.pop('datascalefactor','')
         if datascalefactor and isData(self.sample): scalefactor = datascalefactor
         if mcscalefactor and not isData(self.sample): scalefactor = mcscalefactor
-        if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi)
         if 'scale' in params: scalefactor += '*{0}'.format(params['scale'])
         if 'mcscale' in params and not isData(self.sample): scalefactor += '*{0}'.format(params['mcscale'])
         if 'datascale' in params and isData(self.sample): scalefactor += '*{0}'.format(params['datascale'])
-        # make sure ntuple initialized
-        if not self.initialized: self.__initializeNtuple()
         # verify output file directory exists
         os.system('mkdir -p {0}'.format(os.path.dirname(self.flat)))
         # check if we need to draw the hist, or if the one in the ntuple is the latest
@@ -178,28 +177,32 @@ class NtupleWrapper(object):
         self.__write(hist,directory=directory)
 
     def __getHist(self,histName,selection,scalefactor,variable,binning):
+        if not self.initialized: self.__initializeNtuple()
+        if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi)
         drawString = '{0}>>{1}({2})'.format(variable,histName,', '.join([str(x) for x in binning]))
         selectionString = '{0}*({1})'.format(scalefactor,selection)
         tree = self.sampleTree
-        if not tree: ROOT.TH1F(tempName,tempName,*binning)
+        if not tree: ROOT.TH1F(histName,histName,*binning)
         tree.Draw(drawString,selectionString,'goff')
-        if ROOT.gDirectory.Get(tempName):
-            hist = ROOT.gDirectory.Get(tempName)
+        if ROOT.gDirectory.Get(histName):
+            hist = ROOT.gDirectory.Get(histName)
         else:
-            hist = ROOT.TH1F(tempName,tempName,*binning)
+            hist = ROOT.TH1F(histName,histName,*binning)
         return hist
 
     def __getHist2D(self,histName,selection,scalefactor,xVariable,yVariable,xBinning,yBinning):
+        if not self.initialized: self.__initializeNtuple()
+        if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi)
         binning = xBinning+yBinning
         drawString = '{0}:{1}>>{2}({3})'.format(yVariable,xVariable,histName,', '.join([str(x) for x in binning]))
         selectionString = '{0}*({1})'.format(scalefactor,selection)
         tree = self.sampleTree
-        if not tree: ROOT.TH2F(tempName,tempName,*binning)
+        if not tree: ROOT.TH2F(histName,histName,*binning)
         tree.Draw(drawString,selectionString,'goff')
-        if ROOT.gDirectory.Get(tempName):
-            hist = ROOT.gDirectory.Get(tempName)
+        if ROOT.gDirectory.Get(histName):
+            hist = ROOT.gDirectory.Get(histName)
         else:
-            hist = ROOT.TH2F(tempName,tempName,*binning)
+            hist = ROOT.TH2F(histName,histName,*binning)
         return hist
 
     def getHist(self,variable):

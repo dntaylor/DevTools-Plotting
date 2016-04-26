@@ -9,7 +9,7 @@ import ROOT
 
 from DevTools.Plotter.PlotterBase import PlotterBase
 from DevTools.Plotter.NtupleWrapper import NtupleWrapper
-from DevTools.Plotter.utilities import python_mkdir, getLumi
+from DevTools.Plotter.utilities import python_mkdir, getLumi, isData
 from DevTools.Plotter.style import getStyle
 import DevTools.Plotter.CMS_lumi as CMS_lumi
 import DevTools.Plotter.tdrstyle as tdrstyle
@@ -121,6 +121,9 @@ class Plotter(PlotterBase):
         '''Read the histogram from file'''
         analysis = kwargs.pop('analysis',self.analysis)
         hist = self.sampleFiles[analysis][sampleName].getTempHist(histName,selection,scalefactor,variable,binning)
+        if hist:
+            self.j += 1
+            hist = hist.Clone('h_temp_{0}'.format(self.j))
         return hist
 
     def _getHistogram(self,histName,variable,**kwargs):
@@ -128,7 +131,9 @@ class Plotter(PlotterBase):
         rebin = kwargs.pop('rebin',0)
         nofill = kwargs.pop('nofill',False)
         analysis = self.analysisDict[histName]
-        scalefactor = kwargs.pop('scalefactor','')
+        scalefactor = kwargs.pop('scalefactor','1')
+        mcscalefactor = kwargs.pop('mcscalefactor','1')
+        datascalefactor = kwargs.pop('datascalefactor','1')
         selection = kwargs.pop('selection','')
         binning = kwargs.pop('binning',[])
         # check if it is a variable map, variable list, or single variable
@@ -141,8 +146,9 @@ class Plotter(PlotterBase):
             hists = ROOT.TList()
             for varName in variable:
                 for sampleName in self.histDict[histName]:
-                    if scalefactor and selection and binning: # get temp hist
-                        hist = self._getTempHistogram(sampleName,histName,selection,scalefactor,varName,binning,analysis=analysis)
+                    if selection and binning: # get temp hist
+                        sf = '*'.join([scalefactor,datascalefactor if isData(sampleName) else mcscalefactor])
+                        hist = self._getTempHistogram(sampleName,histName,selection,sf,varName,binning,analysis=analysis)
                     else:
                         hist = self._readSampleVariable(sampleName,varName,analysis=analysis)
                     if hist: hists.Add(hist)
@@ -451,7 +457,10 @@ class Plotter(PlotterBase):
             canvas.cd()
 
         # save
-        if save: self._save(canvas,savename)
+        if save:
+            self._save(canvas,savename)
+        else:
+            return self._saveTemp(canvas)
 
     def plotCounts(self,bins,labels,savename,**kwargs):
         '''Plot a histogram of counts for each bin and save'''
@@ -600,7 +609,10 @@ class Plotter(PlotterBase):
             canvas.cd()
 
         # save
-        if save: self._save(canvas,savename)
+        if save:
+            self._save(canvas,savename)
+        else:
+            return self._saveTemp(canvas)
 
 
     def plotRatio(self,numerator,denominator,savename,**kwargs):
@@ -617,6 +629,7 @@ class Plotter(PlotterBase):
         customOrder = kwargs.pop('customOrder',[])
         subtractMap = kwargs.pop('subtractMap',{})
         getHists = kwargs.pop('getHists', False)
+        save = kwargs.pop('save',True)
 
         logging.info('Plotting {0}'.format(savename))
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
@@ -663,7 +676,11 @@ class Plotter(PlotterBase):
 
         self._setStyle(canvas)
 
-        self._save(canvas,savename)
+        # save
+        if save:
+            self._save(canvas,savename)
+        else:
+            return self._saveTemp(canvas)
 
     def plotROC(self,signalVariable,backgroundVariable,savename,**kwargs):
         '''Plot ROC curve'''
@@ -677,6 +694,7 @@ class Plotter(PlotterBase):
         invert = kwargs.pop('invert',False)
         ymin = kwargs.pop('ymin',0)
         ymax = kwargs.pop('ymax',1.2)
+        save = kwargs.pop('save',True)
 
         logging.info('Plotting {0}'.format(savename))
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
@@ -719,7 +737,11 @@ class Plotter(PlotterBase):
 
         self._setStyle(canvas)
 
-        self._save(canvas,savename)
+        # save
+        if save:
+            self._save(canvas,savename)
+        else:
+            return self._saveTemp(canvas)
 
     def plotNormalized(self,variable,savename,**kwargs):
         '''Plot a ratio of two variables and save'''
@@ -734,6 +756,7 @@ class Plotter(PlotterBase):
         rangex = kwargs.pop('rangex',[])
         customOrder = kwargs.pop('customOrder',[])
         subtractMap = kwargs.pop('subtractMap',{})
+        save = kwargs.pop('save',True)
 
         logging.info('Plotting {0}'.format(savename))
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
@@ -776,7 +799,11 @@ class Plotter(PlotterBase):
 
         self._setStyle(canvas)
 
-        self._save(canvas,savename)
+        # save
+        if save:
+            self._save(canvas,savename)
+        else:
+            return self._saveTemp(canvas)
 
     def plot2D(self,variable,savename,**kwargs):
         '''Plot a variable and save'''
@@ -789,6 +816,7 @@ class Plotter(PlotterBase):
         logy = kwargs.pop('logy',False)
         logx = kwargs.pop('logx',False)
         logz = kwargs.pop('logz',False)
+        save = kwargs.pop('save',True)
 
         logging.info('Plotting {0}'.format(savename))
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
@@ -815,4 +843,8 @@ class Plotter(PlotterBase):
 
         self._setStyle(canvas,position=0)
 
-        self._save(canvas,savename)
+        # save
+        if save:
+            self._save(canvas,savename)
+        else:
+            return self._saveTemp(canvas)

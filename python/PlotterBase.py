@@ -4,6 +4,7 @@ import logging
 import math
 from array import array
 from collections import OrderedDict
+import tempfile
 
 import ROOT
 
@@ -99,4 +100,10 @@ class PlotterBase(object):
             name = '{0}/{1}/{2}.{1}'.format(self.outputDirectory, type, savename)
             python_mkdir(os.path.dirname(name))
             canvas.Print(name)
+
+    def _saveTemp(self, canvas):
+        '''Save the canvas in multiple formats.'''
+        temp = tempfile.NamedTemporaryFile(suffix=".png",delete=False)
+        canvas.Print(temp.name)
+        return temp.name
 

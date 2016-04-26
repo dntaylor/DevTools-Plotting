@@ -5,6 +5,8 @@ import hashlib
 
 from DevTools.Utilities.utilities import python_mkdir, ZMASS
 
+CMSSW_BASE = os.environ['CMSSW_BASE']
+
 def hashFile(*filenames,**kwargs):
     BUFFSIZE = kwargs.pop('BUFFSIZE',65536)
     hasher = hashlib.md5()
@@ -52,7 +54,7 @@ latestNtuples = {
 
 def getNtupleDirectory(analysis):
     # first grab the local one
-    ntupleDir = 'ntuples/{0}'.format(analysis)
+    ntupleDir = '{0}/src/ntuples/{0}'.format(CMSSW_BASE,analysis)
     if os.path.exists(ntupleDir):
         return ntupleDir
     # if not read from hdfs

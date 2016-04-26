@@ -48,8 +48,6 @@ sigMap = {
              'WWG_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
             ],
     'TTV' : [
-             #'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
-             #'TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
              'ttWJets_13TeV_madgraphMLM',
              'ttZJets_13TeV_madgraphMLM',
             ],
@@ -65,7 +63,6 @@ sigMap = {
              'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
             ],
     'TT'  : [
-             #'TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
              'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
              'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
              'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
