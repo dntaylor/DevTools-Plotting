@@ -87,14 +87,8 @@ class NtupleWrapper(object):
         infile.Close()
         # attempt to flatten the histogram
         varComponents = variable.split('/')
-        directory = '/'.join(varComponents[:-1])
-        selection = ''
-        for sel in self.selections:
-            if 'directory' in self.selections[sel]['kwargs']:
-                if directory == self.selections[sel]['kwargs']['directory']: selection = sel
-            else:
-                if directory == '': selection = sel
-        if not selection:
+        selection = '/'.join(varComponents[:-1])
+        if selection not in self.selections:
             logging.error('{0}: unknown, {1} not found in histSelections.'.format(variable,directory))
             return 0
         sels = self.selections[selection]
@@ -139,98 +133,82 @@ class NtupleWrapper(object):
 
     def __flatten(self,directory,histName,selection,params,**kwargs):
         '''Produce flat histograms for a given selection.'''
+        # clear old
         ROOT.gDirectory.Delete('h_*')
         ROOT.gDirectory.Delete(histName)
+        # selections
         mccut = kwargs.pop('mccut','')
         datacut = kwargs.pop('datacut','')
         if datacut and isData(self.sample): selection += ' && {0}'.format(datacut)
         if mccut and not isData(self.sample): selection += ' && {0}'.format(mccut)
+        if 'selection' in params: selection += ' && {0}'.format(params['selection'])
+        # scalefactor
         scalefactor = kwargs.pop('scalefactor','1' if isData(self.sample) else 'genWeight')
         mcscalefactor = kwargs.pop('mcscalefactor','')
         datascalefactor = kwargs.pop('datascalefactor','')
         if datascalefactor and isData(self.sample): scalefactor = datascalefactor
         if mcscalefactor and not isData(self.sample): scalefactor = mcscalefactor
-        if not self.initialized: self.__initializeNtuple()
-        tree = self.sampleTree
-        if not tree: return
-        os.system('mkdir -p {0}'.format(os.path.dirname(self.flat)))
         if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi)
+        if 'scale' in params: scalefactor += '*{0}'.format(params['scale'])
+        if 'mcscale' in params and not isData(self.sample): scalefactor += '*{0}'.format(params['mcscale'])
+        if 'datascale' in params and isData(self.sample): scalefactor += '*{0}'.format(params['datascale'])
+        # make sure ntuple initialized
+        if not self.initialized: self.__initializeNtuple()
+        # verify output file directory exists
+        os.system('mkdir -p {0}'.format(os.path.dirname(self.flat)))
+        # check if we need to draw the hist, or if the one in the ntuple is the latest
+        if hasattr(params,'variable'): # 1D
+             hashExists = self.__checkHash(name,directory,strings=[params['variable'],', '.join([str(x) for x in params['binning']]),scalefactor,selection])
+        else: # 2D
+             hashExists = self.__checkHash(name,directory,strings=[params['yvariable'],params['xVariable'],', '.join([str(x) for x in params['xBinning']+params['yBinning']]),scalefactor,selection])
+        if hashExists:
+            self.__finish()
+            return
+        # get the histogram
         name = histName
         self.j += 1
         tempName = 'h_{0}_{1}_{2}'.format(name,self.sample,self.j)
-        drawString = '{0}>>{1}({2})'.format(params['variable'],tempName,', '.join([str(x) for x in params['binning']]))
-        if 'scale' in params: scalefactor += '*{0}'.format(params['scale'])
-        if 'mcscale' in params and not isData(self.sample): scalefactor += '*{0}'.format(params['mcscale'])
-        if 'datascale' in params and isData(self.sample): scalefactor += '*{0}'.format(params['datascale'])
-        if 'selection' in params: selection += ' && {0}'.format(params['selection'])
-        selectionString = '{0}*({1})'.format(scalefactor,selection)
-        # check if we need to draw the hist, or if the one in the ntuple is the latest
-        hashExists = self.__checkHash(name,directory,strings=[params['variable'],', '.join([str(x) for x in params['binning']]),scalefactor,selection])
-        if hashExists:
-            self.__finish()
-            return
-        tree.Draw(drawString,selectionString,'goff')
-        # see if hist exists
-        if ROOT.gDirectory.Get(tempName):
-            hist = ROOT.gDirectory.Get(tempName)
-            hist.SetTitle(name)
-            hist.SetName(name)
-            self.__write(hist,directory=directory)
-        else:
-            bins = params['binning']
-            hist = ROOT.TH1F(tempName,tempName,*bins)
-            hist.SetTitle(name)
-            hist.SetName(name)
-            self.__write(hist,directory=directory)
+        if hasattr(params,'variable'): # 1D
+            hist = self.__getHist(tempName,selection,scalefactor,params['variable'],params['binning'])
+        else: # 2D
+            hist = self.__getHist2D(tempName,selection,scalefactor,params['xVariable'],params['yVariable'],params['xBinning'],params['yBinning'])
+        hist.SetTitle(name)
+        hist.SetName(name)
+        # save to file
+        self.__write(hist,directory=directory)
 
-    def __flatten2D(self,directory,histName,selection,params,**kwargs):
-        '''Produce flat 2D histograms for a given selection.'''
-        mccut = kwargs.pop('mccut','')
-        datacut = kwargs.pop('datacut','')
-        if datacut and isData(self.sample): selection += ' && {0}'.format(datacut)
-        if mccut and not isData(self.sample): selection += ' && {0}'.format(mccut)
-        scalefactor = kwargs.pop('scalefactor','1' if isData(self.sample) else 'genWeight')
-        mcscalefactor = kwargs.pop('mcscalefactor','')
-        datascalefactor = kwargs.pop('datascalefactor','')
-        if datascalefactor and isData(self.sample): scalefactor = datascalefactor
-        if mcscalefactor and not isData(self.sample): scalefactor = mcscalefactor
-        #if not hasProgress: logging.info('Flattening {0} {1} {2}'.format(self.sample,directory,histName))
-        if not self.initialized: self.__initializeNtuple()
-        tree = self.sampleTree
-        if not tree: return
-        os.system('mkdir -p {0}'.format(os.path.dirname(self.flat)))
-        if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi)
-        name = histName
-        self.j += 1
-        tempName = '{0}_{1}_{2}'.format(name,self.sample,self.j)
-        drawString = '{0}:{1}>>{2}({3})'.format(params['yVariable'],params['xVariable'],tempName,', '.join([str(x) for x in params['xBinning']+params['yBinning']]))
-        if 'scale' in params: scalefactor += '*{0}'.format(params['scale'])
-        if 'mcscale' in params and not isData(self.sample): scalefactor += '*{0}'.format(params['mcscale'])
-        if 'datascale' in params and isData(self.sample): scalefactor += '*{0}'.format(params['datascale'])
-        if 'selection' in params: selection += ' && {0}'.format(params['selection'])
+    def __getHist(self,histName,selection,scalefactor,variable,binning):
+        drawString = '{0}>>{1}({2})'.format(variable,histName,', '.join([str(x) for x in binning]))
         selectionString = '{0}*({1})'.format(scalefactor,selection)
-        # check if we need to draw the hist, or if the one in the ntuple is the latest
-        hashExists = self.__checkHash(name,directory,strings=[params['yvariable'],params['xVariable'],', '.join([str(x) for x in params['xBinning']+params['yBinning']]),scalefactor,selection])
-        if hashExists:
-            self.__finish()
-            return
+        tree = self.sampleTree
+        if not tree: ROOT.TH1F(tempName,tempName,*binning)
         tree.Draw(drawString,selectionString,'goff')
-        # see if hist exists
         if ROOT.gDirectory.Get(tempName):
             hist = ROOT.gDirectory.Get(tempName)
-            hist.SetTitle(name)
-            hist.SetName(name)
-            self.__write(hist,directory=directory)
         else:
-            bins = params['xBinning']+params['yBinning']
-            hist = ROOT.TH2F(tempName,tempName,*bins)
-            hist.SetTitle(name)
-            hist.SetName(name)
-            self.__write(hist,directory=directory)
+            hist = ROOT.TH1F(tempName,tempName,*binning)
+        return hist
+
+    def __getHist2D(self,histName,selection,scalefactor,xVariable,yVariable,xBinning,yBinning):
+        binning = xBinning+yBinning
+        drawString = '{0}:{1}>>{2}({3})'.format(yVariable,xVariable,histName,', '.join([str(x) for x in binning]))
+        selectionString = '{0}*({1})'.format(scalefactor,selection)
+        tree = self.sampleTree
+        if not tree: ROOT.TH2F(tempName,tempName,*binning)
+        tree.Draw(drawString,selectionString,'goff')
+        if ROOT.gDirectory.Get(tempName):
+            hist = ROOT.gDirectory.Get(tempName)
+        else:
+            hist = ROOT.TH2F(tempName,tempName,*binning)
+        return hist
 
     def getHist(self,variable):
         '''Get a histogram'''
         return self.__read(variable)
+
+    def getTempHist(self,histName,selection,scalefactor,variable,binning):
+        '''Get a histogram that is not saved in fla ntuple.'''
+        return self.__getHist(histName,selection,scalefactor,variable,binning)
 
     def flatten(self,histName,selectionName):
         '''Flatten a histogram'''
@@ -252,6 +230,6 @@ class NtupleWrapper(object):
             logging.error('Unrecognized selection {0}'.format(selectionName))
         selection = self.selections[selectionName]['args'][0]
         kwargs = self.selections[selectionName]['kwargs']
-        self.__flatten2D(selectionName,histName,selection,params,**kwargs)
+        self.__flatten(selectionName,histName,selection,params,**kwargs)
 
 

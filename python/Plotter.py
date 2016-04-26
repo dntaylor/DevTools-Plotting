@@ -117,11 +117,20 @@ class Plotter(PlotterBase):
         hist = self.sampleFiles[analysis][sampleName].getHist(variable)
         return hist
 
+    def _getTempHistogram(self,sampleName,histName,selection,scalefactor,variable,binning,**kwargs):
+        '''Read the histogram from file'''
+        analysis = kwargs.pop('analysis',self.analysis)
+        hist = self.sampleFiles[analysis][sampleName].getTempHist(histName,selection,scalefactor,variable,binning)
+        return hist
+
     def _getHistogram(self,histName,variable,**kwargs):
         '''Get a styled histogram'''
         rebin = kwargs.pop('rebin',0)
         nofill = kwargs.pop('nofill',False)
         analysis = self.analysisDict[histName]
+        scalefactor = kwargs.pop('scalefactor','')
+        selection = kwargs.pop('selection','')
+        binning = kwargs.pop('binning',[])
         # check if it is a variable map, variable list, or single variable
         if isinstance(variable,dict):       # its a map
             variable = variable[histName]
@@ -132,7 +141,10 @@ class Plotter(PlotterBase):
             hists = ROOT.TList()
             for varName in variable:
                 for sampleName in self.histDict[histName]:
-                    hist = self._readSampleVariable(sampleName,varName,analysis=analysis)
+                    if scalefactor and selection and binning: # get temp hist
+                        hist = self._getTempHistogram(sampleName,histName,selection,scalefactor,varName,binning,analysis=analysis)
+                    else:
+                        hist = self._readSampleVariable(sampleName,varName,analysis=analysis)
                     if hist: hists.Add(hist)
             if hists.IsEmpty(): return 0
             hist = hists[0].Clone('h_{0}_{1}'.format(histName,varName.replace('/','_')))
