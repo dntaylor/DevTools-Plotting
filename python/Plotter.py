@@ -236,8 +236,8 @@ class Plotter(PlotterBase):
 
     def _getStack(self,variable,**kwargs):
         '''Get a stack of histograms'''
-        stackname = 'h_stack_{0}'.format(self.j)
         self.j += 1
+        stackname = 'h_stack_{0}'.format(self.j)
         stack = ROOT.THStack(stackname,stackname)
         for histName in self.stackOrder:
             hist = self._getHistogram(histName,variable,**kwargs)
@@ -247,13 +247,23 @@ class Plotter(PlotterBase):
     def _getStackCounts(self,variables,**kwargs):
         '''Get a stack of histograms'''
         savename = kwargs.pop('savename','')
-        stackname = 'h_stack_{0}'.format(self.j)
         self.j += 1
+        stackname = 'h_stack_{0}'.format(self.j)
         stack = ROOT.THStack(stackname,stackname)
         for histName in self.stackOrder:
             hist = self._getHistogramCounts(histName,variables,savename=savename,**kwargs)
             if hist: stack.Add(hist)
         return stack
+
+    def _get_stat_err(self, hist):
+        '''Create statistical errorbars froma histogram'''
+        staterr = hist.Clone("{0}_staterr".format(hist.GetName))
+        staterr.SetFillColor(ROOT.kGray+3)
+        staterr.SetLineColor(ROOT.kGray+3)
+        staterr.SetLineWidth(0)
+        staterr.SetMarkerSize(0)
+        staterr.SetFillStyle(3013)
+        return staterr
 
     def _get_ratio_stat_err(self, hist, **kwargs):
         '''Return a statistical error bars for a ratio plot'''
@@ -393,6 +403,9 @@ class Plotter(PlotterBase):
             if ymax!=None: stack.SetMaximum(ymax)
             if ymin!=None: stack.SetMinimum(ymin)
             if plotratio: stack.GetHistogram().GetXaxis().SetLabelOffset(999)
+            self.j += 1
+            staterr = self._get_stat_err(stack.GetStack().Last().Clone('h_stack_{0}'.format(self.j)))
+            staterr.Draw('e2 same')
         for histName,hist in hists.iteritems():
             style = self.styles[histName]
             hist.Draw(style['drawstyle']+' same')
@@ -408,8 +421,8 @@ class Plotter(PlotterBase):
 
         # the ratio portion
         if plotratio:
-            stackname = 'h_stack_{0}_ratio'.format(self.j)
             self.j += 1
+            stackname = 'h_stack_{0}_ratio'.format(self.j)
             denom = stack.GetStack().Last().Clone(stackname)
             ratiostaterr = self._get_ratio_stat_err(denom)
             ratiostaterr.SetXTitle(xaxis)
@@ -418,8 +431,8 @@ class Plotter(PlotterBase):
             ratiounity.SetLineStyle(2)
             ratios = OrderedDict()
             for histName, hist in hists.iteritems():
-                numname = 'h_{0}_{1}_ratio'.format(histName,self.j)
                 self.j += 1
+                numname = 'h_{0}_{1}_ratio'.format(histName,self.j)
                 if histName in self.signals:
                     sighists = ROOT.TList()
                     sighists.Add(hist)
