@@ -36,21 +36,22 @@ def getLumi():
 
 
 latestNtuples = {
+    'Charge'         : '2016-04-23_ChargeAnalysis_v1-merge',
+    'DY'             : '2016-04-23_DY_v1-merge',
+    'DijetFakeRate'  : '2016-04-23_DijetFakeRateAnalysis_v1-merge',
+    'Electron'       : '2016-04-14_ElectronAnalysis_v1-merge',
     'Hpp3l'          : '',
     'Hpp4l'          : '',
-    'WZ'             : '',
-    'Electron'       : '2016-04-14_ElectronAnalysis_v1-merge',
     'Muon'           : '2016-04-14_MuonAnalysis_v1-merge',
-    'Tau'            : '2016-04-14_TauAnalysis_v1-merge',
-    'Charge'         : '',
-    'TauCharge'      : '',
     'SingleElectron' : '',
     'SingleMuon'     : '',
-    'DijetFakeRate'  : '',
+    'Tau'            : '2016-04-14_TauAnalysis_v1-merge',
+    'TauCharge'      : '',
+    'WZ'             : '',
 }
 
 def getNtupleDirectory(analysis):
-    # first grad the local one
+    # first grab the local one
     ntupleDir = 'ntuples/{0}'.format(analysis)
     if os.path.exists(ntupleDir):
         return ntupleDir
@@ -61,18 +62,18 @@ def getNtupleDirectory(analysis):
 
 treeMap = {
     ''               : 'Tree',
+    'Charge'         : 'ChargeTree',
+    'DijetFakeRate'  : 'DijetFakeRateTree',
+    'DY'             : 'DYTree',
     'Electron'       : 'ETree',
-    'Muon'           : 'MTree',
-    'Tau'            : 'TTree',
-    'SingleElectron' : 'ETree',
-    'SingleMuon'     : 'MTree',
-    'WZ'             : 'WZTree',
     'Hpp3l'          : 'Hpp3lTree',
     'Hpp4l'          : 'Hpp4lTree',
-    'DY'             : 'DYTree',
-    'Charge'         : 'ChargeTree',
+    'Muon'           : 'MTree',
+    'SingleElectron' : 'ETree',
+    'SingleMuon'     : 'MTree',
+    'Tau'            : 'TTree',
     'TauCharge'      : 'TauChargeTree',
-    'DijetFakeRate'  : 'DijetFakeRateTree',
+    'WZ'             : 'WZTree',
 }
 
 def getTreeName(analysis):
