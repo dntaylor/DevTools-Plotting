@@ -115,6 +115,7 @@ class NtupleWrapper(object):
 
     def __checkHash(self,name,directory,strings=[]):
         'Check the hash for a sample'''
+        if not self.initialized: self.__initializeNtuple()
         self.outfile = ROOT.TFile(self.flat,'update')
         hashDirectory = 'hash/{0}'.format(directory)
         hashObj = self.outfile.Get('{0}/{1}'.format(hashDirectory,name))
@@ -156,10 +157,10 @@ class NtupleWrapper(object):
         # verify output file directory exists
         os.system('mkdir -p {0}'.format(os.path.dirname(self.flat)))
         # check if we need to draw the hist, or if the one in the ntuple is the latest
-        if hasattr(params,'variable'): # 1D
-             hashExists = self.__checkHash(name,directory,strings=[params['variable'],', '.join([str(x) for x in params['binning']]),scalefactor,selection])
+        if 'variable' in params: # 1D
+             hashExists = self.__checkHash(histName,directory,strings=[params['variable'],', '.join([str(x) for x in params['binning']]),scalefactor,selection])
         else: # 2D
-             hashExists = self.__checkHash(name,directory,strings=[params['yvariable'],params['xVariable'],', '.join([str(x) for x in params['xBinning']+params['yBinning']]),scalefactor,selection])
+             hashExists = self.__checkHash(histName,directory,strings=[params['yVariable'],params['xVariable'],', '.join([str(x) for x in params['xBinning']+params['yBinning']]),scalefactor,selection])
         if hashExists:
             self.__finish()
             return
@@ -167,7 +168,7 @@ class NtupleWrapper(object):
         name = histName
         self.j += 1
         tempName = 'h_{0}_{1}_{2}'.format(name,self.sample,self.j)
-        if hasattr(params,'variable'): # 1D
+        if 'variable' in params: # 1D
             hist = self.__getHist(tempName,selection,scalefactor,params['variable'],params['binning'])
         else: # 2D
             hist = self.__getHist2D(tempName,selection,scalefactor,params['xVariable'],params['yVariable'],params['xBinning'],params['yBinning'])

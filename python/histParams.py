@@ -530,7 +530,8 @@ for sel in sels:
 #############
 ### hpp4l ###
 #############
-hpp4lBaseCut = 'hpp1_passMedium==1 && hpp2_passMedium==1 && hmm1_passMedium==1 && hmm2_passMedium==1 && hpp_deltaR>0.02 && hmm_deltaR>0.02 && hpp_mass>12. && hmm_mass>12. && (z_mass>0 ? z_mass>12. : 1)'
+#hpp4lBaseCut = 'hpp1_passMedium==1 && hpp2_passMedium==1 && hmm1_passMedium==1 && hmm2_passMedium==1 && hpp_deltaR>0.02 && hmm_deltaR>0.02 && hpp_mass>12. && hmm_mass>12. && (z_mass>0 ? z_mass>12. : 1)'
+hpp4lBaseCut = 'hpp1_passMedium==1 && hpp2_passMedium==1 && hmm1_passMedium==1 && hmm2_passMedium==1'
 hpp4lLowMassControl = '{0} && (hpp_mass<100 || hmm_mass<100)'.format(hpp4lBaseCut)
 hpp4lMatchSign = 'hpp1_genCharge==hpp1_charge && hpp2_genCharge==hpp2_charge && hmm1_genCharge==hmm1_charge && hmm2_genCharge==hmm2_charge'
 hpp4lScaleFactor = 'hpp1_mediumScale*hpp2_mediumScale*hmm1_mediumScale*hmm2_mediumScale*genWeight*pileupWeight*triggerEfficiency'
@@ -604,7 +605,8 @@ for mass in masses:
 #############
 ### hpp3l ###
 #############
-hpp3lBaseCut = 'hpp1_passMedium==1 && hpp2_passMedium==1 && hm1_passMedium==1 && hpp_deltaR>0.02 && hpp_mass>12. && (z_mass>0 ? z_mass>12. : 1)'
+#hpp3lBaseCut = 'hpp1_passMedium==1 && hpp2_passMedium==1 && hm1_passMedium==1 && hpp_deltaR>0.02 && hpp_mass>12. && (z_mass>0 ? z_mass>12. : 1)'
+hpp3lBaseCut = 'hpp1_passMedium==1 && hpp2_passMedium==1 && hm1_passMedium==1'
 hpp3lLowMassControl = '{0} && hpp_mass<100'.format(hpp3lBaseCut)
 hpp3lScaleFactor = 'hpp1_mediumScale*hpp2_mediumScale*hm1_mediumScale*genWeight*pileupWeight*triggerEfficiency'
 selectionParams['Hpp3l'] = {

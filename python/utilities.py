@@ -54,7 +54,8 @@ latestNtuples = {
 
 def getNtupleDirectory(analysis):
     # first grab the local one
-    ntupleDir = '{0}/src/ntuples/{0}'.format(CMSSW_BASE,analysis)
+    #ntupleDir = '{0}/src/ntuples/{0}'.format(CMSSW_BASE,analysis)
+    ntupleDir = 'ntuples/{0}'.format(analysis)
     if os.path.exists(ntupleDir):
         return ntupleDir
     # if not read from hdfs

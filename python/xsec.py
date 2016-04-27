@@ -65,6 +65,7 @@ xsecs = {
     'TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8'      :      0.4062   * PB,
     'ttZJets_13TeV_madgraphMLM'                                        :      0.259    * PB,
     'ttWJets_13TeV_madgraphMLM'                                        :      0.243    * PB,
+    'ttH_M125_13TeV_powheg_pythia8'                                    :      0.5085   * PB,
 
     'tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1'                    :      0.0758   * PB,
     'tZq_nunu_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1'                  :      0.1379   * PB,
@@ -73,6 +74,17 @@ xsecs = {
 
     'ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                  :    117.864    * PB,
     'WGToLNuG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                 :    489.       * PB,
+
+    # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageAt1314TeV2014
+    # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageBR
+    # PDG
+    'WH_HToBB_WToLNu_M125_13TeV_amcatnloFXFX_madspin_pythia8'          :      1.380  * 0.5824 * (0.108*3)    * PB, # WH * H->bb * W->lnu
+    'ZH_HToBB_ZToLL_M125_13TeV_amcatnloFXFX_madspin_pythia8'           :      0.8696 * 0.5824 * (0.033658*3) * PB, # ZH * H->bb * Z->ll
+    'ZH_HToBB_ZToNuNu_M125_13TeV_amcatnloFXFX_madspin_pythia8'         :      0.8696 * 0.5824 * 0.2          * PB, # ZH * H->bb * Z->inv
+    'ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8'                         :      0.8696 * 0.5824 * 0.6991       * PB, # ZH * H->bb * Z->had
+    'ZH_HToGG_ZToAll_M125_13TeV_powheg_pythia8'                        :      0.8696 * 0.00227               * PB, # ZH * H->gamgam
+    'ZH_HToZG_ZToAll_M-125_13TeV_powheg_pythia8'                       :      0.8696 * 0.001533              * PB, # ZH * H->Zgam
+    'ZH_HToZZ_4LFilter_M125_13TeV_powheg2-minlo-HZJ_JHUgenV6_pythia8'  :      0.147 * PB, # MCM , 0.8696 * 0.02619 * (0.033658*3)**2 # ZH * H->ZZ * Z->ll^2 
 
     'WWTo2L2Nu_13TeV-powheg'                                           :     10.481    * PB,
     'WWTo4Q_13TeV-powheg'                                              :     45.20     * PB,
