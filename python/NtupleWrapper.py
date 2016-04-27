@@ -211,8 +211,12 @@ class NtupleWrapper(object):
         return self.__read(variable)
 
     def getTempHist(self,histName,selection,scalefactor,variable,binning):
-        '''Get a histogram that is not saved in fla ntuple.'''
+        '''Get a histogram that is not saved in flat ntuple.'''
         return self.__getHist(histName,selection,scalefactor,variable,binning)
+
+    def getTempCount(self,selection,scalefactor):
+        '''Get a histogram that is a single bin of counts with statistical error'''
+        return self.__getHist('count',selection,scalefactor,'1',[1,0,2])
 
     def flatten(self,histName,selectionName):
         '''Flatten a histogram'''
