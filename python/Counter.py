@@ -129,4 +129,4 @@ class Counter(object):
             counts += [self._getCount(processName,directory,**kwargs)]
         vals = [x[0] for x in counts]
         errs = [x[1] for x in counts]
-        print '{0:20} | {1} |'.format(label,' | '.join(['{0:10.4f}'.format(v) for v in vals]))
+        print '{0:20} | {1} |'.format(label,' | '.join(['{0:10.4g}'.format(v) for v in vals]))
