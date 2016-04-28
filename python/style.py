@@ -32,6 +32,8 @@ colorMap = {
     'ZG'        : 'Red',
     'WZ'        : 'Purple',
     'WW'        : 'GreyBlue',
+    'VV'        : 'GreyBlue',
+    'VH'        : 'Steel',
     'VVV'       : 'Navy',
     'WWW'       : 'Navy',
     'WWZ'       : 'Navy',
@@ -43,6 +45,7 @@ colorMap = {
     'Z'         : 'DarkYellow',
     'W'         : 'Aqua',
     'TT'        : 'Green',
+    'T'         : 'LightGreen',
     'HppHmm'    : 'Orange',
     'HppHm'     : 'Orange',
 }
@@ -57,6 +60,8 @@ labelMap = {
     'ZG'        : 'Z#gamma',
     'WZ'        : 'WZ',
     'WW'        : 'WW',
+    'VH'        : 'VH',
+    'VV'        : 'VV',
     'VVV'       : 'VVV',
     'WWW'       : 'WWW',
     'WWZ'       : 'WWZ',
@@ -68,6 +73,7 @@ labelMap = {
     'Z'         : 'Drell-Yan',
     'W'         : 'W',
     'TT'        : 't#bar{t}',
+    'T'         : 'Single Top',
     'HppHmm'    : '#Phi^{++}#Phi^{#font[122]{\55}#font[122]{\55}}',
     'HppHm'     : '#Phi^{#pm#pm}#Phi^{#mp}',
 }

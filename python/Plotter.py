@@ -66,11 +66,9 @@ class Plotter(PlotterBase):
         '''Verify and open a sample'''
         analysis = kwargs.pop('analysis',self.analysis)
         if analysis not in self.sampleFiles: self.sampleFiles[analysis] = {}
-        if sampleName not in self.sampleFiles:
+        if sampleName not in self.sampleFiles[analysis]:
             self.sampleFiles[analysis][sampleName] = NtupleWrapper(analysis,sampleName,**kwargs)
             ROOT.gROOT.cd()
-        else:
-            logging.warning('Sample {0} for analysis {1} already added to plot.'.format(sampleName,analysis))
 
     def addHistogramToStack(self,histName,histConstituents,style={},**kwargs):
         '''
@@ -337,6 +335,7 @@ class Plotter(PlotterBase):
         ROOT.gDirectory.Delete('h_*')
 
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
+        ROOT.SetOwnership(canvas,False)
 
         # ratio plot
         if plotratio:
@@ -354,8 +353,8 @@ class Plotter(PlotterBase):
             ratiopad.SetTicky(1)
             ratiopad.Draw()
             ratiopad.SetLogx(logx)
-            #if plotpad != ROOT.TVirtualPad.Pad(): plotpad.cd()
-            plotpad.cd()
+            if plotpad != ROOT.TVirtualPad.Pad(): plotpad.cd()
+            #plotpad.cd()
         else:
             canvas.SetLogy(logy)
             canvas.SetLogx(logx)
@@ -416,7 +415,7 @@ class Plotter(PlotterBase):
 
         # cms lumi styling
         pad = plotpad if plotratio else canvas
-        #if pad != ROOT.TVirtualPad.Pad(): pad.cd()
+        if pad != ROOT.TVirtualPad.Pad(): pad.cd()
         self._setStyle(pad,position=lumipos,preliminary=isprelim)
 
         # the ratio portion
@@ -454,8 +453,8 @@ class Plotter(PlotterBase):
                 ratios[histName] = num
 
             # and draw
-            #if ratiopad != ROOT.TVirtualPad.Pad(): ratiopad.cd()
-            ratiopad.cd()
+            if ratiopad != ROOT.TVirtualPad.Pad(): ratiopad.cd()
+            #ratiopad.cd()
             ratiostaterr.Draw("e2")
             if len(rangex)==2: ratiostaterr.GetXaxis().SetRangeUser(*rangex)
             ratiounity.Draw('same')
@@ -466,8 +465,8 @@ class Plotter(PlotterBase):
                 else:
                     hist.SetLineWidth(3)
                     hist.Draw('hist same')
-            #if canvas != ROOT.TVirtualPad.Pad(): canvas.cd()
-            canvas.cd()
+            if canvas != ROOT.TVirtualPad.Pad(): canvas.cd()
+            #canvas.cd()
 
         # save
         if save:
@@ -495,6 +494,7 @@ class Plotter(PlotterBase):
         ROOT.gDirectory.Delete('h_*')
 
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
+        ROOT.SetOwnership(canvas,False)
 
         # ratio plot
         if plotratio:
@@ -512,8 +512,8 @@ class Plotter(PlotterBase):
             ratiopad.SetTicky(1)
             ratiopad.Draw()
             ratiopad.SetLogx(logx)
-            #if plotpad != ROOT.TVirtualPad.Pad(): plotpad.cd()
-            plotpad.cd()
+            if plotpad != ROOT.TVirtualPad.Pad(): plotpad.cd()
+            #plotpad.cd()
         else:
             canvas.SetLogy(logy)
             canvas.SetLogx(logx)
@@ -566,12 +566,12 @@ class Plotter(PlotterBase):
 
         # cms lumi styling
         pad = plotpad if plotratio else canvas
-        #if pad != ROOT.TVirtualPad.Pad(): pad.cd()
+        if pad != ROOT.TVirtualPad.Pad(): pad.cd()
         self._setStyle(pad,position=lumipos,preliminary=isprelim)
 
         # cms lumi styling
         pad = plotpad if plotratio else canvas
-        #if pad != ROOT.TVirtualPad.Pad(): pad.cd()
+        if pad != ROOT.TVirtualPad.Pad(): pad.cd()
         self._setStyle(pad,position=lumipos,preliminary=isprelim)
 
         # the ratio portion
@@ -607,8 +607,8 @@ class Plotter(PlotterBase):
                 ratios[histName] = num
 
             # and draw
-            #if ratiopad != ROOT.TVirtualPad.Pad(): ratiopad.cd()
-            ratiopad.cd()
+            if ratiopad != ROOT.TVirtualPad.Pad(): ratiopad.cd()
+            #ratiopad.cd()
             ratiostaterr.Draw("e2")
             ratiounity.Draw('same')
             for histName, hist in ratios.iteritems():
@@ -618,8 +618,8 @@ class Plotter(PlotterBase):
                 else:
                     hist.SetLineWidth(3)
                     hist.Draw('hist same')
-            #if canvas != ROOT.TVirtualPad.Pad(): canvas.cd()
-            canvas.cd()
+            if canvas != ROOT.TVirtualPad.Pad(): canvas.cd()
+            #canvas.cd()
 
         # save
         if save:
@@ -645,7 +645,9 @@ class Plotter(PlotterBase):
         save = kwargs.pop('save',True)
 
         logging.info('Plotting {0}'.format(savename))
+
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
+        ROOT.SetOwnership(canvas,False)
         canvas.SetLogy(logy)
         canvas.SetLogx(logx)
 
@@ -711,6 +713,7 @@ class Plotter(PlotterBase):
 
         logging.info('Plotting {0}'.format(savename))
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
+        ROOT.SetOwnership(canvas,False)
         canvas.SetLogy(logy)
         canvas.SetLogx(logx)
 
@@ -773,6 +776,7 @@ class Plotter(PlotterBase):
 
         logging.info('Plotting {0}'.format(savename))
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
+        ROOT.SetOwnership(canvas,False)
         canvas.SetLogy(logy)
         canvas.SetLogx(logx)
 
@@ -833,6 +837,7 @@ class Plotter(PlotterBase):
 
         logging.info('Plotting {0}'.format(savename))
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
+        ROOT.SetOwnership(canvas,False)
         canvas.SetLogy(logy)
         canvas.SetLogx(logx)
         canvas.SetLogz(logz)

@@ -139,6 +139,15 @@ params = {
         # event
         'mass'                  : {'variable': '4l_mass',                        'binning': [2000, 0, 2000]},
         'st'                    : {'variable': 'hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt','binning': [2000, 0, 2000]},
+        # gen truth
+        'hppLeadingLeptonGenMatch'    : {'variable': 'hpp1_genMatch',               'binning': [2, 0, 2]},
+        'hppLeadingLeptonGenDeltaR'   : {'variable': 'hpp1_genDeltaR',              'binning': [1000, 0, 5]},
+        'hppSubLeadingLeptonGenMatch' : {'variable': 'hpp2_genMatch',               'binning': [2, 0, 2]},
+        'hpmSubLeadingLeptonGenDeltaR': {'variable': 'hpp2_genDeltaR',              'binning': [1000, 0, 5]},
+        'hmmLeadingLeptonGenMatch'    : {'variable': 'hmm1_genMatch',               'binning': [2, 0, 2]},
+        'hmmLeadingLeptonGenDeltaR'   : {'variable': 'hmm1_genDeltaR',              'binning': [1000, 0, 5]},
+        'hmmSubLeadingLeptonGenMatch' : {'variable': 'hmm2_genMatch',               'binning': [2, 0, 2]},
+        'hmmSubLeadingLeptonGenDeltaR': {'variable': 'hmm2_genDeltaR',              'binning': [1000, 0, 5]},
     },
     # overrides for Hpp3l
     'Hpp3l' : {
@@ -175,6 +184,13 @@ params = {
         # event
         'mass'                  : {'variable': '3l_mass',                        'binning': [2000, 0, 2000]},
         'st'                    : {'variable': 'hpp1_pt+hpp2_pt+hm1_pt',         'binning': [2000, 0, 2000]},
+        # gen truth
+        'hppLeadingLeptonGenMatch'    : {'variable': 'hpp1_genMatch',               'binning': [2, 0, 2]},
+        'hppLeadingLeptonGenDeltaR'   : {'variable': 'hpp1_genDeltaR',              'binning': [1000, 0, 5]},
+        'hppSubLeadingLeptonGenMatch' : {'variable': 'hpp2_genMatch',               'binning': [2, 0, 2]},
+        'hpmSubLeadingLeptonGenDeltaR': {'variable': 'hpp2_genDeltaR',              'binning': [1000, 0, 5]},
+        'hmLeptonGenMatch'            : {'variable': 'hm1_genMatch',                'binning': [2, 0, 2]},
+        'hmLeptonGenDeltaR'           : {'variable': 'hm1_genDeltaR',               'binning': [1000, 0, 5]},
     },
 }
 

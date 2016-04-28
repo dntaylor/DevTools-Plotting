@@ -210,6 +210,10 @@ class NtupleWrapper(object):
         '''Get a histogram'''
         return self.__read(variable)
 
+    def getCount(self,directory):
+        '''Get a count'''
+        return self.__read('{0}/count'.format(directory))
+
     def getTempHist(self,histName,selection,scalefactor,variable,binning):
         '''Get a histogram that is not saved in flat ntuple.'''
         return self.__getHist(histName,selection,scalefactor,variable,binning)
