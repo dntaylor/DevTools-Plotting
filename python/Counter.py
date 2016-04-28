@@ -109,14 +109,18 @@ class Counter(object):
                 return (0.,0.)
             if len(counts)==1:
                 return counts[0]
-            else
+            else:
                 return sumWithError(*counts)
         else:
             return (0.,0.)
 
     def printHeader(self):
         '''Print a header'''
-        print '{0:20} | {1}'.format('',' | '.join(['{0:10}'.format(name) for name in self.processOrder]))
+        print '{0:20} | {1} |'.format('',' | '.join(['{0:10}'.format(name) for name in self.processOrder]))
+
+    def printDivider(self):
+        '''Print a divider'''
+        print '{0:20}-|-{1}-|'.format('-'*20,'-|-'.join(['{0:10}'.format('-'*10) for name in self.processOrder]))
 
     def printCounts(self,label,directory,**kwargs):
         '''Print the counts'''
@@ -125,4 +129,4 @@ class Counter(object):
             counts += [self._getCount(processName,directory,**kwargs)]
         vals = [x[0] for x in counts]
         errs = [x[1] for x in counts]
-        print '{0:20} | {1}'.format(label,' | '.join(['{0:10.4f}'.format(v) for v in vals]))
+        print '{0:20} | {1} |'.format(label,' | '.join(['{0:10.4f}'.format(v) for v in vals]))
