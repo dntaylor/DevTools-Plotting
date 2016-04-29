@@ -192,6 +192,24 @@ params = {
         'hmLeptonGenMatch'            : {'variable': 'hm1_genMatch',                'binning': [2, 0, 2]},
         'hmLeptonGenDeltaR'           : {'variable': 'hm1_genDeltaR',               'binning': [1000, 0, 5]},
     },
+    # overrides for WTauFakeRate
+    'WTauFakeRate' : {
+        # z
+        'zMass'                 : {'variable': 'z_mass',                         'binning': [500, 0, 500]},
+        'mllMinusMZ'            : {'variable': 'fabs(z_mass-{0})'.format(ZMASS), 'binning': [200, 0, 200]},
+        'zPt'                   : {'variable': 'z_pt',                           'binning': [500, 0, 500]},
+        'zDeltaR'               : {'variable': 'z_deltaR',                       'binning': [500, 0, 5]},
+        # t
+        'wtMt'                  : {'variable': 'wt_mt',                          'binning': [500, 0, 500]},
+        'wtPt'                  : {'variable': 'wt_pt',                          'binning': [500, 0, 500]},
+        'tPt'                   : {'variable': 't_pt',                           'binning': [500, 0, 500]},
+        'tEta'                  : {'variable': 't_eta',                          'binning': [500, -2.5, 2.5]},
+        # m
+        'wmMt'                  : {'variable': 'wm_mt',                          'binning': [500, 0, 500]},
+        'wmPt'                  : {'variable': 'wm_pt',                          'binning': [500, 0, 500]},
+        'mPt'                   : {'variable': 'm_pt',                           'binning': [500, 0, 500]},
+        'mEta'                  : {'variable': 'm_eta',                          'binning': [500, -2.5, 2.5]},
+    },
 }
 
 ################
@@ -381,6 +399,45 @@ for sel in ['loose','medium','tight','loose/pt20','medium/pt20','tight/pt20']:
             args = selectionParams['DijetFakeRate'][name]['args']
             selectionParams['DijetFakeRate'][name]['args'][0] = args[0] + '&& channel=="{0}" && fabs(l1_eta)>={1} && fabs(l1_eta)<{2}'.format(chan,etaBins[chan][eb],etaBins[chan][eb+1])
 
+#############################
+### WTauFakeRate specific ###
+#############################
+frBaseCut = 'z_deltaR>0.02 && m_pt>25.'
+frBaseCutLoose = '{0}'.format(frBaseCut)
+frBaseCutMedium = '{0} && t_passMedium==1'.format(frBaseCut)
+frBaseCutTight = '{0} && t_passTight==1'.format(frBaseCut)
+frScaleFactorLoose = 'm_tightScale*t_looseScale*genWeight*pileupWeight*triggerEfficiency'
+frScaleFactorMedium = 'm_tightScale*t_mediumScale*genWeight*pileupWeight*triggerEfficiency'
+frScaleFactorTight = 'm_tightScale*t_tightScale*genWeight*pileupWeight*triggerEfficiency'
+selectionParams['WTauFakeRate'] = {
+    'loose'      : {'args': [frBaseCutLoose],                   'kwargs': {'mcscalefactor': frScaleFactorLoose, }},
+    'medium'     : {'args': [frBaseCutMedium],                  'kwargs': {'mcscalefactor': frScaleFactorMedium,}},
+    'tight'      : {'args': [frBaseCutTight],                   'kwargs': {'mcscalefactor': frScaleFactorTight, }},
+}
+
+subsels = {
+    'SS'     : 't_charge==m_charge',
+    'ZVeto'  : '(z_mass<40 || z_mass>100)',
+    'WMt'    : 'wm_mt>60.',
+    'all'    : '(z_mass<40 || z_mass>100) && wm_mt>60.',
+}
+
+for sel in ['loose','medium','tight']:
+    for sub in subsels:
+        name = '{0}/{1}'.format(sel,sub)
+        selectionParams['WTauFakeRate'][name] = deepcopy(selectionParams['WTauFakeRate'][sel])
+        args = selectionParams['WTauFakeRate'][name]['args']
+        selectionParams['WTauFakeRate'][name]['args'][0] = ' && '.join([args[0],subsels[sub]])
+
+etaBins = [0.,0.8,1.479,2.3]
+
+sels = selectionParams['WTauFakeRate'].keys()
+for sel in sels:
+    for eb in range(len(etaBins)-1):
+        name = '{0}/etaBin{1}'.format(sel,eb)
+        selectionParams['WTauFakeRate'][name] = deepcopy(selectionParams['WTauFakeRate'][sel])
+        args = selectionParams['WTauFakeRate'][name]['args']
+        selectionParams['WTauFakeRate'][name]['args'][0] = ' && '.join([args[0],'fabs(t_eta)>={0} && fabs(t_eta)<{1}'.format(etaBins[eb],etaBins[eb+1])])
 
 ###################
 ### DY specific ###
@@ -464,6 +521,7 @@ wzBaseCut = 'z1_pt>20 && z2_pt>10 && w1_pt>20 && met_pt>30 && numBjetsTight30==0
 wzBaseScaleFactor = 'genWeight*pileupWeight*triggerEfficiency'
 wzMCCut = ' && '.join([genStatusOneCut.format(l) for l in ['z1','z2','w1']])
 
+# definitions for scale/selection in fake regions
 wzTightVar = {
     0: 'z1_passMedium',
     1: 'z2_passMedium',
@@ -493,6 +551,7 @@ wzScaleMap = {
     'F': wzLooseScale,
 }
 
+# build the cuts for each fake region
 wzScaleFactorMap = {}
 wzFakeScaleFactorMap = {}
 wzCutMap = {}
@@ -500,7 +559,8 @@ fakeRegions = ['PPP','PPF','PFP','FPP','PFF','FPF','FFP','FFF']
 for region in fakeRegions:
     wzScaleFactorMap[region] = '*'.join([wzScaleMap[region[x]][x] for x in range(3)])
     wzFakeScaleFactorMap[region] = '*'.join(['{0}/(1-{0})'.format(wzFakeRate[f]) for f in range(3) if region[f]=='F'] + ['-1' if region.count('F')%2==0 and region.count('F')>0 else '1'])
-    wzCutMap[region] = ' && '.join(['{0}=={1}'.format(wzTightVar[x],1 if region[x]=='P' else 0) for x in range(3)]+[wzBaseCut])
+    wzCutMap[region] = ' && '.join(['{0}=={1}'.format(wzTightVar[x],1 if region[x]=='P' else 0) for x in range(3)])
+
 # dy/tt all loose
 wzScaleFactorMap['loose'] = '*'.join(['{0}_looseScale'.format(x) for x in ['z1','z2','w1']])
 wzScaleFactorMap['medium'] = '*'.join(['{0}_mediumScale'.format(x) for x in ['z1','z2','w1']])
@@ -510,30 +570,34 @@ ttSimpleCut = 'z1_pt>20 && z2_pt>10 && w1_pt>10 && fabs(z_mass-{0})>5 && 3l_mass
 wzCutMap['dy'] = dySimpleCut
 wzCutMap['tt'] = ttSimpleCut
 
+# base selections (no gen matching)
 selectionParams['WZ'] = {
     'default' : {'args': [wzCutMap['PPP']],       'kwargs': {'mcscalefactor': '*'.join([wzScaleFactorMap['PPP'],wzBaseScaleFactor])}},
+    'dy'      : {'args': [wzCutMap['dy']],        'kwargs': {'mcscalefactor': '*'.join([wzScaleFactorMap['loose'],wzBaseScaleFactor]),}},
+    'tt'      : {'args': [wzCutMap['tt']],        'kwargs': {'mcscalefactor': '*'.join([wzScaleFactorMap['loose'],wzBaseScaleFactor]),}},
 }
 
+# fake regions, gen match leptons in MC
 for region in fakeRegions:
     selectionParams['WZ'][region] = {
-        'args': [wzCutMap[region]], 
+        'args': [wzBaseCut + ' && ' + wzCutMap[region]], 
         'kwargs': {
             'mccut': wzMCCut, 
             'mcscalefactor': '*'.join([wzScaleFactorMap[region],wzFakeScaleFactorMap[region],wzBaseScaleFactor,'1' if region=='PPP' else '-1']),
             'datascalefactor': wzFakeScaleFactorMap[region], 
         }
     }
-
-controls = ['dy','tt']
-for control in controls:
-    selectionParams['WZ'][control] = {
-        'args': [wzCutMap[control]],
-        'kwargs': {
-            'mccut': wzMCCut,
-            'mcscalefactor': '*'.join([wzScaleFactorMap['loose'],wzBaseScaleFactor]),
+    for control in ['dy','tt']:
+        selectionParams['WZ']['{0}/{1}'.format(region,control)] = {
+            'args': [wzCutMap[region] + ' && ' + wzCutMap[control]], 
+            'kwargs': {
+                'mccut': wzMCCut, 
+                'mcscalefactor': '*'.join([wzScaleFactorMap[region],wzFakeScaleFactorMap[region],wzBaseScaleFactor,'1' if region=='PPP' else '-1']),
+                'datascalefactor': wzFakeScaleFactorMap[region], 
+            }
         }
-    }
 
+# channels
 channels = ['eee','eem','mme','mmm']
 sels = selectionParams['WZ'].keys()
 for sel in sels:

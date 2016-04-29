@@ -49,6 +49,7 @@ latestNtuples = {
     'SingleMuon'     : '',
     'Tau'            : '2016-04-14_TauAnalysis_v1-merge',
     'TauCharge'      : '',
+    'WTauFakeRate'   : '',
     'WZ'             : '',
 }
 
@@ -76,6 +77,7 @@ treeMap = {
     'SingleMuon'     : 'MTree',
     'Tau'            : 'TTree',
     'TauCharge'      : 'TauChargeTree',
+    'WTauFakeRate'   : 'WTauFakeRateTree',
     'WZ'             : 'WZTree',
 }
 

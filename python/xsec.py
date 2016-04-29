@@ -84,6 +84,7 @@ xsecs = {
     'ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8'                         :      0.8696 * 0.5824 * 0.6991       * PB, # ZH * H->bb * Z->had
     'ZH_HToGG_ZToAll_M125_13TeV_powheg_pythia8'                        :      0.8696 * 0.00227               * PB, # ZH * H->gamgam
     'ZH_HToZG_ZToAll_M-125_13TeV_powheg_pythia8'                       :      0.8696 * 0.001533              * PB, # ZH * H->Zgam
+    'ZHToTauTau_M125_13TeV_powheg_pythia8'                             :      0.8696 * 0.006272              * PB, # ZH * H->tautau
     'ZH_HToZZ_4LFilter_M125_13TeV_powheg2-minlo-HZJ_JHUgenV6_pythia8'  :      0.147 * PB, # MCM , 0.8696 * 0.02619 * (0.033658*3)**2 # ZH * H->ZZ * Z->ll^2 
 
     'WWTo2L2Nu_13TeV-powheg'                                           :     10.481    * PB,
@@ -97,6 +98,7 @@ xsecs = {
     'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8'                       :      4.42965  * PB,
     'WZJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                   :      5.29     * PB,
     'WZ_TuneCUETP8M1_13TeV-pythia8'                                    :     47.13     * PB,
+    'WZJToLLLNu_TuneCUETP8M1_13TeV-amcnlo-pythia8'                     :      4.666    * PB,
 
     'ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8'                        :      6.842    * PB,
     'ZZTo2Q2Nu_13TeV_amcatnloFXFX_madspin_pythia8'                     :      4.04     * PB,
