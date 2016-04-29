@@ -21,9 +21,9 @@ ROOT.gStyle.SetPalette(1)
 class HistMaker(PlotterBase):
     '''Basic histogram making utilities'''
 
-    def __init__(self,**kwargs):
+    def __init__(self,analysis,**kwargs):
         '''Initialize the plotter'''
-        super(HistMaker, self).__init__(**kwargs)
+        super(HistMaker, self).__init__(analysis,**kwargs)
         # initialize stuff
         self.outputFileName = kwargs.pop('outputFileName','root/file.root')
 
