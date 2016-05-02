@@ -39,8 +39,8 @@ def getLumi():
 
 latestNtuples = {
     'Charge'         : '2016-04-23_ChargeAnalysis_v1-merge',
-    'DY'             : '2016-04-23_DY_v1-merge',
-    'DijetFakeRate'  : '2016-04-23_DijetFakeRateAnalysis_v1-merge',
+    'DY'             : '2016-05-01_DYAnalysis_v1-merge',
+    'DijetFakeRate'  : '',
     'Electron'       : '2016-04-14_ElectronAnalysis_v1-merge',
     'Hpp3l'          : '',
     'Hpp4l'          : '',

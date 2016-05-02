@@ -36,6 +36,7 @@ class NtupleWrapper(object):
         self.tchain = 0
         self.j = 0
         self.initialized = False
+        self.entryListMap = {}
 
     def __exit__(self, type, value, traceback):
         self.__finish()
@@ -63,6 +64,11 @@ class NtupleWrapper(object):
         self.xsec = getXsec(self.sample)
         self.sampleLumi = float(summedWeights)/self.xsec if self.xsec else 0.
         self.sampleTree = tchain
+        self.j += 1
+        listname = 'selList{0}'.format(self.j)
+        self.sampleTree.Draw('>>{0}'.format(listname),'1','entrylist')
+        skim = ROOT.gDirectory.Get(listname)
+        self.entryListMap['1'] = skim
         self.files = allFiles
         self.initialized = True
         self.fileHash = hashFile(*self.files)
@@ -180,11 +186,23 @@ class NtupleWrapper(object):
     def __getHist(self,histName,selection,scalefactor,variable,binning):
         if not self.initialized: self.__initializeNtuple()
         if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi)
-        drawString = '{0}>>{1}({2})'.format(variable,histName,', '.join([str(x) for x in binning]))
-        selectionString = '{0}*({1})'.format(scalefactor,selection)
         tree = self.sampleTree
-        if not tree: ROOT.TH1F(histName,histName,*binning)
+        if not tree: 
+            hist = ROOT.TH1F(histName,histName,*binning)
+            return hist
+        if selection not in self.entryListMap:
+            self.j += 1
+            listname = 'selList{0}'.format(self.j)
+            tree.Draw('>>{0}'.format(listname),selection,'entrylist')
+            skim = ROOT.gDirectory.Get(listname)
+            self.entryListMap[selection] = skim
+        skim = self.entryListMap[selection]
+        tree.SetEntryList(skim)
+        drawString = '{0}>>{1}({2})'.format(variable,histName,', '.join([str(x) for x in binning]))
+        #selectionString = '{0}*({1})'.format(scalefactor,selection)
+        selectionString = '{0}*(1)'.format(scalefactor)
         tree.Draw(drawString,selectionString,'goff')
+        tree.SetEntryList(self.entryListMap['1'])
         if ROOT.gDirectory.Get(histName):
             hist = ROOT.gDirectory.Get(histName)
         else:
@@ -195,11 +213,23 @@ class NtupleWrapper(object):
         if not self.initialized: self.__initializeNtuple()
         if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi)
         binning = xBinning+yBinning
-        drawString = '{0}:{1}>>{2}({3})'.format(yVariable,xVariable,histName,', '.join([str(x) for x in binning]))
-        selectionString = '{0}*({1})'.format(scalefactor,selection)
         tree = self.sampleTree
-        if not tree: ROOT.TH2F(histName,histName,*binning)
+        if not tree:
+            hist = ROOT.TH2F(histName,histName,*binning)
+            return hist
+        if selection not in self.entryListMap:
+            self.j += 1
+            listname = 'selList{0}'.format(self.j)
+            tree.Draw('>>{0}'.format(listname),selection,'entrylist')
+            skim = ROOT.gDirectory.Get(listname)
+            self.entryListMap[selection] = skim
+        skim = self.entryListMap[selection]
+        tree.SetEntryList(skim)
+        drawString = '{0}:{1}>>{2}({3})'.format(yVariable,xVariable,histName,', '.join([str(x) for x in binning]))
+        #selectionString = '{0}*({1})'.format(scalefactor,selection)
+        selectionString = '{0}*(1)'.format(scalefactor)
         tree.Draw(drawString,selectionString,'goff')
+        tree.SetEntryList(self.entryListMap['1'])
         if ROOT.gDirectory.Get(histName):
             hist = ROOT.gDirectory.Get(histName)
         else:

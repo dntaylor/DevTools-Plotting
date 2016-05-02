@@ -24,8 +24,8 @@ sigMap = {
     'WZ'  : [
              'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
              'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-             #'WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8',
-             #'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8',
+             'WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8',
+             'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8',
             ],
     'ZZ'  : [
              'ZZTo4L_13TeV_powheg_pythia8',
@@ -49,7 +49,7 @@ sigMap = {
             ],
     'WW'  : [
              'WWTo2L2Nu_13TeV-powheg',
-             #'WWToLNuQQ_13TeV-powheg',
+             'WWToLNuQQ_13TeV-powheg',
             ],
     'W'   : [
              'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
@@ -64,6 +64,33 @@ sigMap = {
              'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
              'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
+    'T'   : [
+             'ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
+             #'ST_t-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
+             'ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
+             'ST_t-channel_top_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
+             'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
+             'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
+            ],
+    'QCD' : [
+             'QCD_Pt_5to10_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_10to15_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8',
+            ],
     'data': [
              'DoubleMuon',
              'DoubleEG',
@@ -73,11 +100,12 @@ sigMap = {
             ],
 }
 
-samples = ['TT','Z','W']
+samples = ['TT','Z','W','T','WW','QCD']
 
 allSamplesDict = {'MC':[]}
 
 for s in samples:
+    if s=='QCD': continue
     allSamplesDict['MC'] += sigMap[s]
 
 for s in samples:
