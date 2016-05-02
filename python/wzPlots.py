@@ -148,15 +148,22 @@ plotStyles = {
 def getDataDrivenPlot(plot):
     histMap = {}
     plotdirs = plot.split('/')
-    for s in samples + ['data']: histMap[s] = '/'.join(plotdirs[:-1]+['PPP']+plotdirs[-1:])
+    for s in samples + ['data']: histMap[s] = '/'.join(['PPP']+plotdirs)
     regions = ['PPF','PFP','FPP','PFF','FPF','FFP','FFF']
-    histMap['datadriven'] = ['/'.join(plotdirs[:-1]+[reg]+plotdirs[-1:]) for reg in regions]
+    histMap['datadriven'] = ['/'.join([reg]+plotdirs) for reg in regions]
     return histMap
+
+# n-1 cuts
+nMinusOneCuts = ['zptCut','wptCut','bvetoCut','metCut','zmassCut','3lmassCut']
 
 for plot in plotStyles:
     plotvars = getDataDrivenPlot(plot)
     savename = 'datadriven/{0}'.format(plot)
     wzPlotter.plot(plotvars,savename,**plotStyles[plot])
+    for cut in nMinusOneCuts:
+        plotvars = getDataDrivenPlot('{0}/{1}'.format(cut,plot))
+        savename = 'datadriven/nMinusOne/{0}/{1}'.format(cut,plot)
+        wzPlotter.plot(plotvars,savename,**plotStyles[plot])
 
 wzPlotter.clearHistograms()
 
@@ -170,4 +177,8 @@ for plot in plotStyles:
     plotname = 'default/{0}'.format(plot)
     savename = plot
     wzPlotter.plot(plotname,savename,**plotStyles[plot])
+    for cut in nMinusOneCuts:
+        plotname = 'default/{0}/{1}'.format(cut,plot)
+        savename = 'nMinusOne/{0}/{1}'.format(cut,plot)
+        wzPlotter.plot(plotname,savename,**plotStyles[plot])
 
