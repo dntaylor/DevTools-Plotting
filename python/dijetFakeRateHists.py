@@ -11,12 +11,11 @@ import ROOT
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 dijetFakeRatePlotter = Plotter(
-    inputDirectory  = 'flat/DijetFakeRate',
-    outputDirectory = 'plots/DijetFakeRate',
+    'DijetFakeRate',
 )
 
 dijetFakeRateMaker = HistMaker(
-    inputDirectory = 'flat/DijetFakeRate',
+    'DijetFakeRate',
     outputFileName = 'root/DijetFakeRate/fakerates.root',
 )
 

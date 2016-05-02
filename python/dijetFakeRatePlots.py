@@ -100,7 +100,8 @@ sigMap = {
             ],
 }
 
-samples = ['TT','Z','W','T','WW','QCD']
+#samples = ['TT','Z','W','T','WW','QCD']
+samples = ['TT','Z','W','T','WW']
 
 allSamplesDict = {'MC':[]}
 
