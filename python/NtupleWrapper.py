@@ -12,7 +12,7 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 from DevTools.Plotter.xsec import getXsec
 from DevTools.Plotter.utilities import getLumi, isData, hashFile, hashString, python_mkdir, getTreeName, getNtupleDirectory
-from DevTools.Plotter.histParams import getHistParams, getHistParams2D, getHistSelections
+from DevTools.Plotter.histParams import getHistParams, getHistSelections, getProjectionParams
 
 CMSSW_BASE = os.environ['CMSSW_BASE']
 
@@ -27,15 +27,20 @@ class NtupleWrapper(object):
         self.ntuple = kwargs.pop('ntuple','{0}/src/ntuples/{1}/{2}.root'.format(CMSSW_BASE,self.analysis,self.sample))
         self.ntupleDirectory = kwargs.pop('ntupleDirectory','{0}/{1}'.format(getNtupleDirectory(self.analysis),self.sample))
         self.treeName = kwargs.pop('treeName',getTreeName(self.analysis))
-        self.flat = kwargs.pop('flat','flat/{0}/{1}.root'.format(self.analysis,self.sample))
+        #self.flat = kwargs.pop('flat','flat/{0}/{1}.root'.format(self.analysis,self.sample))
+        self.flat = kwargs.pop('flat','{0}/src/flat/{1}/{2}.root'.format(CMSSW_BASE,self.analysis,self.sample))
+        self.proj = kwargs.pop('proj','{0}/src/projections/{1}/{2}.root'.format(CMSSW_BASE,self.analysis,self.sample))
         # get stuff needed to flatten
-        self.histParams = getHistParams(self.analysis)
-        self.histParams2D = getHistParams2D(self.analysis)
+        self.histParams = getHistParams(self.analysis,self.sample)
         self.selections = getHistSelections(self.analysis,self.sample)
+        self.projections = getProjectionParams(self.analysis,self.sample)
         self.outfile = 0
         self.tchain = 0
         self.j = 0
         self.initialized = False
+        # verify output file directory exists
+        os.system('mkdir -p {0}'.format(os.path.dirname(self.flat)))
+        os.system('mkdir -p {0}'.format(os.path.dirname(self.proj)))
         self.entryListMap = {}
 
     def __exit__(self, type, value, traceback):
@@ -80,43 +85,35 @@ class NtupleWrapper(object):
         hist.Write('',ROOT.TObject.kOverwrite)
         self.outfile.Close()
 
+    def __writeProjection(self,hist,directory=''):
+        self.outfile = ROOT.TFile(self.proj,'update')
+        if not self.outfile.GetDirectory(directory): self.outfile.mkdir(directory)
+        self.outfile.cd('{0}:/{1}'.format(self.proj,directory))
+        hist.Write('',ROOT.TObject.kOverwrite)
+        self.outfile.Close()
+
     def __read(self,variable):
         '''Read the histogram from file'''
-        # attempt to read the histogram
-        infile = ROOT.TFile(self.flat,'read')
+        # attempt to read
+        infile = ROOT.TFile(self.proj,'read')
         hist = infile.Get(variable)
         if hist:
             hist = hist.Clone('h_{0}_{1}'.format(self.sample,variable.replace('/','_')))
-            #hist.Sumw2()
             hist.SetDirectory(0)
             return hist
-        else:
-            logging.info('Histogram {0} not found for {1}, attempt to flatten'.format(variable,self.sample))
-        infile.Close()
-        # attempt to flatten the histogram
-        varComponents = variable.split('/')
-        selection = '/'.join(varComponents[:-1])
-        if selection not in self.selections:
-            logging.error('{0}: unknown, {1} not found in histSelections.'.format(variable,directory))
-            return 0
-        sels = self.selections[selection]
-        histName = varComponents[-1]
-        if histName not in self.histParams and histName not in self.histParams2D:
-            logging.error('{0}: unknown, {1} not found in histParams.'.format(variable,histName))
-            return 0
-        if histName in self.histParams: # 1D
-            params = self.histParams[histName]
-            self.__flatten(sels['args'][0],histName,params,**sels['kwargs'])
-        else: # 2D
-            params = self.histParams2D[histName]
-            self.__flatten(sels['args'][0],histName,params,**sels['kwargs'])
-        # now get it again
         infile = ROOT.TFile(self.flat,'read')
         hist = infile.Get(variable)
         if hist:
             hist = hist.Clone('h_{0}_{1}'.format(self.sample,variable.replace('/','_')))
-            hist.Sumw2()
+            hist.SetDirectory(0)
             return hist
+        # attempt to project
+        hist = self.__project(variable)
+        if hist:
+            hist = hist.Clone('h_{0}_{1}'.format(self.sample,variable.replace('/','_')))
+            hist.SetDirectory(0)
+            return hist
+        logging.info('Histogram {0} not found for {1}'.format(variable,self.sample))
         return 0
 
     def __checkHash(self,name,directory,strings=[]):
@@ -160,32 +157,36 @@ class NtupleWrapper(object):
         if 'scale' in params: scalefactor += '*{0}'.format(params['scale'])
         if 'mcscale' in params and not isData(self.sample): scalefactor += '*{0}'.format(params['mcscale'])
         if 'datascale' in params and isData(self.sample): scalefactor += '*{0}'.format(params['datascale'])
-        # verify output file directory exists
-        os.system('mkdir -p {0}'.format(os.path.dirname(self.flat)))
         # check if we need to draw the hist, or if the one in the ntuple is the latest
-        if 'variable' in params: # 1D
-             hashExists = self.__checkHash(histName,directory,strings=[params['variable'],', '.join([str(x) for x in params['binning']]),scalefactor,selection])
-        else: # 2D
+        if 'zVariable' in params: # 3D
+             hashExists = self.__checkHash(histName,directory,strings=[params['zVariable'],params['yVariable'],params['xVariable'],', '.join([str(x) for x in params['xBinning']+params['yBinning']+params['zBinning']]),scalefactor,selection])
+        elif 'yVariable' in params: # 2D
              hashExists = self.__checkHash(histName,directory,strings=[params['yVariable'],params['xVariable'],', '.join([str(x) for x in params['xBinning']+params['yBinning']]),scalefactor,selection])
+        else: # 1D
+             hashExists = self.__checkHash(histName,directory,strings=[params['xVariable'],', '.join([str(x) for x in params['xBinning']]),scalefactor,selection])
         if hashExists:
             self.__finish()
-            return
+            return False
         # get the histogram
         name = histName
         self.j += 1
         tempName = 'h_{0}_{1}_{2}'.format(name,self.sample,self.j)
-        if 'variable' in params: # 1D
-            hist = self.__getHist(tempName,selection,scalefactor,params['variable'],params['binning'])
-        else: # 2D
+        if 'zVariable' in params: # 3D
+            hist = self.__getHist3D(tempName,selection,scalefactor,params['xVariable'],params['yVariable'],params['zVariable'],params['xBinning'],params['yBinning'],params['zBinning'])
+        elif 'yVariable' in params: # 2D
             hist = self.__getHist2D(tempName,selection,scalefactor,params['xVariable'],params['yVariable'],params['xBinning'],params['yBinning'])
+        else: # 1D
+            hist = self.__getHist1D(tempName,selection,scalefactor,params['xVariable'],params['xBinning'])
         hist.SetTitle(name)
         hist.SetName(name)
         # save to file
         self.__write(hist,directory=directory)
+        return True
 
-    def __getHist(self,histName,selection,scalefactor,variable,binning):
+    def __getHist1D(self,histName,selection,scalefactor,xVariable,xBinning):
         if not self.initialized: self.__initializeNtuple()
         if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi)
+        binning = xBinning
         tree = self.sampleTree
         if not tree: 
             hist = ROOT.TH1F(histName,histName,*binning)
@@ -197,8 +198,10 @@ class NtupleWrapper(object):
             skim = ROOT.gDirectory.Get(listname)
             self.entryListMap[selection] = skim
         skim = self.entryListMap[selection]
+        if not skim or skim.GetN()==0:
+            return ROOT.TH1F(histName,histName,*binning)
         tree.SetEntryList(skim)
-        drawString = '{0}>>{1}({2})'.format(variable,histName,', '.join([str(x) for x in binning]))
+        drawString = '{0}>>{1}({2})'.format(xVariable,histName,', '.join([str(x) for x in binning]))
         #selectionString = '{0}*({1})'.format(scalefactor,selection)
         selectionString = '{0}*(1)'.format(scalefactor)
         tree.Draw(drawString,selectionString,'goff')
@@ -224,6 +227,8 @@ class NtupleWrapper(object):
             skim = ROOT.gDirectory.Get(listname)
             self.entryListMap[selection] = skim
         skim = self.entryListMap[selection]
+        if not skim or skim.GetN()==0:
+            return ROOT.TH2F(histName,histName,*binning)
         tree.SetEntryList(skim)
         drawString = '{0}:{1}>>{2}({3})'.format(yVariable,xVariable,histName,', '.join([str(x) for x in binning]))
         #selectionString = '{0}*({1})'.format(scalefactor,selection)
@@ -236,9 +241,225 @@ class NtupleWrapper(object):
             hist = ROOT.TH2F(histName,histName,*binning)
         return hist
 
+    def __getHist3D(self,histName,selection,scalefactor,xVariable,yVariable,zVariable,xBinning,yBinning,zBinning):
+        if not self.initialized: self.__initializeNtuple()
+        if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi)
+        binning = xBinning+yBinning+zBinning
+        tree = self.sampleTree
+        if not tree:
+            hist = ROOT.TH3F(histName,histName,*binning)
+            return hist
+        if selection not in self.entryListMap:
+            self.j += 1
+            listname = 'selList{0}'.format(self.j)
+            tree.Draw('>>{0}'.format(listname),selection,'entrylist')
+            skim = ROOT.gDirectory.Get(listname)
+            self.entryListMap[selection] = skim
+        skim = self.entryListMap[selection]
+        if not skim or skim.GetN()==0:
+            return ROOT.TH3F(histName,histName,*binning)
+        tree.SetEntryList(skim)
+        drawString = '{0}:{1}:{2}>>{3}({4})'.format(zVariable,yVariable,xVariable,histName,', '.join([str(x) for x in binning]))
+        #selectionString = '{0}*({1})'.format(scalefactor,selection)
+        selectionString = '{0}*(1)'.format(scalefactor)
+        tree.Draw(drawString,selectionString,'goff')
+        tree.SetEntryList(self.entryListMap['1'])
+        if ROOT.gDirectory.Get(histName):
+            hist = ROOT.gDirectory.Get(histName)
+        else:
+            hist = ROOT.TH3F(histName,histName,*binning)
+        return hist
+
+    def __project(self,histName,directory,hist2d,direction,binLabels=[],binRange=[0,-1]):
+        '''Project a 2D histogram onto a 1D histogram.'''
+        hists = ROOT.TList()
+        self.j += 1
+        if direction=='x':
+            binning = [
+                hist2d.GetXaxis().GetNbins(),
+                hist2d.GetXaxis().GetXmin(),
+                hist2d.GetXaxis().GetXmax(),
+            ]
+        else:
+            binning = [
+                hist2d.GetYaxis().GetNbins(),
+                hist2d.GetYaxis().GetXmin(),
+                hist2d.GetYaxis().GetXmax(),
+            ]
+        if binLabels:
+            for label in binLabels:
+                name = 'h_{0}_{1}_{2}'.format(histName,label,self.j)
+                if direction=='x':
+                    binNum = hist2d.GetYaxis().FindBin(label)
+                    hist2d.ProjectionX(name,binNum,binNum,'e')
+                else:
+                    binNum = hist2d.GetXaxis().FindBin(label)
+                    hist2d.ProjectionY(name,binNum,binNum,'e')
+                if ROOT.gDirectory.Get(name):
+                    hist = ROOT.gDirectory.Get(name)
+                    if hist: hists.Add(hist)
+        else:
+            name = 'h_{0}_{1}'.format(histName,self.j)
+            if direction=='x':
+                hist2d.ProjectionX(name,binRange[0],binRange[1],'e')
+            else:
+                hist2d.ProjectionY(name,binRange[0],binRange[1],'e')
+            if ROOT.gDirectory.Get(name):
+                hist = ROOT.gDirectory.Get(name)
+                hists.Add(hist)
+        if hists.IsEmpty():
+            hist = ROOT.TH1F(histName,histName,*binning)
+        else:
+            hist = hists[0].Clone('h_temp_{0}_{1}'.format(histName,self.j))
+            hist.Reset()
+            hist.Merge(hists)
+            hist.SetName(histName)
+            hist.SetTitle(histName)
+        self.__writeProjection(hist,directory=directory)
+        return hist
+
+    def __projectFrom3D(self,histName,directory,hist3d,direction,binLabels1=[],binLabels2=[],binRange1=[0,-1],binRange2=[0,-1]):
+        '''Project a 3D histogram onto a 1D histogram.'''
+        hists = ROOT.TList()
+        self.j += 1
+        if direction=='x':
+            binning = [
+                hist3d.GetXaxis().GetNbins(),
+                hist3d.GetXaxis().GetXmin(),
+                hist3d.GetXaxis().GetXmax(),
+            ]
+        elif direction=='y':
+            binning = [
+                hist3d.GetYaxis().GetNbins(),
+                hist3d.GetYaxis().GetXmin(),
+                hist3d.GetYaxis().GetXmax(),
+            ]
+        else:
+            binning = [
+                hist3d.GetZaxis().GetNbins(),
+                hist3d.GetZaxis().GetXmin(),
+                hist3d.GetZaxis().GetXmax(),
+            ]
+        if binLabels1 and binLabels2:
+            for label1 in binLabels1:
+                for label2 in binLabels2:
+                    name = 'h_{0}_{1}_{2}_{3}'.format(histName,label1,label2,self.j)
+                    if direction=='x':
+                        binNum1 = hist3d.GetYaxis().FindBin(label1)
+                        binNum2 = hist3d.GetZaxis().FindBin(label2)
+                        hist3d.ProjectionX(name,binNum1,binNum1,binNum2,binNum2,'e')
+                    elif direction=='y':
+                        binNum1 = hist3d.GetXaxis().FindBin(label1)
+                        binNum2 = hist3d.GetZaxis().FindBin(label2)
+                        hist3d.ProjectionY(name,binNum1,binNum1,binNum2,binNum2,'e')
+                    else:
+                        binNum1 = hist3d.GetXaxis().FindBin(label1)
+                        binNum2 = hist3d.GetYaxis().FindBin(label2)
+                        hist3d.ProjectionZ(name,binNum1,binNum1,binNum2,binNum2,'e')
+                    if ROOT.gDirectory.Get(name):
+                        hist = ROOT.gDirectory.Get(name)
+                        if hist: hists.Add(hist)
+        elif binLabels1 and not binLabels2:
+            for label1 in binLabels1:
+                name = 'h_{0}_{1}_{2}'.format(histName,label1,self.j)
+                if direction=='x':
+                    binNum1 = hist3d.GetYaxis().FindBin(label1)
+                    hist3d.ProjectionX(name,binNum1,binNum1,binRange2[0],binRange2[1],'e')
+                elif direction=='y':
+                    binNum1 = hist3d.GetXaxis().FindBin(label1)
+                    hist3d.ProjectionY(name,binNum1,binNum1,binRange2[0],binRange2[1],'e')
+                else:
+                    binNum1 = hist3d.GetXaxis().FindBin(label1)
+                    hist3d.ProjectionZ(name,binNum1,binNum1,binRange2[0],binRange2[1],'e')
+                if ROOT.gDirectory.Get(name):
+                    hist = ROOT.gDirectory.Get(name)
+                    if hist: hists.Add(hist)
+        elif not binLabels1 and binLabels2:
+            for label2 in binLabels2:
+                name = 'h_{0}_{1}_{2}'.format(histName,label2,self.j)
+                if direction=='x':
+                    binNum2 = hist3d.GetZaxis().FindBin(label2)
+                    hist3d.ProjectionX(name,binRange1[0],bingRange1[1],binNum2,binNum2,'e')
+                elif direction=='y':
+                    binNum2 = hist3d.GetZaxis().FindBin(label2)
+                    hist3d.ProjectionY(name,binRange1[0],bingRange1[1],binNum2,binNum2,'e')
+                else:
+                    binNum2 = hist3d.GetYaxis().FindBin(label2)
+                    hist3d.ProjectionZ(name,binRange1[0],bingRange1[1],binNum2,binNum2,'e')
+                if ROOT.gDirectory.Get(name):
+                    hist = ROOT.gDirectory.Get(name)
+                    if hist: hists.Add(hist)
+        else:
+            name = 'h_{0}_{1}'.format(histName,self.j)
+            if direction=='x':
+                hist3d.ProjectionX(name,binRange1[0],binRange1[1],binRange2[0],binRange2[1],'e')
+            elif direction=='y':
+                hist3d.ProjectionY(name,binRange1[0],binRange1[1],binRange2[0],binRange2[1],'e')
+            else:
+                hist3d.ProjectionZ(name,binRange1[0],binRange1[1],binRange2[0],binRange2[1],'e')
+            if ROOT.gDirectory.Get(name):
+                hist = ROOT.gDirectory.Get(name)
+                hists.Add(hist)
+        if hists.IsEmpty():
+            hist = ROOT.TH1F(histName,histName,*binning)
+        else:
+            hist = hists[0].Clone('h_temp_{0}_{1}'.format(histName,self.j))
+            hist.Reset()
+            hist.Merge(hists)
+            hist.SetName(histName)
+            hist.SetTitle(histName)
+        self.__writeProjection(hist,directory=directory)
+        return hist
+
+    def __projectChannel(self,variable):
+        '''Project down the 2D channels plot to the desired channels.'''
+        components = variable.split('/')
+        histName = components[-1]
+        if len(components)>2 and components[-2] in self.projections and components[-3] in self.projections: # explicit channel/genchannel
+            selectionName = '/'.join(components[:-3])
+            genchannel = components[-2]
+            channel = components[-3]
+        elif len(components)>1 and components[-2] in self.projections: # explicit channel
+            selectionName = '/'.join(components[:-2])
+            genchannel = ''
+            channel = components[-2]
+        else: # all
+            selectionName = '/'.join(components[:-1])
+            genchannel = ''
+            channel = 'all'
+        if histName not in self.histParams:
+            logging.error('Unrecognized histogram {0}'.format(histName))
+            return 0
+        if selectionName not in self.selections:
+            logging.error('Unrecognized selection {0}'.format(selectionName))
+            return 0
+        histNameND = '/'.join([selectionName,histName])
+        histNd = self.__read(histNameND)
+        if histNd and histNd.InheritsFrom('TH3'):
+            if genchannel:
+                directory = '/'.join([selectionName,channel,genchannel])
+                hist = self.__projectFrom3D(histName,directory,histNd,'x',binLabels1=self.projections[channel],binLabels2=self.projections[genchannel])
+            else:
+                directory = '/'.join([selectionName,channel])
+                hist = self.__projectFrom3D(histName,directory,histNd,'x',binLabels1=self.projections[channel])
+        elif histNd and histNd.InheritsFrom('TH2'):
+            directory = '/'.join([selectionName,channel])
+            hist = self.__project(histName,directory,histNd,'x',binLabels=self.projections[channel])
+        elif histNd and histNd.InheritsFrom('TH1'): # its a 1d histogram
+            hist = histNd
+        else: # not a hist
+            hist = 0
+        return hist
+
     def getHist(self,variable):
         '''Get a histogram'''
-        return self.__read(variable)
+        hist = self.__read(variable)
+        if hist and hist.InheritsFrom('TH3'): # 3D, project down on x
+            return self.__projectChannel(variable)
+        elif hist and hist.InheritsFrom('TH2'): # 2D, project down on x
+            return self.__projectChannel(variable)
+        else:
+            return hist
 
     def getCount(self,directory):
         '''Get a count'''
@@ -246,11 +467,11 @@ class NtupleWrapper(object):
 
     def getTempHist(self,histName,selection,scalefactor,variable,binning):
         '''Get a histogram that is not saved in flat ntuple.'''
-        return self.__getHist(histName,selection,scalefactor,variable,binning)
+        return self.__getHist1D(histName,selection,scalefactor,variable,binning)
 
     def getTempCount(self,selection,scalefactor):
         '''Get a histogram that is a single bin of counts with statistical error'''
-        return self.__getHist('count',selection,scalefactor,'1',[1,0,2])
+        return self.__getHist1D('count',selection,scalefactor,'1',[1,0,2])
 
     def flatten(self,histName,selectionName):
         '''Flatten a histogram'''
@@ -261,17 +482,20 @@ class NtupleWrapper(object):
             logging.error('Unrecognized selection {0}'.format(selectionName))
         selection = self.selections[selectionName]['args'][0]
         kwargs = self.selections[selectionName]['kwargs']
-        self.__flatten(selectionName,histName,selection,params,**kwargs)
-
-    def flatten2D(self,histName,selectionName):
-        '''Flatten a 2D histogram'''
-        if histName not in self.histParams2D:
-            logging.error('Unrecognized histogram {0}'.format(histName))
-        params = self.histParams2D[histName]
-        if selectionName not in self.selections:
-            logging.error('Unrecognized selection {0}'.format(selectionName))
-        selection = self.selections[selectionName]['args'][0]
-        kwargs = self.selections[selectionName]['kwargs']
-        self.__flatten(selectionName,histName,selection,params,**kwargs)
-
-
+        updated = self.__flatten(selectionName,histName,selection,params,**kwargs)
+        # project stuff
+        if updated:
+            variable = '/'.join([selectionName,histName])
+            self.__projectChannel(variable)
+            chans = [x for x in self.projections.keys() if 'gen' not in x]
+            genchans = [x for x in self.projections.keys() if 'gen' in x]
+            genchans = [] # block genchans unless i really want it
+            for chan in chans:
+                variable = '/'.join([selectionName,chan,histName])
+                self.__projectChannel(variable)
+                for genchan in genchans:
+                    variable = '/'.join([selectionName,chan,genchan,histName])
+                    self.__projectChannel(variable)
+            for genchan in genchans:
+                variable = '/'.join([selectionName,genchan,histName])
+            self.__projectChannel(variable)

@@ -15,7 +15,7 @@ import DevTools.Plotter.CMS_lumi as CMS_lumi
 import DevTools.Plotter.tdrstyle as tdrstyle
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
-ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 1001;")
+ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 tdrstyle.setTDRStyle()
 ROOT.gStyle.SetPalette(1)
 

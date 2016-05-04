@@ -24,7 +24,6 @@ class FlattenTree(object):
         self.sample = sample
         self.ntuple = NtupleWrapper(analysis,sample,**kwargs)
         self.histParameters = []
-        self.histParameters2D = []
         self.selections = []
         self.countOnly = []
 
@@ -43,12 +42,6 @@ class FlattenTree(object):
         '''
         self.histParameters += [name]
 
-    def add2DHistogram(self,name,**kwargs):
-        '''
-        Add a histogram to flatten 2D
-        '''
-        self.histParameters2D += [name]
-
     def addSelection(self,selection,**kwargs):
         '''Add selection and postfix name to flatten'''
         countOnly = kwargs.pop('countOnly',False)
@@ -59,7 +52,6 @@ class FlattenTree(object):
     def clear(self):
         '''Reset the histograms/selections'''
         self.histParameters = []
-        self.histParameters2D = []
         self.selections = []
         self.countOnly = []
 
@@ -79,22 +71,4 @@ class FlattenTree(object):
                 self.ntuple.flatten(*args)
         else:
             for args in allJobs:
-                self.flatten(*args)
-
-    def flattenAll2D(self,**kwargs):
-        '''Flatten all selections 2D'''
-        if hasProgress:
-            pbar = kwargs.pop('progressbar',ProgressBar(widgets=['{0}: '.format(self.sample),' ',SimpleProgress(),' histograms ',Percentage(),' ',Bar(),' ',ETA()]))
-        else:
-            pbar = None
-        allJobs = []
-        for selName in self.selections:
-            for histName in self.histParameters2D:
-                if selName in self.countOnly and 'count' not in histName: continue
-                allJobs += [[histName,selName]]
-        if hasProgress:
-            for args in pbar(allJobs):
-                self.ntuple.flatten2D(*args)
-        else:
-            for args in allJobs:
-                self.flatten2D(*args)
+                self.ntuple.flatten(*args)

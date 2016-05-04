@@ -143,6 +143,7 @@ plotStyles = {
     'met'                 : {'xaxis': 'E_{T}^{miss}', 'yaxis': 'Events/10 GeV', 'rebin':10, 'rangex':[0,200]},
     'mass'                : {'xaxis': 'm_{3l}', 'yaxis': 'Events/20 GeV', 'rebin':20, 'rangex':[0,500]},
     'nJets'               : {'xaxis': 'Number of Jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'rangex':[0,8]},
+    'nBjets'              : {'xaxis': 'Number of b-tageed Jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'rangex':[0,8]},
 }
 
 def getDataDrivenPlot(plot):
@@ -156,6 +157,9 @@ def getDataDrivenPlot(plot):
 # n-1 cuts
 nMinusOneCuts = ['zptCut','wptCut','bvetoCut','metCut','zmassCut','3lmassCut']
 
+# controls
+controls = ['dy','tt']
+
 for plot in plotStyles:
     plotvars = getDataDrivenPlot(plot)
     savename = 'datadriven/{0}'.format(plot)
@@ -163,6 +167,10 @@ for plot in plotStyles:
     for cut in nMinusOneCuts:
         plotvars = getDataDrivenPlot('{0}/{1}'.format(cut,plot))
         savename = 'datadriven/nMinusOne/{0}/{1}'.format(cut,plot)
+        wzPlotter.plot(plotvars,savename,**plotStyles[plot])
+    for control in controls:
+        plotvars = getDataDrivenPlot('{0}/{1}'.format(control,plot))
+        savename = 'datadriven/{0}/{1}'.format(control,plot)
         wzPlotter.plot(plotvars,savename,**plotStyles[plot])
 
 wzPlotter.clearHistograms()
@@ -180,5 +188,9 @@ for plot in plotStyles:
     for cut in nMinusOneCuts:
         plotname = 'default/{0}/{1}'.format(cut,plot)
         savename = 'nMinusOne/{0}/{1}'.format(cut,plot)
+        wzPlotter.plot(plotname,savename,**plotStyles[plot])
+    for control in controls:
+        plotname = '{0}/{1}'.format(control,plot)
+        savename = '{0}/{1}'.format(control,plot)
         wzPlotter.plot(plotname,savename,**plotStyles[plot])
 

@@ -8,224 +8,241 @@ from itertools import product, combinations_with_replacement
 from DevTools.Plotter.utilities import ZMASS
 from DevTools.Plotter.higgsUtilities import getChannels, getGenChannels
 
-################
-### 1d hists ###
-################
-params = {
-    # default params
-    'common' : {
-        'count'                  : {'variable': '1',               'binning': [1,0,2]}, # just a count of events passing selection
-        'numVertices'            : {'variable': 'numVertices',     'binning': [40,0,40]},
-        'numVertices_noreweight' : {'variable': 'numVertices',     'binning': [40,0,40],                'mcscale': '1./pileupWeight'},
-        'met'                    : {'variable': 'met_pt',          'binning': [500, 0, 500]},
-        'metPhi'                 : {'variable': 'met_phi',         'binning': [500, -3.14159, 3.14159]},
-    },
-    # overrides for Electron
-    'Electron': {
-        'pt'               : {'variable': 'e_pt',            'binning': [1000,0,1000]},
-        'eta'              : {'variable': 'e_eta',           'binning': [60,-3.,3.]},
-        #'dz'               : {'variable': 'e_dz',            'binning': [50,0,0.5]},
-        #'dxy'              : {'variable': 'e_dxy',           'binning': [50,0,0.3]},
-        'mvaTrig'          : {'variable': 'e_mvaTrigValues', 'binning': [100,-1.,1.]},
-    },
-    # overrides for Muon
-    'Muon': {
-        'pt'               : {'variable': 'm_pt',            'binning': [1000,0,1000]},
-        'eta'              : {'variable': 'm_eta',           'binning': [60,-3.,3.]},
-        #'dz'               : {'variable': 'm_dz',            'binning': [50,0,0.5]},
-        #'dxy'              : {'variable': 'm_dxy',           'binning': [50,0,0.3]},
-    },
-    # overrides for Tau
-    'Tau': {
-        'pt'               : {'variable': 't_pt',            'binning': [1000,0,1000]},
-        'eta'              : {'variable': 't_eta',           'binning': [60,-3.,3.]},
-        #'dz'               : {'variable': 't_dz',            'binning': [50,0,0.5]},
-        #'dxy'              : {'variable': 't_dxy',           'binning': [50,0,0.3]},
-    },
+#############
+### hists ###
+#############
+histParams = {
     # overrides for DijetFakeRate
     'DijetFakeRate': {
-        'pt'               : {'variable': 'l1_pt',   'binning': [2000,0,2000]},
-        'eta'              : {'variable': 'l1_eta',  'binning': [600,-3.,3.]},
-        'wMass'            : {'variable': 'w_mt',    'binning': [500, 0, 500]},
+        'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
+        'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
+        'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
+        'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
+        'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
+        'pt'                          : {'xVariable': 'l1_pt',                          'xBinning': [2000,0,2000],           },
+        'eta'                         : {'xVariable': 'l1_eta',                         'xBinning': [600,-3.,3.],            },
+        'wMass'                       : {'xVariable': 'w_mt',                           'xBinning': [500, 0, 500],           },
     },
     # overrides for DY
     'DY' : {
-        'zMass'                 : {'variable': 'z_mass',                         'binning': [5000, 0, 500]},
-        'mllMinusMZ'            : {'variable': 'fabs(z_mass-{0})'.format(ZMASS), 'binning': [2000, 0, 200]},
-        'zPt'                   : {'variable': 'z_pt',                           'binning': [5000, 0, 500]},
-        'zEta'                  : {'variable': 'z_eta',                          'binning': [1000, -5, 5]},
-        'zDeltaR'               : {'variable': 'z_deltaR',                       'binning': [500, 0, 5]},
-        'zLeadingLeptonPt'      : {'variable': 'z1_pt',                          'binning': [10000, 0, 1000]},
-        'zLeadingLeptonEta'     : {'variable': 'z1_eta',                         'binning': [500, -2.5, 2.5]},
-        'zSubLeadingLeptonPt'   : {'variable': 'z2_pt',                          'binning': [10000, 0, 1000]},
-        'zSubLeadingLeptonEta'  : {'variable': 'z2_eta',                         'binning': [500, -2.5, 2.5]},
+        'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
+        'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
+        'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
+        'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
+        'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
+        'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [5000, 0, 500],          },
+        'mllMinusMZ'                  : {'xVariable': 'fabs(z_mass-{0})'.format(ZMASS), 'xBinning': [2000, 0, 200],          },
+        'zPt'                         : {'xVariable': 'z_pt',                           'xBinning': [5000, 0, 500],          },
+        'zEta'                        : {'xVariable': 'z_eta',                          'xBinning': [1000, -5, 5],           },
+        'zDeltaR'                     : {'xVariable': 'z_deltaR',                       'xBinning': [500, 0, 5],             },
+        'zLeadingLeptonPt'            : {'xVariable': 'z1_pt',                          'xBinning': [10000, 0, 1000],        },
+        'zLeadingLeptonEta'           : {'xVariable': 'z1_eta',                         'xBinning': [500, -2.5, 2.5],        },
+        'zSubLeadingLeptonPt'         : {'xVariable': 'z2_pt',                          'xBinning': [10000, 0, 1000],        },
+        'zSubLeadingLeptonEta'        : {'xVariable': 'z2_eta',                         'xBinning': [500, -2.5, 2.5],        },
     },
     # overrides for Charge
     'Charge' : {
-        'zMass'                 : {'variable': 'z_mass',                         'binning': [5000, 0, 500]},
-        'mllMinusMZ'            : {'variable': 'fabs(z_mass-{0})'.format(ZMASS), 'binning': [2000, 0, 200]},
-        'zPt'                   : {'variable': 'z_pt',                           'binning': [5000, 0, 500]},
-        'zEta'                  : {'variable': 'z_eta',                          'binning': [1000, -5, 5]},
-        'zDeltaR'               : {'variable': 'z_deltaR',                       'binning': [500, 0, 5]},
-        'zLeadingLeptonPt'      : {'variable': 'z1_pt',                          'binning': [10000, 0, 1000]},
-        'zLeadingLeptonEta'     : {'variable': 'z1_eta',                         'binning': [500, -2.5, 2.5]},
-        'zSubLeadingLeptonPt'   : {'variable': 'z2_pt',                          'binning': [10000, 0, 1000]},
-        'zSubLeadingLeptonEta'  : {'variable': 'z2_eta',                         'binning': [500, -2.5, 2.5]},
+        'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
+        'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
+        'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
+        'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
+        'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
+        'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [5000, 0, 500],          },
+        'mllMinusMZ'                  : {'xVariable': 'fabs(z_mass-{0})'.format(ZMASS), 'xBinning': [2000, 0, 200],          },
+        'zPt'                         : {'xVariable': 'z_pt',                           'xBinning': [5000, 0, 500],          },
+        'zEta'                        : {'xVariable': 'z_eta',                          'xBinning': [1000, -5, 5],           },
+        'zDeltaR'                     : {'xVariable': 'z_deltaR',                       'xBinning': [500, 0, 5],             },
+        'zLeadingLeptonPt'            : {'xVariable': 'z1_pt',                          'xBinning': [10000, 0, 1000],        },
+        'zLeadingLeptonEta'           : {'xVariable': 'z1_eta',                         'xBinning': [500, -2.5, 2.5],        },
+        'zSubLeadingLeptonPt'         : {'xVariable': 'z2_pt',                          'xBinning': [10000, 0, 1000],        },
+        'zSubLeadingLeptonEta'        : {'xVariable': 'z2_eta',                         'xBinning': [500, -2.5, 2.5],        },
     },
     # overrides for TauCharge
     'TauCharge' : {
-        'zMass'                 : {'variable': 'z_mass',                         'binning': [5000, 0, 500]},
-        'zPt'                   : {'variable': 'z_pt',                           'binning': [5000, 0, 500]},
-        'zEta'                  : {'variable': 'z_eta',                          'binning': [1000, -5, 5]},
-        'zDeltaR'               : {'variable': 'z_deltaR',                       'binning': [500, 0, 5]},
-        'zTauMuPt'              : {'variable': 'z1_pt',                          'binning': [10000, 0, 1000]},
-        'zTauMuEta'             : {'variable': 'z1_eta',                         'binning': [500, -2.5, 2.5]},
-        'zTauHadPt'             : {'variable': 'z2_pt',                          'binning': [10000, 0, 1000]},
-        'zTauHadEta'            : {'variable': 'z2_eta',                         'binning': [500, -2.5, 2.5]},
-        'tauMuMt'               : {'variable': 'w1_mt',                          'binning': [5000, 0, 500]},
-        'tauHadMt'              : {'variable': 'w2_mt',                          'binning': [5000, 0, 500]},
+        'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
+        'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
+        'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
+        'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
+        'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
+        'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [5000, 0, 500],          },
+        'zPt'                         : {'xVariable': 'z_pt',                           'xBinning': [5000, 0, 500],          },
+        'zEta'                        : {'xVariable': 'z_eta',                          'xBinning': [1000, -5, 5],           },
+        'zDeltaR'                     : {'xVariable': 'z_deltaR',                       'xBinning': [500, 0, 5],             },
+        'zTauMuPt'                    : {'xVariable': 'z1_pt',                          'xBinning': [10000, 0, 1000],        },
+        'zTauMuEta'                   : {'xVariable': 'z1_eta',                         'xBinning': [500, -2.5, 2.5],        },
+        'zTauHadPt'                   : {'xVariable': 'z2_pt',                          'xBinning': [10000, 0, 1000],        },
+        'zTauHadEta'                  : {'xVariable': 'z2_eta',                         'xBinning': [500, -2.5, 2.5],        },
+        'tauMuMt'                     : {'xVariable': 'w1_mt',                          'xBinning': [5000, 0, 500],          },
+        'tauHadMt'                    : {'xVariable': 'w2_mt',                          'xBinning': [5000, 0, 500],          },
+    },
+    # overrides for WTauFakeRate      
+    'WTauFakeRate' : {
+        'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
+        'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
+        'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
+        'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
+        'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
+        # z
+        'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [500, 0, 500],           },
+        'mllMinusMZ'                  : {'xVariable': 'fabs(z_mass-{0})'.format(ZMASS), 'xBinning': [200, 0, 200],           },
+        'zPt'                         : {'xVariable': 'z_pt',                           'xBinning': [500, 0, 500],           },
+        'zDeltaR'                     : {'xVariable': 'z_deltaR',                       'xBinning': [500, 0, 5],             },
+        # t
+        'wtMt'                        : {'xVariable': 'wt_mt',                          'xBinning': [500, 0, 500],           },
+        'wtPt'                        : {'xVariable': 'wt_pt',                          'xBinning': [500, 0, 500],           },
+        'tPt'                         : {'xVariable': 't_pt',                           'xBinning': [500, 0, 500],           },
+        'tEta'                        : {'xVariable': 't_eta',                          'xBinning': [500, -2.5, 2.5],        },
+        # m
+        'wmMt'                        : {'xVariable': 'wm_mt',                          'xBinning': [500, 0, 500],           },
+        'wmPt'                        : {'xVariable': 'wm_pt',                          'xBinning': [500, 0, 500],           },
+        'mPt'                         : {'xVariable': 'm_pt',                           'xBinning': [500, 0, 500],           },
+        'mEta'                        : {'xVariable': 'm_eta',                          'xBinning': [500, -2.5, 2.5],        },
     },
     # overrides for WZ
     'WZ' : {
+        'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
+        'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
+        'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
+        'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
+        'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
         # z
-        'zMass'                 : {'variable': 'z_mass',                         'binning': [500, 0, 500]},
-        'mllMinusMZ'            : {'variable': 'fabs(z_mass-{0})'.format(ZMASS), 'binning': [200, 0, 200]},
-        'zPt'                   : {'variable': 'z_pt',                           'binning': [500, 0, 500]},
-        'zDeltaR'               : {'variable': 'z_deltaR',                       'binning': [500, 0, 5]},
-        'zLeadingLeptonPt'      : {'variable': 'z1_pt',                          'binning': [500, 0, 500]},
-        'zLeadingLeptonEta'     : {'variable': 'z1_eta',                         'binning': [500, -2.5, 2.5]},
-        'zSubLeadingLeptonPt'   : {'variable': 'z2_pt',                          'binning': [500, 0, 500]},
-        'zSubLeadingLeptonEta'  : {'variable': 'z2_eta',                         'binning': [500, -2.5, 2.5]},
+        'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [500, 0, 500],           },
+        'mllMinusMZ'                  : {'xVariable': 'fabs(z_mass-{0})'.format(ZMASS), 'xBinning': [200, 0, 200],           },
+        'zPt'                         : {'xVariable': 'z_pt',                           'xBinning': [500, 0, 500],           },
+        'zDeltaR'                     : {'xVariable': 'z_deltaR',                       'xBinning': [500, 0, 5],             },
+        'zLeadingLeptonPt'            : {'xVariable': 'z1_pt',                          'xBinning': [500, 0, 500],           },
+        'zLeadingLeptonEta'           : {'xVariable': 'z1_eta',                         'xBinning': [500, -2.5, 2.5],        },
+        'zSubLeadingLeptonPt'         : {'xVariable': 'z2_pt',                          'xBinning': [500, 0, 500],           },
+        'zSubLeadingLeptonEta'        : {'xVariable': 'z2_eta',                         'xBinning': [500, -2.5, 2.5],        },
         # w
-        'wMass'                 : {'variable': 'w_mt',                           'binning': [500, 0, 500]},
-        'wPt'                   : {'variable': 'w_pt',                           'binning': [500, 0, 500]},
-        'wLeptonPt'             : {'variable': 'w1_pt',                          'binning': [500, 0, 500]},
-        'wLeptonEta'            : {'variable': 'w1_eta',                         'binning': [500, -2.5, 2.5]},
+        'wMass'                       : {'xVariable': 'w_mt',                           'xBinning': [500, 0, 500],           },
+        'wPt'                         : {'xVariable': 'w_pt',                           'xBinning': [500, 0, 500],           },
+        'wLeptonPt'                   : {'xVariable': 'w1_pt',                          'xBinning': [500, 0, 500],           },
+        'wLeptonEta'                  : {'xVariable': 'w1_eta',                         'xBinning': [500, -2.5, 2.5],        },
         # event
-        'mass'                  : {'variable': '3l_mass',                        'binning': [500, 0, 500]},
-        'nJets'                 : {'variable': 'numJetsTight30',                 'binning': [10, 0, 10]},
-        'nBjets'                : {'variable': 'numBjetsTight30',                'binning': [10, 0, 10]},
+        'mass'                        : {'xVariable': '3l_mass',                        'xBinning': [500, 0, 500],           },
+        'nJets'                       : {'xVariable': 'numJetsTight30',                 'xBinning': [10, 0, 10],             },
+        'nBjets'                      : {'xVariable': 'numBjetsTight30',                'xBinning': [10, 0, 10],             },
     },
     # overrides for Hpp4l
     'Hpp4l' : {
+        'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
+        'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
+        'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
+        'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
+        'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
         # h++
-        'hppMass'               : {'variable': 'hpp_mass',                       'binning': [1200, 0, 1200]},
-        'hppPt'                 : {'variable': 'hpp_pt',                         'binning': [1200, 0, 1200]},
-        'hppEta'                : {'variable': 'hpp_eta',                        'binning': [1000, -5, 5]},
-        'hppDeltaR'             : {'variable': 'hpp_deltaR',                     'binning': [500, 0, 5]},
-        'hppLeadingLeptonPt'    : {'variable': 'hpp1_pt',                        'binning': [1000, 0, 1000]},
-        'hppLeadingLeptonEta'   : {'variable': 'hpp1_eta',                       'binning': [500, -2.5, 2.5]},
-        'hppSubLeadingLeptonPt' : {'variable': 'hpp2_pt',                        'binning': [1000, 0, 1000]},
-        'hppSubLeadingLeptonEta': {'variable': 'hpp2_eta',                       'binning': [500, -2.5, 2.5]},
+        'hppMass'                     : {'xVariable': 'hpp_mass',                       'xBinning': [1200, 0, 1200],         },
+        'hppPt'                       : {'xVariable': 'hpp_pt',                         'xBinning': [1200, 0, 1200],         },
+        'hppEta'                      : {'xVariable': 'hpp_eta',                        'xBinning': [1000, -5, 5],           },
+        'hppDeltaR'                   : {'xVariable': 'hpp_deltaR',                     'xBinning': [500, 0, 5],             },
+        'hppLeadingLeptonPt'          : {'xVariable': 'hpp1_pt',                        'xBinning': [1000, 0, 1000],         },
+        'hppLeadingLeptonEta'         : {'xVariable': 'hpp1_eta',                       'xBinning': [500, -2.5, 2.5],        },
+        'hppSubLeadingLeptonPt'       : {'xVariable': 'hpp2_pt',                        'xBinning': [1000, 0, 1000],         },
+        'hppSubLeadingLeptonEta'      : {'xVariable': 'hpp2_eta',                       'xBinning': [500, -2.5, 2.5],        },
         # h--
-        'hmmMass'               : {'variable': 'hmm_mass',                       'binning': [1200, 0, 1200]},
-        'hmmPt'                 : {'variable': 'hmm_pt',                         'binning': [1200, 0, 1200]},
-        'hmmEta'                : {'variable': 'hmm_eta',                        'binning': [1000, -5, 5]},
-        'hmmDeltaR'             : {'variable': 'hmm_deltaR',                     'binning': [500, 0, 5]},
-        'hmmLeadingLeptonPt'    : {'variable': 'hmm1_pt',                        'binning': [1000, 0, 1000]},
-        'hmmLeadingLeptonEta'   : {'variable': 'hmm1_eta',                       'binning': [500, -2.5, 2.5]},
-        'hmmSubLeadingLeptonPt' : {'variable': 'hmm2_pt',                        'binning': [1000, 0, 1000]},
-        'hmmSubLeadingLeptonEta': {'variable': 'hmm2_eta',                       'binning': [500, -2.5, 2.5]},
+        'hmmMass'                     : {'xVariable': 'hmm_mass',                       'xBinning': [1200, 0, 1200],         },
+        'hmmPt'                       : {'xVariable': 'hmm_pt',                         'xBinning': [1200, 0, 1200],         },
+        'hmmEta'                      : {'xVariable': 'hmm_eta',                        'xBinning': [1000, -5, 5],           },
+        'hmmDeltaR'                   : {'xVariable': 'hmm_deltaR',                     'xBinning': [500, 0, 5],             },
+        'hmmLeadingLeptonPt'          : {'xVariable': 'hmm1_pt',                        'xBinning': [1000, 0, 1000],         },
+        'hmmLeadingLeptonEta'         : {'xVariable': 'hmm1_eta',                       'xBinning': [500, -2.5, 2.5],        },
+        'hmmSubLeadingLeptonPt'       : {'xVariable': 'hmm2_pt',                        'xBinning': [1000, 0, 1000],         },
+        'hmmSubLeadingLeptonEta'      : {'xVariable': 'hmm2_eta',                       'xBinning': [500, -2.5, 2.5],        },
         # best z
-        'zMass'                 : {'variable': 'z_mass',                         'binning': [500, 0, 500],    'selection': 'z_mass>0.',},
-        'mllMinusMZ'            : {'variable': 'fabs(z_mass-{0})'.format(ZMASS), 'binning': [200, 0, 200],    'selection': 'z_mass>0.',},
-        'zPt'                   : {'variable': 'z_pt',                           'binning': [500, 0, 500],    'selection': 'z_mass>0.',},
-        'zEta'                  : {'variable': 'z_eta',                          'binning': [1000, -5, 5],    'selection': 'z_mass>0.',},
-        'zDeltaR'               : {'variable': 'z_deltaR',                       'binning': [500, 0, 5],      'selection': 'z_mass>0.',},
-        'zLeadingLeptonPt'      : {'variable': 'z1_pt',                          'binning': [1000, 0, 1000],  'selection': 'z_mass>0.',},
-        'zLeadingLeptonEta'     : {'variable': 'z1_eta',                         'binning': [500, -2.5, 2.5], 'selection': 'z_mass>0.',},
-        'zSubLeadingLeptonPt'   : {'variable': 'z2_pt',                          'binning': [1000, 0, 1000],  'selection': 'z_mass>0.',},
-        'zSubLeadingLeptonEta'  : {'variable': 'z2_eta',                         'binning': [500, -2.5, 2.5], 'selection': 'z_mass>0.',},
+        'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [500, 0, 500],            'selection': 'z_mass>0.',},
+        'mllMinusMZ'                  : {'xVariable': 'fabs(z_mass-{0})'.format(ZMASS), 'xBinning': [200, 0, 200],            'selection': 'z_mass>0.',},
+        'zPt'                         : {'xVariable': 'z_pt',                           'xBinning': [500, 0, 500],            'selection': 'z_mass>0.',},
+        'zEta'                        : {'xVariable': 'z_eta',                          'xBinning': [1000, -5, 5],            'selection': 'z_mass>0.',},
+        'zDeltaR'                     : {'xVariable': 'z_deltaR',                       'xBinning': [500, 0, 5],              'selection': 'z_mass>0.',},
+        'zLeadingLeptonPt'            : {'xVariable': 'z1_pt',                          'xBinning': [1000, 0, 1000],          'selection': 'z_mass>0.',},
+        'zLeadingLeptonEta'           : {'xVariable': 'z1_eta',                         'xBinning': [500, -2.5, 2.5],         'selection': 'z_mass>0.',},
+        'zSubLeadingLeptonPt'         : {'xVariable': 'z2_pt',                          'xBinning': [1000, 0, 1000],          'selection': 'z_mass>0.',},
+        'zSubLeadingLeptonEta'        : {'xVariable': 'z2_eta',                         'xBinning': [500, -2.5, 2.5],         'selection': 'z_mass>0.',},
         # event
-        'mass'                  : {'variable': '4l_mass',                        'binning': [2000, 0, 2000]},
-        'st'                    : {'variable': 'hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt','binning': [2000, 0, 2000]},
+        'mass'                        : {'xVariable': '4l_mass',                        'xBinning': [2000, 0, 2000],         },
+        'st'                          : {'xVariable': 'hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt','xBinning': [2000, 0, 2000],         },
         # gen truth
-        'hppLeadingLeptonGenMatch'    : {'variable': 'hpp1_genMatch',               'binning': [2, 0, 2]},
-        'hppLeadingLeptonGenDeltaR'   : {'variable': 'hpp1_genDeltaR',              'binning': [1000, 0, 5]},
-        'hppSubLeadingLeptonGenMatch' : {'variable': 'hpp2_genMatch',               'binning': [2, 0, 2]},
-        'hpmSubLeadingLeptonGenDeltaR': {'variable': 'hpp2_genDeltaR',              'binning': [1000, 0, 5]},
-        'hmmLeadingLeptonGenMatch'    : {'variable': 'hmm1_genMatch',               'binning': [2, 0, 2]},
-        'hmmLeadingLeptonGenDeltaR'   : {'variable': 'hmm1_genDeltaR',              'binning': [1000, 0, 5]},
-        'hmmSubLeadingLeptonGenMatch' : {'variable': 'hmm2_genMatch',               'binning': [2, 0, 2]},
-        'hmmSubLeadingLeptonGenDeltaR': {'variable': 'hmm2_genDeltaR',              'binning': [1000, 0, 5]},
+        'hppLeadingLeptonGenMatch'    : {'xVariable': 'hpp1_genMatch',                  'xBinning': [2, 0, 2],               },
+        'hppLeadingLeptonGenDeltaR'   : {'xVariable': 'hpp1_genDeltaR',                 'xBinning': [1000, 0, 5],            },
+        'hppSubLeadingLeptonGenMatch' : {'xVariable': 'hpp2_genMatch',                  'xBinning': [2, 0, 2],               },
+        'hpmSubLeadingLeptonGenDeltaR': {'xVariable': 'hpp2_genDeltaR',                 'xBinning': [1000, 0, 5],            },
+        'hmmLeadingLeptonGenMatch'    : {'xVariable': 'hmm1_genMatch',                  'xBinning': [2, 0, 2],               },
+        'hmmLeadingLeptonGenDeltaR'   : {'xVariable': 'hmm1_genDeltaR',                 'xBinning': [1000, 0, 5],            },
+        'hmmSubLeadingLeptonGenMatch' : {'xVariable': 'hmm2_genMatch',                  'xBinning': [2, 0, 2],               },
+        'hmmSubLeadingLeptonGenDeltaR': {'xVariable': 'hmm2_genDeltaR',                 'xBinning': [1000, 0, 5],            },
     },
     # overrides for Hpp3l
     'Hpp3l' : {
+        'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
+        'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
+        'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
+        'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
+        'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
         # h++/h--
-        'hppMass'               : {'variable': 'hpp_mass',                       'binning': [1200, 0, 1200]},
-        'hppPt'                 : {'variable': 'hpp_pt',                         'binning': [1200, 0, 1200]},
-        'hppEta'                : {'variable': 'hpp_eta',                        'binning': [1000, -5, 5]},
-        'hppDeltaR'             : {'variable': 'hpp_deltaR',                     'binning': [500, 0, 5]},
-        'hppLeadingLeptonPt'    : {'variable': 'hpp1_pt',                        'binning': [1000, 0, 1000]},
-        'hppLeadingLeptonEta'   : {'variable': 'hpp1_eta',                       'binning': [500, -2.5, 2.5]},
-        'hppSubLeadingLeptonPt' : {'variable': 'hpp2_pt',                        'binning': [1000, 0, 1000]},
-        'hppSubLeadingLeptonEta': {'variable': 'hpp2_eta',                       'binning': [500, -2.5, 2.5]},
+        'hppMass'                     : {'xVariable': 'hpp_mass',                       'xBinning': [1200, 0, 1200],         },
+        'hppPt'                       : {'xVariable': 'hpp_pt',                         'xBinning': [1200, 0, 1200],         },
+        'hppEta'                      : {'xVariable': 'hpp_eta',                        'xBinning': [1000, -5, 5],           },
+        'hppDeltaR'                   : {'xVariable': 'hpp_deltaR',                     'xBinning': [500, 0, 5],             },
+        'hppLeadingLeptonPt'          : {'xVariable': 'hpp1_pt',                        'xBinning': [1000, 0, 1000],         },
+        'hppLeadingLeptonEta'         : {'xVariable': 'hpp1_eta',                       'xBinning': [500, -2.5, 2.5],        },
+        'hppSubLeadingLeptonPt'       : {'xVariable': 'hpp2_pt',                        'xBinning': [1000, 0, 1000],         },
+        'hppSubLeadingLeptonEta'      : {'xVariable': 'hpp2_eta',                       'xBinning': [500, -2.5, 2.5],        },
         # h-/h+
-        'hmMass'                : {'variable': 'hm_mt',                          'binning': [1200, 0, 1200]},
-        'hmPt'                  : {'variable': 'hm_pt',                          'binning': [1200, 0, 1200]},
-        'hmEta'                 : {'variable': 'hm_eta',                         'binning': [1000, -5, 5]},
-        'hmLeptonPt'            : {'variable': 'hm1_pt',                         'binning': [1000, 0, 1000]},
-        'hmLeptonEta'           : {'variable': 'hm1_eta',                        'binning': [500, -2.5, 2.5]},
+        'hmMass'                      : {'xVariable': 'hm_mt',                          'xBinning': [1200, 0, 1200],         },
+        'hmPt'                        : {'xVariable': 'hm_pt',                          'xBinning': [1200, 0, 1200],         },
+        'hmEta'                       : {'xVariable': 'hm_eta',                         'xBinning': [1000, -5, 5],           },
+        'hmLeptonPt'                  : {'xVariable': 'hm1_pt',                         'xBinning': [1000, 0, 1000],         },
+        'hmLeptonEta'                 : {'xVariable': 'hm1_eta',                        'xBinning': [500, -2.5, 2.5],        },
         # best z
-        'zMass'                 : {'variable': 'z_mass',                         'binning': [500, 0, 500],    'selection': 'z_mass>0.',},
-        'mllMinusMZ'            : {'variable': 'fabs(z_mass-{0})'.format(ZMASS), 'binning': [200, 0, 200],    'selection': 'z_mass>0.',},
-        'zPt'                   : {'variable': 'z_pt',                           'binning': [500, 0, 500],    'selection': 'z_mass>0.',},
-        'zEta'                  : {'variable': 'z_eta',                          'binning': [1000, -5, 5],    'selection': 'z_mass>0.',},
-        'zLeadingLeptonPt'      : {'variable': 'z1_pt',                          'binning': [1000, 0, 1000],  'selection': 'z_mass>0.',},
-        'zLeadingLeptonEta'     : {'variable': 'z1_eta',                         'binning': [500, -2.5, 2.5], 'selection': 'z_mass>0.',},
-        'zSubLeadingLeptonPt'   : {'variable': 'z2_pt',                          'binning': [1000, 0, 1000],  'selection': 'z_mass>0.',},
-        'zSubLeadingLeptonEta'  : {'variable': 'z2_eta',                         'binning': [500, -2.5, 2.5], 'selection': 'z_mass>0.',},
+        'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [500, 0, 500],           'selection': 'z_mass>0.',},
+        'mllMinusMZ'                  : {'xVariable': 'fabs(z_mass-{0})'.format(ZMASS), 'xBinning': [200, 0, 200],           'selection': 'z_mass>0.',},
+        'zPt'                         : {'xVariable': 'z_pt',                           'xBinning': [500, 0, 500],           'selection': 'z_mass>0.',},
+        'zEta'                        : {'xVariable': 'z_eta',                          'xBinning': [1000, -5, 5],           'selection': 'z_mass>0.',},
+        'zLeadingLeptonPt'            : {'xVariable': 'z1_pt',                          'xBinning': [1000, 0, 1000],         'selection': 'z_mass>0.',},
+        'zLeadingLeptonEta'           : {'xVariable': 'z1_eta',                         'xBinning': [500, -2.5, 2.5],        'selection': 'z_mass>0.',},
+        'zSubLeadingLeptonPt'         : {'xVariable': 'z2_pt',                          'xBinning': [1000, 0, 1000],         'selection': 'z_mass>0.',},
+        'zSubLeadingLeptonEta'        : {'xVariable': 'z2_eta',                         'xBinning': [500, -2.5, 2.5],        'selection': 'z_mass>0.',},
         # w
-        'wMass'                 : {'variable': 'w_mt',                           'binning': [500, 0, 500],    'selection': 'z_mass>0.',},
-        'wPt'                   : {'variable': 'w_pt',                           'binning': [500, 0, 500],    'selection': 'z_mass>0.',},
-        'wEta'                  : {'variable': 'w_eta',                          'binning': [1000, -5, 5],    'selection': 'z_mass>0.',},
-        'wLeptonPt'             : {'variable': 'w1_pt',                          'binning': [1000, 0, 1000],  'selection': 'z_mass>0.',},
-        'wLeptonEta'            : {'variable': 'w1_eta',                         'binning': [500, -2.5, 2.5], 'selection': 'z_mass>0.',},
+        'wMass'                       : {'xVariable': 'w_mt',                           'xBinning': [500, 0, 500],           'selection': 'z_mass>0.',},
+        'wPt'                         : {'xVariable': 'w_pt',                           'xBinning': [500, 0, 500],           'selection': 'z_mass>0.',},
+        'wEta'                        : {'xVariable': 'w_eta',                          'xBinning': [1000, -5, 5],           'selection': 'z_mass>0.',},
+        'wLeptonPt'                   : {'xVariable': 'w1_pt',                          'xBinning': [1000, 0, 1000],         'selection': 'z_mass>0.',},
+        'wLeptonEta'                  : {'xVariable': 'w1_eta',                         'xBinning': [500, -2.5, 2.5],        'selection': 'z_mass>0.',},
         # event
-        'mass'                  : {'variable': '3l_mass',                        'binning': [2000, 0, 2000]},
-        'st'                    : {'variable': 'hpp1_pt+hpp2_pt+hm1_pt',         'binning': [2000, 0, 2000]},
+        'mass'                        : {'xVariable': '3l_mass',                        'xBinning': [2000, 0, 2000],         },
+        'st'                          : {'xVariable': 'hpp1_pt+hpp2_pt+hm1_pt',         'xBinning': [2000, 0, 2000],         },
         # gen truth
-        'hppLeadingLeptonGenMatch'    : {'variable': 'hpp1_genMatch',               'binning': [2, 0, 2]},
-        'hppLeadingLeptonGenDeltaR'   : {'variable': 'hpp1_genDeltaR',              'binning': [1000, 0, 5]},
-        'hppSubLeadingLeptonGenMatch' : {'variable': 'hpp2_genMatch',               'binning': [2, 0, 2]},
-        'hpmSubLeadingLeptonGenDeltaR': {'variable': 'hpp2_genDeltaR',              'binning': [1000, 0, 5]},
-        'hmLeptonGenMatch'            : {'variable': 'hm1_genMatch',                'binning': [2, 0, 2]},
-        'hmLeptonGenDeltaR'           : {'variable': 'hm1_genDeltaR',               'binning': [1000, 0, 5]},
-    },
-    # overrides for WTauFakeRate
-    'WTauFakeRate' : {
-        # z
-        'zMass'                 : {'variable': 'z_mass',                         'binning': [500, 0, 500]},
-        'mllMinusMZ'            : {'variable': 'fabs(z_mass-{0})'.format(ZMASS), 'binning': [200, 0, 200]},
-        'zPt'                   : {'variable': 'z_pt',                           'binning': [500, 0, 500]},
-        'zDeltaR'               : {'variable': 'z_deltaR',                       'binning': [500, 0, 5]},
-        # t
-        'wtMt'                  : {'variable': 'wt_mt',                          'binning': [500, 0, 500]},
-        'wtPt'                  : {'variable': 'wt_pt',                          'binning': [500, 0, 500]},
-        'tPt'                   : {'variable': 't_pt',                           'binning': [500, 0, 500]},
-        'tEta'                  : {'variable': 't_eta',                          'binning': [500, -2.5, 2.5]},
-        # m
-        'wmMt'                  : {'variable': 'wm_mt',                          'binning': [500, 0, 500]},
-        'wmPt'                  : {'variable': 'wm_pt',                          'binning': [500, 0, 500]},
-        'mPt'                   : {'variable': 'm_pt',                           'binning': [500, 0, 500]},
-        'mEta'                  : {'variable': 'm_eta',                          'binning': [500, -2.5, 2.5]},
+        'hppLeadingLeptonGenMatch'    : {'xVariable': 'hpp1_genMatch',                  'xBinning': [2, 0, 2],               },
+        'hppLeadingLeptonGenDeltaR'   : {'xVariable': 'hpp1_genDeltaR',                 'xBinning': [1000, 0, 5],            },
+        'hppSubLeadingLeptonGenMatch' : {'xVariable': 'hpp2_genMatch',                  'xBinning': [2, 0, 2],               },
+        'hpmSubLeadingLeptonGenDeltaR': {'xVariable': 'hpp2_genDeltaR',                 'xBinning': [1000, 0, 5],            },
+        'hmLeptonGenMatch'            : {'xVariable': 'hm1_genMatch',                   'xBinning': [2, 0, 2],               },
+        'hmLeptonGenDeltaR'           : {'xVariable': 'hm1_genDeltaR',                  'xBinning': [1000, 0, 5],            },
     },
 }
 
-################
-### 2D hists ###
-################
-params2D = {
-    # default params
+sampleHistParams = {}
+
+def addChannels(params,var,n):
+    for hist in params:
+        if 'yVariable' not in params[hist]: # add chans on y axis
+            params[hist]['yVariable'] = var
+            params[hist]['yBinning'] = [n,0,n]
+        elif 'zVariable' not in params[hist]: # add chans on z axis
+            params[hist]['zVariable'] = var
+            params[hist]['zBinning'] = [n,0,n]
+    return params
+
+###################
+### Projections ###
+###################
+projectionParams = {
     'common' : {
-
-    },
-    # overrides for Electron
-    'Electron' : {
-        #'pt_v_dz' : {'xVariable': 'e_pt', 'yVariable': 'fabs(e_dz)',  'xBinning': [50,0,500], 'yBinning': [50,0,0.5]},
-        #'pt_v_dxy': {'xVariable': 'e_pt', 'yVariable': 'fabs(e_dxy)', 'xBinning': [50,0,500], 'yBinning': [50,0,0.3]},
+        'all' : [], # empty list defaults to sum all channels
     },
 }
+sampleProjectionParams = {}
 
 ##################
 ### selections ###
@@ -241,111 +258,112 @@ eEndcapCut = 'fabs({0}_eta)>1.479'
 promptCut = '{0}_genMatch==1 && {0}_genIsPrompt==1 && {0}_genDeltaR<0.1'
 promptTauCut = '{0}_genMatch==1 && {0}_genDeltaR<0.1'
 genStatusOneCut = '{0}_genMatch==1 && {0}_genStatus==1 && {0}_genDeltaR<0.1'
+genCut = '{0}_genMatch==1 && {0}_genDeltaR<0.1'
 fakeCut = '({0}_genMatch==0 || ({0}_genMatch==1 && {0}_genIsFromHadron && {0}_genDeltaR<0.1))'
 fakeTauCut = '{0}_genMatch==0'
 
-#########################
-### electron specific ###
-#########################
-selectionParams['Electron'] = {
-    'default/prompt' : {'args': [promptCut.format('e')],                                       'kwargs': {}},
-    'default/fake'   : {'args': [fakeCut.format('e')],                                         'kwargs': {}},
-    'barrel/prompt'  : {'args': [' && '.join([promptCut.format('e'),eBarrelCut.format('e')])], 'kwargs': {}},
-    'barrel/fake'    : {'args': [' && '.join([fakeCut.format('e'),eBarrelCut.format('e')])],   'kwargs': {}},
-    'endcap/prompt'  : {'args': [' && '.join([promptCut.format('e'),eEndcapCut.format('e')])], 'kwargs': {}},
-    'edncap/fake'    : {'args': [' && '.join([fakeCut.format('e'),eEndcapCut.format('e')])],   'kwargs': {}},
-}
-
-sels = selectionParams['Electron'].keys()
-idCuts = {
-    'cutBasedVeto'   : 'e_cutBasedVeto==1',
-    'cutBasedLoose'  : 'e_cutBasedLoose==1',
-    'cutBasedMedium' : 'e_cutBasedMedium==1',
-    'cutBasedTight'  : 'e_cutBasedTight==1',
-    'wwLoose'        : 'e_wwLoose==1',
-    'heepV60'        : 'e_heepV60==1',
-    'NonTrigWP80'    : 'e_mvaNonTrigWP80==1',
-    'NonTrigWP90'    : 'e_mvaNonTrigWP90==1',
-    'TrigPre'        : 'e_mvaTrigPre==1',
-    'TrigWP80'       : 'e_mvaTrigPre==1 && e_mvaTrigWP80==1',
-    'TrigWP90'       : 'e_mvaTrigPre==1 && e_mvaTrigWP90==1',
-}
-for sel in sels:
-    for idName in idCuts:
-        name = '{0}/{1}'.format(sel,idName)
-        selectionParams['Electron'][name] = deepcopy(selectionParams['Electron'][sel])
-        args = selectionParams['Electron'][name]['args']
-        selectionParams['Electron'][name]['args'][0] = args[0] + ' && ' + idCuts[idName]
-
+##########################
+#### electron specific ###
+##########################
+#selectionParams['Electron'] = {
+#    'default/prompt' : {'args': [promptCut.format('e')],                                       'kwargs': {}},
+#    'default/fake'   : {'args': [fakeCut.format('e')],                                         'kwargs': {}},
+#    'barrel/prompt'  : {'args': [' && '.join([promptCut.format('e'),eBarrelCut.format('e')])], 'kwargs': {}},
+#    'barrel/fake'    : {'args': [' && '.join([fakeCut.format('e'),eBarrelCut.format('e')])],   'kwargs': {}},
+#    'endcap/prompt'  : {'args': [' && '.join([promptCut.format('e'),eEndcapCut.format('e')])], 'kwargs': {}},
+#    'edncap/fake'    : {'args': [' && '.join([fakeCut.format('e'),eEndcapCut.format('e')])],   'kwargs': {}},
+#}
+#
+#sels = selectionParams['Electron'].keys()
+#idCuts = {
+#    'cutBasedVeto'   : 'e_cutBasedVeto==1',
+#    'cutBasedLoose'  : 'e_cutBasedLoose==1',
+#    'cutBasedMedium' : 'e_cutBasedMedium==1',
+#    'cutBasedTight'  : 'e_cutBasedTight==1',
+#    'wwLoose'        : 'e_wwLoose==1',
+#    'heepV60'        : 'e_heepV60==1',
+#    'NonTrigWP80'    : 'e_mvaNonTrigWP80==1',
+#    'NonTrigWP90'    : 'e_mvaNonTrigWP90==1',
+#    'TrigPre'        : 'e_mvaTrigPre==1',
+#    'TrigWP80'       : 'e_mvaTrigPre==1 && e_mvaTrigWP80==1',
+#    'TrigWP90'       : 'e_mvaTrigPre==1 && e_mvaTrigWP90==1',
+#}
+#for sel in sels:
+#    for idName in idCuts:
+#        name = '{0}/{1}'.format(sel,idName)
+#        selectionParams['Electron'][name] = deepcopy(selectionParams['Electron'][sel])
+#        args = selectionParams['Electron'][name]['args']
+#        selectionParams['Electron'][name]['args'][0] = args[0] + ' && ' + idCuts[idName]
+#
+######################
+#### muon specific ###
+######################
+#selectionParams['Muon'] = {
+#    'default/prompt' : {'args': [promptCut.format('m')], 'kwargs': {}},
+#    'default/fake'   : {'args': [fakeCut.format('m')],   'kwargs': {}},
+#}
+#
+#sels = selectionParams['Muon'].keys()
+#idCuts = {
+#    'isLooseMuon_looseIso'  : 'm_isLooseMuon==1 && m_isolation<0.4',
+#    'isMediumMuon_tightIso' : 'm_isMediumMuon==1 && m_isolation<0.15',
+#    'isTightMuon_tightIso'  : 'm_isTightMuon==1 && m_isolation<0.15',
+#    'isHighPtMuon_tightIso' : 'm_isHighPtMuon==1 && m_isolation<0.15',
+#    'wzLooseMuon'           : 'm_isMediumMuon==1 && m_trackRelIso<0.4 && m_isolation<0.4',
+#    'wzMediumMuon'          : 'm_isMediumMuon==1 && m_trackRelIso<0.4 && m_isolation<0.15 && m_dz<0.1 && (m_pt<20 ? m_dxy<0.01 : m_dxy<0.02)',
+#}
+#for sel in sels:
+#    for idName in idCuts:
+#        name = '{0}/{1}'.format(sel,idName)
+#        selectionParams['Muon'][name] = deepcopy(selectionParams['Muon'][sel])
+#        args = selectionParams['Muon'][name]['args']
+#        selectionParams['Muon'][name]['args'][0] = args[0] + ' && ' + idCuts[idName]
+#
 #####################
-### muon specific ###
+#### tau specific ###
 #####################
-selectionParams['Muon'] = {
-    'default/prompt' : {'args': [promptCut.format('m')], 'kwargs': {}},
-    'default/fake'   : {'args': [fakeCut.format('m')],   'kwargs': {}},
-}
-
-sels = selectionParams['Muon'].keys()
-idCuts = {
-    'isLooseMuon_looseIso'  : 'm_isLooseMuon==1 && m_isolation<0.4',
-    'isMediumMuon_tightIso' : 'm_isMediumMuon==1 && m_isolation<0.15',
-    'isTightMuon_tightIso'  : 'm_isTightMuon==1 && m_isolation<0.15',
-    'isHighPtMuon_tightIso' : 'm_isHighPtMuon==1 && m_isolation<0.15',
-    'wzLooseMuon'           : 'm_isMediumMuon==1 && m_trackRelIso<0.4 && m_isolation<0.4',
-    'wzMediumMuon'          : 'm_isMediumMuon==1 && m_trackRelIso<0.4 && m_isolation<0.15 && m_dz<0.1 && (m_pt<20 ? m_dxy<0.01 : m_dxy<0.02)',
-}
-for sel in sels:
-    for idName in idCuts:
-        name = '{0}/{1}'.format(sel,idName)
-        selectionParams['Muon'][name] = deepcopy(selectionParams['Muon'][sel])
-        args = selectionParams['Muon'][name]['args']
-        selectionParams['Muon'][name]['args'][0] = args[0] + ' && ' + idCuts[idName]
-
-####################
-### tau specific ###
-####################
-selectionParams['Tau'] = {
-    'default/prompt' : {'args': [promptTauCut.format('t')], 'kwargs': {}},
-    'default/fake'   : {'args': [fakeTauCut.format('t')],   'kwargs': {}},
-}
-
-sels = selectionParams['Tau'].keys()
-againstElectron = {
-    'vloose': 't_againstElectronVLooseMVA6==1',
-    'loose' : 't_againstElectronLooseMVA6==1',
-    'medium': 't_againstElectronMediumMVA6==1',
-    'tight' : 't_againstElectronTightMVA6==1',
-    'vtight': 't_againstElectronVTightMVA6==1',
-}
-againstMuon = {
-    'loose' : 't_againstMuonLoose3==1',
-    'tight' : 't_againstMuonTight3==1',
-}
-oldId = 't_decayModeFinding==1'
-oldIsolation = {
-    'loose' : 't_byLooseIsolationMVArun2v1DBoldDMwLT==1',
-    'medium': 't_byMediumIsolationMVArun2v1DBoldDMwLT==1',
-    'tight' : 't_byTightIsolationMVArun2v1DBoldDMwLT==1',
-    'vtight': 't_byVTightIsolationMVArun2v1DBoldDMwLT==1',
-}
-idCuts = {}
-cutLists = [
-    ('vloose','loose','loose'),
-    ('vloose','loose','tight'),
-    ('vloose','loose','vtight'),
-    ('tight','tight','loose'),
-    ('tight','tight','tight'),
-    ('tight','tight','vtight'),
-]
-for cl in cutLists:
-    idCuts['old_{0}Electron_{1}Muon_{2}Isolation'.format(*cl)] = ' && '.join([oldId, againstElectron[cl[0]], againstMuon[cl[1]], oldIsolation[cl[2]]])
-
-for sel in sels:
-    for idName in idCuts:
-        name = '{0}/{1}'.format(sel,idName)
-        selectionParams['Tau'][name] = deepcopy(selectionParams['Tau'][sel])
-        args = selectionParams['Tau'][name]['args']
-        selectionParams['Tau'][name]['args'][0] = args[0] + ' && ' + idCuts[idName]
+#selectionParams['Tau'] = {
+#    'default/prompt' : {'args': [promptTauCut.format('t')], 'kwargs': {}},
+#    'default/fake'   : {'args': [fakeTauCut.format('t')],   'kwargs': {}},
+#}
+#
+#sels = selectionParams['Tau'].keys()
+#againstElectron = {
+#    'vloose': 't_againstElectronVLooseMVA6==1',
+#    'loose' : 't_againstElectronLooseMVA6==1',
+#    'medium': 't_againstElectronMediumMVA6==1',
+#    'tight' : 't_againstElectronTightMVA6==1',
+#    'vtight': 't_againstElectronVTightMVA6==1',
+#}
+#againstMuon = {
+#    'loose' : 't_againstMuonLoose3==1',
+#    'tight' : 't_againstMuonTight3==1',
+#}
+#oldId = 't_decayModeFinding==1'
+#oldIsolation = {
+#    'loose' : 't_byLooseIsolationMVArun2v1DBoldDMwLT==1',
+#    'medium': 't_byMediumIsolationMVArun2v1DBoldDMwLT==1',
+#    'tight' : 't_byTightIsolationMVArun2v1DBoldDMwLT==1',
+#    'vtight': 't_byVTightIsolationMVArun2v1DBoldDMwLT==1',
+#}
+#idCuts = {}
+#cutLists = [
+#    ('vloose','loose','loose'),
+#    ('vloose','loose','tight'),
+#    ('vloose','loose','vtight'),
+#    ('tight','tight','loose'),
+#    ('tight','tight','tight'),
+#    ('tight','tight','vtight'),
+#]
+#for cl in cutLists:
+#    idCuts['old_{0}Electron_{1}Muon_{2}Isolation'.format(*cl)] = ' && '.join([oldId, againstElectron[cl[0]], againstMuon[cl[1]], oldIsolation[cl[2]]])
+#
+#for sel in sels:
+#    for idName in idCuts:
+#        name = '{0}/{1}'.format(sel,idName)
+#        selectionParams['Tau'][name] = deepcopy(selectionParams['Tau'][sel])
+#        args = selectionParams['Tau'][name]['args']
+#        selectionParams['Tau'][name]['args'][0] = args[0] + ' && ' + idCuts[idName]
 
 ##############################
 ### DijetFakeRate specific ###
@@ -573,8 +591,8 @@ for region in fakeRegions:
 wzScaleFactorMap['loose'] = '*'.join(['{0}_looseScale'.format(x) for x in ['z1','z2','w1']])
 wzScaleFactorMap['medium'] = '*'.join(['{0}_mediumScale'.format(x) for x in ['z1','z2','w1']])
 wzScaleFactorMap['tight'] = '*'.join(['{0}_tightScale'.format(x) for x in ['z1','z2','w1']])
-dySimpleCut = 'z1_pt>20 && z2_pt>10 && w1_pt>10 && fabs(z_mass-{0})<15 && 3l_mass>100 && met_pt<25 && w_mt<25'.format(ZMASS)
-ttSimpleCut = 'z1_pt>20 && z2_pt>10 && w1_pt>10 && fabs(z_mass-{0})>5 && 3l_mass>100'.format(ZMASS)
+dySimpleCut = 'z1_pt>20 && z2_pt>10 && w1_pt>20 && fabs(z_mass-{0})<15 && 3l_mass>100 && met_pt<25 && w_mt<25'.format(ZMASS)
+ttSimpleCut = 'z1_pt>20 && z2_pt>10 && w1_pt>20 && fabs(z_mass-{0})>5 && 3l_mass>100 && numBjetsTight30>0'.format(ZMASS)
 wzCutMap['dy'] = dySimpleCut
 wzCutMap['tt'] = ttSimpleCut
 
@@ -625,90 +643,85 @@ for baseCut in baseCutMap:
         }
 
 
-# channels
-channels = ['eee','eem','mme','mmm']
-sels = selectionParams['WZ'].keys()
-for sel in sels:
-    for chan in channels:
-        name = '{0}/{1}'.format(sel,chan)
-        selectionParams['WZ'][name] = deepcopy(selectionParams['WZ'][sel])
-        args = selectionParams['WZ'][name]['args']
-        selectionParams['WZ'][name]['args'][0] = args[0] + ' && channel=="{0}"'.format(chan)
+## channels
+#channels = ['eee','eem','mme','mmm']
+#sels = selectionParams['WZ'].keys()
+#for sel in sels:
+#    for chan in channels:
+#        name = '{0}/{1}'.format(sel,chan)
+#        selectionParams['WZ'][name] = deepcopy(selectionParams['WZ'][sel])
+#        args = selectionParams['WZ'][name]['args']
+#        selectionParams['WZ'][name]['args'][0] = args[0] + ' && channel=="{0}"'.format(chan)
 
 #############
 ### hpp4l ###
 #############
-#hpp4lBaseCut = 'hpp1_passMedium==1 && hpp2_passMedium==1 && hmm1_passMedium==1 && hmm2_passMedium==1 && hpp_deltaR>0.02 && hmm_deltaR>0.02 && hpp_mass>12. && hmm_mass>12. && (z_mass>0 ? z_mass>12. : 1)'
+# setup the reco channels
+channels = getChannels('Hpp4l')
+projectionParams['Hpp4l'] = {}
+allChans = []
+for chan in channels:
+    projectionParams['Hpp4l'][chan] = channels[chan]
+    allChans += channels[chan]
+histParams['Hpp4l'].update(addChannels(deepcopy(histParams['Hpp4l']),'channel',len(allChans)))
+
+# setup base selections
 hpp4lBaseCut = 'hpp1_passMedium==1 && hpp2_passMedium==1 && hmm1_passMedium==1 && hmm2_passMedium==1'
 hpp4lLowMassControl = '{0} && (hpp_mass<100 || hmm_mass<100)'.format(hpp4lBaseCut)
-hpp4lMatchSign = 'hpp1_genCharge==hpp1_charge && hpp2_genCharge==hpp2_charge && hmm1_genCharge==hmm1_charge && hmm2_genCharge==hmm2_charge'
 hpp4lScaleFactor = 'hpp1_mediumScale*hpp2_mediumScale*hmm1_mediumScale*hmm2_mediumScale*genWeight*pileupWeight*triggerEfficiency'
-selectionParams['Hpp4l'] = {
-    'default'   : {'args': [hpp4lBaseCut],                           'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
-    'lowmass'   : {'args': [hpp4lLowMassControl],                    'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
-    #'matchSign' : {'args': [hpp4lBaseCut + ' && ' + hpp4lMatchSign], 'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
+
+# setup fakerate selections
+leps = ['hpp1','hpp2','hmm1','hmm2']
+scaleMap = {
+    'P' : '{0}_looseScale',
+    'F' : '{0}_mediumScale',
 }
 
-masses = [200,300,400,500,600,700,800,900,1000]
+hpp4lBaseScaleFactor = 'genWeight*pileupWeight*triggerEfficiency'
+hpp4lMCCut = ' && '.join([genCut.format(l) for l in leps])
 
-# setup old working points
-hpp4lOldSelections = {}
-for mass in masses:
-    hpp4lOldSelections[mass] = '{base} && (hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt)>0.6*{mass}+130. && hpp_mass>0.9*{mass} && hpp_mass<1.1*{mass} && hmm_mass>0.9*{mass} && hmm_mass<1.1*{mass}'.format(base=hpp4lBaseCut,mass=mass)
-    selectionParams['Hpp4l']['old/{0}'.format(mass)] = {'args': [hpp4lOldSelections[mass]], 'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
+# build the cuts for each fake region
+hpp4lScaleFactorMap = {}
+hpp4lFakeScaleFactorMap = {}
+hpp4lCutMap = {}
+hpp4lFakeRegions = [''.join(x) for x in product('PF',repeat=4)]
+for region in hpp4lFakeRegions:
+    hpp4lScaleFactorMap[region] = '*'.join([scaleMap[region[x]].format(leps[x]) for x in range(4)])
+    hpp4lFakeScaleFactorMap[region] = '*'.join(['{0}/(1-{0})'.format('{0}_mediumFakeRate'.format(leps[x])) for f in range(4) if region[f]=='F'] + ['-1' if region.count('F')%2==0 and region.count('F')>0 else '1'])
+    hpp4lCutMap[region] = ' && '.join(['{0}=={1}'.format('{0}_passMedium'.format(leps[x]),1 if region[x]=='P' else 0) for x in range(4)])
 
-# setup reco channel selections
-channels = getChannels('Hpp4l')
+# the default selections
+selectionParams['Hpp4l'] = {
+    'default'   : {'args': [hpp4lBaseCut],                                           'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
+    'lowmass'   : {'args': [hpp4lLowMassControl],                                    'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
+    'st100'     : {'args': [hpp4lBaseCut+' && hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>100'], 'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
+    'st200'     : {'args': [hpp4lBaseCut+' && hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>200'], 'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
+    'st300'     : {'args': [hpp4lBaseCut+' && hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>300'], 'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
+}
 
-sels = selectionParams['Hpp4l'].keys()
-for sel in sels:
-    for chan in channels:
-        name = '{0}/{1}'.format(sel,chan)
-        selectionParams['Hpp4l'][name] = deepcopy(selectionParams['Hpp4l'][sel])
-        args = selectionParams['Hpp4l'][name]['args']
-        selectionParams['Hpp4l'][name]['args'][0] = args[0] + ' && ' + '(' + ' || '.join(['channel=="{0}"'.format(c) for c in channels[chan]]) + ')'
+
+## setup old working points
+#hpp4lOldSelections = {}
+#for mass in masses:
+#    hpp4lOldSelections[mass] = '{base} && (hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt)>0.6*{mass}+130. && hpp_mass>0.9*{mass} && hpp_mass<1.1*{mass} && hmm_mass>0.9*{mass} && hmm_mass<1.1*{mass}'.format(base=hpp4lBaseCut,mass=mass)
+#    selectionParams['Hpp4l']['old/{0}'.format(mass)] = {'args': [hpp4lOldSelections[mass]], 'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
 
 # setup gen channel selections
 genChans = getGenChannels('Hpp4l')
 genChannelsPP = genChans['PP']
 genChannelsAP = genChans['AP']
 
-genDecayMap = {
-    'ee' : ['ee'],
-    'em' : ['em'],
-    'et' : ['ee','em','et'],
-    'mm' : ['mm'],
-    'mt' : ['em','mm','mt'],
-    'tt' : ['ee','em','et','mm','mt','tt'],
-}
+masses = [200,300,400,500,600,700,800,900,1000]
 
-hpp4l_pp_selections = {}
-hpp4l_ap_selections = {}
-sels = selectionParams['Hpp4l'].keys()
-for sel in sels:
-    for chan in genChannelsPP:
-        baseSel = sel.split('/')[0]
-        reco = sel.split('/')[-1]
-        if baseSel=='lowmass': continue
-        if reco in channels:
-            if reco[:2] not in genDecayMap[chan[:2]]: continue
-            if reco[2:] not in genDecayMap[chan[2:]]: continue
-        name = '{0}/gen_{1}'.format(sel,chan)
-        hpp4l_pp_selections[name] = deepcopy(selectionParams['Hpp4l'][sel])
-        args = hpp4l_pp_selections[name]['args']
-        hpp4l_pp_selections[name]['args'][0] = args[0] + ' && ' + 'genChannel=="{0}"'.format(chan)
-        hpp4l_pp_selections[name]['kwargs']['countOnly'] = False if baseSel=='default' else True
-        #hpp4l_pp_selections[name]['kwargs']['countOnly'] = True
-    for chan in genChannelsAP:
-        name = '{0}/gen_{1}'.format(sel,chan)
-        hpp4l_ap_selections[name] = deepcopy(selectionParams['Hpp4l'][sel])
-        args = hpp4l_ap_selections[name]['args']
-        hpp4l_ap_selections[name]['args'][0] = args[0] + ' && ' + 'genChannel=="{0}"'.format(chan)
-        hpp4l_ap_selections[name]['kwargs']['countOnly'] = True
+sampleHistParams['Hpp4l'] = {}
+sampleProjectionParams['Hpp4l'] = {}
 sampleSelectionParams['Hpp4l'] = {}
 for mass in masses:
     sampleName = 'HPlusPlusHMinusMinusHTo4L_M-{0}_13TeV-pythia8'.format(mass)
-    sampleSelectionParams['Hpp4l'][sampleName] = deepcopy(hpp4l_pp_selections)
+    sampleHistParams['Hpp4l'][sampleName] = addChannels(deepcopy(histParams['Hpp4l']),'genChannel',len(genChannelsPP))
+    sampleProjectionParams['Hpp4l'][sampleName] = {}
+    for genChan in genChannelsPP:
+        sampleProjectionParams['Hpp4l'][sampleName]['gen_{0}'.format(genChan)] = [genChan]
 
 #############
 ### hpp3l ###
@@ -761,15 +774,14 @@ for mass in [200,300,400,500,600,700,800,900,1000]:
 #############################
 ### functions to retrieve ###
 #############################
-def getHistParams(analysis):
-    histParams = deepcopy(params['common'])
-    if analysis in params: histParams.update(params[analysis])
-    return histParams
-
-def getHistParams2D(analysis):
-    histParams = deepcopy(params2D['common'])
-    if analysis in params2D: histParams.update(params2D[analysis])
-    return histParams
+def getHistParams(analysis,sample):
+    params = {}
+    if analysis in histParams:
+        params.update(histParams[analysis])
+    if analysis in sampleHistParams:
+        if sample in sampleHistParams[analysis]:
+            params.update(sampleHistParams[analysis][sample])
+    return params
 
 def getHistSelections(analysis,sample):
     params = {}
@@ -778,4 +790,13 @@ def getHistSelections(analysis,sample):
     if analysis in sampleSelectionParams:
         if sample in sampleSelectionParams[analysis]:
             params.update(sampleSelectionParams[analysis][sample])
+    return params
+
+def getProjectionParams(analysis,sample):
+    params = deepcopy(projectionParams['common'])
+    if analysis in projectionParams:
+        params.update(projectionParams[analysis])
+    if analysis in sampleProjectionParams:
+        if sample in sampleProjectionParams[analysis]:
+            params.update(sampleProjectionParams[analysis][sample])
     return params

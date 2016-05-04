@@ -11,7 +11,7 @@ from copy import deepcopy
 import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
-from DevTools.Plotter.histParams import getHistParams, getHistParams2D, getHistSelections
+from DevTools.Plotter.histParams import getHistParams, getHistSelections, getProjectionParams
 from DevTools.Plotter.utilities import getNtupleDirectory, getTreeName
 from DevTools.Utilities.MultiProgress import MultiProgress
 from DevTools.Plotter.FlattenTree import FlattenTree
@@ -35,13 +35,7 @@ def flatten(directory,**kwargs):
     else:
         pbar = None
 
-    #flattener = FlattenTree(
-    #    ntupleDirectory=getNtupleDirectory(analysis),
-    #    treeName=getTreeName(analysis),
-    #)
     flattener = FlattenTree(analysis,sample)
-
-    #flattener.initializeSample(sample,'flat/{0}/{1}.root'.format(analysis,sample))
 
     for histName, params in histParams.iteritems():
         flattener.addHistogram(histName,**params)
@@ -59,9 +53,11 @@ def getSampleDirectories(analysis,sampleList):
             directories += [d]
     return directories
 
-def getSelectedHistParams(analysis,hists):
-    allHistParams = getHistParams(analysis)
-    if 'all' in hists: return allHistParams
+def getSelectedHistParams(analysis,hists,sample):
+    allHistParams = getHistParams(analysis,sample)
+    params = {}
+    params.update(allHistParams)
+    if 'all' in hists: return params
     selectedHistParams = {}
     for h in hists:
         if h in allHistParams: selectedHistParams[h] = allHistParams[h]
@@ -75,6 +71,14 @@ def getSelectedHistSelections(analysis,sels,sample):
         if s in allHistSelections: selectedHistSelections[s] = allHistSelections[s]
     return selectedHistSelections
 
+def getSelectedProjections(analysis,projs,sample):
+    allProjections = getProjectionParams(analysis,sample)
+    if 'all' in projs: return allProjections
+    selectedProjections = {}
+    for p in projs:
+        if p in allProjections: selectedProjections[p] = allProjections[p]
+    return allProjections
+
 def parse_command_line(argv):
     parser = argparse.ArgumentParser(description='Flatten Tree')
 
@@ -82,6 +86,8 @@ def parse_command_line(argv):
     parser.add_argument('--samples', nargs='+', type=str, default=['*'], help='Samples to flatten. Supports unix style wildcards.')
     parser.add_argument('--hists', nargs='+', type=str, default=['all'], help='Histograms to flatten.')
     parser.add_argument('--selections', nargs='+', type=str, default=['all'], help='Selections to flatten.')
+    parser.add_argument('--channels', nargs='+', type=str, default=['all'], help='Channels to project.')
+    parser.add_argument('--skipProjection', action='store_true', help='Skip projecting')
     parser.add_argument('-j',type=int,default=16,help='Number of cores to use')
 
     return parser.parse_args(argv)
@@ -96,7 +102,6 @@ def main(argv=None):
     logging.info('Preparing to flatten {0}'.format(args.analysis))
 
     directories = getSampleDirectories(args.analysis,args.samples)
-    histParams = getSelectedHistParams(args.analysis,args.hists)
 
     logging.info('Will flatten {0} samples'.format(len(directories)))
 
@@ -105,6 +110,7 @@ def main(argv=None):
         for directory in directories:
             sample = directory.split('/')[-1]
             if sample.endswith('.root'): sample = sample[:-5]
+            histParams = getSelectedHistParams(args.analysis,args.hists,sample)
             histSelections = getSelectedHistSelections(args.analysis,args.selections,sample)
             multi.addJob(sample,flatten,args=(directory,),kwargs={'analysis':args.analysis,'histParams':histParams,'histSelections':histSelections})
         multi.retrieve()
@@ -112,6 +118,7 @@ def main(argv=None):
         for directory in directories:
             sample = directory.split('/')[-1]
             if sample.endswith('.root'): sample = sample[:-5]
+            histParams = getSelectedHistParams(args.analysis,args.hists,sample)
             histSelections = getSelectedHistSelections(args.analysis,args.selections,sample)
             flatten(directory,
                     analysis=args.analysis,
