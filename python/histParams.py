@@ -467,13 +467,11 @@ selectionParams['DY'] = {
 }
 
 channels = ['ee','mm']
+projectionParams['DY'] = {}
+for chan in channels:
+    projectionParams['DY'][chan] = [chan]
+histParams['DY'].update(addChannels(deepcopy(histParams['DY']),'channel',len(channels)))
 
-for sel in ['default']:
-    for chan in channels:
-        name = '{0}/{1}'.format(sel,chan)
-        selectionParams['DY'][name] = deepcopy(selectionParams['DY'][sel])
-        args = selectionParams['DY'][name]['args']
-        selectionParams['DY'][name]['args'][0] = args[0] + ' && channel=="{0}"'.format(chan)
 
 #######################
 ### Charge specific ###
@@ -495,13 +493,11 @@ channelMap = {
     'ee': ['ee'],
     'mm': ['mm'],
 }
+projectionParams['Charge'] = {}
+for chan in channelMap:
+    projectionParams['Charge'][chan] = channelMap[chan]
+histParams['Charge'].update(addChannels(deepcopy(histParams['Charge']),'channel',len(channels)))
 
-for sel in ['OS','SS']:
-    for chan in channelMap:
-        name = '{0}/{1}'.format(sel,chan)
-        selectionParams['Charge'][name] = deepcopy(temp[sel])
-        args = selectionParams['Charge'][name]['args']
-        selectionParams['Charge'][name]['args'][0] = args[0] + '&& {0} && ({1})'.format(emZMassCut,' || '.join('channel=="{0}"'.format(c) for c in channelMap[chan]))
 
 ##########################
 ### TauCharge specific ###
@@ -524,17 +520,23 @@ temp = {
 channelMap = {
     'tt': ['mt','tm'],
 }
+projectionParams['TauCharge'] = {}
+for chan in channelMap:
+    projectionParams['TauCharge'][chan] = channelMap[chan]
+histParams['TauCharge'].update(addChannels(deepcopy(histParams['TauCharge']),'channel',len(channels)))
 
-for sel in temp:
-    for chan in channelMap:
-        name = '{0}/{1}'.format(sel,chan)
-        selectionParams['TauCharge'][name] = deepcopy(temp[sel])
-        args = selectionParams['TauCharge'][name]['args']
-        selectionParams['TauCharge'][name]['args'][0] = args[0] + '&& {0} && ({1})'.format(tZMassCut,' || '.join('channel=="{0}"'.format(c) for c in channelMap[chan]))
 
 #########################
 ### wz specific stuff ###
 #########################
+# setup the reco channels
+channels = ['eee','eem','mme','mmm']
+projectionParams['WZ'] = {}
+for chan in channels:
+    projectionParams['WZ'][chan] =[chan]
+histParams['WZ'].update(addChannels(deepcopy(histParams['WZ']),'channel',len(channels)))
+
+# the cuts
 baseCutMap = {
     'zptCut'   : 'z1_pt>20 && z2_pt>10',
     'wptCut'   : 'w1_pt>20',
@@ -643,16 +645,6 @@ for baseCut in baseCutMap:
         }
 
 
-## channels
-#channels = ['eee','eem','mme','mmm']
-#sels = selectionParams['WZ'].keys()
-#for sel in sels:
-#    for chan in channels:
-#        name = '{0}/{1}'.format(sel,chan)
-#        selectionParams['WZ'][name] = deepcopy(selectionParams['WZ'][sel])
-#        args = selectionParams['WZ'][name]['args']
-#        selectionParams['WZ'][name]['args'][0] = args[0] + ' && channel=="{0}"'.format(chan)
-
 #############
 ### hpp4l ###
 #############
@@ -699,7 +691,6 @@ selectionParams['Hpp4l'] = {
     'st300'     : {'args': [hpp4lBaseCut+' && hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>300'], 'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
 }
 
-
 ## setup old working points
 #hpp4lOldSelections = {}
 #for mass in masses:
@@ -726,7 +717,16 @@ for mass in masses:
 #############
 ### hpp3l ###
 #############
-#hpp3lBaseCut = 'hpp1_passMedium==1 && hpp2_passMedium==1 && hm1_passMedium==1 && hpp_deltaR>0.02 && hpp_mass>12. && (z_mass>0 ? z_mass>12. : 1)'
+# setup the reco channels
+channels = getChannels('Hpp3l')
+projectionParams['Hpp3l'] = {}
+allChans = []
+for chan in channels:
+    projectionParams['Hpp3l'][chan] = channels[chan]
+    allChans += channels[chan]
+histParams['Hpp3l'].update(addChannels(deepcopy(histParams['Hpp3l']),'channel',len(allChans)))
+
+# setup base selections
 hpp3lBaseCut = 'hpp1_passMedium==1 && hpp2_passMedium==1 && hm1_passMedium==1'
 hpp3lLowMassControl = '{0} && hpp_mass<100'.format(hpp3lBaseCut)
 hpp3lScaleFactor = 'hpp1_mediumScale*hpp2_mediumScale*hm1_mediumScale*genWeight*pileupWeight*triggerEfficiency'
@@ -735,41 +735,23 @@ selectionParams['Hpp3l'] = {
     'lowmass' : {'args': [hpp3lLowMassControl], 'kwargs': {'mcscalefactor': hpp3lScaleFactor}},
 }
 
-# setup reco channel selections
-channels = getChannels('Hpp3l')
-
-for sel in ['default','lowmass']:
-    for chan in channels:
-        name = '{0}/{1}'.format(sel,chan)
-        selectionParams['Hpp3l'][name] = deepcopy(selectionParams['Hpp3l'][sel])
-        args = selectionParams['Hpp3l'][name]['args']
-        selectionParams['Hpp3l'][name]['args'][0] = args[0] + ' && ' + '(' + ' || '.join(['channel=="{0}"'.format(c) for c in channels[chan]]) + ')'
-
 # setup gen channel selections
 genChans = getGenChannels('Hpp3l')
 genChannelsPP = genChans['PP']
 genChannelsAP = genChans['AP']
 
-hpp3l_pp_selections = {}
-hpp3l_ap_selections = {}
-sels = selectionParams['Hpp3l'].keys()
-for sel in sels:
-    for chan in genChannelsPP:
-        name = '{0}/gen_{1}'.format(sel,chan)
-        hpp3l_pp_selections[name] = deepcopy(selectionParams['Hpp3l'][sel])
-        args = hpp3l_pp_selections[name]['args']
-        hpp3l_pp_selections[name]['args'][0] = args[0] + ' && ' + 'genChannel=="{0}"'.format(chan)
-        hpp3l_pp_selections[name]['kwargs']['countOnly'] = True
-    for chan in genChannelsAP:
-        name = '{0}/gen_{1}'.format(sel,chan)
-        hpp3l_ap_selections[name] = deepcopy(selectionParams['Hpp3l'][sel])
-        args = hpp3l_ap_selections[name]['args']
-        hpp3l_ap_selections[name]['args'][0] = args[0] + ' && ' + 'genChannel=="{0}"'.format(chan)
-        hpp3l_ap_selections[name]['kwargs']['countOnly'] = True
+masses = [200,300,400,500,600,700,800,900,1000]
+
+sampleHistParams['Hpp3l'] = {}
+sampleProjectionParams['Hpp3l'] = {}
 sampleSelectionParams['Hpp3l'] = {}
-for mass in [200,300,400,500,600,700,800,900,1000]:
+for mass in masses:
     sampleName = 'HPlusPlusHMinusMinusHTo4L_M-{0}_13TeV-pythia8'.format(mass)
-    sampleSelectionParams['Hpp3l'][sampleName] = deepcopy(hpp3l_pp_selections)
+    sampleHistParams['Hpp3l'][sampleName] = addChannels(deepcopy(histParams['Hpp3l']),'genChannel',len(genChannelsPP))
+    sampleProjectionParams['Hpp3l'][sampleName] = {}
+    for genChan in genChannelsPP:
+        sampleProjectionParams['Hpp3l'][sampleName]['gen_{0}'.format(genChan)] = [genChan]
+
 
 #############################
 ### functions to retrieve ###
