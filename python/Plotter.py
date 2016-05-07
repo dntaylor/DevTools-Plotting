@@ -316,15 +316,15 @@ class Plotter(PlotterBase):
         '''Plot a variable and save'''
         xaxis = kwargs.pop('xaxis', 'Variable')
         yaxis = kwargs.pop('yaxis', 'Events')
+        logy = kwargs.pop('logy',False)
+        logx = kwargs.pop('logx',False)
         ymin = kwargs.pop('ymax',None)
         ymax = kwargs.pop('ymin',None)
-        yscale = kwargs.pop('yscale',1.2)
+        yscale = kwargs.pop('yscale',5 if logy else 1.2)
         numcol = kwargs.pop('numcol',1)
         legendpos = kwargs.pop('legendpos',33)
         lumipos = kwargs.pop('lumipos',11)
         isprelim = kwargs.pop('preliminary',True)
-        logy = kwargs.pop('logy',False)
-        logx = kwargs.pop('logx',False)
         plotratio = kwargs.pop('plotratio',True)
         blinder = kwargs.pop('blinder',[])
         rangex = kwargs.pop('rangex',[])
@@ -381,6 +381,7 @@ class Plotter(PlotterBase):
                     highbin = hist.FindBin(blinder[1])
                     for b in range(highbin-lowbin+1):
                         hist.SetBinContent(b+lowbin,0.)
+                        hist.SetBinError(b+lowbin,0.)
                 hist.SetBinErrorOption(ROOT.TH1.kPoisson)
             else:
                 hist.SetLineWidth(3)
@@ -405,9 +406,25 @@ class Plotter(PlotterBase):
             self.j += 1
             staterr = self._get_stat_err(stack.GetStack().Last().Clone('h_stack_{0}'.format(self.j)))
             staterr.Draw('e2 same')
-        for histName,hist in hists.iteritems():
-            style = self.styles[histName]
-            hist.Draw(style['drawstyle']+' same')
+            for histName,hist in hists.iteritems():
+                style = self.styles[histName]
+                hist.Draw(style['drawstyle']+' same')
+        else:
+            first = True
+            for histName,hist in hists.iteritems():
+                style = self.styles[histName]
+                if first:
+                    first = False
+                    hist.Draw(style['drawstyle'])
+                    hist.GetXaxis().SetTitle(xaxis)
+                    hist.GetYaxis().SetTitle(yaxis)
+                    hist.SetMaximum(yscale*highestMax)
+                    if len(rangex)==2: hist.GetXaxis().SetRangeUser(*rangex)
+                    if ymax!=None: hist.SetMaximum(ymax)
+                    if ymin!=None: hist.SetMinimum(ymin)
+                    if plotratio: hist.GetXaxis().SetLabelOffset(999)
+                else:
+                    hist.Draw(style['drawstyle']+' same')
 
         # get the legend
         legend = self._getLegend(stack=stack,hists=hists,numcol=numcol,position=legendpos)
@@ -422,10 +439,13 @@ class Plotter(PlotterBase):
         if plotratio:
             self.j += 1
             stackname = 'h_stack_{0}_ratio'.format(self.j)
-            denom = stack.GetStack().Last().Clone(stackname)
+            if stack:
+                denom = stack.GetStack().Last().Clone(stackname)
+            else:
+                denom = hists.items()[0][1].Clone(stackname)
             ratiostaterr = self._get_ratio_stat_err(denom)
             ratiostaterr.SetXTitle(xaxis)
-            unityargs = [rangex[0],1,rangex[1],1] if len(rangex)==2 else [stack.GetXaxis().GetXmin(),1,stack.GetXaxis().GetXmax(),1]
+            unityargs = [rangex[0],1,rangex[1],1] if len(rangex)==2 else [denom.GetXaxis().GetXmin(),1,denom.GetXaxis().GetXmax(),1]
             ratiounity = ROOT.TLine(*unityargs)
             ratiounity.SetLineStyle(2)
             ratios = OrderedDict()
@@ -478,15 +498,15 @@ class Plotter(PlotterBase):
         '''Plot a histogram of counts for each bin and save'''
         xaxis = kwargs.pop('xaxis', '')
         yaxis = kwargs.pop('yaxis', 'Events')
+        logy = kwargs.pop('logy',False)
+        logx = kwargs.pop('logx',False)
         ymin = kwargs.pop('ymin',None)
         ymax = kwargs.pop('ymax',None)
-        yscale = kwargs.pop('yscale',1.2)
+        yscale = kwargs.pop('yscale',5 if logy else 1.2)
         numcol = kwargs.pop('numcol',1)
         legendpos = kwargs.pop('legendpos',33)
         lumipos = kwargs.pop('lumipos',11)
         isprelim = kwargs.pop('preliminary',True)
-        logy = kwargs.pop('logy',False)
-        logx = kwargs.pop('logx',False)
         plotratio = kwargs.pop('plotratio',True)
         save = kwargs.pop('save',True)
 
@@ -632,13 +652,13 @@ class Plotter(PlotterBase):
         '''Plot a ratio of two variables and save'''
         xaxis = kwargs.pop('xaxis', 'Variable')
         yaxis = kwargs.pop('yaxis', 'Efficiency')
-        ymin = kwargs.pop('ymin',None)
-        ymax = kwargs.pop('ymax',None)
-        yscale = kwargs.pop('yscale',1.2)
-        numcol = kwargs.pop('numcol',1)
-        legendpos = kwargs.pop('legendpos',34)
         logy = kwargs.pop('logy',False)
         logx = kwargs.pop('logx',False)
+        ymin = kwargs.pop('ymin',None)
+        ymax = kwargs.pop('ymax',None)
+        yscale = kwargs.pop('yscale',5 if logy else 1.2)
+        numcol = kwargs.pop('numcol',1)
+        legendpos = kwargs.pop('legendpos',34)
         customOrder = kwargs.pop('customOrder',[])
         subtractMap = kwargs.pop('subtractMap',{})
         getHists = kwargs.pop('getHists', False)

@@ -108,3 +108,27 @@ for plot in plots:
         savename = '{0}/{1}'.format(chan,plot)
         dyPlotter.plot(plotname,savename,**plots[plot])
 
+# pileup plots
+
+pileup = {
+    'numVertices_65000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_66000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_67000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_68000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_69000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_70000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_71000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_72000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_73000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_74000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_noreweight': {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+}
+
+for plot in pileup:
+    plotname = 'default/{0}'.format(plot)
+    savename = 'pileup/{0}'.format(plot)
+    dyPlotter.plot(plotname,savename,**pileup[plot])
+    for chan in chans:
+        plotname = 'default/{0}/{1}'.format(chan,plot)
+        savename = '{0}/pileup/{1}'.format(chan,plot)
+        dyPlotter.plot(plotname,savename,**pileup[plot])

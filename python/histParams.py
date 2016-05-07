@@ -28,6 +28,16 @@ histParams = {
         'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
         'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
         'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
+        'numVertices_65000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_65000/pileupWeight'},
+        'numVertices_66000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_66000/pileupWeight'},
+        'numVertices_67000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_67000/pileupWeight'},
+        'numVertices_68000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_68000/pileupWeight'},
+        'numVertices_69000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_69000/pileupWeight'},
+        'numVertices_70000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_70000/pileupWeight'},
+        'numVertices_71000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_71000/pileupWeight'},
+        'numVertices_72000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_72000/pileupWeight'},
+        'numVertices_73000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_73000/pileupWeight'},
+        'numVertices_74000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_74000/pileupWeight'},
         'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
         'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
         'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [5000, 0, 500],          },
@@ -684,11 +694,12 @@ for region in hpp4lFakeRegions:
 
 # the default selections
 selectionParams['Hpp4l'] = {
-    'default'   : {'args': [hpp4lBaseCut],                                           'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
-    'lowmass'   : {'args': [hpp4lLowMassControl],                                    'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
-    'st100'     : {'args': [hpp4lBaseCut+' && hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>100'], 'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
-    'st200'     : {'args': [hpp4lBaseCut+' && hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>200'], 'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
-    'st300'     : {'args': [hpp4lBaseCut+' && hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>300'], 'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
+    'default'   : {'args': [hpp4lBaseCut],                                                         'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
+    'lowmass'   : {'args': [hpp4lLowMassControl],                                                  'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
+    #'st100'     : {'args': [hpp4lBaseCut+' && hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>100'],               'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
+    #'st200'     : {'args': [hpp4lBaseCut+' && hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>200'],               'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
+    #'st300'     : {'args': [hpp4lBaseCut+' && hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>300'],               'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
+    'zveto'     : {'args': [hpp4lBaseCut+' && (z_mass>0 ? fabs(z_mass-{0})>5 : 1)'.format(ZMASS)], 'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
 }
 
 ## setup old working points

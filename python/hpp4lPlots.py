@@ -12,6 +12,7 @@ import ROOT
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 blind = True
+doCat = False
 
 hpp4lPlotter = Plotter('Hpp4l')
 
@@ -164,13 +165,13 @@ hpp4lPlotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos
 
 plots = {
     # hpp
-    'hppMass'               : {'xaxis': 'm_{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 20 GeV', 'numcol': 2, 'lumipos': 33, 'rebin': 20, 'logy': True},
+    'hppMass'               : {'xaxis': 'm_{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 50, 'logy': True},
     'hppPt'                 : {'xaxis': 'p_{T}^{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
     'hppDeltaR'             : {'xaxis': '#DeltaR(l^{+}l^{+})', 'yaxis': 'Events', 'rebin': 25},
     'hppLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{++}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
     'hppSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{++}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
     # hmm
-    'hmmMass'               : {'xaxis': 'm_{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 20 GeV', 'numcol': 2, 'lumipos': 33, 'rebin': 20, 'logy': True},
+    'hmmMass'               : {'xaxis': 'm_{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 50, 'logy': True},
     'hmmPt'                 : {'xaxis': 'p_{T}^{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
     'hmmDeltaR'             : {'xaxis': '#DeltaR(l^{-}l^{-})', 'yaxis': 'Events', 'rebin': 25},
     'hmmLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{--}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
@@ -194,7 +195,7 @@ for plot in plots:
         for subcat in subCatChannels[cat]:
             plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
         savename = '{0}/{1}'.format(cat,plot)
-        hpp4lPlotter.plot(plotnames,savename,**plots[plot])
+        if doCat: hpp4lPlotter.plot(plotnames,savename,**plots[plot])
 
 #rocplots = {
 #    'st' : {'legendpos':34,'numcol':3,'invert':False},
@@ -228,7 +229,72 @@ if blind:
             for subcat in subCatChannels[cat]:
                 plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
             savename = '{0}/{1}_blinder'.format(cat,plot)
-            hpp4lPlotter.plot(plotnames,savename,blinder=blinders[plot],**plots[plot])
+            if doCat: hpp4lPlotter.plot(plotnames,savename,blinder=blinders[plot],**plots[plot])
+
+## multiple st cuts on same plot:
+#hpp4lPlotter.clearHistograms()
+#
+#allSamplesDict = {'BG':[]}
+#
+#for s in samples:
+#    allSamplesDict['BG'] += sigMap[s]
+#
+#hpp4lPlotter.addHistogram('st100',allSamplesDict['BG'],style={'linecolor':ROOT.kRed,'name':'BG (s_{T}>100 GeV)'})
+#hpp4lPlotter.addHistogram('st200',allSamplesDict['BG'],style={'linecolor':ROOT.kBlue,'name':'BG (s_{T}>200 GeV)'})
+#hpp4lPlotter.addHistogram('st300',allSamplesDict['BG'],style={'linecolor':ROOT.kGreen,'name':'BG (s_{T}>300 GeV)'})
+#
+#for plot in plots:
+#    plotvars = {}
+#    for st in [100,200,300]:
+#        plotvars['st{0}'.format(st)] = 'st{0}/{1}'.format(st,plot)
+#    savename = 'stCuts/{0}'.format(plot)
+#    #hpp4lPlotter.plotNormalized(plotvars,savename,**plots[plot])
+#    hpp4lPlotter.plot(plotvars,savename,**plots[plot])
+#    for cat in cats:
+#        plotvars = {}
+#        for st in [100,200,300]:
+#            plotvars['st{0}'.format(st)] = []
+#            for subcat in subCatChannels[cat]:
+#                plotvars['st{0}'.format(st)] += ['st{0}/{1}/{2}'.format(st,chan,plot) for chan in subCatChannels[cat][subcat]]
+#        savename = 'stCuts/{0}/{1}'.format(cat,plot)
+#        #if doCat: hpp4lPlotter.plotNormalized(plotnames,savename,**plots[plot])
+#        if doCat: hpp4lPlotter.plot(plotnames,savename,**plots[plot])
+
+## multiple zmass cuts on same plot:
+#hpp4lPlotter.clearHistograms()
+#
+#allSamplesDict = {'BG':[]}
+#
+#for s in samples:
+#    allSamplesDict['BG'] += sigMap[s]
+#
+#hpp4lPlotter.addHistogram('default',allSamplesDict['BG'],style={'linecolor':ROOT.kRed,'name':'Preselection'})
+#hpp4lPlotter.addHistogram('zveto',allSamplesDict['BG'],style={'linecolor':ROOT.kBlue,'name':'Z veto'})
+#
+#norm_cust = {
+#    # hpp
+#    'hppMass'               : {'yaxis': 'Unit normalized', 'logy':1, 'rebin': 100},
+#    # hmm
+#    'hmmMass'               : {'yaxis': 'Unit normalized', 'logy':1, 'rebin': 100},
+#}
+#for plot in norm_cust:
+#    kwargs = deepcopy(plots[plot])
+#    kwargs.update(norm_cust[plot])
+#    plotvars = {}
+#    for mode in ['default','zveto']:
+#        plotvars[mode] = '{0}/{1}'.format(mode,plot)
+#    savename = 'zVeto/{0}'.format(plot)
+#    hpp4lPlotter.plotNormalized(plotvars,savename,**kwargs)
+#    #hpp4lPlotter.plot(plotvars,savename,**kwargs)
+#    for cat in cats:
+#        plotvars = {}
+#        for mode in ['default','zveto']:
+#            plotvars[mode] = []
+#            for subcat in subCatChannels[cat]:
+#                plotvars[mode] += ['{0}/{1}/{2}'.format(mode,chan,plot) for chan in subCatChannels[cat][subcat]]
+#        savename = 'zVeto/{0}/{1}'.format(cat,plot)
+#        if doCat: hpp4lPlotter.plotNormalized(plotnames,savename,**kwargs)
+#        #if doCat: hpp4lPlotter.plot(plotnames,savename,**kwargs)
 
 
 # low mass control
@@ -296,7 +362,7 @@ for plot in plots:
         for subcat in subCatChannels[cat]:
             plotnames += ['lowmass/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
         savename = 'lowmass/{0}/{1}'.format(cat,plot)
-        hpp4lPlotter.plot(plotnames,savename,**kwargs)
+        if doCat: hpp4lPlotter.plot(plotnames,savename,**kwargs)
 
 
 # normalized plots
@@ -345,7 +411,7 @@ for plot in plots:
         for subcat in subCatChannels[cat]:
             plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
         savename = 'normalized/{0}/{1}'.format(cat,plot)
-        hpp4lPlotter.plotNormalized(plotnames,savename,**kwargs)
+        if doCat: hpp4lPlotter.plotNormalized(plotnames,savename,**kwargs)
 
 # all signal on one plot
 hpp4lPlotter.clearHistograms()
@@ -412,7 +478,7 @@ for plot in norm_cust:
         savename = 'signal/{0}/{1}'.format(cat,plot)
         catkwargs = deepcopy(kwargs)
         if cat in catRebin and 'rebin' in catkwargs and plot in ['hppMass','hmmMass']: catkwargs['rebin'] = catkwargs['rebin'] * catRebin[cat]
-        hpp4lPlotter.plotNormalized(plotnames,savename,**catkwargs)
+        if doCat: hpp4lPlotter.plotNormalized(plotnames,savename,**catkwargs)
     if 'hpp' in plot: # plot just the channels of the type
         for higgsChan in ['ee','em','et','mm','mt','tt']:
             # reco
@@ -431,4 +497,4 @@ for plot in norm_cust:
                     #    plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot.replace('hpp','hmm'))] 
             if plotnames:
                 savename = 'signal/{0}/{1}_genMatched'.format(higgsChan,plot)
-                hpp4lPlotter.plotNormalized(plotnames,savename,**genkwargs)
+                #hpp4lPlotter.plotNormalized(plotnames,savename,**genkwargs)
