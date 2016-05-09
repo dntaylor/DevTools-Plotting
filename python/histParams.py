@@ -28,16 +28,22 @@ histParams = {
         'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
         'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
         'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
-        'numVertices_65000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_65000/pileupWeight'},
-        'numVertices_66000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_66000/pileupWeight'},
-        'numVertices_67000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_67000/pileupWeight'},
-        'numVertices_68000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_68000/pileupWeight'},
-        'numVertices_69000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_69000/pileupWeight'},
-        'numVertices_70000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_70000/pileupWeight'},
-        'numVertices_71000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_71000/pileupWeight'},
-        'numVertices_72000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_72000/pileupWeight'},
-        'numVertices_73000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_73000/pileupWeight'},
-        'numVertices_74000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_74000/pileupWeight'},
+        #'numVertices_65000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_65000/pileupWeight'},
+        #'numVertices_66000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_66000/pileupWeight'},
+        #'numVertices_67000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_67000/pileupWeight'},
+        #'numVertices_68000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_68000/pileupWeight'},
+        #'numVertices_69000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_69000/pileupWeight'},
+        #'numVertices_70000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_70000/pileupWeight'},
+        #'numVertices_71000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_71000/pileupWeight'},
+        #'numVertices_72000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_72000/pileupWeight'},
+        #'numVertices_73000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_73000/pileupWeight'},
+        #'numVertices_74000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_74000/pileupWeight'},
+        #'numVertices_75000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_75000/pileupWeight'},
+        #'numVertices_76000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_76000/pileupWeight'},
+        #'numVertices_77000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_77000/pileupWeight'},
+        #'numVertices_78000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_78000/pileupWeight'},
+        #'numVertices_79000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_79000/pileupWeight'},
+        #'numVertices_80000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_80000/pileupWeight'},
         'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
         'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
         'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [5000, 0, 500],          },
@@ -136,51 +142,51 @@ histParams = {
     },
     # overrides for Hpp4l
     'Hpp4l' : {
-        'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
-        'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
+        'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                }, # just a count of events passing selection
+        'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],              },
         'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
-        'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
-        'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
+        'met'                         : {'xVariable': 'met_pt',                         'xBinning': [50, 0, 500],           },
+        'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [50, -3.14159, 3.14159],},
         # h++
-        'hppMass'                     : {'xVariable': 'hpp_mass',                       'xBinning': [1200, 0, 1200],         },
-        'hppPt'                       : {'xVariable': 'hpp_pt',                         'xBinning': [1200, 0, 1200],         },
-        'hppEta'                      : {'xVariable': 'hpp_eta',                        'xBinning': [1000, -5, 5],           },
-        'hppDeltaR'                   : {'xVariable': 'hpp_deltaR',                     'xBinning': [500, 0, 5],             },
-        'hppLeadingLeptonPt'          : {'xVariable': 'hpp1_pt',                        'xBinning': [1000, 0, 1000],         },
-        'hppLeadingLeptonEta'         : {'xVariable': 'hpp1_eta',                       'xBinning': [500, -2.5, 2.5],        },
-        'hppSubLeadingLeptonPt'       : {'xVariable': 'hpp2_pt',                        'xBinning': [1000, 0, 1000],         },
-        'hppSubLeadingLeptonEta'      : {'xVariable': 'hpp2_eta',                       'xBinning': [500, -2.5, 2.5],        },
+        'hppMass'                     : {'xVariable': 'hpp_mass',                       'xBinning': [120, 0, 1200],         },
+        'hppPt'                       : {'xVariable': 'hpp_pt',                         'xBinning': [120, 0, 1200],         },
+        'hppEta'                      : {'xVariable': 'hpp_eta',                        'xBinning': [100, -5, 5],           },
+        'hppDeltaR'                   : {'xVariable': 'hpp_deltaR',                     'xBinning': [50, 0, 5],             },
+        'hppLeadingLeptonPt'          : {'xVariable': 'hpp1_pt',                        'xBinning': [100, 0, 1000],         },
+        'hppLeadingLeptonEta'         : {'xVariable': 'hpp1_eta',                       'xBinning': [50, -2.5, 2.5],        },
+        'hppSubLeadingLeptonPt'       : {'xVariable': 'hpp2_pt',                        'xBinning': [100, 0, 1000],         },
+        'hppSubLeadingLeptonEta'      : {'xVariable': 'hpp2_eta',                       'xBinning': [50, -2.5, 2.5],        },
         # h--
-        'hmmMass'                     : {'xVariable': 'hmm_mass',                       'xBinning': [1200, 0, 1200],         },
-        'hmmPt'                       : {'xVariable': 'hmm_pt',                         'xBinning': [1200, 0, 1200],         },
-        'hmmEta'                      : {'xVariable': 'hmm_eta',                        'xBinning': [1000, -5, 5],           },
-        'hmmDeltaR'                   : {'xVariable': 'hmm_deltaR',                     'xBinning': [500, 0, 5],             },
-        'hmmLeadingLeptonPt'          : {'xVariable': 'hmm1_pt',                        'xBinning': [1000, 0, 1000],         },
-        'hmmLeadingLeptonEta'         : {'xVariable': 'hmm1_eta',                       'xBinning': [500, -2.5, 2.5],        },
-        'hmmSubLeadingLeptonPt'       : {'xVariable': 'hmm2_pt',                        'xBinning': [1000, 0, 1000],         },
-        'hmmSubLeadingLeptonEta'      : {'xVariable': 'hmm2_eta',                       'xBinning': [500, -2.5, 2.5],        },
+        'hmmMass'                     : {'xVariable': 'hmm_mass',                       'xBinning': [120, 0, 1200],         },
+        'hmmPt'                       : {'xVariable': 'hmm_pt',                         'xBinning': [120, 0, 1200],         },
+        'hmmEta'                      : {'xVariable': 'hmm_eta',                        'xBinning': [100, -5, 5],           },
+        'hmmDeltaR'                   : {'xVariable': 'hmm_deltaR',                     'xBinning': [50, 0, 5],             },
+        'hmmLeadingLeptonPt'          : {'xVariable': 'hmm1_pt',                        'xBinning': [100, 0, 1000],         },
+        'hmmLeadingLeptonEta'         : {'xVariable': 'hmm1_eta',                       'xBinning': [50, -2.5, 2.5],        },
+        'hmmSubLeadingLeptonPt'       : {'xVariable': 'hmm2_pt',                        'xBinning': [100, 0, 1000],         },
+        'hmmSubLeadingLeptonEta'      : {'xVariable': 'hmm2_eta',                       'xBinning': [50, -2.5, 2.5],        },
         # best z
-        'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [500, 0, 500],            'selection': 'z_mass>0.',},
-        'mllMinusMZ'                  : {'xVariable': 'fabs(z_mass-{0})'.format(ZMASS), 'xBinning': [200, 0, 200],            'selection': 'z_mass>0.',},
-        'zPt'                         : {'xVariable': 'z_pt',                           'xBinning': [500, 0, 500],            'selection': 'z_mass>0.',},
-        'zEta'                        : {'xVariable': 'z_eta',                          'xBinning': [1000, -5, 5],            'selection': 'z_mass>0.',},
-        'zDeltaR'                     : {'xVariable': 'z_deltaR',                       'xBinning': [500, 0, 5],              'selection': 'z_mass>0.',},
-        'zLeadingLeptonPt'            : {'xVariable': 'z1_pt',                          'xBinning': [1000, 0, 1000],          'selection': 'z_mass>0.',},
-        'zLeadingLeptonEta'           : {'xVariable': 'z1_eta',                         'xBinning': [500, -2.5, 2.5],         'selection': 'z_mass>0.',},
-        'zSubLeadingLeptonPt'         : {'xVariable': 'z2_pt',                          'xBinning': [1000, 0, 1000],          'selection': 'z_mass>0.',},
-        'zSubLeadingLeptonEta'        : {'xVariable': 'z2_eta',                         'xBinning': [500, -2.5, 2.5],         'selection': 'z_mass>0.',},
+        'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [50, 0, 500],            'selection': 'z_mass>0.',},
+        'mllMinusMZ'                  : {'xVariable': 'fabs(z_mass-{0})'.format(ZMASS), 'xBinning': [20, 0, 200],            'selection': 'z_mass>0.',},
+        'zPt'                         : {'xVariable': 'z_pt',                           'xBinning': [50, 0, 500],            'selection': 'z_mass>0.',},
+        'zEta'                        : {'xVariable': 'z_eta',                          'xBinning': [100, -5, 5],            'selection': 'z_mass>0.',},
+        'zDeltaR'                     : {'xVariable': 'z_deltaR',                       'xBinning': [50, 0, 5],              'selection': 'z_mass>0.',},
+        'zLeadingLeptonPt'            : {'xVariable': 'z1_pt',                          'xBinning': [100, 0, 1000],          'selection': 'z_mass>0.',},
+        'zLeadingLeptonEta'           : {'xVariable': 'z1_eta',                         'xBinning': [50, -2.5, 2.5],         'selection': 'z_mass>0.',},
+        'zSubLeadingLeptonPt'         : {'xVariable': 'z2_pt',                          'xBinning': [100, 0, 1000],          'selection': 'z_mass>0.',},
+        'zSubLeadingLeptonEta'        : {'xVariable': 'z2_eta',                         'xBinning': [50, -2.5, 2.5],         'selection': 'z_mass>0.',},
         # event
-        'mass'                        : {'xVariable': '4l_mass',                        'xBinning': [2000, 0, 2000],         },
-        'st'                          : {'xVariable': 'hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt','xBinning': [2000, 0, 2000],         },
+        'mass'                        : {'xVariable': '4l_mass',                        'xBinning': [200, 0, 2000],         },
+        'st'                          : {'xVariable': 'hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt','xBinning': [200, 0, 2000],         },
         # gen truth
-        'hppLeadingLeptonGenMatch'    : {'xVariable': 'hpp1_genMatch',                  'xBinning': [2, 0, 2],               },
-        'hppLeadingLeptonGenDeltaR'   : {'xVariable': 'hpp1_genDeltaR',                 'xBinning': [1000, 0, 5],            },
-        'hppSubLeadingLeptonGenMatch' : {'xVariable': 'hpp2_genMatch',                  'xBinning': [2, 0, 2],               },
-        'hpmSubLeadingLeptonGenDeltaR': {'xVariable': 'hpp2_genDeltaR',                 'xBinning': [1000, 0, 5],            },
-        'hmmLeadingLeptonGenMatch'    : {'xVariable': 'hmm1_genMatch',                  'xBinning': [2, 0, 2],               },
-        'hmmLeadingLeptonGenDeltaR'   : {'xVariable': 'hmm1_genDeltaR',                 'xBinning': [1000, 0, 5],            },
-        'hmmSubLeadingLeptonGenMatch' : {'xVariable': 'hmm2_genMatch',                  'xBinning': [2, 0, 2],               },
-        'hmmSubLeadingLeptonGenDeltaR': {'xVariable': 'hmm2_genDeltaR',                 'xBinning': [1000, 0, 5],            },
+        'hppLeadingLeptonGenMatch'    : {'xVariable': 'hpp1_genMatch',                  'xBinning': [2, 0, 2],              },
+        'hppLeadingLeptonGenDeltaR'   : {'xVariable': 'hpp1_genDeltaR',                 'xBinning': [50, 0, 5],             },
+        'hppSubLeadingLeptonGenMatch' : {'xVariable': 'hpp2_genMatch',                  'xBinning': [2, 0, 2],              },
+        'hpmSubLeadingLeptonGenDeltaR': {'xVariable': 'hpp2_genDeltaR',                 'xBinning': [50, 0, 5],             },
+        'hmmLeadingLeptonGenMatch'    : {'xVariable': 'hmm1_genMatch',                  'xBinning': [2, 0, 2],              },
+        'hmmLeadingLeptonGenDeltaR'   : {'xVariable': 'hmm1_genDeltaR',                 'xBinning': [50, 0, 5],             },
+        'hmmSubLeadingLeptonGenMatch' : {'xVariable': 'hmm2_genMatch',                  'xBinning': [2, 0, 2],              },
+        'hmmSubLeadingLeptonGenDeltaR': {'xVariable': 'hmm2_genDeltaR',                 'xBinning': [50, 0, 5],             },
     },
     # overrides for Hpp3l
     'Hpp3l' : {
@@ -668,7 +674,7 @@ for chan in channels:
 histParams['Hpp4l'].update(addChannels(deepcopy(histParams['Hpp4l']),'channel',len(allChans)))
 
 # setup base selections
-hpp4lBaseCut = 'hpp1_passMedium==1 && hpp2_passMedium==1 && hmm1_passMedium==1 && hmm2_passMedium==1'
+hpp4lBaseCut = '1'
 hpp4lLowMassControl = '{0} && (hpp_mass<100 || hmm_mass<100)'.format(hpp4lBaseCut)
 hpp4lScaleFactor = 'hpp1_mediumScale*hpp2_mediumScale*hmm1_mediumScale*hmm2_mediumScale*genWeight*pileupWeight*triggerEfficiency'
 
@@ -687,19 +693,28 @@ hpp4lScaleFactorMap = {}
 hpp4lFakeScaleFactorMap = {}
 hpp4lCutMap = {}
 hpp4lFakeRegions = [''.join(x) for x in product('PF',repeat=4)]
+fakeModes = {
+    0 : [],
+    1 : [],
+    2 : [],
+    3 : [],
+    4 : [],
+}
 for region in hpp4lFakeRegions:
+    fakeModes[region.count('F')] += [region]
     hpp4lScaleFactorMap[region] = '*'.join([scaleMap[region[x]].format(leps[x]) for x in range(4)])
     hpp4lFakeScaleFactorMap[region] = '*'.join(['{0}/(1-{0})'.format('{0}_mediumFakeRate'.format(leps[x])) for f in range(4) if region[f]=='F'] + ['-1' if region.count('F')%2==0 and region.count('F')>0 else '1'])
     hpp4lCutMap[region] = ' && '.join(['{0}=={1}'.format('{0}_passMedium'.format(leps[x]),1 if region[x]=='P' else 0) for x in range(4)])
 
+
 # the default selections
 selectionParams['Hpp4l'] = {
-    'default'   : {'args': [hpp4lBaseCut],                                                         'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
-    'lowmass'   : {'args': [hpp4lLowMassControl],                                                  'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
+    'default'   : {'args': [hpp4lBaseCut + ' && ' + hpp4lCutMap['PPPP']],                          'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
+    'lowmass'   : {'args': [hpp4lLowMassControl + ' && ' + hpp4lCutMap['PPPP']],                   'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
     #'st100'     : {'args': [hpp4lBaseCut+' && hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>100'],               'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
     #'st200'     : {'args': [hpp4lBaseCut+' && hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>200'],               'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
     #'st300'     : {'args': [hpp4lBaseCut+' && hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>300'],               'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
-    'zveto'     : {'args': [hpp4lBaseCut+' && (z_mass>0 ? fabs(z_mass-{0})>5 : 1)'.format(ZMASS)], 'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
+    #'zveto'     : {'args': [hpp4lBaseCut+' && (z_mass>0 ? fabs(z_mass-{0})>5 : 1)'.format(ZMASS)], 'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
 }
 
 ## setup old working points
@@ -707,6 +722,48 @@ selectionParams['Hpp4l'] = {
 #for mass in masses:
 #    hpp4lOldSelections[mass] = '{base} && (hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt)>0.6*{mass}+130. && hpp_mass>0.9*{mass} && hpp_mass<1.1*{mass} && hmm_mass>0.9*{mass} && hmm_mass<1.1*{mass}'.format(base=hpp4lBaseCut,mass=mass)
 #    selectionParams['Hpp4l']['old/{0}'.format(mass)] = {'args': [hpp4lOldSelections[mass]], 'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
+
+## fake regions, gen match leptons in MC
+#for region in hpp4lFakeRegions:
+#    selectionParams['Hpp4l'][region] = {
+#        'args': [hpp4lBaseCut + ' && ' + hpp4lCutMap[region]], 
+#        'kwargs': {
+#            'mccut': hpp4lMCCut, 
+#            'mcscalefactor': '*'.join([hpp4lScaleFactorMap[region],hpp4lFakeScaleFactorMap[region],hpp4lBaseScaleFactor,'1' if region=='PPPP' else '-1']),
+#            'datascalefactor': hpp4lFakeScaleFactorMap[region], 
+#        }
+#    }
+#    selectionParams['Hpp4l']['{0}/lowmass'.format(region)] = {
+#        'args': [hpp4lLowMassControl + ' && ' + hpp4lCutMap[region]], 
+#        'kwargs': {
+#            'mccut': hpp4lMCCut, 
+#            'mcscalefactor': '*'.join([hpp4lScaleFactorMap[region],hpp4lFakeScaleFactorMap[region],hpp4lBaseScaleFactor,'1' if region=='PPPP' else '-1']),
+#            'datascalefactor': hpp4lFakeScaleFactorMap[region], 
+#        }
+#    }
+
+# fake regions via modes
+for nf in range(5):
+    name = '{0}P{1}F'.format(4-nf,nf)
+    regionCut = '(' + ' || '.join([hpp4lCutMap[reg] for reg in fakeModes[nf]]) + ')'
+    regionMCScaleFactor = '*'.join(['({0} ? {1}*{2}*{3}*{4} : 1)'.format(hpp4lCutMap[reg],hpp4lScaleFactorMap[reg],hpp4lFakeScaleFactorMap[reg],hpp4lBaseScaleFactor,'1' if reg=='PPPP' else '-1') for reg in fakeModes[nf]])
+    regionDataScaleFactor = '*'.join(['({0} ? {1} : 1)'.format(hpp4lCutMap[reg],hpp4lFakeScaleFactorMap[reg]) for reg in fakeModes[nf]])
+    selectionParams['Hpp4l'][name] = {
+        'args': [hpp4lBaseCut + ' && ' + regionCut],
+        'kwargs': {
+            'mccut': hpp4lMCCut,
+            'mcscalefactor': regionMCScaleFactor,
+            'datascalefactor': regionDataScaleFactor,
+        }
+    }
+    selectionParams['Hpp4l']['{0}/lowmass'.format(name)] = {
+        'args': [hpp4lLowMassControl + ' && ' + regionCut],
+        'kwargs': {
+            'mccut': hpp4lMCCut,
+            'mcscalefactor': regionMCScaleFactor,
+            'datascalefactor': regionDataScaleFactor,
+        }
+    }
 
 # setup gen channel selections
 genChans = getGenChannels('Hpp4l')

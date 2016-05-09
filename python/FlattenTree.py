@@ -70,5 +70,7 @@ class FlattenTree(object):
             for args in pbar(allJobs):
                 self.ntuple.flatten(*args)
         else:
-            for args in allJobs:
+            n = len(allJobs)
+            for i,args in enumerate(allJobs):
+                logging.info('Processing plot {0} of {1}.'.format(i,n))
                 self.ntuple.flatten(*args)

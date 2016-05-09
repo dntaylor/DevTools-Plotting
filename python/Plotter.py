@@ -83,7 +83,7 @@ class Plotter(PlotterBase):
         self.styles[histName] = getStyle(histName)
         self.styles[histName].update(style)
 
-    def addHistogram(self,histName,histConstituents,style={},signal=False,scale=1,**kwargs):
+    def addHistogram(self,histName,histConstituents,style={},signal=False,scale=1,noplot=False,**kwargs):
         '''
         Add histogram to plot. histConstituents is a list.
         Style is a custom styling.
@@ -93,7 +93,7 @@ class Plotter(PlotterBase):
             self._openFile(sampleName,analysis=analysis,**kwargs)
         self.analysisDict[histName] = analysis
         self.histDict[histName] = histConstituents
-        self.histOrder += [histName]
+        if not noplot: self.histOrder += [histName]
         self.styles[histName] = getStyle(histName)
         self.styles[histName].update(style)
         if signal: self.signals += [histName]

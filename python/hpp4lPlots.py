@@ -12,7 +12,7 @@ import ROOT
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 blind = True
-doCat = False
+doCat = True
 
 hpp4lPlotter = Plotter('Hpp4l')
 
@@ -41,6 +41,14 @@ sigMap = {
              'GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8',
              'GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8',
              'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8',
+            ],
+    'ZZall' : [
+             'ZZTo4L_13TeV_powheg_pythia8',
+             'GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8',
+             'GluGluToContinToZZTo2mu2tau_13TeV_MCFM701_pythia8',
+             'GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8',
+             'GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8',
+             'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8',
              'ZZTo2L2Nu_13TeV_powheg_pythia8',
              'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
             ],
@@ -49,6 +57,12 @@ sigMap = {
              'WWG_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
             ],
     'VH'  : [
+             'ZH_HToBB_ZToLL_M125_13TeV_amcatnloFXFX_madspin_pythia8',
+             'ZH_HToGG_ZToAll_M125_13TeV_powheg_pythia8',
+             'ZH_HToZG_ZToAll_M-125_13TeV_powheg_pythia8',
+             'ZH_HToZZ_4LFilter_M125_13TeV_powheg2-minlo-HZJ_JHUgenV6_pythia8',
+            ],
+    'VHall' : [
              'WH_HToBB_WToLNu_M125_13TeV_amcatnloFXFX_madspin_pythia8',
              'ZH_HToBB_ZToLL_M125_13TeV_amcatnloFXFX_madspin_pythia8',
              'ZH_HToBB_ZToNuNu_M125_13TeV_amcatnloFXFX_madspin_pythia8',
@@ -58,6 +72,10 @@ sigMap = {
              'ZH_HToZZ_4LFilter_M125_13TeV_powheg2-minlo-HZJ_JHUgenV6_pythia8',
             ],
     'TTV' : [
+             'ttZJets_13TeV_madgraphMLM',
+             'ttH_M125_13TeV_powheg_pythia8',
+            ],
+    'TTVall' : [
              'ttWJets_13TeV_madgraphMLM',
              'ttZJets_13TeV_madgraphMLM',
              'ttH_M125_13TeV_powheg_pythia8',
@@ -113,6 +131,7 @@ sigMap = {
              'MuonEG',
              'SingleMuon',
              'SingleElectron',
+             'Tau',
             ],
     'HppHmm200GeV' : ['HPlusPlusHMinusMinusHTo4L_M-200_13TeV-pythia8'],
     'HppHmm300GeV' : ['HPlusPlusHMinusMinusHTo4L_M-300_13TeV-pythia8'],
@@ -125,96 +144,164 @@ sigMap = {
     'HppHmm1000GeV': ['HPlusPlusHMinusMinusHTo4L_M-1000_13TeV-pythia8'],
 }
 
-samples = ['W','T','TT','TTV','Z','WW','VH','WZ','VVV','ZZ']
 
-for s in samples:
-    hpp4lPlotter.addHistogramToStack(s,sigMap[s])
+samples = ['TTV','VH','VVV','ZZ']
+allsamples = ['W','T','TT','TTVall','Z','WW','VHall','WZ','VVV','ZZall']
 
-hpp4lPlotter.addHistogram('HppHmm500GeV',sigMap['HppHmm500GeV'],signal=True)#,scale=10)
+datadrivenSamples = []
+for s in samples + ['data']:
+    datadrivenSamples += sigMap[s]
 
-if not blind:
-    hpp4lPlotter.addHistogram('data',sigMap['data'])
+def getDataDrivenPlot(*plots):
+    histMap = {}
+    regions = ['3P1F','2P2F','1P3F','0P4F']
+    for s in samples + ['data','datadriven']: histMap[s] = []
+    for plot in plots:
+        plotdirs = plot.split('/')
+        for s in samples + ['data']: histMap[s] += ['/'.join(['4P0F']+plotdirs)]
+        histMap['datadriven'] += ['/'.join([reg]+plotdirs) for reg in regions]
+    if blind: histMap.pop('data')
+    return histMap
 
-# per channel counts
-countVars = ['default/count'] + ['default/{0}/count'.format(chan) for chan in chans]
-countLabels = ['Total'] + chanLabels
-savename = 'individualChannels'
-hpp4lPlotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=10)
+def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False):
+    # per channel counts
+    countVars = ['/'.join([x for x in [baseDir,'count'] if x])] + ['/'.join([x for x in [baseDir,chan,'count'] if x]) for chan in chans]
+    if datadriven:
+        for i in range(len(countVars)):
+            countVars[i] = getDataDrivenPlot(countVars[i])
+    countLabels = ['Total'] + chanLabels
+    savename = '/'.join([x for x in [saveDir,'individualChannels'] if x])
+    plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=10)
+    
+    # per category counts
+    countVars = [['/'.join([x for x in [baseDir,'count'] if x])]]
+    for cat in cats:
+        tempCountVars = []
+        for subcat in subCatChannels[cat]:
+            tempCountVars += ['/'.join([x for x in [baseDir,chan,'count'] if x]) for chan in subCatChannels[cat][subcat]]
+        countVars += [tempCountVars]
+    if datadriven:
+        for i in range(len(countVars)):
+            countVars[i] = getDataDrivenPlot(*countVars[i])
+    countLabels = ['Total'] + catLabels
+    savename = '/'.join([x for x in [saveDir,'individualCategories'] if x])
+    plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=10)
+    
+    # per subcategory counts
+    countVars = [['/'.join([x for x in [baseDir,'count'] if x])]]
+    for cat in cats:
+        for subCat in sorted(subCatChannels[cat]):
+            countVars += [['/'.join([x for x in [baseDir,chan,'count'] if x]) for chan in subCatChannels[cat][subCat]]]
+    if datadriven:
+        for i in range(len(countVars)):
+            countVars[i] = getDataDrivenPlot(*countVars[i])
+    countLabels = ['Total'] + subCatLabels
+    savename = '/'.join([x for x in [saveDir,'individualSubCategories'] if x])
+    plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=10,ymin=0.001)
 
-# per category counts
-countVars = ['default/count']
-for cat in cats:
-    tempCountVars = []
-    for subcat in subCatChannels[cat]:
-        tempCountVars += ['default/{0}/count'.format(chan) for chan in subCatChannels[cat][subcat]]
-    countVars += [tempCountVars]
-countLabels = ['Total'] + catLabels
-savename = 'individualCategories'
-hpp4lPlotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=10)
-
-# per subcategory counts
-countVars = ['default/count']
-for cat in cats:
-    for subCat in sorted(subCatChannels[cat]):
-        countVars += [['default/{0}/count'.format(chan) for chan in subCatChannels[cat][subCat]]]
-countLabels = ['Total'] + subCatLabels
-savename = 'individualSubCategories'
-hpp4lPlotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=10,ymin=0.001)
-
-
-
-plots = {
-    # hpp
-    'hppMass'               : {'xaxis': 'm_{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 50, 'logy': True},
-    'hppPt'                 : {'xaxis': 'p_{T}^{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
-    'hppDeltaR'             : {'xaxis': '#DeltaR(l^{+}l^{+})', 'yaxis': 'Events', 'rebin': 25},
-    'hppLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{++}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
-    'hppSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{++}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
-    # hmm
-    'hmmMass'               : {'xaxis': 'm_{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 50, 'logy': True},
-    'hmmPt'                 : {'xaxis': 'p_{T}^{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
-    'hmmDeltaR'             : {'xaxis': '#DeltaR(l^{-}l^{-})', 'yaxis': 'Events', 'rebin': 25},
-    'hmmLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{--}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
-    'hmmSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{--}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
-    # z cand
-    'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': 10},
-    'mllMinusMZ'            : {'xaxis': '|m_{l^{+}l^{-}}-m_{Z}| (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
-    # event
-    'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
-    'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
-    'mass'                  : {'xaxis': 'm_{4l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
-    'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
-}
-
-# signal region
-for plot in plots:
-    plotname = 'default/{0}'.format(plot)
-    hpp4lPlotter.plot(plotname,plot,**plots[plot])
+def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,**kwargs):
+    plotname = '/'.join([x for x in [baseDir,plot] if x])
+    plotvars = getDataDrivenPlot(plotname) if datadriven else plotname
+    savename = '/'.join([x for x in [saveDir,plot] if x])
+    plotter.plot(plotvars,savename,**kwargs)
     for cat in cats:
         plotnames = []
         for subcat in subCatChannels[cat]:
-            plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
-        savename = '{0}/{1}'.format(cat,plot)
-        if doCat: hpp4lPlotter.plot(plotnames,savename,**plots[plot])
-
-#rocplots = {
-#    'st' : {'legendpos':34,'numcol':3,'invert':False},
-#}
-#
-#for plot,kwargs in rocplots.iteritems():
-#    sig = {'HppHmm500GeV':'default/{0}'.format(plot)}
-#    bg = {}
-#    for s in samples:
-#        bg[s] = 'default/{0}'.format(plot)
-#    hpp4lPlotter.plotROC(sig, bg, 'roc_{0}'.format(plot), **kwargs)
+            plotnames += ['/'.join([x for x in [baseDir,chan,plot] if x]) for chan in subCatChannels[cat][subcat]]
+        plotvars = getDataDrivenPlot(*plotnames) if datadriven else plotnames
+        savename = '/'.join([x for x in [saveDir,cat,plot] if x])
+        if doCat: plotter.plot(plotvars,savename,**kwargs)
 
 
-if blind:
-    hpp4lPlotter.addHistogram('data',sigMap['data'])
+########################
+### plot definitions ###
+########################
+plots = {
+    # hpp
+    'hppMass'               : {'xaxis': 'm_{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': True},
+    'hppPt'                 : {'xaxis': 'p_{T}^{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
+    'hppDeltaR'             : {'xaxis': '#DeltaR(l^{+}l^{+})', 'yaxis': 'Events', 'rebin': 2},
+    'hppLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{++}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
+    'hppSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{++}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
+    # hmm
+    'hmmMass'               : {'xaxis': 'm_{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': True},
+    'hmmPt'                 : {'xaxis': 'p_{T}^{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
+    'hmmDeltaR'             : {'xaxis': '#DeltaR(l^{-}l^{-})', 'yaxis': 'Events', 'rebin': 2},
+    'hmmLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{--}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
+    'hmmSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{--}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
+    # z cand
+    'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': 1},
+    'mllMinusMZ'            : {'xaxis': '|m_{l^{+}l^{-}}-m_{Z}| (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': 1},
+    # event
+    'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
+    'mass'                  : {'xaxis': 'm_{4l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
+    'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
+}
 
+lowmass_cust = {
+    # hpp
+    'hppMass'              : {'rangex': [0,300], 'logy': False},
+    'hppPt'                : {'rangex': [0,300]},
+    'hppLeadingLeptonPt'   : {'rangex': [0,300]},
+    'hppSubLeadingLeptonPt': {'rangex': [0,300]},
+    # hmm
+    'hmmMass'              : {'rangex': [0,300], 'logy': False},
+    'hmmPt'                : {'rangex': [0,300]},
+    'hmmLeadingLeptonPt'   : {'rangex': [0,300]},
+    'hmmSubLeadingLeptonPt': {'rangex': [0,300]},
+    # z
+    'zMass'                : {'rangex': [60,120]},
+    'mllMinusMZ'           : {'rangex': [0,60]},
+    # event
+    'met'                  : {'rangex': [0,200]},
+    'mass'                 : {'rangex': [0,600], 'rebin':25, 'xaxis': 'Events / 25 GeV'},
+    'st'                   : {'rangex': [0,400], 'rebin':25, 'xaxis': 'Events / 25 GeV'},
+}
+
+norm_cust = {
+    # hpp
+    'hppMass'               : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
+    'hppPt'                 : {'yaxis': 'Unit normalized', 'rebin': 20, 'numcol': 2},
+    'hppDeltaR'             : {'yaxis': 'Unit normalized', 'rebin': 10},
+    'hppLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 5},
+    'hppSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 5},
+    # hmm
+    'hmmMass'               : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
+    'hmmPt'                 : {'yaxis': 'Unit normalized', 'rebin': 20, 'numcol': 2},
+    'hmmDeltaR'             : {'yaxis': 'Unit normalized', 'rebin': 10},
+    'hmmLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 5},
+    'hmmSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 5},
+    # z
+    'zMass'                 : {'yaxis': 'Unit normalized', 'rebin': 20, 'numcol': 2},
+    'mllMinusMZ'            : {'yaxis': 'Unit normalized', 'rebin': 1},
+    # event
+    'met'                   : {'yaxis': 'Unit normalized', 'rebin': 1},
+    'numVertices'           : {'yaxis': 'Unit normalized'},
+    'mass'                  : {'yaxis': 'Unit normalized', 'rebin': 10},
+    'st'                    : {'yaxis': 'Unit normalized', 'rebin': 10},
+}
+
+
+############################
+### MC based BG estimate ###
+############################
+for s in allsamples:
+    hpp4lPlotter.addHistogramToStack(s.replace('all',''),sigMap[s])
+
+hpp4lPlotter.addHistogram('HppHmm500GeV',sigMap['HppHmm500GeV'],signal=True)#,scale=10)
+
+if not blind: hpp4lPlotter.addHistogram('data',sigMap['data'])
+
+plotCounts(hpp4lPlotter,baseDir='default')
+
+for plot in plots:
+    kwargs = deepcopy(plots[plot])
+    plotWithCategories(hpp4lPlotter,plot,baseDir='default',**kwargs)
 
 # partially blinded plots
 if blind:
+    hpp4lPlotter.addHistogram('data',sigMap['data'])
     blinders = {
         'hppMass': [100,1200],
         'hmmMass': [100,1200],
@@ -236,7 +323,7 @@ if blind:
 #
 #allSamplesDict = {'BG':[]}
 #
-#for s in samples:
+#for s in allsamples:
 #    allSamplesDict['BG'] += sigMap[s]
 #
 #hpp4lPlotter.addHistogram('st100',allSamplesDict['BG'],style={'linecolor':ROOT.kRed,'name':'BG (s_{T}>100 GeV)'})
@@ -265,7 +352,7 @@ if blind:
 #
 #allSamplesDict = {'BG':[]}
 #
-#for s in samples:
+#for s in allsamples:
 #    allSamplesDict['BG'] += sigMap[s]
 #
 #hpp4lPlotter.addHistogram('default',allSamplesDict['BG'],style={'linecolor':ROOT.kRed,'name':'Preselection'})
@@ -296,109 +383,91 @@ if blind:
 #        if doCat: hpp4lPlotter.plotNormalized(plotnames,savename,**kwargs)
 #        #if doCat: hpp4lPlotter.plot(plotnames,savename,**kwargs)
 
-
-# low mass control
+##############################
+### datadriven backgrounds ###
+##############################
 hpp4lPlotter.clearHistograms()
+
+hpp4lPlotter.addHistogramToStack('datadriven',datadrivenSamples)
 
 for s in samples:
     hpp4lPlotter.addHistogramToStack(s,sigMap[s])
-hpp4lPlotter.addHistogram('data',sigMap['data'])
 
-# per channel counts
-countVars = ['lowmass/count'] + ['lowmass/{0}/count'.format(chan) for chan in chans]
-countLabels = ['Total'] + chanLabels
-savename = 'lowmass/individualChannels'
-hpp4lPlotter.plotCounts(countVars,countLabels,savename,numcol=2)
+if not blind: hpp4lPlotter.addHistogram('data',sigMap['data'])
 
-# per category counts
-countVars = ['lowmass/count']
-for cat in cats:
-    tempCountVars = []
-    for subcat in subCatChannels[cat]:
-        tempCountVars += ['lowmass/{0}/count'.format(chan) for chan in subCatChannels[cat][subcat]]
-    countVars += [tempCountVars]
-countLabels = ['Total'] + catLabels
-savename = 'lowmass/individualCategories'
-hpp4lPlotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=10)
-
-# per subcategory counts
-countVars = ['lowmass/count']
-for cat in cats:
-    for subCat in sorted(subCatChannels[cat]):
-        countVars += [['lowmass/{0}/count'.format(chan) for chan in subCatChannels[cat][subCat]]]
-countLabels = ['Total'] + subCatLabels
-savename = 'lowmass/individualSubCategories'
-hpp4lPlotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,ymax=1e4,ymin=0.001)
-
-
-
-lowmass_cust = {
-    # hpp
-    'hppMass'              : {'rangex': [0,300], 'logy': False},
-    'hppPt'                : {'rangex': [0,300]},
-    'hppLeadingLeptonPt'   : {'rangex': [0,300]},
-    'hppSubLeadingLeptonPt': {'rangex': [0,300]},
-    # hmm
-    'hmmMass'              : {'rangex': [0,300], 'logy': False},
-    'hmmPt'                : {'rangex': [0,300]},
-    'hmmLeadingLeptonPt'   : {'rangex': [0,300]},
-    'hmmSubLeadingLeptonPt': {'rangex': [0,300]},
-    # z
-    'zMass'                : {'rangex': [60,120]},
-    'mllMinusMZ'           : {'rangex': [0,60]},
-    # event
-    'met'                  : {'rangex': [0,200]},
-    'mass'                 : {'rangex': [0,600], 'rebin':25, 'xaxis': 'Events / 25 GeV'},
-    'st'                   : {'rangex': [0,400], 'rebin':25, 'xaxis': 'Events / 25 GeV'},
-}
+plotCounts(hpp4lPlotter,baseDir='',saveDir='datadriven',datadriven=True)
 
 for plot in plots:
-    plotname = 'lowmass/{0}'.format(plot)
     kwargs = deepcopy(plots[plot])
-    if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
-    hpp4lPlotter.plot(plotname,plotname,**kwargs)
-    for cat in cats:
-        plotnames = []
-        for subcat in subCatChannels[cat]:
-            plotnames += ['lowmass/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
-        savename = 'lowmass/{0}/{1}'.format(cat,plot)
-        if doCat: hpp4lPlotter.plot(plotnames,savename,**kwargs)
+    plotWithCategories(hpp4lPlotter,plot,baseDir='',saveDir='datadriven',datadriven=True,**kwargs)
+
+# partially blinded plots
+if blind:
+    hpp4lPlotter.addHistogram('data',sigMap['data'])
+    blinders = {
+        'hppMass': [100,1200],
+        'hmmMass': [100,1200],
+    }
+
+    for plot in blinders:
+        plotname = 'default/{0}'.format(plot)
+        savename = 'datadriven/{0}_blinder'.format(plot)
+        hpp4lPlotter.plot(plotname,savename,blinder=blinders[plot],**plots[plot])
+        for cat in cats:
+            plotnames = []
+            for subcat in subCatChannels[cat]:
+                plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
+            savename = 'datadriven/{0}/{1}_blinder'.format(cat,plot)
+            if doCat: hpp4lPlotter.plot(plotnames,savename,blinder=blinders[plot],**plots[plot])
 
 
-# normalized plots
+########################
+### low mass control ###
+########################
 hpp4lPlotter.clearHistograms()
 
-samples = ['TT','TTV','Z','WW','WZ','VVV','ZZ']
-allSamplesDict = {'BG':[]}
+for s in allsamples:
+    hpp4lPlotter.addHistogramToStack(s,sigMap[s])
+hpp4lPlotter.addHistogram('data',sigMap['data'])
+
+plotCounts(hpp4lPlotter,baseDir='lowmass',saveDir='lowmass')
+
+for plot in plots:
+    kwargs = deepcopy(plots[plot])
+    if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
+    plotWithCategories(hpp4lPlotter,plot,baseDir='lowmass',saveDir='lowmass',**kwargs)
+
+######################################
+### lowmass datadriven backgrounds ###
+######################################
+hpp4lPlotter.clearHistograms()
+
+hpp4lPlotter.addHistogramToStack('datadriven',datadrivenSamples)
 
 for s in samples:
+    hpp4lPlotter.addHistogramToStack(s,sigMap[s])
+
+if not blind: hpp4lPlotter.addHistogram('data',sigMap['data'])
+
+plotCounts(hpp4lPlotter,baseDir='lowmass',saveDir='lowmass/datadriven',datadriven=True)
+
+for plot in plots:
+    kwargs = deepcopy(plots[plot])
+    if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
+    plotWithCategories(hpp4lPlotter,plot,baseDir='lowmass',saveDir='lowmass/datadriven',datadriven=True,**kwargs)
+
+########################
+### normalized plots ###
+########################
+hpp4lPlotter.clearHistograms()
+
+allSamplesDict = {'BG':[]}
+
+for s in allsamples:
     allSamplesDict['BG'] += sigMap[s]
 
 hpp4lPlotter.addHistogram('BG',allSamplesDict['BG'])
 hpp4lPlotter.addHistogram('HppHmm500GeV',sigMap['HppHmm500GeV'],signal=True)
-
-norm_cust = {
-    # hpp
-    'hppMass'               : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
-    'hppPt'                 : {'yaxis': 'Unit normalized', 'rebin': 20, 'numcol': 2},
-    'hppDeltaR'             : {'yaxis': 'Unit normalized', 'rebin': 10},
-    'hppLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 5},
-    'hppSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 5},
-    # hmm
-    'hmmMass'               : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
-    'hmmPt'                 : {'yaxis': 'Unit normalized', 'rebin': 20, 'numcol': 2},
-    'hmmDeltaR'             : {'yaxis': 'Unit normalized', 'rebin': 10},
-    'hmmLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 5},
-    'hmmSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 5},
-    # z
-    'zMass'                 : {'yaxis': 'Unit normalized', 'rebin': 20, 'numcol': 2},
-    'mllMinusMZ'            : {'yaxis': 'Unit normalized', 'rebin': 1},
-    # event
-    'met'                   : {'yaxis': 'Unit normalized', 'rebin': 1},
-    'numVertices'           : {'yaxis': 'Unit normalized'},
-    'mass'                  : {'yaxis': 'Unit normalized', 'rebin': 10},
-    'st'                    : {'yaxis': 'Unit normalized', 'rebin': 10},
-}
 
 for plot in plots:
     plotname = 'default/{0}'.format(plot)
@@ -413,7 +482,9 @@ for plot in plots:
         savename = 'normalized/{0}/{1}'.format(cat,plot)
         if doCat: hpp4lPlotter.plotNormalized(plotnames,savename,**kwargs)
 
-# all signal on one plot
+##############################
+### all signal on one plot ###
+##############################
 hpp4lPlotter.clearHistograms()
 
 sigColors = {

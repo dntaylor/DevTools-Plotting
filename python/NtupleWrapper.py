@@ -34,7 +34,9 @@ class NtupleWrapper(object):
         self.histParams = getHistParams(self.analysis,self.sample)
         self.selections = getHistSelections(self.analysis,self.sample)
         self.projections = getProjectionParams(self.analysis,self.sample)
+        self.infile = 0
         self.outfile = 0
+        self.infile = 0
         self.tchain = 0
         self.j = 0
         self.initialized = False
@@ -137,6 +139,34 @@ class NtupleWrapper(object):
             self.outfile.Close()
             return False
 
+    def __checkProjectionHash(self,name,directory,channel='',genchannel=''):
+        '''Check hash of projection from histogram.'''
+        return False
+        print name,directory,channel,genchannel
+        self.infile = ROOT.TFile(self.flat,'read')
+        self.outfile = ROOT.TFile(self.proj,'update')
+        flatHashDirectory = 'hash/{0}'.format(directory)
+        projHashDirectory = 'hash/{0}'.format('/'.join([x for x in [directory,channel,genchannel] if x]))
+        print flatHashDirectory
+        print projHashDirectory
+        flatHashObj = self.infile.Get('{0}/{1}'.format(flatHashDirectory,name))
+        projHashObj = self.outfile.Get('{0}/{1}'.format(projHashDirectory,name))
+        if not projHashObj:
+            projHashObj = ROOT.TNamed(name,'')
+        newHash = flatHashObj.GetTitle()
+        oldHash = projHashObj.GetTitle()
+        print newHash, oldHash
+        if oldHash==newHash:
+            self.outfile.Close()
+            return True
+        else:
+            projHashObj.SetTitle(newHash)
+            if not self.outfile.GetDirectory(projHashDirectory): self.outfile.mkdir(projHashDirectory)
+            self.outfile.cd('{0}:/{1}'.format(self.proj,projHashDirectory))
+            projHashObj.Write('',ROOT.TObject.kOverwrite)
+            self.outfile.Close()
+            return False
+
     def __flatten(self,directory,histName,selection,params,**kwargs):
         '''Produce flat histograms for a given selection.'''
         # clear old
@@ -205,7 +235,8 @@ class NtupleWrapper(object):
         #selectionString = '{0}*({1})'.format(scalefactor,selection)
         selectionString = '{0}*(1)'.format(scalefactor)
         tree.Draw(drawString,selectionString,'goff')
-        tree.SetEntryList(self.entryListMap['1'])
+        if self.entryListMap['1'].GetN()>0:
+            tree.SetEntryList(self.entryListMap['1'])
         if ROOT.gDirectory.Get(histName):
             hist = ROOT.gDirectory.Get(histName)
         else:
@@ -234,7 +265,8 @@ class NtupleWrapper(object):
         #selectionString = '{0}*({1})'.format(scalefactor,selection)
         selectionString = '{0}*(1)'.format(scalefactor)
         tree.Draw(drawString,selectionString,'goff')
-        tree.SetEntryList(self.entryListMap['1'])
+        if self.entryListMap['1'].GetN()>0:
+            tree.SetEntryList(self.entryListMap['1'])
         if ROOT.gDirectory.Get(histName):
             hist = ROOT.gDirectory.Get(histName)
         else:
@@ -433,6 +465,10 @@ class NtupleWrapper(object):
         if selectionName not in self.selections:
             logging.error('Unrecognized selection {0}'.format(selectionName))
             return 0
+        # check if we need to project
+        #passHash = self.__checkProjectionHash(histName,selectionName,channel=channel,genchannel=genchannel)
+        #if passHash: return 0
+        # not project
         histNameND = '/'.join([selectionName,histName])
         histNd = self.__read(histNameND)
         if histNd and histNd.InheritsFrom('TH3'):

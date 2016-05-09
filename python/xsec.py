@@ -96,9 +96,9 @@ xsecs = {
     'WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8'                     :      3.05     * PB,
     'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8'                      :      5.60     * PB,
     'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8'                       :      4.42965  * PB,
-    'WZJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                   :      5.29     * PB,
+    'WZJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                   :      4.71     * PB,
     'WZ_TuneCUETP8M1_13TeV-pythia8'                                    :     47.13     * PB,
-    'WZJToLLLNu_TuneCUETP8M1_13TeV-amcnlo-pythia8'                     :      4.666    * PB,
+    'WZJToLLLNu_TuneCUETP8M1_13TeV-amcnlo-pythia8'                     :      4.715    * PB,
 
     'ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8'                        :      6.842    * PB,
     'ZZTo2Q2Nu_13TeV_amcatnloFXFX_madspin_pythia8'                     :      4.04     * PB,
