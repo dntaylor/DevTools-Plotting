@@ -13,10 +13,10 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 from DevTools.Plotter.histParams import getHistParams, getHistSelections, getProjectionParams
 from DevTools.Plotter.utilities import getNtupleDirectory, getTreeName
-from DevTools.Utilities.MultiProgress import MultiProgress
 from DevTools.Plotter.FlattenTree import FlattenTree
 
 try:
+    from DevTools.Utilities.MultiProgress import MultiProgress
     from progressbar import ProgressBar, ETA, Percentage, Bar, SimpleProgress
     hasProgress = True
 except:
@@ -24,18 +24,22 @@ except:
 
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-def flatten(directory,**kwargs):
-    sample = directory.split('/')[-1]
-    if sample.endswith('.root'): sample = sample[:-5]
-    analysis = kwargs.pop('analysis')
+def flatten(analysis,sample,**kwargs):
     histParams = kwargs.pop('histParams',{})
     histSelections = kwargs.pop('histSelections',{})
+    inputFileList = kwargs.pop('inputFileList','')
+    outputFile = kwargs.pop('outputFile','')
     if hasProgress:
         pbar = kwargs.pop('progressbar',ProgressBar(widgets=['{0}: '.format(sample),' ',SimpleProgress(),' histograms ',Percentage(),' ',Bar(),' ',ETA()]))
     else:
         pbar = None
 
-    flattener = FlattenTree(analysis,sample)
+    if outputFile:
+        flat = outputFile
+        proj = outputFile.replace('.root','_projection.root')
+        flattener = FlattenTree(analysis,sample,inputFileList=inputFileList,flat=flat,proj=proj)
+    else:
+        flattener = FlattenTree(analysis,sample,inputFileList=inputFileList)
 
     for histName, params in histParams.iteritems():
         flattener.addHistogram(histName,**params)
@@ -88,7 +92,7 @@ def parse_command_line(argv):
     parser.add_argument('--selections', nargs='+', type=str, default=['all'], help='Selections to flatten.')
     parser.add_argument('--channels', nargs='+', type=str, default=['all'], help='Channels to project.')
     parser.add_argument('--skipProjection', action='store_true', help='Skip projecting')
-    parser.add_argument('-j',type=int,default=16,help='Number of cores to use')
+    parser.add_argument('-j',type=int,default=1,help='Number of cores to use')
 
     return parser.parse_args(argv)
 
@@ -101,18 +105,37 @@ def main(argv=None):
 
     logging.info('Preparing to flatten {0}'.format(args.analysis))
 
-    directories = getSampleDirectories(args.analysis,args.samples)
+    grid = False
+    if 'INPUT' in os.environ and 'OUTPUT' in os.environ:
+        inputFileList = os.environ['INPUT']
+        outputFile = os.environ['OUTPUT']
+        # figureout the sample
+        with open(inputFileList,'r') as f:
+            inputfiles = [x.strip() for x in f.readlines()]
+            sample = inputfiles[0].split('/')[-2]
+        grid = True
+    else:
+        directories = getSampleDirectories(args.analysis,args.samples)
+        logging.info('Will flatten {0} samples'.format(len(directories)))
 
-    logging.info('Will flatten {0} samples'.format(len(directories)))
-
-    if args.j>1:
+    if grid:
+        histParams = getSelectedHistParams(args.analysis,args.hists,sample)
+        histSelections = getSelectedHistSelections(args.analysis,args.selections,sample)
+        flatten(args.analysis,
+                sample,
+                histParams=histParams,
+                histSelections=histSelections,
+                #inputFileList=inputFileList,
+                outputFile=outputFile,
+                )
+    elif args.j>1 and hasProgress:
         multi = MultiProgress(args.j)
         for directory in directories:
             sample = directory.split('/')[-1]
             if sample.endswith('.root'): sample = sample[:-5]
             histParams = getSelectedHistParams(args.analysis,args.hists,sample)
             histSelections = getSelectedHistSelections(args.analysis,args.selections,sample)
-            multi.addJob(sample,flatten,args=(directory,),kwargs={'analysis':args.analysis,'histParams':histParams,'histSelections':histSelections})
+            multi.addJob(sample,flatten,args=(args.analysis,sample,),kwargs={'histParams':histParams,'histSelections':histSelections})
         multi.retrieve()
     else:
         for directory in directories:
@@ -120,8 +143,8 @@ def main(argv=None):
             if sample.endswith('.root'): sample = sample[:-5]
             histParams = getSelectedHistParams(args.analysis,args.hists,sample)
             histSelections = getSelectedHistSelections(args.analysis,args.selections,sample)
-            flatten(directory,
-                    analysis=args.analysis,
+            flatten(args.analysis,
+                    sample,
                     histParams=histParams,
                     histSelections=histSelections,
                     )

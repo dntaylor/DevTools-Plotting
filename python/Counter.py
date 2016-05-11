@@ -90,6 +90,7 @@ class Counter(object):
         mcscalefactor = kwargs.pop('mcscalefactor','1')
         datascalefactor = kwargs.pop('datascalefactor','1')
         selection = kwargs.pop('selection','')
+        mccut = kwargs.pop('mccut','')
         # check if it is a map, list, or directory
         if isinstance(directory,dict):       # its a map
             directory = directory[processName]
@@ -101,7 +102,8 @@ class Counter(object):
                 for sampleName in self.processDict[processName]:
                     if selection:
                         sf = '*'.join([scalefactor,datascalefactor if isData(sampleName) else mcscalefactor])
-                        count = self._getTempCount(sampleName,selection,sf,analysis=analysis)
+                        fullcut = ' && '.join([selection,mccut]) if mccut and not isData(sampleName) else selection
+                        count = self._getTempCount(sampleName,fullcut,sf,analysis=analysis)
                     else:
                         count = self._readSampleCount(sampleName,dirName,analysis=analysis)
                     if count: counts += [count]

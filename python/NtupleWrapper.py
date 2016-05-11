@@ -26,6 +26,7 @@ class NtupleWrapper(object):
         # backup passing custom parameters
         self.ntuple = kwargs.pop('ntuple','{0}/src/ntuples/{1}/{2}.root'.format(CMSSW_BASE,self.analysis,self.sample))
         self.ntupleDirectory = kwargs.pop('ntupleDirectory','{0}/{1}'.format(getNtupleDirectory(self.analysis),self.sample))
+        self.inputFileList = kwargs.pop('inputFileList','')
         self.treeName = kwargs.pop('treeName',getTreeName(self.analysis))
         #self.flat = kwargs.pop('flat','flat/{0}/{1}.root'.format(self.analysis,self.sample))
         self.flat = kwargs.pop('flat','{0}/src/flat/{1}/{2}.root'.format(CMSSW_BASE,self.analysis,self.sample))
@@ -57,9 +58,14 @@ class NtupleWrapper(object):
 
     def __initializeNtuple(self):
         tchain = ROOT.TChain(self.treeName)
-        if os.path.isfile(self.ntuple):
+        if self.inputFileList: # reading from a passed list of inputfiles
+            allFiles = []
+            with open(self.inputFileList,'r') as f:
+                for line in f.readlines():
+                   allFiles += [line.strip()]
+        elif os.path.isfile(self.ntuple): # reading a single root file
             allFiles = [self.ntuple]
-        else:
+        else: # reading from an input directory (all files in directory will be processed)
             allFiles = glob.glob('{0}/*.root'.format(self.ntupleDirectory))
         summedWeights = 0.
         for f in allFiles:
@@ -75,6 +81,7 @@ class NtupleWrapper(object):
         listname = 'selList{0}'.format(self.j)
         self.sampleTree.Draw('>>{0}'.format(listname),'1','entrylist')
         skim = ROOT.gDirectory.Get(listname)
+        #skim = self.sampleTree.GetEntryList()
         self.entryListMap['1'] = skim
         self.files = allFiles
         self.initialized = True
@@ -142,20 +149,16 @@ class NtupleWrapper(object):
     def __checkProjectionHash(self,name,directory,channel='',genchannel=''):
         '''Check hash of projection from histogram.'''
         return False
-        print name,directory,channel,genchannel
         self.infile = ROOT.TFile(self.flat,'read')
         self.outfile = ROOT.TFile(self.proj,'update')
         flatHashDirectory = 'hash/{0}'.format(directory)
         projHashDirectory = 'hash/{0}'.format('/'.join([x for x in [directory,channel,genchannel] if x]))
-        print flatHashDirectory
-        print projHashDirectory
         flatHashObj = self.infile.Get('{0}/{1}'.format(flatHashDirectory,name))
         projHashObj = self.outfile.Get('{0}/{1}'.format(projHashDirectory,name))
         if not projHashObj:
             projHashObj = ROOT.TNamed(name,'')
         newHash = flatHashObj.GetTitle()
         oldHash = projHashObj.GetTitle()
-        print newHash, oldHash
         if oldHash==newHash:
             self.outfile.Close()
             return True
@@ -221,6 +224,7 @@ class NtupleWrapper(object):
         if not tree: 
             hist = ROOT.TH1F(histName,histName,*binning)
             return hist
+        tree.SetEntryList(self.entryListMap['1'])
         if selection not in self.entryListMap:
             self.j += 1
             listname = 'selList{0}'.format(self.j)
@@ -235,8 +239,7 @@ class NtupleWrapper(object):
         #selectionString = '{0}*({1})'.format(scalefactor,selection)
         selectionString = '{0}*(1)'.format(scalefactor)
         tree.Draw(drawString,selectionString,'goff')
-        if self.entryListMap['1'].GetN()>0:
-            tree.SetEntryList(self.entryListMap['1'])
+        tree.SetEntryList(self.entryListMap['1'])
         if ROOT.gDirectory.Get(histName):
             hist = ROOT.gDirectory.Get(histName)
         else:
@@ -251,6 +254,7 @@ class NtupleWrapper(object):
         if not tree:
             hist = ROOT.TH2F(histName,histName,*binning)
             return hist
+        tree.SetEntryList(self.entryListMap['1'])
         if selection not in self.entryListMap:
             self.j += 1
             listname = 'selList{0}'.format(self.j)
@@ -265,8 +269,7 @@ class NtupleWrapper(object):
         #selectionString = '{0}*({1})'.format(scalefactor,selection)
         selectionString = '{0}*(1)'.format(scalefactor)
         tree.Draw(drawString,selectionString,'goff')
-        if self.entryListMap['1'].GetN()>0:
-            tree.SetEntryList(self.entryListMap['1'])
+        tree.SetEntryList(self.entryListMap['1'])
         if ROOT.gDirectory.Get(histName):
             hist = ROOT.gDirectory.Get(histName)
         else:
@@ -281,6 +284,7 @@ class NtupleWrapper(object):
         if not tree:
             hist = ROOT.TH3F(histName,histName,*binning)
             return hist
+        tree.SetEntryList(self.entryListMap['1'])
         if selection not in self.entryListMap:
             self.j += 1
             listname = 'selList{0}'.format(self.j)
@@ -507,7 +511,11 @@ class NtupleWrapper(object):
 
     def getTempCount(self,selection,scalefactor):
         '''Get a histogram that is a single bin of counts with statistical error'''
-        return self.__getHist1D('count',selection,scalefactor,'1',[1,0,2])
+        self.j += 1
+        tempname = 'count_{0}_{1}_{2}'.format(self.analysis,self.sample,self.j)
+        hist = self.__getHist1D(tempname,selection,scalefactor,'1',[1,0,2])
+        hist.SetTitle('count')
+        return hist
 
     def flatten(self,histName,selectionName):
         '''Flatten a histogram'''

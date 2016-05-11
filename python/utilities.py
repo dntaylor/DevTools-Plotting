@@ -42,23 +42,24 @@ latestNtuples = {
     'DY'             : '2016-05-02_DYAnalysis_v1-merge',
     'DijetFakeRate'  : '',
     'Electron'       : '2016-04-14_ElectronAnalysis_v1-merge',
-    'Hpp3l'          : '',
-    'Hpp4l'          : '',
+    'Hpp3l'          : '2016-05-02_Hpp3lAnalysis_v1-merge',
+    'Hpp4l'          : '2016-05-02_Hpp4lAnalysis_v1-merge',
     'Muon'           : '2016-04-14_MuonAnalysis_v1-merge',
     'SingleElectron' : '',
     'SingleMuon'     : '',
     'Tau'            : '2016-04-14_TauAnalysis_v1-merge',
     'TauCharge'      : '',
     'WTauFakeRate'   : '',
-    'WZ'             : '',
+    'WZ'             : '2016-04-29_WZAnalysis_v1-merge',
 }
 
-def getNtupleDirectory(analysis):
+def getNtupleDirectory(analysis,local=True):
     # first grab the local one
-    #ntupleDir = '{0}/src/ntuples/{0}'.format(CMSSW_BASE,analysis)
-    ntupleDir = 'ntuples/{0}'.format(analysis)
-    if os.path.exists(ntupleDir):
-        return ntupleDir
+    if local:
+        #ntupleDir = '{0}/src/ntuples/{0}'.format(CMSSW_BASE,analysis)
+        ntupleDir = 'ntuples/{0}'.format(analysis)
+        if os.path.exists(ntupleDir):
+            return ntupleDir
     # if not read from hdfs
     baseDir = '/hdfs/store/user/dntaylor'
     if analysis in latestNtuples and latestNtuples[analysis]:

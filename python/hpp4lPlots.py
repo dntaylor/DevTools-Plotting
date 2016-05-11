@@ -13,6 +13,11 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 
 blind = True
 doCat = True
+plotMC = True
+plotDatadriven = True
+plotSignal = False
+plotNormalization = False
+plotCount = True
 
 hpp4lPlotter = Plotter('Hpp4l')
 
@@ -147,6 +152,7 @@ sigMap = {
 
 samples = ['TTV','VH','VVV','ZZ']
 allsamples = ['W','T','TT','TTVall','Z','WW','VHall','WZ','VVV','ZZall']
+signals = ['HppHmm500GeV']
 
 datadrivenSamples = []
 for s in samples + ['data']:
@@ -154,16 +160,16 @@ for s in samples + ['data']:
 
 def getDataDrivenPlot(*plots):
     histMap = {}
-    regions = ['3P1F','2P2F','1P3F','0P4F']
-    for s in samples + ['data','datadriven']: histMap[s] = []
+    #regions = ['3P1F','2P2F','1P3F','0P4F']
+    regions = ['3P1F']
+    for s in samples + signals + ['data','datadriven']: histMap[s] = []
     for plot in plots:
         plotdirs = plot.split('/')
-        for s in samples + ['data']: histMap[s] += ['/'.join(['4P0F']+plotdirs)]
+        for s in samples + signals + ['data']: histMap[s] += ['/'.join(['4P0F']+plotdirs)]
         histMap['datadriven'] += ['/'.join([reg]+plotdirs) for reg in regions]
-    if blind: histMap.pop('data')
     return histMap
 
-def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False):
+def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False,postfix=''):
     # per channel counts
     countVars = ['/'.join([x for x in [baseDir,'count'] if x])] + ['/'.join([x for x in [baseDir,chan,'count'] if x]) for chan in chans]
     if datadriven:
@@ -171,6 +177,7 @@ def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False):
             countVars[i] = getDataDrivenPlot(countVars[i])
     countLabels = ['Total'] + chanLabels
     savename = '/'.join([x for x in [saveDir,'individualChannels'] if x])
+    if postfix: savename += '_{0}'.format(postfix)
     plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=10)
     
     # per category counts
@@ -185,6 +192,7 @@ def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False):
             countVars[i] = getDataDrivenPlot(*countVars[i])
     countLabels = ['Total'] + catLabels
     savename = '/'.join([x for x in [saveDir,'individualCategories'] if x])
+    if postfix: savename += '_{0}'.format(postfix)
     plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=10)
     
     # per subcategory counts
@@ -197,12 +205,14 @@ def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False):
             countVars[i] = getDataDrivenPlot(*countVars[i])
     countLabels = ['Total'] + subCatLabels
     savename = '/'.join([x for x in [saveDir,'individualSubCategories'] if x])
+    if postfix: savename += '_{0}'.format(postfix)
     plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=10,ymin=0.001)
 
-def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,**kwargs):
+def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postfix='',**kwargs):
     plotname = '/'.join([x for x in [baseDir,plot] if x])
     plotvars = getDataDrivenPlot(plotname) if datadriven else plotname
     savename = '/'.join([x for x in [saveDir,plot] if x])
+    if postfix: savename += '_{0}'.format(postfix)
     plotter.plot(plotvars,savename,**kwargs)
     for cat in cats:
         plotnames = []
@@ -210,6 +220,7 @@ def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,**kwa
             plotnames += ['/'.join([x for x in [baseDir,chan,plot] if x]) for chan in subCatChannels[cat][subcat]]
         plotvars = getDataDrivenPlot(*plotnames) if datadriven else plotnames
         savename = '/'.join([x for x in [saveDir,cat,plot] if x])
+        if postfix: savename += '_{0}'.format(postfix)
         if doCat: plotter.plot(plotvars,savename,**kwargs)
 
 
@@ -237,6 +248,11 @@ plots = {
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
     'mass'                  : {'xaxis': 'm_{4l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
     'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
+}
+
+blind_cust = {
+    'hppMass': {'blinder': [100,1200]},
+    'hmmMass': {'blinder': [100,1200]},
 }
 
 lowmass_cust = {
@@ -286,37 +302,29 @@ norm_cust = {
 ############################
 ### MC based BG estimate ###
 ############################
-for s in allsamples:
-    hpp4lPlotter.addHistogramToStack(s.replace('all',''),sigMap[s])
-
-hpp4lPlotter.addHistogram('HppHmm500GeV',sigMap['HppHmm500GeV'],signal=True)#,scale=10)
-
-if not blind: hpp4lPlotter.addHistogram('data',sigMap['data'])
-
-plotCounts(hpp4lPlotter,baseDir='default')
-
-for plot in plots:
-    kwargs = deepcopy(plots[plot])
-    plotWithCategories(hpp4lPlotter,plot,baseDir='default',**kwargs)
-
-# partially blinded plots
-if blind:
-    hpp4lPlotter.addHistogram('data',sigMap['data'])
-    blinders = {
-        'hppMass': [100,1200],
-        'hmmMass': [100,1200],
-    }
+if plotMC:
+    for s in allsamples:
+        hpp4lPlotter.addHistogramToStack(s.replace('all',''),sigMap[s])
     
-    for plot in blinders:
-        plotname = 'default/{0}'.format(plot)
-        savename = '{0}_blinder'.format(plot)
-        hpp4lPlotter.plot(plotname,savename,blinder=blinders[plot],**plots[plot])
-        for cat in cats:
-            plotnames = []
-            for subcat in subCatChannels[cat]:
-                plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
-            savename = '{0}/{1}_blinder'.format(cat,plot)
-            if doCat: hpp4lPlotter.plot(plotnames,savename,blinder=blinders[plot],**plots[plot])
+    for signal in signals:
+        hpp4lPlotter.addHistogram(signal,sigMap[signal],signal=True)
+    
+    if not blind: hpp4lPlotter.addHistogram('data',sigMap['data'])
+    
+    if plotCount: plotCounts(hpp4lPlotter,baseDir='default')
+    
+    for plot in plots:
+        kwargs = deepcopy(plots[plot])
+        plotWithCategories(hpp4lPlotter,plot,baseDir='default',**kwargs)
+    
+    # partially blinded plots
+    if blind:
+        hpp4lPlotter.addHistogram('data',sigMap['data'])
+        
+        for plot in blind_cust:
+            kwargs = deepcopy(plots[plot])
+            kwargs.update(blind_cust[plot])
+            plotWithCategories(hpp4lPlotter,plot,baseDir='default',postfix='blinder',**kwargs)
 
 ## multiple st cuts on same plot:
 #hpp4lPlotter.clearHistograms()
@@ -386,186 +394,185 @@ if blind:
 ##############################
 ### datadriven backgrounds ###
 ##############################
-hpp4lPlotter.clearHistograms()
+if plotDatadriven:
+    hpp4lPlotter.clearHistograms()
+    
+    hpp4lPlotter.addHistogramToStack('datadriven',datadrivenSamples)
+    
+    for s in samples:
+        hpp4lPlotter.addHistogramToStack(s,sigMap[s])
+    
+    for signal in signals:
+        hpp4lPlotter.addHistogram(signal,sigMap[signal],signal=True)
 
-hpp4lPlotter.addHistogramToStack('datadriven',datadrivenSamples)
-
-for s in samples:
-    hpp4lPlotter.addHistogramToStack(s,sigMap[s])
-
-if not blind: hpp4lPlotter.addHistogram('data',sigMap['data'])
-
-plotCounts(hpp4lPlotter,baseDir='',saveDir='datadriven',datadriven=True)
-
-for plot in plots:
-    kwargs = deepcopy(plots[plot])
-    plotWithCategories(hpp4lPlotter,plot,baseDir='',saveDir='datadriven',datadriven=True,**kwargs)
-
-# partially blinded plots
-if blind:
-    hpp4lPlotter.addHistogram('data',sigMap['data'])
-    blinders = {
-        'hppMass': [100,1200],
-        'hmmMass': [100,1200],
-    }
-
-    for plot in blinders:
-        plotname = 'default/{0}'.format(plot)
-        savename = 'datadriven/{0}_blinder'.format(plot)
-        hpp4lPlotter.plot(plotname,savename,blinder=blinders[plot],**plots[plot])
-        for cat in cats:
-            plotnames = []
-            for subcat in subCatChannels[cat]:
-                plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
-            savename = 'datadriven/{0}/{1}_blinder'.format(cat,plot)
-            if doCat: hpp4lPlotter.plot(plotnames,savename,blinder=blinders[plot],**plots[plot])
+    if not blind: hpp4lPlotter.addHistogram('data',sigMap['data'])
+    
+    if plotCount: plotCounts(hpp4lPlotter,baseDir='',saveDir='datadriven',datadriven=True)
+    
+    for plot in plots:
+        kwargs = deepcopy(plots[plot])
+        plotWithCategories(hpp4lPlotter,plot,baseDir='',saveDir='datadriven',datadriven=True,**kwargs)
+    
+    # partially blinded plots
+    if blind:
+        hpp4lPlotter.addHistogram('data',sigMap['data'])
+    
+        for plot in blind_cust:
+            kwargs = deepcopy(plots[plot])
+            kwargs.update(blind_cust[plot])
+            plotWithCategories(hpp4lPlotter,plot,baseDir='',saveDir='datadriven',postfix='blinder',datadriven=True,**kwargs)
 
 
 ########################
 ### low mass control ###
 ########################
-hpp4lPlotter.clearHistograms()
-
-for s in allsamples:
-    hpp4lPlotter.addHistogramToStack(s,sigMap[s])
-hpp4lPlotter.addHistogram('data',sigMap['data'])
-
-plotCounts(hpp4lPlotter,baseDir='lowmass',saveDir='lowmass')
-
-for plot in plots:
-    kwargs = deepcopy(plots[plot])
-    if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
-    plotWithCategories(hpp4lPlotter,plot,baseDir='lowmass',saveDir='lowmass',**kwargs)
+if plotMC:
+    hpp4lPlotter.clearHistograms()
+    
+    for s in allsamples:
+        hpp4lPlotter.addHistogramToStack(s.replace('all',''),sigMap[s])
+    hpp4lPlotter.addHistogram('data',sigMap['data'])
+    
+    if plotCount: plotCounts(hpp4lPlotter,baseDir='lowmass',saveDir='lowmass')
+    
+    for plot in plots:
+        kwargs = deepcopy(plots[plot])
+        if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
+        plotWithCategories(hpp4lPlotter,plot,baseDir='lowmass',saveDir='lowmass',**kwargs)
 
 ######################################
 ### lowmass datadriven backgrounds ###
 ######################################
-hpp4lPlotter.clearHistograms()
-
-hpp4lPlotter.addHistogramToStack('datadriven',datadrivenSamples)
-
-for s in samples:
-    hpp4lPlotter.addHistogramToStack(s,sigMap[s])
-
-if not blind: hpp4lPlotter.addHistogram('data',sigMap['data'])
-
-plotCounts(hpp4lPlotter,baseDir='lowmass',saveDir='lowmass/datadriven',datadriven=True)
-
-for plot in plots:
-    kwargs = deepcopy(plots[plot])
-    if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
-    plotWithCategories(hpp4lPlotter,plot,baseDir='lowmass',saveDir='lowmass/datadriven',datadriven=True,**kwargs)
+if plotDatadriven:
+    hpp4lPlotter.clearHistograms()
+    
+    hpp4lPlotter.addHistogramToStack('datadriven',datadrivenSamples)
+    
+    for s in samples:
+        hpp4lPlotter.addHistogramToStack(s,sigMap[s])
+    
+    hpp4lPlotter.addHistogram('data',sigMap['data'])
+    
+    if plotCount: plotCounts(hpp4lPlotter,baseDir='lowmass',saveDir='lowmass/datadriven',datadriven=True)
+    
+    for plot in plots:
+        kwargs = deepcopy(plots[plot])
+        if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
+        plotWithCategories(hpp4lPlotter,plot,baseDir='lowmass',saveDir='lowmass/datadriven',datadriven=True,**kwargs)
 
 ########################
 ### normalized plots ###
 ########################
-hpp4lPlotter.clearHistograms()
-
-allSamplesDict = {'BG':[]}
-
-for s in allsamples:
-    allSamplesDict['BG'] += sigMap[s]
-
-hpp4lPlotter.addHistogram('BG',allSamplesDict['BG'])
-hpp4lPlotter.addHistogram('HppHmm500GeV',sigMap['HppHmm500GeV'],signal=True)
-
-for plot in plots:
-    plotname = 'default/{0}'.format(plot)
-    savename = 'normalized/{0}'.format(plot)
-    kwargs = deepcopy(plots[plot])
-    if plot in norm_cust: kwargs.update(norm_cust[plot])
-    hpp4lPlotter.plotNormalized(plotname,savename,**kwargs)
-    for cat in cats:
-        plotnames = []
-        for subcat in subCatChannels[cat]:
-            plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
-        savename = 'normalized/{0}/{1}'.format(cat,plot)
-        if doCat: hpp4lPlotter.plotNormalized(plotnames,savename,**kwargs)
+if plotNormalization:
+    hpp4lPlotter.clearHistograms()
+    
+    allSamplesDict = {'BG':[]}
+    
+    for s in allsamples:
+        allSamplesDict['BG'] += sigMap[s]
+    
+    hpp4lPlotter.addHistogram('BG',allSamplesDict['BG'])
+    for signal in signals:
+        hpp4lPlotter.addHistogram(signal,sigMap[signal],signal=True)
+    
+    for plot in plots:
+        plotname = 'default/{0}'.format(plot)
+        savename = 'normalized/{0}'.format(plot)
+        kwargs = deepcopy(plots[plot])
+        if plot in norm_cust: kwargs.update(norm_cust[plot])
+        hpp4lPlotter.plotNormalized(plotname,savename,**kwargs)
+        for cat in cats:
+            plotnames = []
+            for subcat in subCatChannels[cat]:
+                plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
+            savename = 'normalized/{0}/{1}'.format(cat,plot)
+            if doCat: hpp4lPlotter.plotNormalized(plotnames,savename,**kwargs)
 
 ##############################
 ### all signal on one plot ###
 ##############################
-hpp4lPlotter.clearHistograms()
-
-sigColors = {
-    200 : ROOT.TColor.GetColor('#000000'),
-    300 : ROOT.TColor.GetColor('#330000'),
-    400 : ROOT.TColor.GetColor('#660000'),
-    500 : ROOT.TColor.GetColor('#800000'),
-    600 : ROOT.TColor.GetColor('#990000'),
-    700 : ROOT.TColor.GetColor('#B20000'),
-    800 : ROOT.TColor.GetColor('#CC0000'),
-    900 : ROOT.TColor.GetColor('#FF0000'),
-    1000: ROOT.TColor.GetColor('#FF3333'),
-    1100: ROOT.TColor.GetColor('#FF6666'),
-    1200: ROOT.TColor.GetColor('#FF8080'),
-    1300: ROOT.TColor.GetColor('#FF9999'),
-    1400: ROOT.TColor.GetColor('#FFB2B2'),
-    1500: ROOT.TColor.GetColor('#FFCCCC'),
-}
-
-#masses = [200,300,400,500,600,700,800,900,1000]
-masses = [200,400,600,800,1000]
-for mass in masses:
-    hpp4lPlotter.addHistogram('HppHmm{0}GeV'.format(mass),sigMap['HppHmm{0}GeV'.format(mass)],signal=True,style={'linecolor': sigColors[mass]})
-
-catRebin = {
-    'I'  : 1,
-    'II' : 5,
-    'III': 10,
-    'IV' : 10,
-    'V'  : 20,
-    'VI' : 50,
-}
-
-genRebin = {
-    'ee' : 1,
-    'em' : 1,
-    'et' : 5,
-    'mm' : 1,
-    'mt' : 5,
-    'tt' : 10,
-}
-
-genDecayMap = {
-    'ee' : ['ee'],
-    'em' : ['em'],
-    'et' : ['ee','em','et'],
-    'mm' : ['mm'],
-    'mt' : ['em','mm','mt'],
-    'tt' : ['ee','em','et','mm','mt','tt'],
-}
-
-for plot in norm_cust:
-    plotname = 'default/{0}'.format(plot)
-    savename = 'signal/{0}'.format(plot)
-    kwargs = deepcopy(plots[plot])
-    if plot in norm_cust: kwargs.update(norm_cust[plot])
-    hpp4lPlotter.plotNormalized(plotname,savename,**kwargs)
-    for cat in cats:
-        plotnames = []
-        for subcat in subCatChannels[cat]:
-            plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
-        savename = 'signal/{0}/{1}'.format(cat,plot)
-        catkwargs = deepcopy(kwargs)
-        if cat in catRebin and 'rebin' in catkwargs and plot in ['hppMass','hmmMass']: catkwargs['rebin'] = catkwargs['rebin'] * catRebin[cat]
-        if doCat: hpp4lPlotter.plotNormalized(plotnames,savename,**catkwargs)
-    if 'hpp' in plot: # plot just the channels of the type
-        for higgsChan in ['ee','em','et','mm','mt','tt']:
-            # reco
-            plotnames = ['default/{0}/{1}'.format(chan,plot) for chan in chans if chan[:2]==higgsChan] + ['default/{0}/{1}'.format(chan,plot.replace('hpp','hmm')) for chan in chans if chan[2:]==higgsChan]
-            savename = 'signal/{0}/{1}'.format(higgsChan,plot)
-            genkwargs = deepcopy(kwargs)
-            if higgsChan in genRebin and 'rebin' in genkwargs and plot in ['hppMass','hmmMass']: genkwargs['rebin'] = genkwargs['rebin'] * genRebin[higgsChan]
-            hpp4lPlotter.plotNormalized(plotnames,savename,**genkwargs)
-            # and the gen truth
+if plotSignal:
+    hpp4lPlotter.clearHistograms()
+    
+    sigColors = {
+        200 : ROOT.TColor.GetColor('#000000'),
+        300 : ROOT.TColor.GetColor('#330000'),
+        400 : ROOT.TColor.GetColor('#660000'),
+        500 : ROOT.TColor.GetColor('#800000'),
+        600 : ROOT.TColor.GetColor('#990000'),
+        700 : ROOT.TColor.GetColor('#B20000'),
+        800 : ROOT.TColor.GetColor('#CC0000'),
+        900 : ROOT.TColor.GetColor('#FF0000'),
+        1000: ROOT.TColor.GetColor('#FF3333'),
+        1100: ROOT.TColor.GetColor('#FF6666'),
+        1200: ROOT.TColor.GetColor('#FF8080'),
+        1300: ROOT.TColor.GetColor('#FF9999'),
+        1400: ROOT.TColor.GetColor('#FFB2B2'),
+        1500: ROOT.TColor.GetColor('#FFCCCC'),
+    }
+    
+    #masses = [200,300,400,500,600,700,800,900,1000]
+    masses = [200,400,600,800,1000]
+    for mass in masses:
+        hpp4lPlotter.addHistogram('HppHmm{0}GeV'.format(mass),sigMap['HppHmm{0}GeV'.format(mass)],signal=True,style={'linecolor': sigColors[mass]})
+    
+    catRebin = {
+        'I'  : 1,
+        'II' : 5,
+        'III': 10,
+        'IV' : 10,
+        'V'  : 20,
+        'VI' : 50,
+    }
+    
+    genRebin = {
+        'ee' : 1,
+        'em' : 1,
+        'et' : 5,
+        'mm' : 1,
+        'mt' : 5,
+        'tt' : 10,
+    }
+    
+    genDecayMap = {
+        'ee' : ['ee'],
+        'em' : ['em'],
+        'et' : ['ee','em','et'],
+        'mm' : ['mm'],
+        'mt' : ['em','mm','mt'],
+        'tt' : ['ee','em','et','mm','mt','tt'],
+    }
+    
+    for plot in norm_cust:
+        plotname = 'default/{0}'.format(plot)
+        savename = 'signal/{0}'.format(plot)
+        kwargs = deepcopy(plots[plot])
+        if plot in norm_cust: kwargs.update(norm_cust[plot])
+        hpp4lPlotter.plotNormalized(plotname,savename,**kwargs)
+        for cat in cats:
             plotnames = []
-            for gen in chans:
-                for reco in chans:
-                    if reco[:2] in genDecayMap[gen[:2]] and reco[2:] in genDecayMap[gen[2:]] and gen[:2]==higgsChan:
-                        plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot)] 
-                    #if reco[:2] in genDecayMap[gen[:2]] and reco[2:] in genDecayMap[gen[2:]] and gen[2:]==higgsChan:
-                    #    plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot.replace('hpp','hmm'))] 
-            if plotnames:
-                savename = 'signal/{0}/{1}_genMatched'.format(higgsChan,plot)
-                #hpp4lPlotter.plotNormalized(plotnames,savename,**genkwargs)
+            for subcat in subCatChannels[cat]:
+                plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
+            savename = 'signal/{0}/{1}'.format(cat,plot)
+            catkwargs = deepcopy(kwargs)
+            if cat in catRebin and 'rebin' in catkwargs and plot in ['hppMass','hmmMass']: catkwargs['rebin'] = catkwargs['rebin'] * catRebin[cat]
+            if doCat: hpp4lPlotter.plotNormalized(plotnames,savename,**catkwargs)
+        if 'hpp' in plot: # plot just the channels of the type
+            for higgsChan in ['ee','em','et','mm','mt','tt']:
+                # reco
+                plotnames = ['default/{0}/{1}'.format(chan,plot) for chan in chans if chan[:2]==higgsChan] + ['default/{0}/{1}'.format(chan,plot.replace('hpp','hmm')) for chan in chans if chan[2:]==higgsChan]
+                savename = 'signal/{0}/{1}'.format(higgsChan,plot)
+                genkwargs = deepcopy(kwargs)
+                if higgsChan in genRebin and 'rebin' in genkwargs and plot in ['hppMass','hmmMass']: genkwargs['rebin'] = genkwargs['rebin'] * genRebin[higgsChan]
+                hpp4lPlotter.plotNormalized(plotnames,savename,**genkwargs)
+                # and the gen truth
+                plotnames = []
+                for gen in chans:
+                    for reco in chans:
+                        if reco[:2] in genDecayMap[gen[:2]] and reco[2:] in genDecayMap[gen[2:]] and gen[:2]==higgsChan:
+                            plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot)] 
+                        #if reco[:2] in genDecayMap[gen[:2]] and reco[2:] in genDecayMap[gen[2:]] and gen[2:]==higgsChan:
+                        #    plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot.replace('hpp','hmm'))] 
+                if plotnames:
+                    savename = 'signal/{0}/{1}_genMatched'.format(higgsChan,plot)
+                    #hpp4lPlotter.plotNormalized(plotnames,savename,**genkwargs)
