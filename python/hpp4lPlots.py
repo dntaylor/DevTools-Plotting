@@ -95,8 +95,14 @@ sigMap = {
              'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
             ],
     'Z'   : [
-             'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
              'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
     'TT'  : [
              'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
@@ -112,8 +118,6 @@ sigMap = {
              'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
             ],
     'QCD' : [
-             'QCD_Pt_5to10_TuneCUETP8M1_13TeV_pythia8',
-             'QCD_Pt_10to15_TuneCUETP8M1_13TeV_pythia8',
              'QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8',
              'QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8',
              'QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8',

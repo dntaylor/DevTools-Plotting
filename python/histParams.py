@@ -12,6 +12,12 @@ from DevTools.Plotter.higgsUtilities import getChannels, getGenChannels
 ### hists ###
 #############
 histParams = {
+    # overrides for Tau
+    'Tau': {
+        'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
+        'pt'                          : {'xVariable': 't_pt',                           'xBinning': [2000,0,2000],           },
+        'eta'                         : {'xVariable': 't_eta',                          'xBinning': [600,-3.,3.],            },
+    },
     # overrides for DijetFakeRate
     'DijetFakeRate': {
         'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
@@ -276,7 +282,7 @@ promptTauCut = '{0}_genMatch==1 && {0}_genDeltaR<0.1'
 genStatusOneCut = '{0}_genMatch==1 && {0}_genStatus==1 && {0}_genDeltaR<0.1'
 genCut = '{0}_genMatch==1 && {0}_genDeltaR<0.1'
 fakeCut = '({0}_genMatch==0 || ({0}_genMatch==1 && {0}_genIsFromHadron && {0}_genDeltaR<0.1))'
-fakeTauCut = '{0}_genMatch==0'
+fakeTauCut = '({0}_genMatch==0 || ({0}_genMatch==1 && {0}_genDeltaR>0.1))'
 
 ##########################
 #### electron specific ###
@@ -334,52 +340,68 @@ fakeTauCut = '{0}_genMatch==0'
 #        selectionParams['Muon'][name] = deepcopy(selectionParams['Muon'][sel])
 #        args = selectionParams['Muon'][name]['args']
 #        selectionParams['Muon'][name]['args'][0] = args[0] + ' && ' + idCuts[idName]
-#
-#####################
-#### tau specific ###
-#####################
-#selectionParams['Tau'] = {
-#    'default/prompt' : {'args': [promptTauCut.format('t')], 'kwargs': {}},
-#    'default/fake'   : {'args': [fakeTauCut.format('t')],   'kwargs': {}},
-#}
-#
-#sels = selectionParams['Tau'].keys()
-#againstElectron = {
-#    'vloose': 't_againstElectronVLooseMVA6==1',
-#    'loose' : 't_againstElectronLooseMVA6==1',
-#    'medium': 't_againstElectronMediumMVA6==1',
-#    'tight' : 't_againstElectronTightMVA6==1',
-#    'vtight': 't_againstElectronVTightMVA6==1',
-#}
-#againstMuon = {
-#    'loose' : 't_againstMuonLoose3==1',
-#    'tight' : 't_againstMuonTight3==1',
-#}
-#oldId = 't_decayModeFinding==1'
-#oldIsolation = {
-#    'loose' : 't_byLooseIsolationMVArun2v1DBoldDMwLT==1',
-#    'medium': 't_byMediumIsolationMVArun2v1DBoldDMwLT==1',
-#    'tight' : 't_byTightIsolationMVArun2v1DBoldDMwLT==1',
-#    'vtight': 't_byVTightIsolationMVArun2v1DBoldDMwLT==1',
-#}
-#idCuts = {}
-#cutLists = [
-#    ('vloose','loose','loose'),
-#    ('vloose','loose','tight'),
-#    ('vloose','loose','vtight'),
-#    ('tight','tight','loose'),
-#    ('tight','tight','tight'),
-#    ('tight','tight','vtight'),
-#]
-#for cl in cutLists:
-#    idCuts['old_{0}Electron_{1}Muon_{2}Isolation'.format(*cl)] = ' && '.join([oldId, againstElectron[cl[0]], againstMuon[cl[1]], oldIsolation[cl[2]]])
-#
-#for sel in sels:
-#    for idName in idCuts:
-#        name = '{0}/{1}'.format(sel,idName)
-#        selectionParams['Tau'][name] = deepcopy(selectionParams['Tau'][sel])
-#        args = selectionParams['Tau'][name]['args']
-#        selectionParams['Tau'][name]['args'][0] = args[0] + ' && ' + idCuts[idName]
+
+####################
+### tau specific ###
+####################
+selectionParams['Tau'] = {
+    'default/prompt' : {'args': [promptTauCut.format('t')], 'kwargs': {}},
+    'default/fake'   : {'args': [fakeTauCut.format('t')],   'kwargs': {}},
+}
+
+sels = selectionParams['Tau'].keys()
+againstElectron = {
+    'vloose': 't_againstElectronVLooseMVA6==1',
+    'loose' : 't_againstElectronLooseMVA6==1',
+    'medium': 't_againstElectronMediumMVA6==1',
+    'tight' : 't_againstElectronTightMVA6==1',
+    'vtight': 't_againstElectronVTightMVA6==1',
+}
+againstMuon = {
+    'loose' : 't_againstMuonLoose3==1',
+    'tight' : 't_againstMuonTight3==1',
+}
+oldId = 't_decayModeFinding==1'
+oldIsolation = {
+    'loose' : 't_byLooseIsolationMVArun2v1DBoldDMwLT==1',
+    'medium': 't_byMediumIsolationMVArun2v1DBoldDMwLT==1',
+    'tight' : 't_byTightIsolationMVArun2v1DBoldDMwLT==1',
+    'vtight': 't_byVTightIsolationMVArun2v1DBoldDMwLT==1',
+}
+newId = 't_decayModeFindingNewDMs==1'
+newIsolation = {
+    'loose' : 't_byLooseIsolationMVArun2v1DBnewDMwLT==1',
+    'medium': 't_byMediumIsolationMVArun2v1DBnewDMwLT==1',
+    'tight' : 't_byTightIsolationMVArun2v1DBnewDMwLT==1',
+    'vtight': 't_byVTightIsolationMVArun2v1DBnewDMwLT==1',
+}
+idCuts = {}
+cutLists = [
+    ('vloose','loose','loose'),
+    ('vloose','loose','tight'),
+    ('vloose','loose','vtight'),
+    ('tight','tight','loose'),
+    ('tight','tight','tight'),
+    ('tight','tight','vtight'),
+]
+for cl in cutLists:
+    el,mu,iso = cl
+    idCuts['old_{0}Electron_{1}Muon_{2}Isolation'.format(el,mu,iso)] = ' && '.join([oldId, againstElectron[el], againstMuon[mu], oldIsolation[iso]])
+    idCuts['new_{0}Electron_{1}Muon_{2}Isolation'.format(el,mu,iso)] = ' && '.join([newId, againstElectron[el], againstMuon[mu], newIsolation[iso]])
+    idCuts['old_{0}Electron_{1}Muon_noIsolation'.format(el,mu)] = ' && '.join([oldId, againstElectron[el], againstMuon[mu]])
+    idCuts['new_{0}Electron_{1}Muon_noIsolation'.format(el,mu)] = ' && '.join([newId, againstElectron[el], againstMuon[mu]])
+    if iso!='vtight': continue
+    idCuts['old_{0}Electron_noMuon_{1}Isolation'.format(el,iso)] = ' && '.join([oldId, againstElectron[el], oldIsolation[iso]])
+    idCuts['new_{0}Electron_noMuon_{1}Isolation'.format(el,iso)] = ' && '.join([newId, againstElectron[el], newIsolation[iso]])
+    idCuts['old_noElectron_{0}Muon_{1}Isolation'.format(el,mu,iso)] = ' && '.join([oldId, againstMuon[mu], oldIsolation[iso]])
+    idCuts['new_noElectron_{0}Muon_{1}Isolation'.format(el,mu,iso)] = ' && '.join([newId, againstMuon[mu], newIsolation[iso]])
+
+for sel in sels:
+    for idName in idCuts:
+        name = '{0}/{1}'.format(sel,idName)
+        selectionParams['Tau'][name] = deepcopy(selectionParams['Tau'][sel])
+        args = selectionParams['Tau'][name]['args']
+        selectionParams['Tau'][name]['args'][0] = args[0] + ' && ' + idCuts[idName]
 
 ##############################
 ### DijetFakeRate specific ###
@@ -781,6 +803,24 @@ for mass in masses:
     sampleProjectionParams['Hpp4l'][sampleName] = {}
     for genChan in genChannelsPP:
         sampleProjectionParams['Hpp4l'][sampleName]['gen_{0}'.format(genChan)] = [genChan]
+
+# special selections for samples
+# DY-10 0, 1, 2 bins (0 includes 3+)
+# DY-50 0, 1, 2, 3, 4 bins (0 includes 5+)
+sampleCuts = {
+    'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8' : '(numGenJets==0 || numGenJets>2)',
+    'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': 'numGenJets==1',
+    'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': 'numGenJets==2',
+    'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'     : '(numGenJets==0 || numGenJets>4)',
+    'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==1',
+    'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==2',
+    'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==3',
+    'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==4',
+}
+for sample,cut in sampleCuts.iteritems():
+    sampleSelectionParams['Hpp4l'][sample] = deepcopy(selectionParams['Hpp4l'])
+    for sel in selectionParams['Hpp4l'].keys():
+        sampleSelectionParams['Hpp4l'][sample][sel]['args'][0] += ' && {0}'.format(cut)
 
 #############
 ### hpp3l ###

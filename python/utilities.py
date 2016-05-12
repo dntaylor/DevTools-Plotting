@@ -47,7 +47,7 @@ latestNtuples = {
     'Muon'           : '2016-04-14_MuonAnalysis_v1-merge',
     'SingleElectron' : '',
     'SingleMuon'     : '',
-    'Tau'            : '2016-04-14_TauAnalysis_v1-merge',
+    'Tau'            : '2016-05-11_TauAnalysis_v1-merge',
     'TauCharge'      : '',
     'WTauFakeRate'   : '',
     'WZ'             : '2016-04-29_WZAnalysis_v1-merge',

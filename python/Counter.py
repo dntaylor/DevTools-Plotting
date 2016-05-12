@@ -116,9 +116,9 @@ class Counter(object):
         else:
             return (0.,0.)
 
-    def printHeader(self):
+    def printHeader(self,label=''):
         '''Print a header'''
-        print '{0:20} | {1} |'.format('',' | '.join(['{0:10}'.format(name) for name in self.processOrder]))
+        print '{0:20} | {1} |'.format(label,' | '.join(['{0:10}'.format(name) for name in self.processOrder]))
 
     def printDivider(self):
         '''Print a divider'''
