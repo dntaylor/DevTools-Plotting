@@ -528,7 +528,7 @@ class NtupleWrapper(object):
         kwargs = self.selections[selectionName]['kwargs']
         updated = self.__flatten(selectionName,histName,selection,params,**kwargs)
         # project stuff
-        if updated:
+        if updated and len(self.projections.keys())>1: # if it changed and there are channels to project
             variable = '/'.join([selectionName,histName])
             self.__projectChannel(variable)
             chans = [x for x in self.projections.keys() if 'gen' not in x]

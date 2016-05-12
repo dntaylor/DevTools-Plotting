@@ -38,14 +38,18 @@ def main(argv=None):
         destname = os.path.basename(os.path.normpath(directory))
         logging.info('Copying sample {0} of {1}: {2}'.format(i+1,len(alldirs),destname))
         files = glob.glob('{0}/*.root'.format(directory))
-        flatsource = files[0] if '_projection.root' in files[1] else files[1]
-        projsource = files[1] if '_projection.root' in files[1] else files[0]
-        flatfile = '{0}/{1}.root'.format(args.flat,destname)
-        projfile = '{0}/{1}.root'.format(args.projection,destname)
-        command = 'cp {0} {1}'.format(flatsource,flatfile)
-        os.system(command)
-        command = 'cp {0} {1}'.format(projsource,projfile)
-        os.system(command)
+        flats = [x for x in files if '_projection.root' not in x]
+        projs = [x for x in files if '_projection.root' in x]
+        if flats:
+            flatsource = flats[0]
+            flatfile = '{0}/{1}.root'.format(args.flat,destname)
+            command = 'cp {0} {1}'.format(flatsource,flatfile)
+            os.system(command)
+        if projs:
+            projsource = projs[0]
+            projfile = '{0}/{1}.root'.format(args.projection,destname)
+            command = 'cp {0} {1}'.format(projsource,projfile)
+            os.system(command)
 
 
 if __name__ == "__main__":

@@ -39,15 +39,15 @@ def getLumi():
 
 latestNtuples = {
     'Charge'         : '2016-04-23_ChargeAnalysis_v1-merge',
-    'DY'             : '2016-05-02_DYAnalysis_v1-merge',
+    'DY'             : '2016-05-02_DYAnalysis_v1-merge',       # check variations on minbias cross section (71 best fit)
     'DijetFakeRate'  : '',
     'Electron'       : '2016-04-14_ElectronAnalysis_v1-merge',
-    'Hpp3l'          : '2016-05-02_Hpp3lAnalysis_v1-merge',
-    'Hpp4l'          : '2016-05-02_Hpp4lAnalysis_v1-merge',
+    'Hpp3l'          : '2016-05-02_Hpp3lAnalysis_v1-merge',    # Tau no iso for loose
+    'Hpp4l'          : '2016-05-02_Hpp4lAnalysis_v1-merge',    # Tau no iso for loose
     'Muon'           : '2016-04-14_MuonAnalysis_v1-merge',
     'SingleElectron' : '',
     'SingleMuon'     : '',
-    'Tau'            : '2016-05-11_TauAnalysis_v1-merge',
+    'Tau'            : '2016-05-11_TauAnalysis_v1-merge',      # Addition of new DMs
     'TauCharge'      : '',
     'WTauFakeRate'   : '',
     'WZ'             : '2016-04-29_WZAnalysis_v1-merge',
