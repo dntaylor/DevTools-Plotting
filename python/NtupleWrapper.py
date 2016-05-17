@@ -9,6 +9,7 @@ import ROOT
 sys.argv.pop()
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
+ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 
 from DevTools.Plotter.xsec import getXsec
 from DevTools.Plotter.utilities import getLumi, isData, hashFile, hashString, python_mkdir, getTreeName, getNtupleDirectory
@@ -104,24 +105,26 @@ class NtupleWrapper(object):
     def __read(self,variable):
         '''Read the histogram from file'''
         # attempt to read
-        infile = ROOT.TFile(self.proj,'read')
-        hist = infile.Get(variable)
-        if hist:
-            hist = hist.Clone('h_{0}_{1}'.format(self.sample,variable.replace('/','_')))
-            hist.SetDirectory(0)
-            return hist
-        infile = ROOT.TFile(self.flat,'read')
-        hist = infile.Get(variable)
-        if hist:
-            hist = hist.Clone('h_{0}_{1}'.format(self.sample,variable.replace('/','_')))
-            hist.SetDirectory(0)
-            return hist
-        # attempt to project
-        hist = self.__project(variable)
-        if hist:
-            hist = hist.Clone('h_{0}_{1}'.format(self.sample,variable.replace('/','_')))
-            hist.SetDirectory(0)
-            return hist
+        if os.path.isfile(self.proj):
+            infile = ROOT.TFile(self.proj,'read')
+            hist = infile.Get(variable)
+            if hist:
+                hist = hist.Clone('h_{0}_{1}'.format(self.sample,variable.replace('/','_')))
+                hist.SetDirectory(0)
+                return hist
+        if os.path.isfile(self.flat):
+            infile = ROOT.TFile(self.flat,'read')
+            hist = infile.Get(variable)
+            if hist:
+                hist = hist.Clone('h_{0}_{1}'.format(self.sample,variable.replace('/','_')))
+                hist.SetDirectory(0)
+                return hist
+            # attempt to project
+            hist = self.__projectChannel(variable,temp=True)
+            if hist:
+                hist = hist.Clone('h_{0}_{1}'.format(self.sample,variable.replace('/','_')))
+                hist.SetDirectory(0)
+                return hist
         logging.info('Histogram {0} not found for {1}'.format(variable,self.sample))
         return 0
 
@@ -224,6 +227,9 @@ class NtupleWrapper(object):
         if not tree: 
             hist = ROOT.TH1F(histName,histName,*binning)
             return hist
+        if self.entryListMap['1'].GetN()<1:
+            hist = ROOT.TH1F(histName,histName,*binning)
+            return hist
         tree.SetEntryList(self.entryListMap['1'])
         if selection not in self.entryListMap:
             self.j += 1
@@ -252,6 +258,9 @@ class NtupleWrapper(object):
         binning = xBinning+yBinning
         tree = self.sampleTree
         if not tree:
+            hist = ROOT.TH2F(histName,histName,*binning)
+            return hist
+        if self.entryListMap['1'].GetN()<1:
             hist = ROOT.TH2F(histName,histName,*binning)
             return hist
         tree.SetEntryList(self.entryListMap['1'])
@@ -284,6 +293,9 @@ class NtupleWrapper(object):
         if not tree:
             hist = ROOT.TH3F(histName,histName,*binning)
             return hist
+        if self.entryListMap['1'].GetN()<1:
+            hist = ROOT.TH3F(histName,histName,*binning)
+            return hist
         tree.SetEntryList(self.entryListMap['1'])
         if selection not in self.entryListMap:
             self.j += 1
@@ -306,10 +318,9 @@ class NtupleWrapper(object):
             hist = ROOT.TH3F(histName,histName,*binning)
         return hist
 
-    def __project(self,histName,directory,hist2d,direction,binLabels=[],binRange=[0,-1]):
+    def __project(self,histName,directory,hist2d,direction,binLabels=[],binRange=[0,-1],temp=False):
         '''Project a 2D histogram onto a 1D histogram.'''
         hists = ROOT.TList()
-        self.j += 1
         if direction=='x':
             binning = [
                 hist2d.GetXaxis().GetNbins(),
@@ -324,6 +335,7 @@ class NtupleWrapper(object):
             ]
         if binLabels:
             for label in binLabels:
+                self.j += 1
                 name = 'h_{0}_{1}_{2}'.format(histName,label,self.j)
                 if direction=='x':
                     binNum = hist2d.GetYaxis().FindBin(label)
@@ -335,6 +347,7 @@ class NtupleWrapper(object):
                     hist = ROOT.gDirectory.Get(name)
                     if hist: hists.Add(hist)
         else:
+            self.j += 1
             name = 'h_{0}_{1}'.format(histName,self.j)
             if direction=='x':
                 hist2d.ProjectionX(name,binRange[0],binRange[1],'e')
@@ -346,18 +359,18 @@ class NtupleWrapper(object):
         if hists.IsEmpty():
             hist = ROOT.TH1F(histName,histName,*binning)
         else:
+            self.j += 1
             hist = hists[0].Clone('h_temp_{0}_{1}'.format(histName,self.j))
             hist.Reset()
             hist.Merge(hists)
             hist.SetName(histName)
             hist.SetTitle(histName)
-        self.__writeProjection(hist,directory=directory)
+        if not temp: self.__writeProjection(hist,directory=directory)
         return hist
 
-    def __projectFrom3D(self,histName,directory,hist3d,direction,binLabels1=[],binLabels2=[],binRange1=[0,-1],binRange2=[0,-1]):
+    def __projectFrom3D(self,histName,directory,hist3d,direction,binLabels1=[],binLabels2=[],binRange1=[0,-1],binRange2=[0,-1],temp=False):
         '''Project a 3D histogram onto a 1D histogram.'''
         hists = ROOT.TList()
-        self.j += 1
         if direction=='x':
             binning = [
                 hist3d.GetXaxis().GetNbins(),
@@ -379,6 +392,7 @@ class NtupleWrapper(object):
         if binLabels1 and binLabels2:
             for label1 in binLabels1:
                 for label2 in binLabels2:
+                    self.j += 1
                     name = 'h_{0}_{1}_{2}_{3}'.format(histName,label1,label2,self.j)
                     if direction=='x':
                         binNum1 = hist3d.GetYaxis().FindBin(label1)
@@ -397,6 +411,7 @@ class NtupleWrapper(object):
                         if hist: hists.Add(hist)
         elif binLabels1 and not binLabels2:
             for label1 in binLabels1:
+                self.j += 1
                 name = 'h_{0}_{1}_{2}'.format(histName,label1,self.j)
                 if direction=='x':
                     binNum1 = hist3d.GetYaxis().FindBin(label1)
@@ -412,6 +427,7 @@ class NtupleWrapper(object):
                     if hist: hists.Add(hist)
         elif not binLabels1 and binLabels2:
             for label2 in binLabels2:
+                self.j += 1
                 name = 'h_{0}_{1}_{2}'.format(histName,label2,self.j)
                 if direction=='x':
                     binNum2 = hist3d.GetZaxis().FindBin(label2)
@@ -426,6 +442,7 @@ class NtupleWrapper(object):
                     hist = ROOT.gDirectory.Get(name)
                     if hist: hists.Add(hist)
         else:
+            self.j += 1
             name = 'h_{0}_{1}'.format(histName,self.j)
             if direction=='x':
                 hist3d.ProjectionX(name,binRange1[0],binRange1[1],binRange2[0],binRange2[1],'e')
@@ -439,15 +456,16 @@ class NtupleWrapper(object):
         if hists.IsEmpty():
             hist = ROOT.TH1F(histName,histName,*binning)
         else:
+            self.j += 1
             hist = hists[0].Clone('h_temp_{0}_{1}'.format(histName,self.j))
             hist.Reset()
             hist.Merge(hists)
             hist.SetName(histName)
             hist.SetTitle(histName)
-        self.__writeProjection(hist,directory=directory)
+        if not temp: self.__writeProjection(hist,directory=directory)
         return hist
 
-    def __projectChannel(self,variable):
+    def __projectChannel(self,variable,temp=False):
         '''Project down the 2D channels plot to the desired channels.'''
         components = variable.split('/')
         histName = components[-1]
@@ -478,13 +496,13 @@ class NtupleWrapper(object):
         if histNd and histNd.InheritsFrom('TH3'):
             if genchannel:
                 directory = '/'.join([selectionName,channel,genchannel])
-                hist = self.__projectFrom3D(histName,directory,histNd,'x',binLabels1=self.projections[channel],binLabels2=self.projections[genchannel])
+                hist = self.__projectFrom3D(histName,directory,histNd,'x',binLabels1=self.projections[channel],binLabels2=self.projections[genchannel],temp=temp)
             else:
                 directory = '/'.join([selectionName,channel])
-                hist = self.__projectFrom3D(histName,directory,histNd,'x',binLabels1=self.projections[channel])
+                hist = self.__projectFrom3D(histName,directory,histNd,'x',binLabels1=self.projections[channel],temp=temp)
         elif histNd and histNd.InheritsFrom('TH2'):
             directory = '/'.join([selectionName,channel])
-            hist = self.__project(histName,directory,histNd,'x',binLabels=self.projections[channel])
+            hist = self.__project(histName,directory,histNd,'x',binLabels=self.projections[channel],temp=temp)
         elif histNd and histNd.InheritsFrom('TH1'): # its a 1d histogram
             hist = histNd
         else: # not a hist

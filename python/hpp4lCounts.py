@@ -5,7 +5,7 @@ import logging
 from itertools import product, combinations_with_replacement
 
 from DevTools.Plotter.Counter import Counter
-from DevTools.Plotter.higgsUtilities import getChannels, getChannelLabels, getCategories, getCategoryLabels, getSubCategories, getSubCategoryLabels
+from DevTools.Plotter.higgsUtilities import getChannels, getChannelLabels, getCategories, getCategoryLabels, getSubCategories, getSubCategoryLabels, getGenRecoChannelMap
 from copy import deepcopy
 import ROOT
 
@@ -25,6 +25,7 @@ subCatChannels = getSubCategories('Hpp4l')
 subCatLabels = getSubCategoryLabels('Hpp4l')
 chans = getChannels('Hpp4l')
 chanLabels = getChannelLabels('Hpp4l')
+genRecoMap = getGenRecoChannelMap('Hpp4l')
 
 sigMap = {
     'WZ'  : [
@@ -89,10 +90,10 @@ sigMap = {
              'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
             ],
     'Z'   : [
-             #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
              'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
              'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-             #'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
              'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
              'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
              'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
@@ -147,6 +148,16 @@ sigMap = {
     'HppHmm1000GeV': ['HPlusPlusHMinusMinusHTo4L_M-1000_13TeV-pythia8'],
 }
 
+sampleCuts = {
+    'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8' : '(numGenJets==0 || numGenJets>2)',
+    'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': 'numGenJets==1',
+    'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': 'numGenJets==2',
+    'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'     : '(numGenJets==0 || numGenJets>4)',
+    'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==1',
+    'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==2',
+    'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==3',
+    'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==4',
+}
 
 samples = ['TTV','VH','VVV','ZZ']
 allsamples = ['W','T','TT','TTVall','Z','WW','VHall','WZ','VVV','ZZall']
@@ -156,24 +167,58 @@ datadrivenSamples = []
 for s in samples + ['data']:
     datadrivenSamples += sigMap[s]
 
-for s in allsamples:
-    hpp4lCounter.addProcess(s.replace('all',''),sigMap[s])
+genSelection = {
+    'ee100': 'genChannel=="eeee"',
+    'em100': 'genChannel=="emem"',
+    'et100': 'genChannel=="etet"',
+    'mm100': 'genChannel=="mmmm"',
+    'mt100': 'genChannel=="mtmt"',
+    'tt100': 'genChannel=="tttt"',
+}
 
-for signal in signals:
-    hpp4lCounter.addProcess(signal,sigMap[signal],signal=True)
+genChanMap = {
+    'ee100': 'eeee',
+    'em100': 'emem',
+    'et100': 'etet',
+    'mm100': 'mmmm',
+    'mt100': 'mtmt',
+    'tt100': 'tttt',
+}
 
-if not blind: hpp4lCounter.addProcess('data',sigMap['data'])
 
-baseSelection = 'hpp1_passMedium==1 && hpp2_passMedium==1 && hmm1_passMedium==1 && hmm2_passMedium==1'
-mcscalefactor = 'hpp1_mediumScale*hpp2_mediumScale*hmm1_mediumScale*hmm2_mediumScale*genWeight*pileupWeight*triggerEfficiency'
+for bp in ['ee100','em100','et100','mm100','mt100','tt100']:
+    hpp4lCounter.clear()
 
-hpp4lCounter.printHeader('Preselection')
-hpp4lCounter.printDivider()
-hpp4lCounter.printCounts('All','none',selection=baseSelection,mcscalefactor=mcscalefactor)
-for cat in sorted(subCatChannels):
-    for subcat in sorted(subCatChannels[cat]):
-        recoCut = '(' + ' || '.join(['channel=="{0}"'.format(c) for chan in subCatChannels[cat][subcat] for c in chans[chan]]) + ')'
+    for s in allsamples:
+        processSampleCuts = {}
+        for sample in sigMap[s]:
+            if sample in sampleCuts:
+                processSampleCuts[sample] = sampleCuts[sample]
+        hpp4lCounter.addProcess(s.replace('all',''),sigMap[s],sampleCuts=processSampleCuts)
+    
+    for signal in signals:
+        scales = {}
+        for s in sigMap[signal]:
+            scales[s] = '({0} ? 36. : 0.)'.format(genSelection[bp])
+        hpp4lCounter.addProcess(signal,sigMap[signal],signal=True,scale=scales)
+    
+    if not blind: hpp4lCounter.addProcess('data',sigMap['data'])
+    
+    baseSelection = 'hpp1_passMedium==1 && hpp2_passMedium==1 && hmm1_passMedium==1 && hmm2_passMedium==1'
+    recoSelection = '(' + ' || '.join(['channel=="{0}"'.format(reco) for chan in genRecoMap[genChanMap[bp]] for reco in chans[chan]]) + ')'
+    baseSelection += ' && {0}'.format(recoSelection)
+    mcscalefactor = 'hpp1_mediumScale*hpp2_mediumScale*hmm1_mediumScale*hmm2_mediumScale*genWeight*pileupWeight*triggerEfficiency'
+    
+    hpp4lCounter.printHeader(bp)
+    hpp4lCounter.printDivider()
+    hpp4lCounter.printCounts('All','none',selection=baseSelection,mcscalefactor=mcscalefactor,doError=True)
+    #for cat in sorted(subCatChannels):
+    #    for subcat in sorted(subCatChannels[cat]):
+    #        recoCut = '(' + ' || '.join(['channel=="{0}"'.format(c) for chan in subCatChannels[cat][subcat] for c in chans[chan]]) + ')'
+    #        fullCut = '{0} && {1}'.format(baseSelection,recoCut)
+    #        hpp4lCounter.printCounts(' - {0}-{1}'.format(cat,subcat),'none',selection=fullCut,mcscalefactor=mcscalefactor,doError=True)
+    for chan in sorted(chans):
+        if chan not in genRecoMap[genChanMap[bp]]: continue
+        recoCut = '(' + ' || '.join(['channel=="{0}"'.format(c) for c in chans[chan]]) + ')'
         fullCut = '{0} && {1}'.format(baseSelection,recoCut)
-        hpp4lCounter.printCounts(' - {0}-{1}'.format(cat,subcat),'none',selection=fullCut,mcscalefactor=mcscalefactor)
-
-
+        hpp4lCounter.printCounts(' - {0}'.format(chan),'none',selection=fullCut,mcscalefactor=mcscalefactor,doError=True)

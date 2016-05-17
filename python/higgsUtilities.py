@@ -1,4 +1,5 @@
 from itertools import product, combinations_with_replacement
+import numpy as np
 
 cats = ['I','II','III','IV','V','VI']
 catLabelMap = {
@@ -173,6 +174,39 @@ for analysis in ['Hpp3l','Hpp4l']:
                     if hpphm not in result: result += [hpphm]
             subCatChannels[analysis][cat][subCat] = result
 
+
+
+class Scales(object):
+    def __init__(self, br_ee, br_em, br_et, br_mm, br_mt, br_tt):
+        self.a_3l = np.array([br_ee, br_em, br_et, br_mm, br_mt, br_tt], dtype=float)
+        self.m_4l = np.outer(self.a_3l, self.a_3l)
+        self.index = {"ee": 0, "em": 1, "et": 2, "mm": 3, "mt": 4, "tt": 5}
+    def scale_Hpp4l(self, hpp, hmm):
+        i = self.index[hpp]
+        j = self.index[hmm]
+        return self.m_4l[i,j] * 36.0
+    def scale_Hpp3l(self, hpp, hm='a'):
+        i = self.index[hpp]
+        scale = 9./2
+        if hpp in ['ee','mm','tt']: scale = 9.
+        return self.a_3l[i] * scale
+
+scales = {
+    'ee100': Scales(1., 0., 0., 0., 0., 0.),
+    'em100': Scales(0., 1., 0., 0., 0., 0.),
+    'et100': Scales(0., 0., 1., 0., 0., 0.),
+    'mm100': Scales(0., 0., 0., 1., 0., 0.),
+    'mt100': Scales(0., 0., 0., 0., 1., 0.),
+    'tt100': Scales(0., 0., 0., 0., 0., 1.),
+    'BP1'  : Scales(0, 0.01, 0.01, 0.3, 0.38, 0.3),
+    'BP2'  : Scales(1./2., 0, 0, 1./8., 1./4., 1./8.),
+    'BP3'  : Scales(1./3., 0, 0, 1./3., 0, 1./3.),
+    'BP4'  : Scales(1./6., 1./6., 1./6., 1./6., 1./6., 1./6.),
+}
+
+def getScales(mode):
+    return scales[mode]
+
 def getCategories(analysis):
     '''Get categories'''
     return cats
@@ -194,26 +228,30 @@ def getSubCategoryLabels(analysis):
             subCatLabelList += [subCatLabelMap[analysis][cat][subCat]]
     return subCatLabelList
 
+chans3l = {}
+chans4l = {}
+hppChannels = [''.join(x) for x in product('emt',repeat=2)]
+hmChannels  = [''.join(x) for x in product('emt',repeat=1)]
+for hpp in hppChannels:
+    for hmm in hppChannels:
+        chanString = ''.join(sorted(hpp))+''.join(sorted(hmm))
+        if chanString not in chans4l:
+            chans4l[chanString] = []
+        chans4l[chanString] += [hpp+hmm]
+for hpp in hppChannels:
+    for hm in hmChannels:
+        chanString = ''.join(sorted(hpp))+''.join(sorted(hm))
+        if chanString not in chans3l:
+            chans3l[chanString] = []
+        chans3l[chanString] += [hpp+hm]
+
 def getChannels(analysis):
     '''Get channel strings for analysis'''
-    chans = {}
-    hppChannels = [''.join(x) for x in product('emt',repeat=2)]
-    hmChannels  = [''.join(x) for x in product('emt',repeat=1)]
     if analysis=='Hpp4l':
-        for hpp in hppChannels:
-            for hmm in hppChannels:
-                chanString = ''.join(sorted(hpp))+''.join(sorted(hmm))
-                if chanString not in chans:
-                    chans[chanString] = []
-                chans[chanString] += [hpp+hmm]
-    elif analysis=='Hpp3l':
-        for hpp in hppChannels:
-            for hm in hmChannels:
-                chanString = ''.join(sorted(hpp))+''.join(sorted(hm))
-                if chanString not in chans:
-                    chans[chanString] = []
-                chans[chanString] += [hpp+hm]
-    return chans
+        return chans4l
+    if analysis=='Hpp3l':
+        return chans3l
+    return {}
 
 def getChannelLabels(analysis):
     '''Get channel labels'''
@@ -225,14 +263,28 @@ def getChannelLabels(analysis):
     chanLabels = [''.join([labelMap[c] for c in chan]) for chan in sorted(getChannels(analysis).keys())]
     return chanLabels
 
+genChannelsPP = []
+genChannelsAP = []
+genHiggsChannels = [''.join(x) for x in combinations_with_replacement('emt',2)]
+genHiggsChannels2 = [''.join(x) for x in combinations_with_replacement('emt',1)]
+for hpp in genHiggsChannels:
+    for hmm in genHiggsChannels:
+        genChannelsPP += [hpp+hmm]
+    for hm in genHiggsChannels2:
+        genChannelsAP += [hpp+hm]
+
 def getGenChannels(analysis):
-    genChannelsPP = []
-    genChannelsAP = []
-    genHiggsChannels = [''.join(x) for x in combinations_with_replacement('emt',2)]
-    genHiggsChannels2 = [''.join(x) for x in combinations_with_replacement('emt',1)]
-    for hpp in genHiggsChannels:
-        for hmm in genHiggsChannels:
-            genChannelsPP += [hpp+hmm]
-        for hm in genHiggsChannels2:
-            genChannelsAP += [hpp+hm]
     return {'PP':genChannelsPP,'AP':genChannelsAP}
+
+def getGenRecoChannelMap(analysis):
+    theMap = {}
+    for gen in genChannelsPP:
+        theMap[gen] = []
+        for reco in chans4l:
+            good = True
+            for r,lep in enumerate(reco):
+                if not (lep==gen[r] or gen[r]=='t'):
+                    good = False
+            if good:
+                theMap[gen] += [reco]
+    return theMap

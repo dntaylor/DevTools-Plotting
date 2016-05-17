@@ -767,9 +767,12 @@ selectionParams['Hpp4l'] = {
 # fake regions via modes
 for nf in range(5):
     name = '{0}P{1}F'.format(4-nf,nf)
+    name_regular = '{0}P{1}F_regular'.format(4-nf,nf)
     regionCut = '(' + ' || '.join([hpp4lCutMap[reg] for reg in fakeModes[nf]]) + ')'
     regionMCScaleFactor = '*'.join(['({0} ? {1}*{2}*{3}*{4} : 1)'.format(hpp4lCutMap[reg],hpp4lScaleFactorMap[reg],hpp4lFakeScaleFactorMap[reg],hpp4lBaseScaleFactor,'1' if reg=='PPPP' else '-1') for reg in fakeModes[nf]])
+    regionMCScaleFactor_regular = '*'.join(['({0} ? {1}*{2} : 1)'.format(hpp4lCutMap[reg],hpp4lScaleFactorMap[reg],hpp4lBaseScaleFactor) for reg in fakeModes[nf]])
     regionDataScaleFactor = '*'.join(['({0} ? {1} : 1)'.format(hpp4lCutMap[reg],hpp4lFakeScaleFactorMap[reg]) for reg in fakeModes[nf]])
+    # fake scaled
     selectionParams['Hpp4l'][name] = {
         'args': [hpp4lBaseCut + ' && ' + regionCut],
         'kwargs': {
@@ -784,6 +787,21 @@ for nf in range(5):
             'mccut': hpp4lMCCut,
             'mcscalefactor': regionMCScaleFactor,
             'datascalefactor': regionDataScaleFactor,
+        }
+    }
+    # regular for valudation
+    selectionParams['Hpp4l'][name_regular] = {
+        'args': [hpp4lBaseCut + ' && ' + regionCut],
+        'kwargs': {
+            'mccut': hpp4lMCCut,
+            'mcscalefactor': regionMCScaleFactor_regular,
+        }
+    }
+    selectionParams['Hpp4l']['{0}/lowmass'.format(name_regular)] = {
+        'args': [hpp4lLowMassControl + ' && ' + regionCut],
+        'kwargs': {
+            'mccut': hpp4lMCCut,
+            'mcscalefactor': regionMCScaleFactor_regular,
         }
     }
 

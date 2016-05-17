@@ -27,7 +27,9 @@ class Counter(object):
         self.analysisDict = {}
         self.processOrder = []
         self.sampleFiles = {}
+        self.processSampleCuts = {}
         self.signals = []
+        self.scales = {}
         self.j = 0
 
     def __exit__(self, type, value, traceback):
@@ -53,12 +55,16 @@ class Counter(object):
         Add process, processSamples is a list of samples to include
         '''
         analysis = kwargs.pop('analysis',self.analysis)
+        sampleCuts = kwargs.pop('sampleCuts',{})
+        scale = kwargs.pop('scale',{})
         for sampleName in processSamples:
             self._openFile(sampleName,analysis=analysis,**kwargs)
         self.analysisDict[processName] = analysis
         self.processDict[processName] = processSamples
+        if sampleCuts: self.processSampleCuts[processName] = sampleCuts
         self.processOrder += [processName]
         if signal: self.signals += [processName]
+        if scale: self.scales[processName] = scale
 
     def clear(self):
         self.sampleFiles = {}
@@ -66,6 +72,8 @@ class Counter(object):
         self.processDict = {}
         self.processOrder = []
         self.signals = []
+        self.scales = {}
+        self.processSampleCuts = {}
 
     def _readSampleCount(self,sampleName,directory,**kwargs):
         '''Read the count from file'''
@@ -97,38 +105,68 @@ class Counter(object):
         if isinstance(directory,basestring): # its a single directory
             directory = [directory]
         if processName in self.processDict:
+            logging.debug('Process: {0}'.format(processName))
             counts = []
             for dirName in directory:
+                logging.debug('Directory: {0}'.format(dirName))
                 for sampleName in self.processDict[processName]:
+                    logging.debug('Sample: {0}'.format(sampleName))
                     if selection:
+                        logging.debug('Custom selection')
                         sf = '*'.join([scalefactor,datascalefactor if isData(sampleName) else mcscalefactor])
+                        if processName in self.scales:
+                            if sampleName in self.scales[processName]:
+                                sf += '*{0}'.format(self.scales[processName][sampleName])
                         fullcut = ' && '.join([selection,mccut]) if mccut and not isData(sampleName) else selection
+                        if processName in self.processSampleCuts:
+                            if sampleName in self.processSampleCuts[processName]:
+                                fullcut += ' && {0}'.format(self.processSampleCuts[processName][sampleName])
                         count = self._getTempCount(sampleName,fullcut,sf,analysis=analysis)
+                        logging.debug('Count: {0} +/- {1}'.format(*count))
                     else:
                         count = self._readSampleCount(sampleName,dirName,analysis=analysis)
+                        logging.debug('Count: {0} +/- {1}'.format(*count))
                     if count: counts += [count]
             if not counts:
+                logging.debug('No entries for {0}'.format(processName))
                 return (0.,0.)
             if len(counts)==1:
+                logging.debug('Total: {0} +/- {1}'.format(*counts[0]))
                 return counts[0]
             else:
-                return sumWithError(*counts)
+                total = sumWithError(*counts)
+                logging.debug('Total: {0} +/- {1}'.format(*total))
+                return total
         else:
             return (0.,0.)
 
     def printHeader(self,label=''):
         '''Print a header'''
-        print '{0:20} | {1} |'.format(label,' | '.join(['{0:10}'.format(name) for name in self.processOrder]))
+        print '{0:20} | {1} |'.format(label,' | '.join(['{0:10}'.format(name) for name in self.processOrder + ['All BG']]))
 
     def printDivider(self):
         '''Print a divider'''
-        print '{0:20}-|-{1}-|'.format('-'*20,'-|-'.join(['{0:10}'.format('-'*10) for name in self.processOrder]))
+        print '{0:20}-|-{1}-|'.format('-'*20,'-|-'.join(['{0:10}'.format('-'*10) for name in self.processOrder + ['All BG']]))
+
+    def getCounts(self,directory,**kwargs):
+        '''Get a map for the counts'''
+        counts = {}
+        for processName in self.processOrder:
+            counts[processName] = self._getCount(processName,directory,**kwargs)
+        return counts
 
     def printCounts(self,label,directory,**kwargs):
         '''Print the counts'''
+        doError = kwargs.pop('doError',False)
+        logging.info('Processing: {0}'.format(label))
+        countMap = self.getCounts(directory,**kwargs)
         counts = []
         for processName in self.processOrder:
-            counts += [self._getCount(processName,directory,**kwargs)]
+            counts += [countMap[processName]]
         vals = [x[0] for x in counts]
         errs = [x[1] for x in counts]
-        print '{0:20} | {1} |'.format(label,' | '.join(['{0:10.4g}'.format(v) for v in vals]))
+        nsig = len(self.signals)
+        vals += [sum(vals[:-1*nsig])]
+        errs += [sum([x**2 for x in errs[:-1*nsig]])**0.5]
+        print '{0:20} | {1} |'.format(label,' | '.join(['{0:>10.4f}'.format(v) for v in vals]))
+        if doError: print '{0:20} | {1} |'.format('',' | '.join(['{0:>10.4f}'.format(e) for e in errs]))

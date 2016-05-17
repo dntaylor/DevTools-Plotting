@@ -50,6 +50,23 @@ sigMap = {
              'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
              'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
+    'QCD' : [
+             'QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8',
+             'QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8',
+            ],
     'data': [
              'DoubleMuon',
              'DoubleEG',
@@ -92,21 +109,34 @@ sigcolors = [
 ]
 
 
-tPlotter.addHistogram('HppHmm500GeV',sigMap['HppHmm500GeV'],style={'name': '#Phi^{++}#Phi^{--} (match tau gen jet)'})
-tPlotter.addHistogram('TT',sigMap['TT'],style={'name':'t#bar{t} (fake)'})
+tPlotter.addHistogram('signew',sigMap['HppHmm1000GeV'],style={'name': 'New DMs (match tau gen jet)','linecolor':ROOT.kRed})
+tPlotter.addHistogram('sigold',sigMap['HppHmm1000GeV'],style={'name': 'Old DMs (match tau gen jet)','linecolor':ROOT.kBlue})
+tPlotter.addHistogram('fakenew',sigMap['QCD'],style={'name':'New DMs (fake)','linecolor':ROOT.kRed,'linestyle':2})
+tPlotter.addHistogram('fakeold',sigMap['QCD'],style={'name':'Old DMs (fake)','linecolor':ROOT.kBlue,'linestyle':2})
 
 idNames = [
-    'old_vlooseElectron_looseMuon_looseIsolation',
-    'old_vlooseElectron_looseMuon_tightIsolation',
-    'old_vlooseElectron_looseMuon_vtightIsolation',
-    'old_tightElectron_tightMuon_looseIsolation',
-    'old_tightElectron_tightMuon_tightIsolation',
-    'old_tightElectron_tightMuon_vtightIsolation',
+    '{0}_vlooseElectron_looseMuon_looseIsolation',
+    '{0}_vlooseElectron_looseMuon_tightIsolation',
+    '{0}_vlooseElectron_looseMuon_vtightIsolation',
+    '{0}_tightElectron_tightMuon_looseIsolation',
+    '{0}_tightElectron_tightMuon_tightIsolation',
+    '{0}_tightElectron_tightMuon_vtightIsolation',
 ]
 
 binning = [0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,450,500,550,600,650,700,800,900,1000]
+binning = [0,20,40,60,80,100,120,140,160,180,200,240,300,400,500,600,800,1000]
 for idName in idNames:
-    num = {'HppHmm500GeV': 'default/prompt/{0}/pt'.format(idName), 'TT': 'default/fake/{0}/pt'.format(idName)}
-    denom = {'HppHmm500GeV': 'default/prompt/pt', 'TT': 'default/fake/pt'}
-    savename = idName
+    num = {
+        'signew': 'default/prompt/{0}/pt'.format(idName.format('new')),
+        'sigold': 'default/prompt/{0}/pt'.format(idName.format('old')),
+        'fakenew': 'default/fake/{0}/pt'.format(idName.format('new')),
+        'fakeold': 'default/fake/{0}/pt'.format(idName.format('old')),
+    }
+    denom = {
+        'signew': 'default/prompt/pt',
+        'sigold': 'default/prompt/pt',
+        'fakenew': 'default/fake/pt',
+        'fakeold': 'default/fake/pt',
+    }
+    savename = idName.format('tau')
     tPlotter.plotRatio(num,denom,savename,rebin=binning,xaxis='p_{T} (GeV)',numcol=2,ymax=1.2)
