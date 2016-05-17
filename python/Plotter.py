@@ -717,10 +717,10 @@ class Plotter(PlotterBase):
         else:
             return self._saveTemp(canvas)
 
-    def plotROC(self,signalVariable,backgroundVariable,savename,**kwargs):
+    def plotEfficiency(self,variable,savename,**kwargs):
         '''Plot ROC curve'''
-        xaxis = kwargs.pop('xaxis', 'Signal Efficiency')
-        yaxis = kwargs.pop('yaxis', 'Background Rejection')
+        xaxis = kwargs.pop('xaxis', 'Variable')
+        yaxis = kwargs.pop('yaxis', 'Efficiency')
         numcol = kwargs.pop('numcol',1)
         legendpos = kwargs.pop('legendpos',33)
         logy = kwargs.pop('logy',False)
@@ -740,8 +740,75 @@ class Plotter(PlotterBase):
         hists = OrderedDict()
         histOrder = customOrder if customOrder else self.histOrder
         for i,histName in enumerate(histOrder):
-            sig = self._getHistogram(histName,signalVariable,nofill=True,**kwargs)
-            bg = self._getHistogram(histName,backgroundVariable,nofill=True,**kwargs)
+            sig = self._getHistogram(histName,variable,nofill=True,**kwargs)
+            numBins = sig.GetNbinsX()
+            sigEff = [0]*numBins
+            sigVal = [0]*numBins
+            totSig = sig.Integral()
+            for b in range(numBins):
+                sigEff[b] = sig.Integral(1,b+1)/totSig if invert else sig.Integral(b+1,numBins)/totSig
+                sigVal[b] = sig.GetBinLowEdge(b+1)
+            eff = ROOT.TGraph(numBins,array('f',sigVal),array('f',sigEff))
+            style = self.styles[histName]
+            eff.SetLineWidth(2)
+            eff.SetLineColor(style['linecolor'])
+            eff.SetMarkerColor(style['linecolor'])
+            eff.SetFillColor(0)
+            if i==0:
+                eff.Draw('AL')
+                eff.GetXaxis().SetTitle(xaxis)
+                eff.GetYaxis().SetTitle(yaxis)
+                eff.GetYaxis().SetTitleOffset(1.2)
+                eff.SetMaximum(ymax)
+                eff.SetMinimum(ymin)
+            else:
+                eff.Draw('L same')
+            eff.SetTitle(style['name'])
+            hists[histName] = eff
+
+        legend = self._getLegend(hists=hists,numcol=numcol,position=legendpos)
+        legend.Draw()
+
+        self._setStyle(canvas)
+
+        # save
+        if save:
+            self._save(canvas,savename)
+        else:
+            return self._saveTemp(canvas)
+
+    def plotROC(self,signalVariable,backgroundVariable,savename,**kwargs):
+        '''Plot ROC curve'''
+        xaxis = kwargs.pop('xaxis', 'Signal Efficiency')
+        yaxis = kwargs.pop('yaxis', 'Background Rejection')
+        numcol = kwargs.pop('numcol',1)
+        legendpos = kwargs.pop('legendpos',33)
+        logy = kwargs.pop('logy',False)
+        logx = kwargs.pop('logx',False)
+        customOrder = kwargs.pop('customOrder',[])
+        sigOrder = kwargs.pop('sigOrder',[])
+        bgOrder = kwargs.pop('bgOrder',[])
+        workingPoints = kwargs.pop('workingPoints',{})
+        invert = kwargs.pop('invert',False)
+        ymin = kwargs.pop('ymin',0)
+        ymax = kwargs.pop('ymax',1.2)
+        save = kwargs.pop('save',True)
+
+        logging.info('Plotting {0}'.format(savename))
+        canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
+        ROOT.SetOwnership(canvas,False)
+        canvas.SetLogy(logy)
+        canvas.SetLogx(logx)
+
+        hists = OrderedDict()
+        histOrder = customOrder if customOrder else self.histOrder
+        sigHists = sigOrder if sigOrder and bgOrder and len(sigOrder)==len(bgOrder) else histOrder
+        bgHists = bgOrder if sigOrder and bgOrder and len(sigOrder)==len(bgOrder) else histOrder
+        wpStyles = [20,21,22,23]
+        wpHists = []
+        for i,(sigName,bgName) in enumerate(zip(sigHists,bgHists)):
+            sig = self._getHistogram(sigName,signalVariable,nofill=True,**kwargs)
+            bg = self._getHistogram(bgName,backgroundVariable,nofill=True,**kwargs)
             numBins = sig.GetNbinsX()
             sigEff = [0]*numBins
             bgEff = [0]*numBins
@@ -751,7 +818,7 @@ class Plotter(PlotterBase):
                 sigEff[b] = sig.Integral(1,b+1)/totSig if invert else sig.Integral(b+1,numBins)/totSig
                 bgEff[b] = (totBg-bg.Integral(1,b+1))/totBg if invert else (totBg-bg.Integral(b+1,numBins))/totBg
             roc = ROOT.TGraph(numBins,array('f',sigEff),array('f',bgEff))
-            style = self.styles[histName]
+            style = self.styles[sigName]
             roc.SetLineWidth(2)
             roc.SetLineColor(style['linecolor'])
             roc.SetMarkerColor(style['linecolor'])
@@ -766,10 +833,27 @@ class Plotter(PlotterBase):
             else:
                 roc.Draw('L same')
             roc.SetTitle(style['name'])
-            hists[histName] = roc
+            hists[sigName] = roc
+            # working points
+            for w,wp in enumerate(sorted(workingPoints[sigName])):
+                wpbin = max(1,sig.FindBin(workingPoints[sigName][wp]))
+                wpgraph = ROOT.TGraph(1,array('f',[sigEff[wpbin-1]]),array('f',[bgEff[wpbin-1]]))
+                wpgraph.SetMarkerColor(style['linecolor'])
+                wpgraph.SetMarkerStyle(wpStyles[w])
+                wpgraph.Draw('P same')
+                wpHists += [wpgraph]
 
         legend = self._getLegend(hists=hists,numcol=numcol,position=legendpos)
         legend.Draw()
+
+        wpEntries = []
+        for w,wp in enumerate(sorted(workingPoints[sigName])):
+            hist = ROOT.TGraph(1,array('f',[0]),array('f',[0]))
+            hist.SetMarkerStyle(wpStyles[w])
+            wpEntries += [[hist,wp,'P']]
+            
+        wpLegend = super(Plotter,self)._getLegend(entries=wpEntries,position=11)
+        wpLegend.Draw()
 
         self._setStyle(canvas)
 

@@ -5,7 +5,7 @@ import logging
 from itertools import product, combinations_with_replacement
 
 from DevTools.Plotter.Plotter import Plotter
-from DevTools.Plotter.higgsUtilities import getChannels, getChannelLabels, getCategories, getCategoryLabels, getSubCategories, getSubCategoryLabels
+from DevTools.Plotter.higgsUtilities import getChannels, getChannelLabels, getCategories, getCategoryLabels, getSubCategories, getSubCategoryLabels, getGenRecoChannelMap
 from copy import deepcopy
 import ROOT
 
@@ -13,9 +13,10 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 
 blind = True
 doCat = True
-plotMC = True
-plotDatadriven = True
+plotMC = False
+plotDatadriven = False
 plotSignal = False
+plotROC = True
 plotNormalization = False
 plotCount = True
 
@@ -31,6 +32,9 @@ subCatChannels = getSubCategories('Hpp4l')
 subCatLabels = getSubCategoryLabels('Hpp4l')
 chans = getChannels('Hpp4l')
 chanLabels = getChannelLabels('Hpp4l')
+genRecoMap = getGenRecoChannelMap('Hpp4l')
+#masses = [200,300,400,500,600,700,800,900,1000]
+masses = [200,400,600,800,1000]
 
 sigMap = {
     'WZ'  : [
@@ -158,9 +162,31 @@ samples = ['TTV','VH','VVV','ZZ']
 allsamples = ['W','T','TT','TTVall','Z','WW','VHall','WZ','VVV','ZZall']
 signals = ['HppHmm500GeV']
 
+allSamplesDict = {'BG':[]}
+for s in allsamples:
+    allSamplesDict['BG'] += sigMap[s]
+
 datadrivenSamples = []
 for s in samples + ['data']:
     datadrivenSamples += sigMap[s]
+
+sigColors = {
+    200 : ROOT.TColor.GetColor('#000000'),
+    300 : ROOT.TColor.GetColor('#330000'),
+    400 : ROOT.TColor.GetColor('#660000'),
+    500 : ROOT.TColor.GetColor('#800000'),
+    600 : ROOT.TColor.GetColor('#990000'),
+    700 : ROOT.TColor.GetColor('#B20000'),
+    800 : ROOT.TColor.GetColor('#CC0000'),
+    900 : ROOT.TColor.GetColor('#FF0000'),
+    1000: ROOT.TColor.GetColor('#FF3333'),
+    1100: ROOT.TColor.GetColor('#FF6666'),
+    1200: ROOT.TColor.GetColor('#FF8080'),
+    1300: ROOT.TColor.GetColor('#FF9999'),
+    1400: ROOT.TColor.GetColor('#FFB2B2'),
+    1500: ROOT.TColor.GetColor('#FFCCCC'),
+}
+
 
 def getDataDrivenPlot(*plots):
     histMap = {}
@@ -282,26 +308,47 @@ lowmass_cust = {
 norm_cust = {
     # hpp
     'hppMass'               : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
-    'hppPt'                 : {'yaxis': 'Unit normalized', 'rebin': 20, 'numcol': 2},
-    'hppDeltaR'             : {'yaxis': 'Unit normalized', 'rebin': 10},
-    'hppLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 5},
-    'hppSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 5},
+    'hppPt'                 : {'yaxis': 'Unit normalized', 'rebin': 1, 'numcol': 2},
+    'hppDeltaR'             : {'yaxis': 'Unit normalized', 'rebin': 1},
+    'hppLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 1},
+    'hppSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 1},
     # hmm
     'hmmMass'               : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
-    'hmmPt'                 : {'yaxis': 'Unit normalized', 'rebin': 20, 'numcol': 2},
-    'hmmDeltaR'             : {'yaxis': 'Unit normalized', 'rebin': 10},
-    'hmmLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 5},
-    'hmmSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 5},
+    'hmmPt'                 : {'yaxis': 'Unit normalized', 'rebin': 1, 'numcol': 2},
+    'hmmDeltaR'             : {'yaxis': 'Unit normalized', 'rebin': 1},
+    'hmmLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 1},
+    'hmmSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 1},
     # z
-    'zMass'                 : {'yaxis': 'Unit normalized', 'rebin': 20, 'numcol': 2},
+    'zMass'                 : {'yaxis': 'Unit normalized', 'rebin': 1, 'numcol': 2},
     'mllMinusMZ'            : {'yaxis': 'Unit normalized', 'rebin': 1},
     # event
     'met'                   : {'yaxis': 'Unit normalized', 'rebin': 1},
     'numVertices'           : {'yaxis': 'Unit normalized'},
-    'mass'                  : {'yaxis': 'Unit normalized', 'rebin': 10},
-    'st'                    : {'yaxis': 'Unit normalized', 'rebin': 10},
+    'mass'                  : {'yaxis': 'Unit normalized', 'rebin': 1},
+    'st'                    : {'yaxis': 'Unit normalized', 'rebin': 1},
 }
 
+eff_cust = {
+    # hpp
+    'hppMass'               : {'yaxis': 'Efficiency', 'logy':0, 'rebin': 1},
+    'hppPt'                 : {'yaxis': 'Efficiency', 'rebin': 1, 'numcol': 2},
+    'hppDeltaR'             : {'yaxis': 'Efficiency', 'rebin': 1, 'invert': True},
+    'hppLeadingLeptonPt'    : {'yaxis': 'Efficiency', 'rebin': 1},
+    'hppSubLeadingLeptonPt' : {'yaxis': 'Efficiency', 'rebin': 1},
+    'st'                    : {'yaxis': 'Efficiency', 'rebin': 1},
+    'mllMinusMZ'            : {'yaxis': 'Efficiency', 'rebin': 1},
+}
+
+roc_cust = {
+    # hpp
+    'hppMass'               : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1,'logy':0},
+    'hppPt'                 : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
+    'hppDeltaR'             : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1, 'invert': True},
+    'hppLeadingLeptonPt'    : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
+    'hppSubLeadingLeptonPt' : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
+    'st'                    : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
+    'mllMinusMZ'            : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
+}
 
 ############################
 ### MC based BG estimate ###
@@ -470,11 +517,6 @@ if plotDatadriven:
 if plotNormalization:
     hpp4lPlotter.clearHistograms()
     
-    allSamplesDict = {'BG':[]}
-    
-    for s in allsamples:
-        allSamplesDict['BG'] += sigMap[s]
-    
     hpp4lPlotter.addHistogram('BG',allSamplesDict['BG'])
     for signal in signals:
         hpp4lPlotter.addHistogram(signal,sigMap[signal],signal=True)
@@ -498,25 +540,6 @@ if plotNormalization:
 if plotSignal:
     hpp4lPlotter.clearHistograms()
     
-    sigColors = {
-        200 : ROOT.TColor.GetColor('#000000'),
-        300 : ROOT.TColor.GetColor('#330000'),
-        400 : ROOT.TColor.GetColor('#660000'),
-        500 : ROOT.TColor.GetColor('#800000'),
-        600 : ROOT.TColor.GetColor('#990000'),
-        700 : ROOT.TColor.GetColor('#B20000'),
-        800 : ROOT.TColor.GetColor('#CC0000'),
-        900 : ROOT.TColor.GetColor('#FF0000'),
-        1000: ROOT.TColor.GetColor('#FF3333'),
-        1100: ROOT.TColor.GetColor('#FF6666'),
-        1200: ROOT.TColor.GetColor('#FF8080'),
-        1300: ROOT.TColor.GetColor('#FF9999'),
-        1400: ROOT.TColor.GetColor('#FFB2B2'),
-        1500: ROOT.TColor.GetColor('#FFCCCC'),
-    }
-    
-    #masses = [200,300,400,500,600,700,800,900,1000]
-    masses = [200,400,600,800,1000]
     for mass in masses:
         hpp4lPlotter.addHistogram('HppHmm{0}GeV'.format(mass),sigMap['HppHmm{0}GeV'.format(mass)],signal=True,style={'linecolor': sigColors[mass]})
     
@@ -538,15 +561,6 @@ if plotSignal:
         'tt' : 10,
     }
     
-    genDecayMap = {
-        'ee' : ['ee'],
-        'em' : ['em'],
-        'et' : ['ee','em','et'],
-        'mm' : ['mm'],
-        'mt' : ['em','mm','mt'],
-        'tt' : ['ee','em','et','mm','mt','tt'],
-    }
-    
     for plot in norm_cust:
         plotname = 'default/{0}'.format(plot)
         savename = 'signal/{0}'.format(plot)
@@ -561,22 +575,67 @@ if plotSignal:
             catkwargs = deepcopy(kwargs)
             if cat in catRebin and 'rebin' in catkwargs and plot in ['hppMass','hmmMass']: catkwargs['rebin'] = catkwargs['rebin'] * catRebin[cat]
             if doCat: hpp4lPlotter.plotNormalized(plotnames,savename,**catkwargs)
-        if 'hpp' in plot: # plot just the channels of the type
-            for higgsChan in ['ee','em','et','mm','mt','tt']:
-                # reco
-                plotnames = ['default/{0}/{1}'.format(chan,plot) for chan in chans if chan[:2]==higgsChan] + ['default/{0}/{1}'.format(chan,plot.replace('hpp','hmm')) for chan in chans if chan[2:]==higgsChan]
-                savename = 'signal/{0}/{1}'.format(higgsChan,plot)
-                genkwargs = deepcopy(kwargs)
-                if higgsChan in genRebin and 'rebin' in genkwargs and plot in ['hppMass','hmmMass']: genkwargs['rebin'] = genkwargs['rebin'] * genRebin[higgsChan]
+    for plot in eff_cust:
+        kwargs = deepcopy(plots[plot])
+        if plot in norm_cust: kwargs.update(norm_cust[plot])
+        for higgsChan in ['ee','em','et','mm','mt','tt']:
+            # reco
+            plotnames = ['default/{0}/{1}'.format(chan,plot) for chan in chans if chan[:2]==higgsChan]
+            if 'hpp' in plot: plotnames += ['default/{0}/{1}'.format(chan,plot.replace('hpp','hmm')) for chan in chans if chan[2:]==higgsChan]
+            savename = 'signal/{0}/{1}'.format(higgsChan,plot)
+            genkwargs = deepcopy(kwargs)
+            effkwargs = deepcopy(plots[plot])
+            if plot in eff_cust: effkwargs.update(eff_cust[plot])
+            #if higgsChan in genRebin and 'rebin' in genkwargs and plot in ['hppMass','hmmMass']: genkwargs['rebin'] = genkwargs['rebin'] * genRebin[higgsChan]
+            hpp4lPlotter.plotNormalized(plotnames,savename,**genkwargs)
+            # and the gen truth
+            plotnames = []
+            for gen in genRecoMap:
+                for reco in genRecoMap[gen]:
+                    if gen[:2]==higgsChan:
+                        plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot)] 
+                    if gen[2:]==higgsChan and 'hpp' in plot:
+                        plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot.replace('hpp','hmm'))] 
+            if plotnames:
+                savename = 'signal/{0}/{1}_genMatched'.format(higgsChan,plot)
                 hpp4lPlotter.plotNormalized(plotnames,savename,**genkwargs)
-                # and the gen truth
-                plotnames = []
-                for gen in chans:
-                    for reco in chans:
-                        if reco[:2] in genDecayMap[gen[:2]] and reco[2:] in genDecayMap[gen[2:]] and gen[:2]==higgsChan:
-                            plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot)] 
-                        #if reco[:2] in genDecayMap[gen[:2]] and reco[2:] in genDecayMap[gen[2:]] and gen[2:]==higgsChan:
-                        #    plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot.replace('hpp','hmm'))] 
-                if plotnames:
-                    savename = 'signal/{0}/{1}_genMatched'.format(higgsChan,plot)
-                    #hpp4lPlotter.plotNormalized(plotnames,savename,**genkwargs)
+                savename = 'signal/{0}/{1}_genMatched_efficiency'.format(higgsChan,plot)
+                hpp4lPlotter.plotEfficiency(plotnames,savename,**effkwargs)
+
+# ROCs
+if plotROC:
+    hpp4lPlotter.clearHistograms()
+    
+    hpp4lPlotter.addHistogram('BG',allSamplesDict['BG'])
+    sigOrder = []
+    bgOrder = []
+    workingPoints = {
+        'mllMinusMZ' : {},
+        'hppMass'    : {},
+    }
+    for mass in masses:
+        name = 'HppHmm{0}GeV'.format(mass)
+        sigOrder += [name]
+        bgOrder += ['BG']
+        hpp4lPlotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': sigColors[mass]})
+        workingPoints['mllMinusMZ'][name] = {'Z Veto': 5}
+        workingPoints['hppMass'][name] = {'0.2*m_{#Phi}': 0.2*mass, '0.3*m_{#Phi}': 0.3*mass, '0.5*m_{#Phi}': 0.5*mass, '0.9*m_{#Phi}': 0.9*mass,}
+
+
+    for plot in roc_cust:
+        kwargs = deepcopy(plots[plot])
+        kwargs.update(roc_cust[plot])
+        for higgsChan in ['ee','em','et','mm','mt','tt']:
+            plotnames = []
+            bgnames = []
+            for gen in genRecoMap:
+                for reco in genRecoMap[gen]:
+                    if gen[:2]==higgsChan:
+                        plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot)] 
+                        bgnames += ['default/{0}/{1}'.format(reco,plot)] 
+                    if gen[2:]==higgsChan and 'hpp' in plot:
+                        plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot.replace('hpp','hmm'))] 
+            if plotnames:
+                savename = 'signal/{0}/{1}_genMatched_roc'.format(higgsChan,plot)
+                wp = workingPoints[plot] if plot in workingPoints else {}
+                hpp4lPlotter.plotROC(plotnames,bgnames,savename,sigOrder=sigOrder,bgOrder=bgOrder,workingPoints=wp,**kwargs)
