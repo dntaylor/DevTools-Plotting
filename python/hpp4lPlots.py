@@ -5,7 +5,7 @@ import logging
 from itertools import product, combinations_with_replacement
 
 from DevTools.Plotter.Plotter import Plotter
-from DevTools.Plotter.higgsUtilities import getChannels, getChannelLabels, getCategories, getCategoryLabels, getSubCategories, getSubCategoryLabels, getGenRecoChannelMap
+from DevTools.Plotter.higgsUtilities import getChannels, getChannelLabels, getCategories, getCategoryLabels, getSubCategories, getSubCategoryLabels, getGenRecoChannelMap, getSigMap
 from copy import deepcopy
 import ROOT
 
@@ -13,10 +13,11 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 
 blind = True
 doCat = True
-plotMC = False
-plotDatadriven = False
+plotMC = True
+plotDatadriven = True
+plotFakeRegions = True
 plotSignal = False
-plotROC = True
+plotROC = False
 plotNormalization = False
 plotCount = True
 
@@ -33,130 +34,10 @@ subCatLabels = getSubCategoryLabels('Hpp4l')
 chans = getChannels('Hpp4l')
 chanLabels = getChannelLabels('Hpp4l')
 genRecoMap = getGenRecoChannelMap('Hpp4l')
+sigMap = getSigMap('Hpp4l')
+
 #masses = [200,300,400,500,600,700,800,900,1000]
 masses = [200,400,600,800,1000]
-
-sigMap = {
-    'WZ'  : [
-             'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
-             'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-             'WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8',
-             'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-            ],
-    'ZZ'  : [
-             'ZZTo4L_13TeV_powheg_pythia8',
-             'GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo2mu2tau_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8',
-            ],
-    'ZZall' : [
-             'ZZTo4L_13TeV_powheg_pythia8',
-             'GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo2mu2tau_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8',
-             'ZZTo2L2Nu_13TeV_powheg_pythia8',
-             'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-            ],
-    'VVV' : [
-             'WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
-             'WWG_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
-            ],
-    'VH'  : [
-             'ZH_HToBB_ZToLL_M125_13TeV_amcatnloFXFX_madspin_pythia8',
-             'ZH_HToGG_ZToAll_M125_13TeV_powheg_pythia8',
-             'ZH_HToZG_ZToAll_M-125_13TeV_powheg_pythia8',
-             'ZH_HToZZ_4LFilter_M125_13TeV_powheg2-minlo-HZJ_JHUgenV6_pythia8',
-            ],
-    'VHall' : [
-             'WH_HToBB_WToLNu_M125_13TeV_amcatnloFXFX_madspin_pythia8',
-             'ZH_HToBB_ZToLL_M125_13TeV_amcatnloFXFX_madspin_pythia8',
-             'ZH_HToBB_ZToNuNu_M125_13TeV_amcatnloFXFX_madspin_pythia8',
-             'ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8',
-             'ZH_HToGG_ZToAll_M125_13TeV_powheg_pythia8',
-             'ZH_HToZG_ZToAll_M-125_13TeV_powheg_pythia8',
-             'ZH_HToZZ_4LFilter_M125_13TeV_powheg2-minlo-HZJ_JHUgenV6_pythia8',
-            ],
-    'TTV' : [
-             'ttZJets_13TeV_madgraphMLM',
-             'ttH_M125_13TeV_powheg_pythia8',
-            ],
-    'TTVall' : [
-             'ttWJets_13TeV_madgraphMLM',
-             'ttZJets_13TeV_madgraphMLM',
-             'ttH_M125_13TeV_powheg_pythia8',
-             'tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
-             'tZq_nunu_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
-            ],
-    'WW'  : [
-             'WWTo2L2Nu_13TeV-powheg',
-             'WWToLNuQQ_13TeV-powheg',
-            ],
-    'W'   : [
-             'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-            ],
-    'Z'   : [
-             'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-             'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-             'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-             'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-             'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-            ],
-    'TT'  : [
-             'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-            ],
-    'T'   : [
-             'ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
-             #'ST_t-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
-             'ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
-             'ST_t-channel_top_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
-             'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
-             'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
-            ],
-    'QCD' : [
-             'QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8',
-             'QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8',
-             'QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8',
-             'QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8',
-             'QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8',
-             'QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8',
-             'QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8',
-             'QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8',
-             'QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8',
-             'QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8',
-             'QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8',
-             'QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8',
-             'QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8',
-             'QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8',
-             'QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8',
-            ],
-    'data': [
-             'DoubleMuon',
-             'DoubleEG',
-             'MuonEG',
-             'SingleMuon',
-             'SingleElectron',
-             'Tau',
-            ],
-    'HppHmm200GeV' : ['HPlusPlusHMinusMinusHTo4L_M-200_13TeV-pythia8'],
-    'HppHmm300GeV' : ['HPlusPlusHMinusMinusHTo4L_M-300_13TeV-pythia8'],
-    'HppHmm400GeV' : ['HPlusPlusHMinusMinusHTo4L_M-400_13TeV-pythia8'],
-    'HppHmm500GeV' : ['HPlusPlusHMinusMinusHTo4L_M-500_13TeV-pythia8'],
-    'HppHmm600GeV' : ['HPlusPlusHMinusMinusHTo4L_M-600_13TeV-pythia8'],
-    'HppHmm700GeV' : ['HPlusPlusHMinusMinusHTo4L_M-700_13TeV-pythia8'],
-    'HppHmm800GeV' : ['HPlusPlusHMinusMinusHTo4L_M-800_13TeV-pythia8'],
-    'HppHmm900GeV' : ['HPlusPlusHMinusMinusHTo4L_M-900_13TeV-pythia8'],
-    'HppHmm1000GeV': ['HPlusPlusHMinusMinusHTo4L_M-1000_13TeV-pythia8'],
-}
-
 
 samples = ['TTV','VH','VVV','ZZ']
 allsamples = ['W','T','TT','TTVall','Z','WW','VHall','WZ','VVV','ZZall']
@@ -188,10 +69,13 @@ sigColors = {
 }
 
 
+########################
+### Helper functions ###
+########################
 def getDataDrivenPlot(*plots):
     histMap = {}
-    #regions = ['3P1F','2P2F','1P3F','0P4F']
-    regions = ['3P1F']
+    regions = ['3P1F','2P2F','1P3F','0P4F']
+    #regions = ['3P1F','2P2F']
     for s in samples + signals + ['data','datadriven']: histMap[s] = []
     for plot in plots:
         plotdirs = plot.split('/')
@@ -208,7 +92,7 @@ def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False,postfix='')
     countLabels = ['Total'] + chanLabels
     savename = '/'.join([x for x in [saveDir,'individualChannels'] if x])
     if postfix: savename += '_{0}'.format(postfix)
-    plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=10)
+    plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=100,ymin=0.001,labelsOption='v')
     
     # per category counts
     countVars = [['/'.join([x for x in [baseDir,'count'] if x])]]
@@ -223,7 +107,7 @@ def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False,postfix='')
     countLabels = ['Total'] + catLabels
     savename = '/'.join([x for x in [saveDir,'individualCategories'] if x])
     if postfix: savename += '_{0}'.format(postfix)
-    plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=10)
+    plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=100,ymin=0.001)
     
     # per subcategory counts
     countVars = [['/'.join([x for x in [baseDir,'count'] if x])]]
@@ -236,7 +120,7 @@ def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False,postfix='')
     countLabels = ['Total'] + subCatLabels
     savename = '/'.join([x for x in [saveDir,'individualSubCategories'] if x])
     if postfix: savename += '_{0}'.format(postfix)
-    plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=10,ymin=0.001)
+    plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=100,ymin=0.001)
 
 def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postfix='',**kwargs):
     plotname = '/'.join([x for x in [baseDir,plot] if x])
@@ -260,12 +144,14 @@ def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postf
 plots = {
     # hpp
     'hppMass'               : {'xaxis': 'm_{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': True},
+    'hppMt'                 : {'xaxis': 'm_{T}^{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': True},
     'hppPt'                 : {'xaxis': 'p_{T}^{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
     'hppDeltaR'             : {'xaxis': '#DeltaR(l^{+}l^{+})', 'yaxis': 'Events', 'rebin': 2},
     'hppLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{++}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
     'hppSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{++}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
     # hmm
     'hmmMass'               : {'xaxis': 'm_{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': True},
+    'hmmMt'                 : {'xaxis': 'm_{T}^{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': True},
     'hmmPt'                 : {'xaxis': 'p_{T}^{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
     'hmmDeltaR'             : {'xaxis': '#DeltaR(l^{-}l^{-})', 'yaxis': 'Events', 'rebin': 2},
     'hmmLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{--}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
@@ -288,11 +174,13 @@ blind_cust = {
 lowmass_cust = {
     # hpp
     'hppMass'              : {'rangex': [0,300], 'logy': False},
+    'hppMt'                : {'rangex': [0,300], 'logy': False},
     'hppPt'                : {'rangex': [0,300]},
     'hppLeadingLeptonPt'   : {'rangex': [0,300]},
     'hppSubLeadingLeptonPt': {'rangex': [0,300]},
     # hmm
     'hmmMass'              : {'rangex': [0,300], 'logy': False},
+    'hmmMt'                : {'rangex': [0,300], 'logy': False},
     'hmmPt'                : {'rangex': [0,300]},
     'hmmLeadingLeptonPt'   : {'rangex': [0,300]},
     'hmmSubLeadingLeptonPt': {'rangex': [0,300]},
@@ -308,12 +196,14 @@ lowmass_cust = {
 norm_cust = {
     # hpp
     'hppMass'               : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
+    'hppMt'                 : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
     'hppPt'                 : {'yaxis': 'Unit normalized', 'rebin': 1, 'numcol': 2},
     'hppDeltaR'             : {'yaxis': 'Unit normalized', 'rebin': 1},
     'hppLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 1},
     'hppSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 1},
     # hmm
     'hmmMass'               : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
+    'hmmMt'                 : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
     'hmmPt'                 : {'yaxis': 'Unit normalized', 'rebin': 1, 'numcol': 2},
     'hmmDeltaR'             : {'yaxis': 'Unit normalized', 'rebin': 1},
     'hmmLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 1},
@@ -331,6 +221,7 @@ norm_cust = {
 eff_cust = {
     # hpp
     'hppMass'               : {'yaxis': 'Efficiency', 'logy':0, 'rebin': 1},
+    'hppMt'                 : {'yaxis': 'Efficiency', 'logy':0, 'rebin': 1},
     'hppPt'                 : {'yaxis': 'Efficiency', 'rebin': 1, 'numcol': 2},
     'hppDeltaR'             : {'yaxis': 'Efficiency', 'rebin': 1, 'invert': True},
     'hppLeadingLeptonPt'    : {'yaxis': 'Efficiency', 'rebin': 1},
@@ -342,6 +233,7 @@ eff_cust = {
 roc_cust = {
     # hpp
     'hppMass'               : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1,'logy':0},
+    'hppMt'                 : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1,'logy':0},
     'hppPt'                 : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
     'hppDeltaR'             : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1, 'invert': True},
     'hppLeadingLeptonPt'    : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
@@ -473,6 +365,25 @@ if plotDatadriven:
             kwargs.update(blind_cust[plot])
             plotWithCategories(hpp4lPlotter,plot,baseDir='',saveDir='datadriven',postfix='blinder',datadriven=True,**kwargs)
 
+####################
+### Fake Regions ###
+####################
+if plotFakeRegions:
+    hpp4lPlotter.clearHistograms()
+    
+    for s in allsamples:
+        hpp4lPlotter.addHistogramToStack(s.replace('all',''),sigMap[s])
+    for signal in signals:
+        hpp4lPlotter.addHistogram(signal,sigMap[signal],signal=True)
+
+    hpp4lPlotter.addHistogram('data',sigMap['data'])
+    
+    for fr in ['3P1F','2P2F','1P3F','0P4F']:
+        if plotCount: plotCounts(hpp4lPlotter,baseDir='{0}_regular'.format(fr),saveDir=fr)
+        
+        for plot in plots:
+            kwargs = deepcopy(plots[plot])
+            plotWithCategories(hpp4lPlotter,plot,baseDir='{0}_regular'.format(fr),saveDir=fr,**kwargs)
 
 ########################
 ### low mass control ###
@@ -510,6 +421,24 @@ if plotDatadriven:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
         plotWithCategories(hpp4lPlotter,plot,baseDir='lowmass',saveDir='lowmass/datadriven',datadriven=True,**kwargs)
+
+############################
+### Fake Regions lowmass ###
+############################
+if plotFakeRegions:
+    hpp4lPlotter.clearHistograms()
+    
+    for s in allsamples:
+        hpp4lPlotter.addHistogramToStack(s.replace('all',''),sigMap[s])
+
+    hpp4lPlotter.addHistogram('data',sigMap['data'])
+    
+    for fr in ['3P1F','2P2F','1P3F','0P4F']:
+        if plotCount: plotCounts(hpp4lPlotter,baseDir='{0}_regular/lowmass'.format(fr),saveDir='lowmass/{0}'.format(fr))
+        
+        for plot in plots:
+            kwargs = deepcopy(plots[plot])
+            plotWithCategories(hpp4lPlotter,plot,baseDir='{0}_regular/lowmass'.format(fr),saveDir='lowmass/{0}'.format(fr),**kwargs)
 
 ########################
 ### normalized plots ###
@@ -612,14 +541,18 @@ if plotROC:
     workingPoints = {
         'mllMinusMZ' : {},
         'hppMass'    : {},
+        'hppMt'      : {},
+        'st'         : {},
     }
     for mass in masses:
         name = 'HppHmm{0}GeV'.format(mass)
         sigOrder += [name]
         bgOrder += ['BG']
         hpp4lPlotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': sigColors[mass]})
-        workingPoints['mllMinusMZ'][name] = {'Z Veto': 5}
-        workingPoints['hppMass'][name] = {'0.2*m_{#Phi}': 0.2*mass, '0.3*m_{#Phi}': 0.3*mass, '0.5*m_{#Phi}': 0.5*mass, '0.9*m_{#Phi}': 0.9*mass,}
+        workingPoints['mllMinusMZ'][name] = {'Z Veto 5 GeV': 5, 'Z Veto 5 GeV': 10, 'Z Veto 5 GeV': 50}
+        workingPoints['hppMass'][name]    = {'0.2*m_{#Phi}': 0.2*mass, '0.3*m_{#Phi}': 0.3*mass, '0.4*m_{#Phi}': 0.4*mass, '0.5*m_{#Phi}': 0.5*mass, '0.9*m_{#Phi}': 0.9*mass,}
+        workingPoints['hppMt'][name]      = {'0.2*m_{#Phi}': 0.2*mass, '0.3*m_{#Phi}': 0.3*mass, '0.4*m_{#Phi}': 0.4*mass, '0.5*m_{#Phi}': 0.5*mass, '0.9*m_{#Phi}': 0.9*mass,}
+        workingPoints['st'][name]         = {'0.2*m_{#Phi}': 0.2*mass, '0.4*m_{#Phi}': 0.4*mass, '0.6*m_{#Phi}': 0.6*mass, '0.8*m_{#Phi}': 0.8*mass, '1.0*m_{#Phi}': 1.0*mass,}
 
 
     for plot in roc_cust:

@@ -504,6 +504,7 @@ class Plotter(PlotterBase):
         ymax = kwargs.pop('ymax',None)
         yscale = kwargs.pop('yscale',5 if logy else 1.2)
         numcol = kwargs.pop('numcol',1)
+        labelsOption = kwargs.pop('labelsOption','')
         legendpos = kwargs.pop('legendpos',33)
         lumipos = kwargs.pop('lumipos',11)
         isprelim = kwargs.pop('preliminary',True)
@@ -575,6 +576,7 @@ class Plotter(PlotterBase):
                 stack.GetHistogram().GetXaxis().SetBinLabel(b+1,label)
             if ymax!=None: stack.SetMaximum(ymax)
             if ymin!=None: stack.SetMinimum(ymin)
+            if labelsOption: stack.GetHistogram().GetXaxis().LabelsOption(labelsOption)
             if plotratio: stack.GetHistogram().GetXaxis().SetLabelOffset(999)
         for histName,hist in hists.iteritems():
             style = self.styles[histName]
@@ -601,6 +603,7 @@ class Plotter(PlotterBase):
             ratiostaterr.SetXTitle(xaxis)
             for b,label in enumerate(labels):
                 ratiostaterr.GetXaxis().SetBinLabel(b+1,label)
+            if labelsOption: ratiostaterr.GetXaxis().LabelsOption(labelsOption)
             unityargs = [stack.GetXaxis().GetXmin(),1,stack.GetXaxis().GetXmax(),1]
             ratiounity = ROOT.TLine(*unityargs)
             ratiounity.SetLineStyle(2)
@@ -804,7 +807,7 @@ class Plotter(PlotterBase):
         histOrder = customOrder if customOrder else self.histOrder
         sigHists = sigOrder if sigOrder and bgOrder and len(sigOrder)==len(bgOrder) else histOrder
         bgHists = bgOrder if sigOrder and bgOrder and len(sigOrder)==len(bgOrder) else histOrder
-        wpStyles = [20,21,22,23]
+        wpStyles = [20,21,22,23,33,34,24,25,26,32,27,28]
         wpHists = []
         for i,(sigName,bgName) in enumerate(zip(sigHists,bgHists)):
             sig = self._getHistogram(sigName,signalVariable,nofill=True,**kwargs)
@@ -835,25 +838,27 @@ class Plotter(PlotterBase):
             roc.SetTitle(style['name'])
             hists[sigName] = roc
             # working points
-            for w,wp in enumerate(sorted(workingPoints[sigName])):
-                wpbin = max(1,sig.FindBin(workingPoints[sigName][wp]))
-                wpgraph = ROOT.TGraph(1,array('f',[sigEff[wpbin-1]]),array('f',[bgEff[wpbin-1]]))
-                wpgraph.SetMarkerColor(style['linecolor'])
-                wpgraph.SetMarkerStyle(wpStyles[w])
-                wpgraph.Draw('P same')
-                wpHists += [wpgraph]
+            if sigName in workingPoints:
+                for w,wp in enumerate(sorted(workingPoints[sigName])):
+                    wpbin = max(1,sig.FindBin(workingPoints[sigName][wp]))
+                    wpgraph = ROOT.TGraph(1,array('f',[sigEff[wpbin-1]]),array('f',[bgEff[wpbin-1]]))
+                    wpgraph.SetMarkerColor(style['linecolor'])
+                    wpgraph.SetMarkerStyle(wpStyles[w])
+                    wpgraph.Draw('P same')
+                    wpHists += [wpgraph]
 
         legend = self._getLegend(hists=hists,numcol=numcol,position=legendpos)
         legend.Draw()
 
-        wpEntries = []
-        for w,wp in enumerate(sorted(workingPoints[sigName])):
-            hist = ROOT.TGraph(1,array('f',[0]),array('f',[0]))
-            hist.SetMarkerStyle(wpStyles[w])
-            wpEntries += [[hist,wp,'P']]
-            
-        wpLegend = super(Plotter,self)._getLegend(entries=wpEntries,position=11)
-        wpLegend.Draw()
+        if sigName in workingPoints:
+            wpEntries = []
+            for w,wp in enumerate(sorted(workingPoints[sigName])):
+                hist = ROOT.TGraph(1,array('f',[0]),array('f',[0]))
+                hist.SetMarkerStyle(wpStyles[w])
+                wpEntries += [[hist,wp,'P']]
+                
+            wpLegend = super(Plotter,self)._getLegend(entries=wpEntries,position=11,numcol=2)
+            wpLegend.Draw()
 
         self._setStyle(canvas)
 

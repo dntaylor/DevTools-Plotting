@@ -155,6 +155,7 @@ histParams = {
         'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [50, -3.14159, 3.14159],},
         # h++
         'hppMass'                     : {'xVariable': 'hpp_mass',                       'xBinning': [120, 0, 1200],         },
+        'hppMt'                       : {'xVariable': 'hppmet_mt',                      'xBinning': [120, 0, 1200],         },
         'hppPt'                       : {'xVariable': 'hpp_pt',                         'xBinning': [120, 0, 1200],         },
         'hppEta'                      : {'xVariable': 'hpp_eta',                        'xBinning': [100, -5, 5],           },
         'hppDeltaR'                   : {'xVariable': 'hpp_deltaR',                     'xBinning': [50, 0, 5],             },
@@ -164,6 +165,7 @@ histParams = {
         'hppSubLeadingLeptonEta'      : {'xVariable': 'hpp2_eta',                       'xBinning': [50, -2.5, 2.5],        },
         # h--
         'hmmMass'                     : {'xVariable': 'hmm_mass',                       'xBinning': [120, 0, 1200],         },
+        'hmmMt'                       : {'xVariable': 'hmmmet_mt',                      'xBinning': [120, 0, 1200],         },
         'hmmPt'                       : {'xVariable': 'hmm_pt',                         'xBinning': [120, 0, 1200],         },
         'hmmEta'                      : {'xVariable': 'hmm_eta',                        'xBinning': [100, -5, 5],           },
         'hmmDeltaR'                   : {'xVariable': 'hmm_deltaR',                     'xBinning': [50, 0, 5],             },
@@ -725,8 +727,8 @@ fakeModes = {
 for region in hpp4lFakeRegions:
     fakeModes[region.count('F')] += [region]
     hpp4lScaleFactorMap[region] = '*'.join([scaleMap[region[x]].format(leps[x]) for x in range(4)])
-    hpp4lFakeScaleFactorMap[region] = '*'.join(['{0}/(1-{0})'.format('{0}_mediumFakeRate'.format(leps[x])) for f in range(4) if region[f]=='F'] + ['-1' if region.count('F')%2==0 and region.count('F')>0 else '1'])
-    hpp4lCutMap[region] = ' && '.join(['{0}=={1}'.format('{0}_passMedium'.format(leps[x]),1 if region[x]=='P' else 0) for x in range(4)])
+    hpp4lFakeScaleFactorMap[region] = '*'.join(['({0}/(1-{0}))'.format('{0}_mediumFakeRate'.format(leps[x])) for x in range(4) if region[x]=='F'] + ['-1' if region.count('F')%2==0 and region.count('F')>0 else '1'])
+    hpp4lCutMap[region] = '(' + ' && '.join(['{0}=={1}'.format('{0}_passMedium'.format(leps[x]),1 if region[x]=='P' else 0) for x in range(4)]) + ')'
 
 
 # the default selections
@@ -789,18 +791,16 @@ for nf in range(5):
             'datascalefactor': regionDataScaleFactor,
         }
     }
-    # regular for valudation
+    # regular for validation
     selectionParams['Hpp4l'][name_regular] = {
         'args': [hpp4lBaseCut + ' && ' + regionCut],
         'kwargs': {
-            'mccut': hpp4lMCCut,
             'mcscalefactor': regionMCScaleFactor_regular,
         }
     }
     selectionParams['Hpp4l']['{0}/lowmass'.format(name_regular)] = {
         'args': [hpp4lLowMassControl + ' && ' + regionCut],
         'kwargs': {
-            'mccut': hpp4lMCCut,
             'mcscalefactor': regionMCScaleFactor_regular,
         }
     }
@@ -825,15 +825,16 @@ for mass in masses:
 # special selections for samples
 # DY-10 0, 1, 2 bins (0 includes 3+)
 # DY-50 0, 1, 2, 3, 4 bins (0 includes 5+)
+# NOTE: extensions have more stats than exclusive bins, using them
 sampleCuts = {
-    'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8' : '(numGenJets==0 || numGenJets>2)',
-    'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': 'numGenJets==1',
-    'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': 'numGenJets==2',
-    'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'     : '(numGenJets==0 || numGenJets>4)',
-    'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==1',
-    'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==2',
-    'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==3',
-    'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==4',
+    #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8' : '(numGenJets==0 || numGenJets>2)',
+    #'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': 'numGenJets==1',
+    #'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': 'numGenJets==2',
+    #'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'     : '(numGenJets==0 || numGenJets>4)',
+    #'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==1',
+    #'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==2',
+    #'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==3',
+    #'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==4',
 }
 for sample,cut in sampleCuts.iteritems():
     sampleSelectionParams['Hpp4l'][sample] = deepcopy(selectionParams['Hpp4l'])
@@ -882,7 +883,7 @@ for mass in masses:
 #############################
 ### functions to retrieve ###
 #############################
-def getHistParams(analysis,sample):
+def getHistParams(analysis,sample=''):
     params = {}
     if analysis in histParams:
         params.update(histParams[analysis])
@@ -891,7 +892,7 @@ def getHistParams(analysis,sample):
             params.update(sampleHistParams[analysis][sample])
     return params
 
-def getHistSelections(analysis,sample):
+def getHistSelections(analysis,sample=''):
     params = {}
     if analysis in selectionParams:
         params.update(selectionParams[analysis])
@@ -900,7 +901,7 @@ def getHistSelections(analysis,sample):
             params.update(sampleSelectionParams[analysis][sample])
     return params
 
-def getProjectionParams(analysis,sample):
+def getProjectionParams(analysis,sample=''):
     params = deepcopy(projectionParams['common'])
     if analysis in projectionParams:
         params.update(projectionParams[analysis])
