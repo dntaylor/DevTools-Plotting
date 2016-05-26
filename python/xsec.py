@@ -34,8 +34,11 @@ xsecs = {
     'QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8'                     :           0.00682981  * PB,
     'QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8'                      :           0.000165445 * PB,
 
+    'DYJetsToLL_M-5to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'        :   7160        * PB,
+    'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'       :   7160        * PB,
     'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'      :  18610.       * PB, # already NNLO
     'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'          :   6025.2      * PB,
+    'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'           :   4895        * PB,
 
     'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'     :    421.5      * PB * 1.216, # 1.216 LO -> NNLO for DY
     'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'     :    184.3      * PB * 1.216,
@@ -51,6 +54,7 @@ xsecs = {
     'ST_t-channel_top_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1'                  :  44.33 * PB,
     'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1'                  :  35.6  * PB,
     'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1'                      :  35.6  * PB,
+    'ST_tW_top_5f_NoFullyHadronicDecays_13TeV-powheg_TuneCUETP8M1'                        :  38.09 * PB,
 
     'TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                   :    831.76     * PB,
     'TTTo2L2Nu_13TeV-powheg'                                           :     87.31     * PB,
@@ -59,6 +63,7 @@ xsecs = {
     'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :    114.5      * PB,
     'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8' :    114.6      * PB,
 
+    'TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8'          :      3.697    * PB,
     'TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8'             :      0.2529   * PB,
     'TTZToQQ_TuneCUETP8M1_13TeV-amcatnlo-pythia8'                      :      0.5297   * PB,
     'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8'     :      0.2043   * PB,
@@ -71,6 +76,8 @@ xsecs = {
     'tZq_nunu_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1'                  :      0.1379   * PB,
 
     'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'               :  61526.7      * PB,
+
+    'W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'               :   3120        * PB,
 
     'ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                  :    117.864    * PB,
     'WGToLNuG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                 :    489.       * PB,
@@ -91,6 +98,7 @@ xsecs = {
     'WWTo4Q_13TeV-powheg'                                              :     45.20     * PB,
     'WWToLNuQQ_13TeV-powheg'                                           :     43.53     * PB,
     'WW_TuneCUETP8M1_13TeV-pythia8'                                    :     63.21     * PB,
+    'GluGluWWTo2L2Nu_MCFM_13TeV'                                       :      0.39     * PB,
 
     'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8'                   :     10.71     * PB,
     'WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8'                     :      3.05     * PB,

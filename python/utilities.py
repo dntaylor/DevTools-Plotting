@@ -3,7 +3,7 @@ import os
 import sys
 import hashlib
 
-from DevTools.Utilities.utilities import python_mkdir, ZMASS
+from DevTools.Utilities.utilities import python_mkdir, ZMASS, getCMSSWVersion
 
 CMSSW_BASE = os.environ['CMSSW_BASE']
 
@@ -33,11 +33,15 @@ def isData(sample):
 
 def getLumi():
     '''Get the integrated luminosity to scale monte carlo'''
-    #return 2263 # december jamboree golden json
-    return 2318 # moriond golden json
+    version = getCMSSWVersion()
+    if version=='76X':
+        #return 2263 # december jamboree golden json
+        return 2318 # moriond golden json
+    else:
+        return 221 # first golden json 80X
 
-
-latestNtuples = {
+latestNtuples = {}
+latestNtuples['76X'] = {
     'Charge'         : '2016-04-23_ChargeAnalysis_v1-merge',
     'DY'             : '2016-05-02_DYAnalysis_v1-merge',       # check variations on minbias cross section (71 best fit)
     'DijetFakeRate'  : '',
@@ -58,6 +62,21 @@ latestNtuples = {
     'WTauFakeRate'   : '',
     'WZ'             : '2016-04-29_WZAnalysis_v1-merge',
 }
+latestNtuples['80X'] = {
+    'Charge'         : '2016-05-24_ChargeAnalysis_80X_v1-merge',
+    'DY'             : '2016-05-24_DYAnalysis_80X_v1-merge',
+    'DijetFakeRate'  : '2016-05-24_DijetFakeRateAnalysis_80X_v1-merge',
+    'Electron'       : '2016-05-24_ElectronAnalysis_80X_v1-merge',
+    'Hpp3l'          : '',
+    'Hpp4l'          : '',
+    'Muon'           : '2016-05-24_MuonAnalysis_80X_v1-merge',
+    'SingleElectron' : '',
+    'SingleMuon'     : '',
+    'Tau'            : '2016-05-24_TauAnalysis_80X_v1-merge',
+    'TauCharge'      : '2016-05-24_TauChargeAnalysis_80X_v1-merge',
+    'WTauFakeRate'   : '2016-05-24_WTauFakeRateAnalysis_80X_v1-merge',
+    'WZ'             : '',
+}
 
 def getNtupleDirectory(analysis,local=True):
     # first grab the local one
@@ -68,8 +87,9 @@ def getNtupleDirectory(analysis,local=True):
             return ntupleDir
     # if not read from hdfs
     baseDir = '/hdfs/store/user/dntaylor'
-    if analysis in latestNtuples and latestNtuples[analysis]:
-        return os.path.join(baseDir,latestNtuples[analysis])
+    ver = getCMSSWVersion()
+    if analysis in latestNtuples[ver] and latestNtuples[ver][analysis]:
+        return os.path.join(baseDir,latestNtuples[ver][analysis])
 
 treeMap = {
     ''               : 'Tree',
