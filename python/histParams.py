@@ -500,7 +500,7 @@ for sel in sels:
 ###################
 ### DY specific ###
 ###################
-dyBaseCut = 'z1_passMedium==1 && z2_passMedium==1 && z_deltaR>0.02 && z_mass>12. && z1_pt>20. && z2_pt>10. && z_mass>50.'
+dyBaseCut = 'z1_passMedium==1 && z2_passMedium==1 && z_deltaR>0.02 && z_mass>12. && z1_pt>25. && z2_pt>20. && z_mass>50.'
 dyScaleFactor = 'z1_mediumScale*z2_mediumScale*genWeight*pileupWeight*triggerEfficiency'
 
 bbCut = 'fabs(z1_eta)<1.479 && fabs(z2_eta)<1.479'

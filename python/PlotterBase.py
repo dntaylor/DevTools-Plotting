@@ -95,10 +95,12 @@ class PlotterBase(object):
 
     def _save(self, canvas, savename):
         '''Save the canvas in multiple formats.'''
+        logging.debug('Saving {0}'.format(savename))
         canvas.SetName(savename)
         for type in ['pdf','root','png']:
             name = '{0}/{1}/{2}.{1}'.format(self.outputDirectory, type, savename)
             python_mkdir(os.path.dirname(name))
+            logging.debug('Writing {0}'.format(name))
             canvas.Print(name)
 
     def _saveTemp(self, canvas):

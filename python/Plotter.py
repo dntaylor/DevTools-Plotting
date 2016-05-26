@@ -113,12 +113,17 @@ class Plotter(PlotterBase):
         '''Read the histogram from file'''
         analysis = kwargs.pop('analysis',self.analysis)
         hist = self.sampleFiles[analysis][sampleName].getHist(variable)
+        logging.debug('Read {0} {1} {2}: {3}'.format(analysis, sampleName, variable, hist))
+        if hist:
+            self.j += 1
+            hist = hist.Clone('h_temp_{0}'.format(self.j))
         return hist
 
     def _getTempHistogram(self,sampleName,histName,selection,scalefactor,variable,binning,**kwargs):
         '''Read the histogram from file'''
         analysis = kwargs.pop('analysis',self.analysis)
         hist = self.sampleFiles[analysis][sampleName].getTempHist(histName,selection,scalefactor,variable,binning)
+        logging.debug('Read temp {0} {1} {2}: {3}'.format(analysis, sampleName, histName, hist))
         if hist:
             self.j += 1
             hist = hist.Clone('h_temp_{0}'.format(self.j))
@@ -142,6 +147,7 @@ class Plotter(PlotterBase):
         # it is now a list
         if histName in self.histDict:
             hists = ROOT.TList()
+            logging.debug('Reading histName')
             for varName in variable:
                 for sampleName in self.histDict[histName]:
                     if selection and binning: # get temp hist
@@ -237,6 +243,7 @@ class Plotter(PlotterBase):
         self.j += 1
         stackname = 'h_stack_{0}'.format(self.j)
         stack = ROOT.THStack(stackname,stackname)
+        logging.debug('Reading stack')
         for histName in self.stackOrder:
             hist = self._getHistogram(histName,variable,**kwargs)
             if hist: stack.Add(hist)
@@ -335,18 +342,18 @@ class Plotter(PlotterBase):
         ROOT.gDirectory.Delete('h_*')
 
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
-        ROOT.SetOwnership(canvas,False)
+        #ROOT.SetOwnership(canvas,False)
 
         # ratio plot
         if plotratio:
             plotpad = ROOT.TPad("plotpad", "top pad", 0.0, 0.21, 1.0, 1.0)
-            ROOT.SetOwnership(plotpad,False)
+            #ROOT.SetOwnership(plotpad,False)
             plotpad.SetBottomMargin(0.04)
             plotpad.Draw()
             plotpad.SetLogy(logy)
             plotpad.SetLogx(logx)
             ratiopad = ROOT.TPad("ratiopad", "bottom pad", 0.0, 0.0, 1.0, 0.21)
-            ROOT.SetOwnership(ratiopad,False)
+            #ROOT.SetOwnership(ratiopad,False)
             ratiopad.SetTopMargin(0.06)
             ratiopad.SetBottomMargin(0.5)
             ratiopad.SetTickx(1)
@@ -394,6 +401,7 @@ class Plotter(PlotterBase):
             hists[histName] = hist
 
         # now draw them
+        logging.debug('Drawing')
         if self.stackOrder:
             stack.Draw("hist")
             stack.GetXaxis().SetTitle(xaxis)
@@ -427,16 +435,19 @@ class Plotter(PlotterBase):
                     hist.Draw(style['drawstyle']+' same')
 
         # get the legend
+        logging.debug('Legend')
         legend = self._getLegend(stack=stack,hists=hists,numcol=numcol,position=legendpos)
         legend.Draw()
 
         # cms lumi styling
+        logging.debug('CMSLumi')
         pad = plotpad if plotratio else canvas
         if pad != ROOT.TVirtualPad.Pad(): pad.cd()
         self._setStyle(pad,position=lumipos,preliminary=isprelim)
 
         # the ratio portion
         if plotratio:
+            logging.debug('Making Ratio')
             self.j += 1
             stackname = 'h_stack_{0}_ratio'.format(self.j)
             if stack:
@@ -485,12 +496,14 @@ class Plotter(PlotterBase):
                 else:
                     hist.SetLineWidth(3)
                     hist.Draw('hist same')
-            if canvas != ROOT.TVirtualPad.Pad(): canvas.cd()
-            #canvas.cd()
+            #if canvas != ROOT.TVirtualPad.Pad(): canvas.cd()
+            ##canvas.cd()
 
         # save
         if save:
             self._save(canvas,savename)
+            logging.debug('Done')
+            return 0
         else:
             return self._saveTemp(canvas)
 
@@ -515,18 +528,18 @@ class Plotter(PlotterBase):
         ROOT.gDirectory.Delete('h_*')
 
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
-        ROOT.SetOwnership(canvas,False)
+        #ROOT.SetOwnership(canvas,False)
 
         # ratio plot
         if plotratio:
             plotpad = ROOT.TPad("plotpad", "top pad", 0.0, 0.21, 1.0, 1.0)
-            ROOT.SetOwnership(plotpad,False)
+            #ROOT.SetOwnership(plotpad,False)
             plotpad.SetBottomMargin(0.04)
             plotpad.Draw()
             plotpad.SetLogy(logy)
             plotpad.SetLogx(logx)
             ratiopad = ROOT.TPad("ratiopad", "bottom pad", 0.0, 0.0, 1.0, 0.21)
-            ROOT.SetOwnership(ratiopad,False)
+            #ROOT.SetOwnership(ratiopad,False)
             ratiopad.SetTopMargin(0.06)
             ratiopad.SetBottomMargin(0.5)
             ratiopad.SetTickx(1)
@@ -641,7 +654,7 @@ class Plotter(PlotterBase):
                 else:
                     hist.SetLineWidth(3)
                     hist.Draw('hist same')
-            if canvas != ROOT.TVirtualPad.Pad(): canvas.cd()
+            #if canvas != ROOT.TVirtualPad.Pad(): canvas.cd()
             #canvas.cd()
 
         # save
@@ -670,7 +683,7 @@ class Plotter(PlotterBase):
         logging.info('Plotting {0}'.format(savename))
 
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
-        ROOT.SetOwnership(canvas,False)
+        #ROOT.SetOwnership(canvas,False)
         canvas.SetLogy(logy)
         canvas.SetLogx(logx)
 
@@ -736,7 +749,7 @@ class Plotter(PlotterBase):
 
         logging.info('Plotting {0}'.format(savename))
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
-        ROOT.SetOwnership(canvas,False)
+        #ROOT.SetOwnership(canvas,False)
         canvas.SetLogy(logy)
         canvas.SetLogx(logx)
 
@@ -799,7 +812,7 @@ class Plotter(PlotterBase):
 
         logging.info('Plotting {0}'.format(savename))
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
-        ROOT.SetOwnership(canvas,False)
+        #ROOT.SetOwnership(canvas,False)
         canvas.SetLogy(logy)
         canvas.SetLogx(logx)
 
@@ -885,7 +898,7 @@ class Plotter(PlotterBase):
 
         logging.info('Plotting {0}'.format(savename))
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
-        ROOT.SetOwnership(canvas,False)
+        #ROOT.SetOwnership(canvas,False)
         canvas.SetLogy(logy)
         canvas.SetLogx(logx)
 
@@ -946,7 +959,7 @@ class Plotter(PlotterBase):
 
         logging.info('Plotting {0}'.format(savename))
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
-        ROOT.SetOwnership(canvas,False)
+        #ROOT.SetOwnership(canvas,False)
         canvas.SetLogy(logy)
         canvas.SetLogx(logx)
         canvas.SetLogz(logz)
