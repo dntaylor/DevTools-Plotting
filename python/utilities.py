@@ -63,18 +63,18 @@ latestNtuples['76X'] = {
     'WZ'             : '2016-04-29_WZAnalysis_v1-merge',
 }
 latestNtuples['80X'] = {
-    'Charge'         : '2016-05-24_ChargeAnalysis_80X_v1-merge',
-    'DY'             : '2016-05-24_DYAnalysis_80X_v1-merge',
-    'DijetFakeRate'  : '2016-05-24_DijetFakeRateAnalysis_80X_v1-merge',
-    'Electron'       : '2016-05-24_ElectronAnalysis_80X_v1-merge',
+    'Charge'         : '2016-05-26_ChargeAnalysis_80X_v1-merge',
+    'DY'             : '2016-05-26_DYAnalysis_80X_v1-merge',
+    'DijetFakeRate'  : '2016-05-26_DijetFakeRateAnalysis_80X_v1-merge',
+    'Electron'       : '2016-05-26_ElectronAnalysis_80X_v1-merge',
     'Hpp3l'          : '',
     'Hpp4l'          : '',
-    'Muon'           : '2016-05-24_MuonAnalysis_80X_v1-merge',
+    'Muon'           : '2016-05-26_MuonAnalysis_80X_v1-merge',
     'SingleElectron' : '',
     'SingleMuon'     : '',
-    'Tau'            : '2016-05-24_TauAnalysis_80X_v1-merge',
-    'TauCharge'      : '2016-05-24_TauChargeAnalysis_80X_v1-merge',
-    'WTauFakeRate'   : '2016-05-24_WTauFakeRateAnalysis_80X_v1-merge',
+    'Tau'            : '2016-05-26_TauAnalysis_80X_v1-merge',
+    'TauCharge'      : '2016-05-26_TauChargeAnalysis_80X_v1-merge',
+    'WTauFakeRate'   : '2016-05-26_WTauFakeRateAnalysis_80X_v1-merge',
     'WZ'             : '',
 }
 
