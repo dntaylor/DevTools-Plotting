@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 import math
+import prettytable
 from array import array
 from collections import OrderedDict
 

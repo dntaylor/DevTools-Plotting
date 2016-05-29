@@ -38,7 +38,8 @@ def getLumi():
         #return 2263 # december jamboree golden json
         return 2318 # moriond golden json
     else:
-        return 221 # first golden json 80X
+        #return 221 # first golden json 80X
+        return 589 # second golden json 80X
 
 latestNtuples = {}
 latestNtuples['76X'] = {
@@ -63,19 +64,17 @@ latestNtuples['76X'] = {
     'WZ'             : '2016-04-29_WZAnalysis_v1-merge',
 }
 latestNtuples['80X'] = {
-    'Charge'         : '2016-05-26_ChargeAnalysis_80X_v1-merge',
-    'DY'             : '2016-05-26_DYAnalysis_80X_v1-merge',
-    'DijetFakeRate'  : '2016-05-26_DijetFakeRateAnalysis_80X_v1-merge',
-    'Electron'       : '2016-05-26_ElectronAnalysis_80X_v1-merge',
-    'Hpp3l'          : '',
-    'Hpp4l'          : '',
-    'Muon'           : '2016-05-26_MuonAnalysis_80X_v1-merge',
-    'SingleElectron' : '',
-    'SingleMuon'     : '',
-    'Tau'            : '2016-05-26_TauAnalysis_80X_v1-merge',
-    'TauCharge'      : '2016-05-26_TauChargeAnalysis_80X_v1-merge',
-    'WTauFakeRate'   : '2016-05-26_WTauFakeRateAnalysis_80X_v1-merge',
-    'WZ'             : '',
+    'Charge'         : '2016-05-28_ChargeAnalysis_80X_v1-merge',
+    'DY'             : '2016-05-28_DYAnalysis_80X_v1-merge',
+    'DijetFakeRate'  : '2016-05-28_DijetFakeRateAnalysis_80X_v1-merge',
+    'Electron'       : '2016-05-28_ElectronAnalysis_80X_v1-merge',
+    'Hpp3l'          : '2016-05-28_Hpp3lAnalysis_80X_v1-merge',
+    'Hpp4l'          : '2016-05-28_Hpp4lAnalysis_80X_v1-merge',
+    'Muon'           : '2016-05-28_MuonAnalysis_80X_v1-merge',
+    'Tau'            : '2016-05-28_TauAnalysis_80X_v1-merge',
+    'TauCharge'      : '2016-05-28_TauChargeAnalysis_80X_v1-merge',
+    'WTauFakeRate'   : '2016-05-28_WTauFakeRateAnalysis_80X_v1-merge',
+    'WZ'             : '2016-05-28_WZAnalysis_80X_v1-merge',
 }
 
 def getNtupleDirectory(analysis,local=True):
