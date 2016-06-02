@@ -13,7 +13,7 @@ from DevTools.Plotter.utilities import getLumi, isData
 from DevTools.Utilities.utilities import sumWithError, prodWithError, divWithError, python_mkdir
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
-ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 1001;")
+ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 
 
 class Counter(object):

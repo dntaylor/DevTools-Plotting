@@ -79,14 +79,10 @@ labelMap = {
 }
 
 for sig in ['HppHmm','HppHm']:
-    for mass in [200,250,300,350,400,450,500,600,700,800,900,1000]:
+    for mass in [200,250,300,350,400,450,500,600,700,800,900,1000,1100,1200,1300,1400,1500]:
         key = '{0}{1}GeV'.format(sig,mass)
         colorMap[key] = colorMap[sig]
-        labelMap[key] = labelMap[sig] + ' ({0} GeV)'.format(mass)
-    for mass in [1,1.1,1.2,1.3,1.4,1.5]:
-        key = '{0}{1:3.1f}TeV'.format(sig,mass)
-        colorMap[key] = colorMap[sig]
-        labelMap[key] = labelMap[sig] + ' ({0:3.1f} TeV)'.format(mass)
+        labelMap[key] = '#splitline{{{0}}{{({1} GeV)}}'.format(labelMap[sig],mass)
 
 
 
