@@ -6,7 +6,7 @@ from copy import deepcopy
 from itertools import product, combinations_with_replacement
 
 from DevTools.Plotter.utilities import ZMASS
-from DevTools.Plotter.higgsUtilities import getChannels, getGenChannels
+from DevTools.Plotter.higgsUtilities import getChannels, getGenChannels, getOldSelections
 
 #############
 ### hists ###
@@ -696,6 +696,8 @@ for baseCut in baseCutMap:
 #############
 ### hpp4l ###
 #############
+masses = [200,300,400,500,600,700,800,900,1000]
+
 # setup the reco channels
 channels = getChannels('Hpp4l')
 projectionParams['Hpp4l'] = {}
@@ -749,30 +751,18 @@ selectionParams['Hpp4l'] = {
     #'zveto'     : {'args': [hpp4lBaseCut+' && (z_mass>0 ? fabs(z_mass-{0})>5 : 1)'.format(ZMASS)], 'kwargs': {'mcscalefactor': hpp4lScaleFactor}},
 }
 
-## setup old working points
-#hpp4lOldSelections = {}
-#for mass in masses:
-#    hpp4lOldSelections[mass] = '{base} && (hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt)>0.6*{mass}+130. && hpp_mass>0.9*{mass} && hpp_mass<1.1*{mass} && hmm_mass>0.9*{mass} && hmm_mass<1.1*{mass}'.format(base=hpp4lBaseCut,mass=mass)
-#    selectionParams['Hpp4l']['old/{0}'.format(mass)] = {'args': [hpp4lOldSelections[mass]], 'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
-
-## fake regions, gen match leptons in MC
-#for region in hpp4lFakeRegions:
-#    selectionParams['Hpp4l'][region] = {
-#        'args': [hpp4lBaseCut + ' && ' + hpp4lCutMap[region]], 
-#        'kwargs': {
-#            'mccut': hpp4lMCCut, 
-#            'mcscalefactor': '*'.join([hpp4lScaleFactorMap[region],hpp4lFakeScaleFactorMap[region],hpp4lBaseScaleFactor,'1' if region=='PPPP' else '-1']),
-#            'datascalefactor': hpp4lFakeScaleFactorMap[region], 
-#        }
-#    }
-#    selectionParams['Hpp4l']['{0}/lowmass'.format(region)] = {
-#        'args': [hpp4lLowMassControl + ' && ' + hpp4lCutMap[region]], 
-#        'kwargs': {
-#            'mccut': hpp4lMCCut, 
-#            'mcscalefactor': '*'.join([hpp4lScaleFactorMap[region],hpp4lFakeScaleFactorMap[region],hpp4lBaseScaleFactor,'1' if region=='PPPP' else '-1']),
-#            'datascalefactor': hpp4lFakeScaleFactorMap[region], 
-#        }
-#    }
+# setup old working points
+for mass in masses:
+    for hppTaus in range(3):
+        for hmmTaus in range(3):
+            sideband = getOldSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=[],invcuts=['mass'])
+            massWindow = getOldSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['mass'])
+            allSideband = getOldSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['st','zveto','met','dr'],invcuts=['mass'])
+            allMassWindow = getOldSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['st','zveto','met','dr','mass'])
+            selectionParams['Hpp4l']['old/sideband/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] =      {'args': [hpp4lCutMap['PPPP'] + ' && ' + sideband],      'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
+            selectionParams['Hpp4l']['old/massWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] =    {'args': [hpp4lCutMap['PPPP'] + ' && ' + massWindow],    'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
+            selectionParams['Hpp4l']['old/allSideband/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] =   {'args': [hpp4lCutMap['PPPP'] + ' && ' + allSideband],   'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
+            selectionParams['Hpp4l']['old/allMassWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] = {'args': [hpp4lCutMap['PPPP'] + ' && ' + allMassWindow], 'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
 
 # fake regions via modes
 for nf in range(5):
@@ -817,8 +807,6 @@ for nf in range(5):
 genChans = getGenChannels('Hpp4l')
 genChannelsPP = genChans['PP']
 genChannelsAP = genChans['AP']
-
-masses = [200,300,400,500,600,700,800,900,1000]
 
 sampleHistParams['Hpp4l'] = {}
 sampleProjectionParams['Hpp4l'] = {}
