@@ -54,7 +54,9 @@ latestNtuples['76X'] = {
     #'Hpp4l'          : '2016-05-02_Hpp4lAnalysis_v1-merge',           # Tau no iso for loose
     #'Hpp4l'          : '2016-05-12_Hpp4lAnalysis_v1-merge',           # only 2 fake taus allowed
     #'Hpp4l'          : '2016-05-13_Hpp4lAnalysis_newDMs_v1-merge',    # new DMs
-    'Hpp4l'          : '2016-05-16_Hpp4lAnalysis_v1-merge',           # fix for gen channel
+    #'Hpp4l'          : '2016-05-16_Hpp4lAnalysis_v1-merge',           # fix for gen channel
+    #'Hpp4l'          : '2016-06-04_Hpp4lAnalysis_76X_HZZIDs_v1-merge',# hzz ids (with wrong lepton scale factors)
+    'Hpp4l'          : '2016-06-04_Hpp4lAnalysis_76X_WZIDs_v1-merge', # wz ids
     'Muon'           : '2016-04-14_MuonAnalysis_v1-merge',
     'SingleElectron' : '',
     'SingleMuon'     : '',
