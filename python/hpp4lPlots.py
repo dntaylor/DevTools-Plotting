@@ -13,13 +13,14 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 
 blind = True
 doCat = True
-plotMC = True
-plotDatadriven = True
-plotFakeRegions = True
+plotMC = False
+plotDatadriven = False
+plotFakeRegions = False
 plotSignal = False
 plotROC = False
 plotNormalization = False
-plotCount = True
+plotSOverB = True
+plotCount = False
 
 hpp4lPlotter = Plotter('Hpp4l')
 
@@ -228,6 +229,20 @@ eff_cust = {
     'hppSubLeadingLeptonPt' : {'yaxis': 'Efficiency', 'rebin': 1},
     'st'                    : {'yaxis': 'Efficiency', 'rebin': 1},
     'mllMinusMZ'            : {'yaxis': 'Efficiency', 'rebin': 1},
+    'met'                   : {'yaxis': 'Efficiency', 'rebin': 1},
+}
+
+sOverB_cust = {
+    # hpp
+    'hppMass'               : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
+    'hppMt'                 : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
+    'hppPt'                 : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1, 'numcol': 2},
+    'hppDeltaR'             : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1, 'invert': True},
+    'hppLeadingLeptonPt'    : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
+    'hppSubLeadingLeptonPt' : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
+    'st'                    : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
+    'mllMinusMZ'            : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
+    'met'                   : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
 }
 
 roc_cust = {
@@ -240,6 +255,7 @@ roc_cust = {
     'hppSubLeadingLeptonPt' : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
     'st'                    : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
     'mllMinusMZ'            : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
+    'met'                   : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
 }
 
 ############################
@@ -462,6 +478,32 @@ if plotNormalization:
                 plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
             savename = 'normalized/{0}/{1}'.format(cat,plot)
             if doCat: hpp4lPlotter.plotNormalized(plotnames,savename,**kwargs)
+
+if plotSOverB:
+    hpp4lPlotter.clearHistograms()
+    
+    hpp4lPlotter.addHistogram('BG',allSamplesDict['BG'])
+    sigOrder = []
+    bgOrder = []
+    for mass in masses:
+        name = 'HppHmm{0}GeV'.format(mass)
+        sigOrder += [name]
+        bgOrder += ['BG']
+        hpp4lPlotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': sigColors[mass]})
+
+    for plot in sOverB_cust:
+        plotname = 'default/{0}'.format(plot)
+        savename = 'sOverB/{0}'.format(plot)
+        kwargs = deepcopy(plots[plot])
+        if plot in sOverB_cust: kwargs.update(sOverB_cust[plot])
+        hpp4lPlotter.plotSOverB(plotname,sigOrder,bgOrder,savename,**kwargs)
+        for cat in cats:
+            plotnames = []
+            for subcat in subCatChannels[cat]:
+                plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
+            savename = 'sOverB/{0}/{1}'.format(cat,plot)
+            if doCat: hpp4lPlotter.plotSOverB(plotnames,sigOrder,bgOrder,savename,**kwargs)
+
 
 ##############################
 ### all signal on one plot ###

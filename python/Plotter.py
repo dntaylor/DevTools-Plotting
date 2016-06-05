@@ -9,8 +9,9 @@ import ROOT
 
 from DevTools.Plotter.PlotterBase import PlotterBase
 from DevTools.Plotter.NtupleWrapper import NtupleWrapper
-from DevTools.Plotter.utilities import python_mkdir, getLumi, isData
+from DevTools.Plotter.utilities import getLumi, isData
 from DevTools.Plotter.style import getStyle
+from DevTools.Utilities.utilities import *
 import DevTools.Plotter.CMS_lumi as CMS_lumi
 import DevTools.Plotter.tdrstyle as tdrstyle
 
@@ -732,6 +733,87 @@ class Plotter(PlotterBase):
             self._save(canvas,savename)
         else:
             return self._saveTemp(canvas)
+
+    def plotSOverB(self,variable,signals,backgrounds,savename,**kwargs):
+        '''Plot ROC curve'''
+        xaxis = kwargs.pop('xaxis', 'Variable')
+        yaxis = kwargs.pop('yaxis', 'Signal over background')
+        logy = kwargs.pop('logy',False)
+        logx = kwargs.pop('logx',False)
+        invert = kwargs.pop('invert',False)
+        yscale = kwargs.pop('yscale',5 if logy else 1.2)
+        ymin = kwargs.pop('ymin',None)
+        ymax = kwargs.pop('ymax',None)
+        numcol = kwargs.pop('numcol',1)
+        legendpos = kwargs.pop('legendpos',34)
+        save = kwargs.pop('save',True)
+
+        logging.info('Plotting {0}'.format(savename))
+        canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
+        #ROOT.SetOwnership(canvas,False)
+        canvas.SetLogy(logy)
+        canvas.SetLogx(logx)
+
+        if isinstance(signals,str): signals = [signals]
+        if isinstance(backgrounds,str): backgrounds = [backgrounds]*len(signals)
+
+        highestMax = 0.
+        hists = OrderedDict()
+
+        for i,histNames in enumerate(zip(signals,backgrounds)):
+            signal, background = histNames
+            sig = self._getHistogram(signal,variable,nofill=True,**kwargs)
+            bg = self._getHistogram(background,variable,nofill=True,**kwargs)
+            numBins = sig.GetNbinsX()
+            self.j += 1
+            name = 'h_sOverB_{0}'.format(self.j)
+            sOverB = ROOT.TH1F(name,name,numBins,sig.GetXaxis().GetXmin(),sig.GetXaxis().GetXmax())
+            for b in range(numBins):
+                blow = 1 if invert else b+1
+                bhigh = b+1 if invert else numBins
+                sigVal = 0
+                sigErr2 = 0
+                bgVal = 0
+                bgErr2 = 0
+                for j in range(blow,bhigh+1):
+                    sigVal += sig.GetBinContent(j)
+                    sigErr2 += sig.GetBinError(j)**2
+                    bgVal += bg.GetBinContent(j)
+                    bgErr2 += bg.GetBinError(j)**2
+                sOverBVal = divWithError((sigVal,sigErr2**0.5),(bgVal,bgErr2**0.5))
+                sOverB.SetBinContent(b+1,sOverBVal[0])
+                sOverB.SetBinError(b+1,sOverBVal[1])
+            style = self.styles[signal]
+            sOverB.SetLineWidth(2)
+            sOverB.SetLineColor(style['linecolor'])
+            sOverB.SetMarkerColor(style['linecolor'])
+            sOverB.SetFillColor(0)
+            if i==0:
+                sOverB.Draw('e0')
+                sOverB.GetXaxis().SetTitle(xaxis)
+                sOverB.GetYaxis().SetTitle(yaxis)
+                sOverB.GetYaxis().SetTitleOffset(1.2)
+                sOverB.SetMinimum(0.)
+                if ymax!=None: sOverB.SetMaximum(ymax)
+                if ymin!=None: sOverB.SetMinimum(ymin)
+            else:
+                sOverB.Draw('e0 same')
+            sOverB.SetTitle(style['name'])
+            #highestMax = max(highestMax,sOverB.GetMaximum())
+            #if ymax==None: sOverB.SetMaximum(yscale*highestMax)
+            hists[signal] = sOverB
+
+        legend = self._getLegend(hists=hists,numcol=numcol,position=legendpos)
+        legend.Draw()
+
+        self._setStyle(canvas)
+
+        # save
+        if save:
+            self._save(canvas,savename)
+        else:
+            return self._saveTemp(canvas)
+
 
     def plotEfficiency(self,variable,savename,**kwargs):
         '''Plot ROC curve'''
