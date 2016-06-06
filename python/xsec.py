@@ -34,14 +34,14 @@ xsecs = {
     'QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8'                     :           0.00682981  * PB,
     'QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8'                      :           0.000165445 * PB,
 
-    'DYJetsToLL_M-5to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'        :   7160        * PB,
-    'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'       :   7160        * PB,
+    'DYJetsToLL_M-5to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'        :   7160        * PB * 1.216, # 1.216 LO -> NNLO
+    'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'       :   7160        * PB * 1.216,
     'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'      :  18610.       * PB, # already NNLO
     'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'          :   6025.2      * PB,
-    'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'           :   4895        * PB,
+    'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'           :   4895        * PB * 1.216,
 
-    'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'     :    421.5      * PB * 1.216, # 1.216 LO -> NNLO for DY
-    'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'     :    184.3      * PB * 1.216,
+    'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'     :    421.5      * PB, 
+    'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'     :    184.3      * PB,
     'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          :   1016.       * PB * 1.216,
     'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          :    331.4      * PB * 1.216,
     'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          :     96.36     * PB * 1.216,

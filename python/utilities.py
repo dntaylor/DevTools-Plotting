@@ -39,7 +39,8 @@ def getLumi():
         return 2318 # moriond golden json
     else:
         #return 221 # first golden json 80X
-        return 589 # second golden json 80X
+        #return 589 # second golden json 80X
+        return 804.2 # third golden json 80X
 
 latestNtuples = {}
 latestNtuples['76X'] = {
