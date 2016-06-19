@@ -1,4 +1,5 @@
 import logging
+from xsec_Hpp4l import xsecs as xsecs_4l
 
 PB = 1.
 pb = PB
@@ -154,6 +155,9 @@ xsecs = {
     'HPlusPlusHMinusMinusHTo4L_M-900_13TeV-pythia8'                    :      6.820e-05 * PB,
     'HPlusPlusHMinusMinusHTo4L_M-1000_13TeV-pythia8'                   :      3.477e-05 * PB,
 }
+
+for mass in xsecs_4l:
+    xsecs['HPlusPlusHMinusMinusHTo4L_M-{0}_TuneCUETP8M1_13TeV_pythia8'.format(mass)] = xsecs_4l[mass]
 
 
 def getXsec(sample):
