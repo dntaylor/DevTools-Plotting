@@ -40,7 +40,9 @@ def getLumi():
     else:
         #return 221 # first golden json 80X
         #return 589 # second golden json 80X
-        return 804.2 # third golden json 80X
+        #return 804.2 # third golden json 80X
+        return 2070 # fourth golden json 80X
+
 
 latestNtuples = {}
 latestNtuples['76X'] = {
@@ -48,14 +50,7 @@ latestNtuples['76X'] = {
     'DY'             : '2016-05-02_DYAnalysis_v1-merge',       # check variations on minbias cross section (71 best fit)
     'DijetFakeRate'  : '',
     'Electron'       : '2016-04-14_ElectronAnalysis_v1-merge',
-    #'Hpp3l'          : '2016-05-02_Hpp3lAnalysis_v1-merge',           # Tau no iso for loose
-    #'Hpp3l'          : '2016-05-12_Hpp3lAnalysis_v1-merge',           # only 1 fake taus allowed
-    #'Hpp3l'          : '2016-05-13_Hpp3lAnalysis_newDMs_v1-merge',    # new DMs
     'Hpp3l'          : '2016-05-16_Hpp3lAnalysis_v1-merge',           # fix for gen channel
-    #'Hpp4l'          : '2016-05-02_Hpp4lAnalysis_v1-merge',           # Tau no iso for loose
-    #'Hpp4l'          : '2016-05-12_Hpp4lAnalysis_v1-merge',           # only 2 fake taus allowed
-    #'Hpp4l'          : '2016-05-13_Hpp4lAnalysis_newDMs_v1-merge',    # new DMs
-    #'Hpp4l'          : '2016-05-16_Hpp4lAnalysis_v1-merge',           # fix for gen channel
     #'Hpp4l'          : '2016-06-07_Hpp4lAnalysis_76X_HZZIDs_v1-merge',# hzz ids
     'Hpp4l'          : '2016-06-07_Hpp4lAnalysis_76X_WZIDs_v1-merge', # wz ids
     'Muon'           : '2016-04-14_MuonAnalysis_v1-merge',
@@ -71,7 +66,7 @@ latestNtuples['80X'] = {
     'DY'             : '2016-06-06_DYAnalysis_80X_v1-merge',
     'DijetFakeRate'  : '2016-05-28_DijetFakeRateAnalysis_80X_v1-merge',
     'Hpp3l'          : '2016-05-28_Hpp3lAnalysis_80X_v1-merge',
-    'Hpp4l'          : '2016-05-28_Hpp4lAnalysis_80X_v1-merge',
+    'Hpp4l'          : '2016-06-20_Hpp4lAnalysis_80X_v1-merge',
     'Electron'       : '2016-06-18_ElectronAnalysis_80X_v1-merge',
     'Muon'           : '2016-06-18_MuonAnalysis_80X_v1-merge',
     'Tau'            : '2016-06-18_TauAnalysis_80X_v1-merge',

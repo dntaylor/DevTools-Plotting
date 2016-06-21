@@ -187,13 +187,13 @@ histParams = {
         'mass'                        : {'xVariable': '4l_mass',                        'xBinning': [200, 0, 2000],         },
         'st'                          : {'xVariable': 'hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt','xBinning': [200, 0, 2000],         },
         # gen truth
-        'hppLeadingLeptonGenMatch'    : {'xVariable': 'hpp1_genMatch',                  'xBinning': [2, 0, 2],              },
+        #'hppLeadingLeptonGenMatch'    : {'xVariable': 'hpp1_genMatch',                  'xBinning': [2, 0, 2],              },
         'hppLeadingLeptonGenDeltaR'   : {'xVariable': 'hpp1_genDeltaR',                 'xBinning': [50, 0, 5],             },
-        'hppSubLeadingLeptonGenMatch' : {'xVariable': 'hpp2_genMatch',                  'xBinning': [2, 0, 2],              },
+        #'hppSubLeadingLeptonGenMatch' : {'xVariable': 'hpp2_genMatch',                  'xBinning': [2, 0, 2],              },
         'hpmSubLeadingLeptonGenDeltaR': {'xVariable': 'hpp2_genDeltaR',                 'xBinning': [50, 0, 5],             },
-        'hmmLeadingLeptonGenMatch'    : {'xVariable': 'hmm1_genMatch',                  'xBinning': [2, 0, 2],              },
+        #'hmmLeadingLeptonGenMatch'    : {'xVariable': 'hmm1_genMatch',                  'xBinning': [2, 0, 2],              },
         'hmmLeadingLeptonGenDeltaR'   : {'xVariable': 'hmm1_genDeltaR',                 'xBinning': [50, 0, 5],             },
-        'hmmSubLeadingLeptonGenMatch' : {'xVariable': 'hmm2_genMatch',                  'xBinning': [2, 0, 2],              },
+        #'hmmSubLeadingLeptonGenMatch' : {'xVariable': 'hmm2_genMatch',                  'xBinning': [2, 0, 2],              },
         'hmmSubLeadingLeptonGenDeltaR': {'xVariable': 'hmm2_genDeltaR',                 'xBinning': [50, 0, 5],             },
     },
     # overrides for Hpp3l
@@ -237,11 +237,11 @@ histParams = {
         'mass'                        : {'xVariable': '3l_mass',                        'xBinning': [2000, 0, 2000],         },
         'st'                          : {'xVariable': 'hpp1_pt+hpp2_pt+hm1_pt',         'xBinning': [2000, 0, 2000],         },
         # gen truth
-        'hppLeadingLeptonGenMatch'    : {'xVariable': 'hpp1_genMatch',                  'xBinning': [2, 0, 2],               },
+        #'hppLeadingLeptonGenMatch'    : {'xVariable': 'hpp1_genMatch',                  'xBinning': [2, 0, 2],               },
         'hppLeadingLeptonGenDeltaR'   : {'xVariable': 'hpp1_genDeltaR',                 'xBinning': [1000, 0, 5],            },
-        'hppSubLeadingLeptonGenMatch' : {'xVariable': 'hpp2_genMatch',                  'xBinning': [2, 0, 2],               },
+        #'hppSubLeadingLeptonGenMatch' : {'xVariable': 'hpp2_genMatch',                  'xBinning': [2, 0, 2],               },
         'hpmSubLeadingLeptonGenDeltaR': {'xVariable': 'hpp2_genDeltaR',                 'xBinning': [1000, 0, 5],            },
-        'hmLeptonGenMatch'            : {'xVariable': 'hm1_genMatch',                   'xBinning': [2, 0, 2],               },
+        #'hmLeptonGenMatch'            : {'xVariable': 'hm1_genMatch',                   'xBinning': [2, 0, 2],               },
         'hmLeptonGenDeltaR'           : {'xVariable': 'hm1_genDeltaR',                  'xBinning': [1000, 0, 5],            },
     },
 }
@@ -764,54 +764,54 @@ for mass in masses:
             selectionParams['Hpp4l']['old/massWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] =    {'args': [hpp4lCutMap['PPPP'] + ' && ' + massWindow],    'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
             selectionParams['Hpp4l']['old/allSideband/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] =   {'args': [hpp4lCutMap['PPPP'] + ' && ' + allSideband],   'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
             selectionParams['Hpp4l']['old/allMassWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] = {'args': [hpp4lCutMap['PPPP'] + ' && ' + allMassWindow], 'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
-            for cuta in cuts4l:
-                sel = getOldSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=[cuta])
-                if not sel: continue
-                selectionParams['Hpp4l']['old/{0}Only/{1}/hpp{2}hmm{3}'.format(cuta,mass,hppTaus,hmmTaus)] = {'args': [hpp4lCutMap['PPPP'] + ' && ' + sel], 'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
-                for cutb in cuts4l:
-                    if cuts4l.index(cutb)<cuts4l.index(cuta): continue
-                    sel = getOldSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=[cuta,cutb])
-                    if not sel: continue
-                    selectionParams['Hpp4l']['old/{0}_{1}/{2}/hpp{3}hmm{4}'.format(cuta,cutb,mass,hppTaus,hmmTaus)] = {'args': [hpp4lCutMap['PPPP'] + ' && ' + sel], 'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
+            #for cuta in cuts4l:
+            #    sel = getOldSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=[cuta])
+            #    if not sel: continue
+            #    selectionParams['Hpp4l']['old/{0}Only/{1}/hpp{2}hmm{3}'.format(cuta,mass,hppTaus,hmmTaus)] = {'args': [hpp4lCutMap['PPPP'] + ' && ' + sel], 'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
+            #    for cutb in cuts4l:
+            #        if cuts4l.index(cutb)<cuts4l.index(cuta): continue
+            #        sel = getOldSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=[cuta,cutb])
+            #        if not sel: continue
+            #        selectionParams['Hpp4l']['old/{0}_{1}/{2}/hpp{3}hmm{4}'.format(cuta,cutb,mass,hppTaus,hmmTaus)] = {'args': [hpp4lCutMap['PPPP'] + ' && ' + sel], 'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
 
-# fake regions via modes
-for nf in range(5):
-    name = '{0}P{1}F'.format(4-nf,nf)
-    name_regular = '{0}P{1}F_regular'.format(4-nf,nf)
-    regionCut = '(' + ' || '.join([hpp4lCutMap[reg] for reg in fakeModes[nf]]) + ')'
-    regionMCScaleFactor = '*'.join(['({0} ? {1}*{2}*{3}*{4} : 1)'.format(hpp4lCutMap[reg],hpp4lScaleFactorMap[reg],hpp4lFakeScaleFactorMap[reg],hpp4lBaseScaleFactor,'1' if reg=='PPPP' else '-1') for reg in fakeModes[nf]])
-    regionMCScaleFactor_regular = '*'.join(['({0} ? {1}*{2} : 1)'.format(hpp4lCutMap[reg],hpp4lScaleFactorMap[reg],hpp4lBaseScaleFactor) for reg in fakeModes[nf]])
-    regionDataScaleFactor = '*'.join(['({0} ? {1} : 1)'.format(hpp4lCutMap[reg],hpp4lFakeScaleFactorMap[reg]) for reg in fakeModes[nf]])
-    # fake scaled
-    selectionParams['Hpp4l'][name] = {
-        'args': [hpp4lBaseCut + ' && ' + regionCut],
-        'kwargs': {
-            'mccut': hpp4lMCCut,
-            'mcscalefactor': regionMCScaleFactor,
-            'datascalefactor': regionDataScaleFactor,
-        }
-    }
-    selectionParams['Hpp4l']['{0}/lowmass'.format(name)] = {
-        'args': [hpp4lLowMassControl + ' && ' + regionCut],
-        'kwargs': {
-            'mccut': hpp4lMCCut,
-            'mcscalefactor': regionMCScaleFactor,
-            'datascalefactor': regionDataScaleFactor,
-        }
-    }
-    # regular for validation
-    selectionParams['Hpp4l'][name_regular] = {
-        'args': [hpp4lBaseCut + ' && ' + regionCut],
-        'kwargs': {
-            'mcscalefactor': regionMCScaleFactor_regular,
-        }
-    }
-    selectionParams['Hpp4l']['{0}/lowmass'.format(name_regular)] = {
-        'args': [hpp4lLowMassControl + ' && ' + regionCut],
-        'kwargs': {
-            'mcscalefactor': regionMCScaleFactor_regular,
-        }
-    }
+## fake regions via modes
+#for nf in range(5):
+#    name = '{0}P{1}F'.format(4-nf,nf)
+#    name_regular = '{0}P{1}F_regular'.format(4-nf,nf)
+#    regionCut = '(' + ' || '.join([hpp4lCutMap[reg] for reg in fakeModes[nf]]) + ')'
+#    regionMCScaleFactor = '*'.join(['({0} ? {1}*{2}*{3}*{4} : 1)'.format(hpp4lCutMap[reg],hpp4lScaleFactorMap[reg],hpp4lFakeScaleFactorMap[reg],hpp4lBaseScaleFactor,'1' if reg=='PPPP' else '-1') for reg in fakeModes[nf]])
+#    regionMCScaleFactor_regular = '*'.join(['({0} ? {1}*{2} : 1)'.format(hpp4lCutMap[reg],hpp4lScaleFactorMap[reg],hpp4lBaseScaleFactor) for reg in fakeModes[nf]])
+#    regionDataScaleFactor = '*'.join(['({0} ? {1} : 1)'.format(hpp4lCutMap[reg],hpp4lFakeScaleFactorMap[reg]) for reg in fakeModes[nf]])
+#    # fake scaled
+#    selectionParams['Hpp4l'][name] = {
+#        'args': [hpp4lBaseCut + ' && ' + regionCut],
+#        'kwargs': {
+#            'mccut': hpp4lMCCut,
+#            'mcscalefactor': regionMCScaleFactor,
+#            'datascalefactor': regionDataScaleFactor,
+#        }
+#    }
+#    selectionParams['Hpp4l']['{0}/lowmass'.format(name)] = {
+#        'args': [hpp4lLowMassControl + ' && ' + regionCut],
+#        'kwargs': {
+#            'mccut': hpp4lMCCut,
+#            'mcscalefactor': regionMCScaleFactor,
+#            'datascalefactor': regionDataScaleFactor,
+#        }
+#    }
+#    # regular for validation
+#    selectionParams['Hpp4l'][name_regular] = {
+#        'args': [hpp4lBaseCut + ' && ' + regionCut],
+#        'kwargs': {
+#            'mcscalefactor': regionMCScaleFactor_regular,
+#        }
+#    }
+#    selectionParams['Hpp4l']['{0}/lowmass'.format(name_regular)] = {
+#        'args': [hpp4lLowMassControl + ' && ' + regionCut],
+#        'kwargs': {
+#            'mcscalefactor': regionMCScaleFactor_regular,
+#        }
+#    }
 
 # setup gen channel selections
 genChans = getGenChannels('Hpp4l')

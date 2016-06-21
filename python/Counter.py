@@ -149,7 +149,7 @@ class Counter(object):
         '''Print a divider'''
         print '{0:20}-|-{1}-|'.format('-'*20,'-|-'.join(['{0:10}'.format('-'*10) for name in self.processOrder + ['All BG']]))
 
-    def getCount(self,directory,processName,**kwargs):
+    def getCount(self,processName,directory,**kwargs):
         '''Get a single count'''
         return self._getCount(processName,directory,**kwargs)
 
@@ -157,7 +157,7 @@ class Counter(object):
         '''Get a map for the counts'''
         counts = {}
         for processName in self.processOrder:
-            counts[processName] = self.getCount(directory,processName,**kwargs)
+            counts[processName] = self.getCount(processName,directory,**kwargs)
         return counts
 
     def printCounts(self,label,directory,**kwargs):

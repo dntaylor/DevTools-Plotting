@@ -57,6 +57,8 @@ xsecs = {
     'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1'                      :  35.6  * PB,
     'ST_tW_top_5f_NoFullyHadronicDecays_13TeV-powheg_TuneCUETP8M1'                        :  38.09 * PB,
 
+    'TGJets_leptonDecays_13TeV_amcatnlo_madspin_pythia8'               :      0.959    * PB,
+
     'TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                   :    831.76     * PB,
     'TTTo2L2Nu_13TeV-powheg'                                           :     87.31     * PB,
     'TT_TuneCUETP8M1_13TeV-powheg-pythia8'                             :    831.76     * PB,
@@ -82,9 +84,17 @@ xsecs = {
     'W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'               :   9493        * PB,
     'W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'               :   3120        * PB,
     'W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'               :    942.3      * PB,
-    'W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'               :    524.2      * PB,
+    'W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'               :    524.2      * PB,    
 
-    'ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                  :    117.864    * PB,
+    'WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :   1345        * PB,
+    'WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :    359.7      * PB,
+    'WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :     48.91     * PB,
+    'WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :     12.05     * PB,
+    'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'   :      5.501    * PB,
+    'WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'  :      1.329    * PB,
+    'WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'   :      0.03216  * PB,
+                                                                                                
+    'ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                  :    117.864    * PB,    
     'WGToLNuG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                 :    489.       * PB,
 
     # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageAt1314TeV2014
@@ -98,6 +108,9 @@ xsecs = {
     'ZH_HToZG_ZToAll_M-125_13TeV_powheg_pythia8'                       :      0.8696 * 0.001533              * PB, # ZH * H->Zgam
     'ZHToTauTau_M125_13TeV_powheg_pythia8'                             :      0.8696 * 0.006272              * PB, # ZH * H->tautau
     'ZH_HToZZ_4LFilter_M125_13TeV_powheg2-minlo-HZJ_JHUgenV6_pythia8'  :      0.147 * PB, # MCM , 0.8696 * 0.02619 * (0.033658*3)**2 # ZH * H->ZZ * Z->ll^2 
+    'ZH_HToBB_ZToLL_M125_13TeV_powheg_herwigpp'                        :      0.07495  * PB,
+    'ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8'                       :      0.8696 * 0.5824 * 0.2          * PB, # ZH * H->bb * Z->inv
+    'ZH_HToZZ_4LFilter_M126_13TeV_powheg2-minlo-HZJ_JHUgenV6_pythia8'  :      0.147 * PB,
 
     'WWTo2L2Nu_13TeV-powheg'                                           :     10.481    * PB,
     'WWTo4Q_13TeV-powheg'                                              :     45.20     * PB,
@@ -112,6 +125,7 @@ xsecs = {
     'WZJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                   :      4.71     * PB,
     'WZ_TuneCUETP8M1_13TeV-pythia8'                                    :     47.13     * PB,
     'WZJToLLLNu_TuneCUETP8M1_13TeV-amcnlo-pythia8'                     :      4.715    * PB,
+    'WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                 :      4.712    * PB,
 
     'ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8'                        :      6.842    * PB,
     'ZZTo2Q2Nu_13TeV_amcatnloFXFX_madspin_pythia8'                     :      4.04     * PB,

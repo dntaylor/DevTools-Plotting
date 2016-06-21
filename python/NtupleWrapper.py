@@ -527,6 +527,10 @@ class NtupleWrapper(object):
         '''Get a histogram that is not saved in flat ntuple.'''
         return self.__getHist1D(histName,selection,scalefactor,variable,binning)
 
+    def getTempHist2D(self,histName,selection,scalefactor,xVariable,yVariable,xBinning,yBinning):
+        '''Get a histogram that is not saved in flat ntuple.'''
+        return self.__getHist2D(histName,selection,scalefactor,xVariable,yVariable,xBinning,yBinning)
+
     def getTempCount(self,selection,scalefactor):
         '''Get a histogram that is a single bin of counts with statistical error'''
         self.j += 1
