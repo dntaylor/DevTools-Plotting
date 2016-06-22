@@ -68,14 +68,17 @@ class NtupleWrapper(object):
             allFiles = [self.ntuple]
         else: # reading from an input directory (all files in directory will be processed)
             allFiles = glob.glob('{0}/*.root'.format(self.ntupleDirectory))
+        if len(allFiles)==0: logging.error('No files found for sample {0}'.format(self.sample))
         summedWeights = 0.
         for f in allFiles:
             tfile = ROOT.TFile.Open(f)
             summedWeights += tfile.Get("summedWeights").GetBinContent(1)
             tfile.Close()
             tchain.Add(f)
+        if not summedWeights and not isData(self.sample): logging.warning('No events for sample {0}'.format(self.sample))
         self.intLumi = getLumi()
         self.xsec = getXsec(self.sample)
+        if not self.xsec: logging.error('No xsec for sample {0}'.format(self.sample))
         self.sampleLumi = float(summedWeights)/self.xsec if self.xsec else 0.
         self.sampleTree = tchain
         self.j += 1
@@ -87,6 +90,18 @@ class NtupleWrapper(object):
         self.files = allFiles
         self.initialized = True
         self.fileHash = hashFile(*self.files)
+
+    def getTree(self):
+        if not self.initialized: self.__initializeNtuple()
+        return self.sampleTree
+
+    def getSampleLumi(self):
+        if not self.initialized: self.__initializeNtuple()
+        return self.sampleLumi
+
+    def getIntLumi(self):
+        if not self.initialized: self.__initializeNtuple()
+        return self.intLumi
 
     def __write(self,hist,directory=''):
         self.outfile = ROOT.TFile(self.flat,'update')
@@ -125,7 +140,7 @@ class NtupleWrapper(object):
                 hist = hist.Clone('h_{0}_{1}'.format(self.sample,variable.replace('/','_')))
                 hist.SetDirectory(0)
                 return hist
-        logging.info('Histogram {0} not found for {1}'.format(variable,self.sample))
+        logging.debug('Histogram {0} not found for {1}'.format(variable,self.sample))
         return 0
 
     def __checkHash(self,name,directory,strings=[]):
@@ -221,7 +236,7 @@ class NtupleWrapper(object):
 
     def __getHist1D(self,histName,selection,scalefactor,xVariable,xBinning):
         if not self.initialized: self.__initializeNtuple()
-        if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi)
+        if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi) if self.sampleLumi else '0'
         binning = xBinning
         tree = self.sampleTree
         if not tree: 
@@ -254,7 +269,7 @@ class NtupleWrapper(object):
 
     def __getHist2D(self,histName,selection,scalefactor,xVariable,yVariable,xBinning,yBinning):
         if not self.initialized: self.__initializeNtuple()
-        if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi)
+        if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi) if self.sampleLumi else '0'
         binning = xBinning+yBinning
         tree = self.sampleTree
         if not tree:
@@ -287,7 +302,7 @@ class NtupleWrapper(object):
 
     def __getHist3D(self,histName,selection,scalefactor,xVariable,yVariable,zVariable,xBinning,yBinning,zBinning):
         if not self.initialized: self.__initializeNtuple()
-        if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi)
+        if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi) if self.sampleLumi else '0'
         binning = xBinning+yBinning+zBinning
         tree = self.sampleTree
         if not tree:

@@ -8,6 +8,10 @@ from itertools import product, combinations_with_replacement
 from DevTools.Plotter.utilities import ZMASS
 from DevTools.Plotter.higgsUtilities import getChannels, getGenChannels, getOldSelections
 
+from DevTools.Utilities.utilities import getCMSSWVersion
+
+version = getCMSSWVersion()
+
 #############
 ### hists ###
 #############
@@ -823,6 +827,7 @@ sampleProjectionParams['Hpp4l'] = {}
 sampleSelectionParams['Hpp4l'] = {}
 for mass in masses:
     sampleName = 'HPlusPlusHMinusMinusHTo4L_M-{0}_13TeV-pythia8'.format(mass)
+    if version=='80X': sampleName = 'HPlusPlusHMinusMinusHTo4L_M-{0}_TuneCUETP8M1_13TeV_pythia8'.format(mass)
     sampleHistParams['Hpp4l'][sampleName] = addChannels(deepcopy(histParams['Hpp4l']),'genChannel',len(genChannelsPP))
     sampleProjectionParams['Hpp4l'][sampleName] = {}
     for genChan in genChannelsPP:
@@ -880,6 +885,7 @@ sampleProjectionParams['Hpp3l'] = {}
 sampleSelectionParams['Hpp3l'] = {}
 for mass in masses:
     sampleName = 'HPlusPlusHMinusMinusHTo4L_M-{0}_13TeV-pythia8'.format(mass)
+    if version=='80X': sampleName = 'HPlusPlusHMinusMinusHTo4L_M-{0}_TuneCUETP8M1_13TeV_pythia8'.format(mass)
     sampleHistParams['Hpp3l'][sampleName] = addChannels(deepcopy(histParams['Hpp3l']),'genChannel',len(genChannelsPP))
     sampleProjectionParams['Hpp3l'][sampleName] = {}
     for genChan in genChannelsPP:

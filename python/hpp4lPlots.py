@@ -13,14 +13,14 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 
 blind = True
 doCat = True
-plotMC = False
+plotMC = True
 plotDatadriven = False
 plotFakeRegions = False
-plotSignal = False
-plotROC = False
-plotNormalization = False
-plotSOverB = True
-plotCount = False
+plotSignal = True
+plotROC = True
+plotNormalization = True
+plotSOverB = False
+plotCount = True
 
 hpp4lPlotter = Plotter('Hpp4l')
 
