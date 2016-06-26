@@ -345,7 +345,8 @@ selectionParams['Muon'] = {
 
 sels = selectionParams['Muon'].keys()
 idCuts = {
-    'isLooseMuon_looseIso'  : 'm_isLooseMuon==1 && m_isolation<0.4',
+    'isLooseMuon_looseIso'  : 'm_isLooseMuon==1 && m_isolation<0.25',
+    'isMediumMuon_looseIso' : 'm_isMediumMuon==1 && m_isolation<0.25',
     'isMediumMuon_tightIso' : 'm_isMediumMuon==1 && m_isolation<0.15',
     'isTightMuon_tightIso'  : 'm_isTightMuon==1 && m_isolation<0.15',
     'isHighPtMuon_tightIso' : 'm_isHighPtMuon==1 && m_isolation<0.15',

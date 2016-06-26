@@ -7,7 +7,7 @@ import ROOT
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 
-tPlotter = Plotter('Tau')
+mPlotter = Plotter('Muon')
 
 sigMap = {
     'Z'   : [
@@ -38,7 +38,7 @@ sigMap = {
              'QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8',
             ],
     'data': [
-             'Tau',
+             'SingleMuon',
             ],
     'HppHmm200GeV'  : ['HPlusPlusHMinusMinusHTo4L_M-200_TuneCUETP8M1_13TeV_pythia8'],
     'HppHmm300GeV'  : ['HPlusPlusHMinusMinusHTo4L_M-300_TuneCUETP8M1_13TeV_pythia8'],
@@ -88,34 +88,29 @@ sigcolors = [
 ]
 
 
-tPlotter.addHistogram('signew',sigMap['HppHmm1000GeV'],style={'name': 'New DMs (match tau gen jet)','linecolor':ROOT.kRed})
-tPlotter.addHistogram('sigold',sigMap['HppHmm1000GeV'],style={'name': 'Old DMs (match tau gen jet)','linecolor':ROOT.kBlue})
-tPlotter.addHistogram('fakenew',sigMap['QCD'],style={'name':'New DMs (fake)','linecolor':ROOT.kRed,'linestyle':2})
-tPlotter.addHistogram('fakeold',sigMap['QCD'],style={'name':'Old DMs (fake)','linecolor':ROOT.kBlue,'linestyle':2})
+mPlotter.addHistogram('sig',sigMap['HppHmm1000GeV'],style={'name': 'Match to gen','linecolor':ROOT.kBlue})
+mPlotter.addHistogram('fake',sigMap['QCD'],style={'name':'Fake','linecolor':ROOT.kBlue,'linestyle':2})
 
 idNames = [
-    '{0}_vlooseElectron_looseMuon_looseIsolation',
-    '{0}_vlooseElectron_looseMuon_tightIsolation',
-    '{0}_vlooseElectron_looseMuon_vtightIsolation',
-    '{0}_tightElectron_tightMuon_looseIsolation',
-    '{0}_tightElectron_tightMuon_tightIsolation',
-    '{0}_tightElectron_tightMuon_vtightIsolation',
+    'isLooseMuon_looseIso',
+    'isMediumMuon_looseIso',
+    'isMediumMuon_tightIso',
+    'isTightMuon_tightIso',
+    'isHighPtMuon_tightIso',
+    'wzLooseMuon',
+    'wzMediumMuon',
 ]
 
 binning = [0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,450,500,550,600,650,700,800,900,1000]
 binning = [0,20,40,60,80,100,120,140,160,180,200,240,300,400,500,600,800,1000]
 for idName in idNames:
     num = {
-        'signew': 'default/prompt/{0}/pt'.format(idName.format('new')),
-        'sigold': 'default/prompt/{0}/pt'.format(idName.format('old')),
-        'fakenew': 'default/fake/{0}/pt'.format(idName.format('new')),
-        'fakeold': 'default/fake/{0}/pt'.format(idName.format('old')),
+        'sig': 'default/prompt/{0}/pt'.format(idName),
+        'fake': 'default/fake/{0}/pt'.format(idName),
     }
     denom = {
-        'signew': 'default/prompt/pt',
-        'sigold': 'default/prompt/pt',
-        'fakenew': 'default/fake/pt',
-        'fakeold': 'default/fake/pt',
+        'sig': 'default/prompt/pt',
+        'fake': 'default/fake/pt',
     }
-    savename = idName.format('tau')
-    tPlotter.plotRatio(num,denom,savename,rebin=binning,xaxis='p_{T} (GeV)',numcol=2,ymax=1.2)
+    savename = idName
+    mPlotter.plotRatio(num,denom,savename,rebin=binning,xaxis='p_{T} (GeV)',numcol=2,ymax=1.2)
