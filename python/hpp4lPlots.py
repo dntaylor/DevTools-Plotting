@@ -37,7 +37,7 @@ chanLabels = getChannelLabels('Hpp4l')
 genRecoMap = getGenRecoChannelMap('Hpp4l')
 sigMap = getSigMap('Hpp4l')
 
-#masses = [200,300,400,500,600,700,800,900,1000]
+allmasses = [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500]
 masses = [200,400,600,800,1000]
 
 samples = ['TTV','VH','VVV','ZZ']
@@ -509,6 +509,49 @@ if plotSOverB:
 ### all signal on one plot ###
 ##############################
 if plotSignal:
+    hpp4lPlotter.clearHistograms()
+
+    xvals = {}
+    for mass in allmasses:
+        hpp4lPlotter.addHistogram('HppHmm{0}GeV'.format(mass),sigMap['HppHmm{0}GeV'.format(mass)],signal=True,style={'linecolor': sigColors[mass]})
+        xvals[mass] = 'HppHmm{0}GeV'.format(mass)
+
+    fitvalues = {
+        'hppMass': {0.:[0.,0.9],1:[0.,0.4],2:[0.,0.3]},
+    }
+
+    envelopePoints = [0.05,0.1,0.5,0.9,0.95]
+    envelopeStyles = [3,2,1,1,2]
+    envelopeColors = [4,4,1,2,2]
+    envelopeLabels = ['p = 0.05','p = 0.1', 'p = 0.5', 'p = 0.9', 'p = 0.95']
+    for plot in ['hppMass']:
+        plotname = 'default/{0}'.format(plot)
+        savename = 'signal/envelopes/{0}'.format(plot)
+        kwargs = deepcopy(envelope_cust[plot])
+        selection = ' && '.join(['{0}_passMedium'.format(lep) for lep in ['hpp1','hpp2','hmm1','hmm2']])
+        scalefactor = 'hpp1_mediumScale*hpp2_mediumScale*hmm1_mediumScale*hmm2_mediumScale*genWeight*pileupWeight*triggerEfficiency'
+        binning = [1600,0,1600]
+        hpp4lPlotter.plotEnvelope('hpp_mass',savename,xvals,envelopePoints,envelopeLabels=envelopeLabels,envelopeStyles=envelopeStyles,envelopeColors=envelopeColors,selection=selection,mcscalefactor=scalefactor,binning=binning,**kwargs)
+        #hpp4lPlotter.plotEnvelope(plotname,savename,xvals,envelopePoints,envelopeStyles=envelopeStyles,envelopeColors=envelopeColors,**kwargs)
+
+        for nTau in range(3):
+            genChans = []
+            recoChans = []
+            for gen in genRecoMap:
+                if gen[:2].count('t')!=nTau or gen[2:].count('t')!=nTau: continue
+                genChans += [gen]
+                for r in genRecoMap[gen]:
+                    recoChans += chans[r]
+            recoCut = '(' + ' || '.join(['channel=="{0}"'.format(r) for r in recoChans]) + ')'
+            genCut = '(' + ' || '.join(['genChannel=="{0}"'.format(g) for g in genChans]) + ')'
+            fullCut = ' && '.join([recoCut,genCut,selection])
+            savename = 'signal/envelopes/{0}_{1}Taus'.format(plot,nTau)
+            
+            fitFunctions = [['pol1',200,1500]+fitvalues[plot][nTau]]
+            hpp4lPlotter.plotEnvelope('hpp_mass',savename,xvals,envelopePoints,envelopeLabels=envelopeLabels,envelopeStyles=envelopeStyles,envelopeColors=envelopeColors,fitFunctions=fitFunctions,selection=fullCut,mcscalefactor=scalefactor,binning=binning,**kwargs)
+
+
+
     hpp4lPlotter.clearHistograms()
     
     for mass in masses:

@@ -713,7 +713,7 @@ for baseCut in baseCutMap:
 #############
 ### hpp4l ###
 #############
-masses = [200,300,400,500,600,700,800,900,1000]
+masses = [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500]
 
 # setup the reco channels
 channels = getChannels('Hpp4l')

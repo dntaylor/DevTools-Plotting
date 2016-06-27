@@ -1070,3 +1070,95 @@ class Plotter(PlotterBase):
             self._save(canvas,savename)
         else:
             return self._saveTemp(canvas)
+
+    def plotEnvelope(self,variable,savename,xvalMap,envelopePoints,**kwargs):
+        xaxis = kwargs.pop('xaxis', 'Variable')
+        yaxis = kwargs.pop('yaxis', 'Variable')
+        ymin = kwargs.pop('ymax',None)
+        ymax = kwargs.pop('ymax',None)
+        numcol = kwargs.pop('numcol',1)
+        legendpos = kwargs.pop('legendpos',33)
+        lumipos = kwargs.pop('lumipos',11)
+        logy = kwargs.pop('logy',False)
+        logx = kwargs.pop('logx',False)
+        save = kwargs.pop('save',True)
+        envelopeStyles = kwargs.pop('envelopeStyles',[])
+        envelopeColors = kwargs.pop('envelopeColors',[])
+        envelopeLabels = kwargs.pop('envelopeLabels',[])
+        fitFunctions = kwargs.pop('fitFunctions',[])
+
+        logging.info('Plotting {0}'.format(savename))
+        canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
+        #ROOT.SetOwnership(canvas,False)
+        canvas.SetLogy(logy)
+        canvas.SetLogx(logx)
+
+
+        xpoints = sorted(xvalMap.keys())
+
+        envelopes = {e:{} for e in envelopePoints}
+
+        hists = OrderedDict()
+        for x,histName in sorted(xvalMap.iteritems()):
+            hist = self._getHistogram(histName,variable,**kwargs)
+            hists[x] = hist
+            total = hist.Integral()
+            for b in range(hist.GetNbinsX()):
+                thisInt = hist.Integral(0,b+1)
+                ratio = thisInt/total if total else 0.
+                for e in envelopePoints:
+                    if ratio < e: envelopes[e][x] = hist.GetBinLowEdge(b+1)
+
+        highestMax = max([max(envelopes[e].values()) for e in envelopePoints])
+
+        envGraphs = OrderedDict()
+        fits = {}
+        newfits = {}
+        for i,e in enumerate(envelopePoints):
+            xvals = [x for x in sorted(envelopes[e])]
+            yvals = [envelopes[e][x] for x in sorted(envelopes[e])]
+            graph = ROOT.TGraph(len(xvals),array('d',xvals),array('d',yvals))
+            if len(envelopeStyles)==len(envelopePoints): graph.SetLineStyle(envelopeStyles[i])
+            if len(envelopeColors)==len(envelopePoints): graph.SetLineColor(envelopeColors[i])
+            if len(envelopeLabels)==len(envelopePoints): graph.SetTitle(envelopeLabels[i])
+            graph.SetLineWidth(2)
+            if i==0:
+                graph.SetMaximum(highestMax*1.1)
+                graph.GetXaxis().SetTitle(xaxis)
+                graph.GetYaxis().SetTitle(yaxis)
+                graph.Draw("AL")
+            else:
+                graph.Draw("L same")
+            #print 'Fitting {0} with pol1'.format(e)
+            #fit = graph.Fit('pol1','SN')
+
+            envGraphs[e] = graph
+            #fits[e] = fit
+           
+            #if i==0:
+            #    newfit = ROOT.TF1('f{0}'.format(e),'pol1',min(xvalMap.keys()),max(xvalMap.keys()))
+            #    newfit.SetParameters(fit.GetParams())
+            #    if len(envelopeColors)==len(envelopePoints): newfit.SetLineColor(envelopeColors[i])
+            #    newfit.Draw("same")
+            #    newfits[e] = newfit
+
+        fits = OrderedDict()
+        for i,fitFunction in enumerate(fitFunctions):
+            fit = ROOT.TF1('f{0}'.format(i),*fitFunction[0:3])
+            fit.SetParameters(*fitFunction[3:])
+            fit.SetLineColor(1)
+            fit.SetTitle('Selection')
+            fit.Draw("same")
+            fits[i] = fit
+       
+        entries = [[g,g.GetTitle(),'L'] for g in reversed(fits.values()+envGraphs.values())]
+        legend = super(Plotter,self)._getLegend(entries=entries,numcol=numcol,position=legendpos)
+        legend.Draw()
+
+        self._setStyle(canvas,position=lumipos)
+
+        # save
+        if save:
+            self._save(canvas,savename)
+        else:
+            return self._saveTemp(canvas)
