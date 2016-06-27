@@ -258,6 +258,13 @@ roc_cust = {
     'met'                   : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
 }
 
+envelope_cust = {
+    # hpp
+    'hppMass'               : {'yaxis': 'm_{l^{#pm}l^{#pm}} (GeV)', 'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
+}
+
+
+
 ############################
 ### MC based BG estimate ###
 ############################
