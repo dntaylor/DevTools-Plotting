@@ -5,6 +5,7 @@ import logging
 from itertools import product, combinations_with_replacement
 
 from DevTools.Plotter.Plotter import Plotter
+from DevTools.Utilities.utilities import ZMASS
 from DevTools.Plotter.higgsUtilities import getChannels, getChannelLabels, getCategories, getCategoryLabels, getSubCategories, getSubCategoryLabels, getGenRecoChannelMap, getSigMap
 from copy import deepcopy
 import ROOT
@@ -13,14 +14,15 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 
 blind = True
 doCat = True
-plotMC = True
+plotMC = False
 plotDatadriven = False
 plotFakeRegions = False
-plotSignal = True
-plotROC = True
-plotNormalization = True
+plotSignal = False
+plotROC = False
+plotNormalization = False
 plotSOverB = False
-plotCount = True
+plotCount = False
+plotAllMasses = True
 
 hpp4lPlotter = Plotter('Hpp4l')
 
@@ -260,7 +262,11 @@ roc_cust = {
 
 envelope_cust = {
     # hpp
-    'hppMass'               : {'yaxis': 'm_{l^{#pm}l^{#pm}} (GeV)', 'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
+    'hppMass'               : {'yaxis': 'm_{l^{#pm}l^{#pm}} (GeV)',     'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
+    'st'                    : {'yaxis': '#Sigma p_{T}^{l} (GeV)',       'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
+    'hppDeltaR'             : {'yaxis': '#DeltaR(l^{+}l^{+})',          'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
+    'met'                   : {'yaxis': 'E_{T}^{miss} (GeV)',           'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
+    'mllMinusZ'             : {'yaxis': '|m_{l^{+}l^{-}}-m_{Z}| (GeV)', 'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
 }
 
 
@@ -515,7 +521,7 @@ if plotSOverB:
 ##############################
 ### all signal on one plot ###
 ##############################
-if plotSignal:
+if plotAllMasses:
     hpp4lPlotter.clearHistograms()
 
     xvals = {}
@@ -527,19 +533,32 @@ if plotSignal:
         'hppMass': {0.:[0.,0.9],1:[0.,0.4],2:[0.,0.3]},
     }
 
+    varMap = {
+        'hppMass'  : 'hpp_mass',
+        'hppDeltaR': 'hpp_deltaR',
+        'mllMinusZ': 'fabs(z_mass-{0})'.format(ZMASS),
+        'met'      : 'met_pt',
+        'st'       : 'hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt',
+    }
+
+    varBinning = {
+        'hppMass'  : [1600,0,1600],
+        'hppDeltaR': [300,0,6],
+        'mllMinusZ': [1000,0,1000],
+        'met'      : [1000,0,1000],
+        'st'       : [3000,0,3000],
+    }
+
     envelopePoints = [0.05,0.1,0.5,0.9,0.95]
     envelopeStyles = [3,2,1,1,2]
     envelopeColors = [4,4,1,2,2]
     envelopeLabels = ['p = 0.05','p = 0.1', 'p = 0.5', 'p = 0.9', 'p = 0.95']
-    for plot in ['hppMass']:
-        plotname = 'default/{0}'.format(plot)
+    for plot in envelope_cust:
         savename = 'signal/envelopes/{0}'.format(plot)
         kwargs = deepcopy(envelope_cust[plot])
         selection = ' && '.join(['{0}_passMedium'.format(lep) for lep in ['hpp1','hpp2','hmm1','hmm2']])
         scalefactor = 'hpp1_mediumScale*hpp2_mediumScale*hmm1_mediumScale*hmm2_mediumScale*genWeight*pileupWeight*triggerEfficiency'
-        binning = [1600,0,1600]
-        hpp4lPlotter.plotEnvelope('hpp_mass',savename,xvals,envelopePoints,envelopeLabels=envelopeLabels,envelopeStyles=envelopeStyles,envelopeColors=envelopeColors,selection=selection,mcscalefactor=scalefactor,binning=binning,**kwargs)
-        #hpp4lPlotter.plotEnvelope(plotname,savename,xvals,envelopePoints,envelopeStyles=envelopeStyles,envelopeColors=envelopeColors,**kwargs)
+        hpp4lPlotter.plotEnvelope(varMap[plot],savename,xvals,envelopePoints,envelopeLabels=envelopeLabels,envelopeStyles=envelopeStyles,envelopeColors=envelopeColors,selection=selection,mcscalefactor=scalefactor,binning=varBinning[plot],**kwargs)
 
         for nTau in range(3):
             genChans = []
@@ -554,11 +573,12 @@ if plotSignal:
             fullCut = ' && '.join([recoCut,genCut,selection])
             savename = 'signal/envelopes/{0}_{1}Taus'.format(plot,nTau)
             
-            fitFunctions = [['pol1',200,1500]+fitvalues[plot][nTau]]
-            hpp4lPlotter.plotEnvelope('hpp_mass',savename,xvals,envelopePoints,envelopeLabels=envelopeLabels,envelopeStyles=envelopeStyles,envelopeColors=envelopeColors,fitFunctions=fitFunctions,selection=fullCut,mcscalefactor=scalefactor,binning=binning,**kwargs)
+            fitFunctions = [['pol1',200,1500]+fitvalues[plot][nTau]] if plot in fitvalues else []
+            hpp4lPlotter.plotEnvelope(varMap[plot],savename,xvals,envelopePoints,envelopeLabels=envelopeLabels,envelopeStyles=envelopeStyles,envelopeColors=envelopeColors,fitFunctions=fitFunctions,selection=fullCut,mcscalefactor=scalefactor,binning=varBinning[plot],**kwargs)
 
 
 
+if plotSignal:
     hpp4lPlotter.clearHistograms()
     
     for mass in masses:

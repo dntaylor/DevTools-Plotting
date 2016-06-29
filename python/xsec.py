@@ -66,6 +66,7 @@ xsecs = {
     'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'             :     57.35     * PB,
     'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :    114.5      * PB,
     'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8' :    114.6      * PB,
+    'TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'                    :    502.2      * PB,
 
     'TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8'          :      3.697    * PB,
     'TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8'             :      0.2529   * PB,
@@ -97,6 +98,7 @@ xsecs = {
                                                                                                 
     'ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                  :    117.864    * PB,    
     'WGToLNuG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                 :    489.       * PB,
+    'WGToLNuG_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'                  :    405.271    * PB,
 
     # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageAt1314TeV2014
     # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageBR
@@ -116,6 +118,8 @@ xsecs = {
     'WWTo2L2Nu_13TeV-powheg'                                           :     10.481    * PB,
     'WWTo4Q_13TeV-powheg'                                              :     45.20     * PB,
     'WWToLNuQQ_13TeV-powheg'                                           :     43.53     * PB,
+    'WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8'                   :     45.85     * PB,
+    'WWTo4Q_4f_13TeV_amcatnloFXFX_madspin_pythia8'                     :     45.31     * PB,
     'WW_TuneCUETP8M1_13TeV-pythia8'                                    :     63.21     * PB,
     'GluGluWWTo2L2Nu_MCFM_13TeV'                                       :      0.39     * PB,
 

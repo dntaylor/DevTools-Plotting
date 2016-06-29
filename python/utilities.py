@@ -63,20 +63,20 @@ latestNtuples['76X'] = {
     'WZ'             : '2016-04-29_WZAnalysis_v1-merge',
 }
 latestNtuples['80X'] = {
-    'Charge'         : '2016-05-28_ChargeAnalysis_80X_v1-merge',
+    'Charge'         : '2016-06-28_ChargeAnalysis_80X_v1-merge',
     'DY'             : '2016-06-26_DYAnalysis_80X_v1-merge',
-    'DijetFakeRate'  : '2016-05-28_DijetFakeRateAnalysis_80X_v1-merge',
-    'Hpp3l'          : '2016-05-28_Hpp3lAnalysis_80X_v1-merge',
+    'DijetFakeRate'  : '2016-06-28_DijetFakeRateAnalysis_80X_v1-merge',
+    'Hpp3l'          : '2016-06-27_Hpp3lAnalysis_80X_v1-merge',
     'Hpp4l'          : '2016-06-26_Hpp4lAnalysis_80X_v1-merge',
     'Electron'       : '2016-06-25_ElectronAnalysis_80X_v1-merge',
     'Muon'           : '2016-06-25_MuonAnalysis_80X_v1-merge',
     'Tau'            : '2016-06-25_TauAnalysis_80X_v1-merge',
-    'TauCharge'      : '2016-05-28_TauChargeAnalysis_80X_v1-merge',
-    'WTauFakeRate'   : '2016-05-28_WTauFakeRateAnalysis_80X_v1-merge',
+    'TauCharge'      : '2016-06-28_TauChargeAnalysis_80X_v1-merge',
+    'WTauFakeRate'   : '2016-06-28_WTauFakeRateAnalysis_80X_v1-merge',
     'WZ'             : '2016-05-28_WZAnalysis_80X_v1-merge',
 }
 
-def getNtupleDirectory(analysis,local=True):
+def getNtupleDirectory(analysis,local=False,version=getCMSSWVersion()):
     # first grab the local one
     if local:
         #ntupleDir = '{0}/src/ntuples/{0}'.format(CMSSW_BASE,analysis)
@@ -85,9 +85,8 @@ def getNtupleDirectory(analysis,local=True):
             return ntupleDir
     # if not read from hdfs
     baseDir = '/hdfs/store/user/dntaylor'
-    ver = getCMSSWVersion()
-    if analysis in latestNtuples[ver] and latestNtuples[ver][analysis]:
-        return os.path.join(baseDir,latestNtuples[ver][analysis])
+    if analysis in latestNtuples[version] and latestNtuples[version][analysis]:
+        return os.path.join(baseDir,latestNtuples[version][analysis])
 
 treeMap = {
     ''               : 'Tree',

@@ -312,13 +312,26 @@ sigMap = {
              'WWToLNuQQ_13TeV-powheg',
             ],
     'W'   : [
-             'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             #'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
     'Z'   : [
-             'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
              #'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
              #'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-             'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             #'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
              #'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
              #'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
              #'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
@@ -440,8 +453,10 @@ def getOldSelections(analysis,mass,nTaus=[0,0],cuts=['st','zveto','met','dr','ma
     if analysis=='Hpp3l':
         # hpp/hmm
         cutMap = selections_old[analysis][nTaus[0]]
-        selString += ' && '.join([cutMap[cutName].format(sign='pp',mass=mass) for cutName in cuts if cutName in cutMap])
-        selString += ' && '.join(['!({0})'.format(cutMap[cutName].format(sign='pp',mass=mass)) for cutName in invcuts if cutName in cutMap])
+        cutlist = []
+        cutlist += [cutMap[cutName].format(sign='pp',mass=mass) for cutName in cuts if cutName in cutMap]
+        cutlist += ['!({0})'.format(cutMap[cutName].format(sign='pp',mass=mass)) for cutName in invcuts if cutName in cutMap]
+        selString = ' && '.join(cutlist)
     if analysis=='Hpp4l':
         cutlist = []
         for cut in cuts:
@@ -515,14 +530,50 @@ def getGenChannels(analysis):
     return {'PP':genChannelsPP,'AP':genChannelsAP}
 
 def getGenRecoChannelMap(analysis):
+    '''A map of gen channels and possible reco channels
+    A tau (t) can be either an electron (e) or muon (m) at reco.
+    For Hpp4l:
+        4 gen leptons -> 4 reco leptons
+    For Hpp3l:
+        3 gen leptons -> 3 reco leptons
+        4 gen leptons -> 3 reco leptons
+           * special case, a lepton is lost
+           here the first two reco must match either
+           the first pair gen or the second pair gen
+           the third reco must match one of the other pair
+    '''
     theMap = {}
     for gen in genChannelsPP:
         theMap[gen] = []
-        for reco in chans4l:
-            good = True
-            for r,lep in enumerate(reco):
-                if not (lep==gen[r] or gen[r]=='t'):
-                    good = False
-            if good:
-                theMap[gen] += [reco]
+        if analysis=='Hpp4l':
+            for reco in chans4l:
+                good = True
+                for r,lep in enumerate(reco):
+                    if not (lep==gen[r] or gen[r]=='t'):
+                        good = False
+                if good:
+                    theMap[gen] += [reco]
+        if analysis=='Hpp3l':
+            for reco in chans3l:
+                good = False
+                if ((reco[0]==gen[0] or gen[0]=='t')
+                    and (reco[1]==gen[1] or gen[1]=='t')
+                    and (reco[2] in gen[2:] or 't' in gen[2:])): # matches first
+                        good = True
+                if ((reco[0]==gen[2] or gen[2]=='t')
+                    and (reco[1]==gen[3] or gen[3]=='t')
+                    and (reco[2] in gen[:2] or 't' in gen[:2])): # matches second
+                        good = True
+                if good:
+                    theMap[gen] += [reco]
+    for gen in genChannelsAP:
+        theMap[gen] = []
+        if analysis=='Hpp3l':
+            for reco in chans3l:
+                good = True
+                for r,lep in enumerate(reco):
+                    if not (lep==gen[r] or gen[r]=='t'):
+                        good = False
+                if good:
+                    theMap[gen] += [reco]
     return theMap
