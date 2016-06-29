@@ -333,7 +333,7 @@ class NtupleWrapper(object):
         selectionString = '{0}*({1})'.format(scalefactor,selection)
         #selectionString = '{0}*(1)'.format(scalefactor)
         tree.Draw(drawString,selectionString,'goff')
-        tree.SetEntryList(self.entryListMap['1'])
+        #tree.SetEntryList(self.entryListMap['1'])
         if ROOT.gDirectory.Get(histName):
             hist = ROOT.gDirectory.Get(histName)
         else:

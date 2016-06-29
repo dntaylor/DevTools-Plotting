@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 blind = True
 doCat = True
 plotMC = True
-plotDatadriven = False
+plotDatadriven = True
 plotFakeRegions = False
 plotSignal = False
 plotROC = False
@@ -82,7 +82,7 @@ def getDataDrivenPlot(*plots):
     for s in samples + signals + ['data','datadriven']: histMap[s] = []
     for plot in plots:
         plotdirs = plot.split('/')
-        for s in samples + signals + ['data']: histMap[s] += ['/'.join(['4P0F']+plotdirs)]
+        for s in samples + signals + ['data']: histMap[s] += ['/'.join(['3P0F']+plotdirs)]
         histMap['datadriven'] += ['/'.join([reg]+plotdirs) for reg in regions]
     return histMap
 
