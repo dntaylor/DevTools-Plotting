@@ -20,52 +20,45 @@ labelMap = {
 }
 chanLabels = [''.join([labelMap[c] for c in chan]) for chan in chans]
 
+
 sigMap = {
-    'WZ'  : [
-             'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
-             'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-             'WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8',
-             'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-            ],
-    'ZZ'  : [
-             'ZZTo4L_13TeV_powheg_pythia8',
-             'GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo2mu2tau_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8',
-             'ZZTo2L2Nu_13TeV_powheg_pythia8',
-             'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-            ],
-    'VVV' : [
-             'WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
-             'WWG_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
-            ],
-    'TTV' : [
-             #'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
-             #'TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
-             'ttWJets_13TeV_madgraphMLM',
-             'ttZJets_13TeV_madgraphMLM',
-            ],
     'WW'  : [
              'WWTo2L2Nu_13TeV-powheg',
              'WWToLNuQQ_13TeV-powheg',
             ],
     'W'   : [
              'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             #'WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
     'Z'   : [
-             'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-             'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             #'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             #'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
     'TT'  : [
-             'TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
              'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
              'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
              'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
     'T'   : [
-             'ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
+             #'ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
              #'ST_t-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
              'ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
              'ST_t-channel_top_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
@@ -73,8 +66,6 @@ sigMap = {
              'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
             ],
     'QCD' : [
-             'QCD_Pt_5to10_TuneCUETP8M1_13TeV_pythia8',
-             'QCD_Pt_10to15_TuneCUETP8M1_13TeV_pythia8',
              'QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8',
              'QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8',
              'QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8',
@@ -117,7 +108,7 @@ dijetFakeRatePlotter.addHistogram('data',sigMap['data'])
 # plot definitions
 plots = {
     'pt'      : {'xaxis': 'p_{T} (GeV)', 'yaxis': 'Events/0.5 GeV', 'rebin': 5, 'rangex': [0,150]},
-    'eta'     : {'xaxis': '|#eta|', 'yaxis': 'Events', 'rebin': 5, 'rangex': [-2.5,2.5]},
+    'eta'     : {'xaxis': '#eta', 'yaxis': 'Events', 'rebin': 5, 'rangex': [-2.5,2.5]},
     'met'     : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events/0.2 GeV', 'rebin': 2, 'rangex': [0,200]},
     'wMass'   : {'xaxis': 'm_{T}^{l^{+},MET} (GeV)', 'yaxis': 'Events/0.5 GeV', 'rebin': 5, 'rangex': [0,200]},
 }
@@ -192,7 +183,7 @@ for plot in ['pt']:
             plotname['dataDY'] = dyvars
             #plotname['dataTT'] = ttvars
             savename = '{0}/{1}/allJetPts_{2}'.format(lepton,chan,plot)
-            dijetFakeRatePlotter.plotNormalized(plotname,savename,legendpos=34,numcol=2,**kwargs)
+            #dijetFakeRatePlotter.plotNormalized(plotname,savename,legendpos=34,numcol=2,**kwargs)
             for lepBin in range(3):
                 plotname = {}
                 for jetPt in jetPts:
@@ -203,7 +194,7 @@ for plot in ['pt']:
                 plotname['dataDY'] = dyvars
                 #plotname['dataTT'] = ttvars
                 savename = '{0}/{1}/allJetPts_{2}_{3}'.format(lepton,chan,plot,lepBin)
-                dijetFakeRatePlotter.plotNormalized(plotname,savename,legendpos=34,numcol=2,**kwargs)
+                #dijetFakeRatePlotter.plotNormalized(plotname,savename,legendpos=34,numcol=2,**kwargs)
 
 # ratios of tight/loose as func of pt/eta
 dijetFakeRatePlotter.clearHistograms()

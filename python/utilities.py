@@ -65,9 +65,9 @@ latestNtuples['76X'] = {
 latestNtuples['80X'] = {
     'Charge'         : '2016-06-28_ChargeAnalysis_80X_v1-merge',
     'DY'             : '2016-06-26_DYAnalysis_80X_v1-merge',
-    'DijetFakeRate'  : '2016-06-28_DijetFakeRateAnalysis_80X_v1-merge',
-    'Hpp3l'          : '2016-06-27_Hpp3lAnalysis_80X_v1-merge',
-    'Hpp4l'          : '2016-06-26_Hpp4lAnalysis_80X_v1-merge',
+    'DijetFakeRate'  : '2016-06-29_DijetFakeRateAnalysis_80X_v3-merge',
+    'Hpp3l'          : '2016-06-29_Hpp3lAnalysis_80X_v2-merge',
+    'Hpp4l'          : '2016-06-29_Hpp4lAnalysis_80X_v2-merge',
     'Electron'       : '2016-06-25_ElectronAnalysis_80X_v1-merge',
     'Muon'           : '2016-06-25_MuonAnalysis_80X_v1-merge',
     'Tau'            : '2016-06-25_TauAnalysis_80X_v1-merge',
@@ -107,3 +107,14 @@ treeMap = {
 
 def getTreeName(analysis):
     return treeMap[analysis] if analysis in treeMap else ''
+
+def addChannels(params,var,n):
+    for hist in params:
+        if 'yVariable' not in params[hist]: # add chans on y axis
+            params[hist]['yVariable'] = var
+            params[hist]['yBinning'] = [n,0,n]
+        elif 'zVariable' not in params[hist]: # add chans on z axis
+            params[hist]['zVariable'] = var
+            params[hist]['zBinning'] = [n,0,n]
+    return params
+

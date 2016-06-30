@@ -55,7 +55,7 @@ labelMap = {
     'BG'        : 'Background',
     'EWK'       : 'Electroweak',
     'QCD'       : 'QCD',
-    'datadriven': 'Non-Prompt',
+    'datadriven': 'Nonprompt',
     'ZZ'        : 'ZZ',
     'ZG'        : 'Z#gamma',
     'WZ'        : 'WZ',

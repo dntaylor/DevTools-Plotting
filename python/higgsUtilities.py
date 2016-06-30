@@ -250,10 +250,16 @@ for hpp in genHiggsChannels:
 ### Signal map ###
 ##################
 sigMap = {
-    'WZ'  : [
+    'WZall' : [
              'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
              'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-             'WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8',
+             #'WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8',
+             #'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8',
+            ],
+    'WZ'  : [
+             'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
+             #'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
+             #'WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8',
              #'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8',
             ],
     'ZZ'  : [
@@ -304,7 +310,7 @@ sigMap = {
              'ttWJets_13TeV_madgraphMLM',
              'ttZJets_13TeV_madgraphMLM',
              #'ttH_M125_13TeV_powheg_pythia8',
-             'tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
+             #'tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
              #'tZq_nunu_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
             ],
     'WW'  : [
@@ -313,17 +319,17 @@ sigMap = {
             ],
     'W'   : [
              #'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-             'WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
     'Z'   : [
              #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
@@ -343,7 +349,7 @@ sigMap = {
              'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
     'T'   : [
-             'ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
+             #'ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
              #'ST_t-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
              'ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
              'ST_t-channel_top_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1',

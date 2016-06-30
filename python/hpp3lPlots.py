@@ -16,7 +16,7 @@ blind = True
 doCat = True
 plotMC = True
 plotDatadriven = True
-plotFakeRegions = False
+plotFakeRegions = True
 plotSignal = False
 plotROC = False
 plotNormalization = False
@@ -42,8 +42,8 @@ sigMap = getSigMap('Hpp3l')
 allmasses = [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500]
 masses = [200,400,600,800,1000]
 
-samples = ['TTV','VH','VVV','ZZ']
-allsamples = ['W','T','TT','TTVall','Z','WW','VHall','WZ','VVV','ZZall']
+samples = ['TTV','VVV','ZZ','WZ']
+allsamples = ['W','T','TT','TTVall','Z','WW','VVV','ZZall','WZall']
 signals = ['HppHmm500GeV']
 
 allSamplesDict = {'BG':[]}
@@ -95,7 +95,7 @@ def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False,postfix='')
     countLabels = ['Total'] + chanLabels
     savename = '/'.join([x for x in [saveDir,'individualChannels'] if x])
     if postfix: savename += '_{0}'.format(postfix)
-    plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=100,ymin=0.001,labelsOption='v')
+    plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=1000,ymin=1,labelsOption='v')
 
     # per category counts
     countVars = [['/'.join([x for x in [baseDir,'count'] if x])]]
@@ -110,7 +110,7 @@ def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False,postfix='')
     countLabels = ['Total'] + catLabels
     savename = '/'.join([x for x in [saveDir,'individualCategories'] if x])
     if postfix: savename += '_{0}'.format(postfix)
-    plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=100,ymin=0.001)
+    plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=1000,ymin=1)
 
     # per subcategory counts
     countVars = [['/'.join([x for x in [baseDir,'count'] if x])]]
@@ -123,7 +123,7 @@ def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False,postfix='')
     countLabels = ['Total'] + subCatLabels
     savename = '/'.join([x for x in [saveDir,'individualSubCategories'] if x])
     if postfix: savename += '_{0}'.format(postfix)
-    plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=100,ymin=0.001)
+    plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=1000,ymin=1)
 
 def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postfix='',**kwargs):
     plotname = '/'.join([x for x in [baseDir,plot] if x])
@@ -157,7 +157,7 @@ plots = {
     # event
     'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
-    'mass'                  : {'xaxis': 'm_{3l} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
+    'mass'                  : {'xaxis': 'm_{3l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
     'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': 10},
 }
 

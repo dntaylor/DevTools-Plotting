@@ -11,8 +11,7 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 
 chargePlotter = Plotter('Charge')
 
-chans = ['ee','mm','tt']
-#chans = ['ee','mm']
+chans = ['ee','mm']
 
 labelMap = {
     'e': 'e',

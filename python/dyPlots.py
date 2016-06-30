@@ -86,17 +86,17 @@ dyPlotter.plotCounts(countVars,countLabels,savename,numcol=2)
 # plot definitions
 plots = {
     # z cand
-    'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events/0.5 GeV', 'rebin': 5, 'rangex': [0,200], 'logy':1},
-    'mllMinusMZ'            : {'xaxis': '|m_{l^{+}l^{-}}-m_{Z}| (GeV)', 'yaxis': 'Events/0.5 GeV', 'rebin': 5, 'rangex': [0,60]},
-    'zPt'                   : {'xaxis': 'p_{T}^{l^{+}l^{-}} (GeV)', 'yaxis': 'Events/0.5 GeV', 'rebin': 5, 'rangex': [0,150]},
-    'zDeltaR'               : {'xaxis': '#DeltaR(l^{+}l^{-})', 'yaxis': 'Events', 'rebin': 5},
-    'zLeadingLeptonPt'      : {'xaxis': 'p_{T}^{Z_{lead}} (GeV)', 'yaxis': 'Events/0.5 GeV', 'rebin': 5, 'rangex': [0,150]},
-    'zSubLeadingLeptonPt'   : {'xaxis': 'p_{T}^{Z_{sublead}} (GeV)', 'yaxis': 'Events/0.5 GeV', 'rebin': 5, 'rangex': [0,150]},
+    'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 2 GeV', 'rebin': 20, 'rangex': [0,200], 'logy':1},
+    'mllMinusMZ'            : {'xaxis': '|m_{l^{+}l^{-}}-m_{Z}| (GeV)', 'yaxis': 'Events / 1 GeV', 'rebin': 10, 'rangex': [0,60]},
+    'zPt'                   : {'xaxis': 'p_{T}^{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 50, 'rangex': [0,150]},
+    'zDeltaR'               : {'xaxis': '#DeltaR(l^{+}l^{-})', 'yaxis': 'Events', 'rebin': 10},
+    'zLeadingLeptonPt'      : {'xaxis': 'p_{T}^{Z_{lead}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 50, 'rangex': [0,150]},
+    'zSubLeadingLeptonPt'   : {'xaxis': 'p_{T}^{Z_{sublead}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 50, 'rangex': [0,150]},
     # event
     'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'numVertices_noreweight': {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
-    'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events/0.2 GeV', 'rebin': 2, 'rangex': [0,200]},
-    'metPhi'                : {'xaxis': '#phi_{E_{T}^{miss}}', 'yaxis': 'Events', 'rebin': 5, 'numcol': 3, 'legendpos': 43},
+    'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5, 'rangex': [0,200]},
+    'metPhi'                : {'xaxis': '#phi_{E_{T}^{miss}}', 'yaxis': 'Events', 'rebin': 10, 'numcol': 3, 'legendpos': 34},
 }
 
 # signal region
