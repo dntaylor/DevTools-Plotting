@@ -86,41 +86,41 @@ leps = ['hpp1','hpp2','hm1']
 ### build the plotters ###
 ##########################
 
-# mc background
-hpp3lPlotter = Plotter('Hpp3l')
+def getPlotter(blind=True,datadriven=False):
+     plotter = Plotter('Hpp3l')
+     plotter.setSelectionMap(sampleCuts)
+     
+     if datadriven: plotter.addHistogramToStack('datadriven',datadrivenSamples)
 
-hpp3lPlotter.setSelectionMap(sampleCuts)
+     mcSamples = samples if datadriven else allsamples
+     signalMap = sigMapDD if datadriven else sigMap
+     for s in mcSamples:
+         plotter.addHistogramToStack(s,signalMap[s])
+     
+     for signal in signals:
+         plotter.addHistogram(signal,sigalMap[signal],signal=True)
+     
+     if not blind: plotter.addHistogram('data',signalMap['data'])
+     return plotter
 
-for s in allsamples:
-    hpp3lPlotter.addHistogramToStack(s,sigMap[s])
-
-for signal in signals:
-    hpp3lPlotter.addHistogram(signal,sigMap[signal],signal=True)
-
-if not blind: hpp3lPlotter.addHistogram('data',sigMap['data'])
-
-# datadriven background
-hpp3lDDPlotter = Plotter('Hpp3l')
-
-hpp3lDDPlotter.setSelectionMap(sampleCuts)
-
-hpp3lDDPlotter.addHistogramToStack('datadriven',datadrivenSamples)
-
-for s in samples:
-    hpp3lDDPlotter.addHistogramToStack(s,sigMapDD[s])
-
-for signal in signals:
-    hpp3lDDPlotter.addHistogram(signal,sigMapDD[signal],signal=True)
-
-if not blind: hpp3lDDPlotter.addHistogram('data',sigMapDD['data'])
 
 ##########################
 ### Plotting functions ###
 ##########################
-def makePlot(savename,variable,binning,selection='1',**kwargs):
+def makePlot(savename,variable,binning,selection='1',blind=True,**kwargs):
     '''
     Make a plot using MC background estimation.
     '''
+    plotter = getPlotter(blind=blind)
     fullSelection = ' && '.join([selection]+['{0}_passMedium'.format(lep) for lep in leps])
     mcscale = '*'.join(['genWeight','pileupWeight','triggerEfficiency'] + ['{0}_mediumScale'.format(lep) for lep in leps])
-    hpp3lPlotter.plot(variable,savename,selection=fullSelection,binning=binning,mcscalefactor=mcscale,**kwargs)
+    plotter.plot(variable,savename,selection=fullSelection,binning=binning,mcscalefactor=mcscale,**kwargs)
+
+def makeLowMassPlot(savename,variable,binning,selection='1',**kwargs):
+    '''
+    Make a plot using MC background estimation for low mass control.
+    '''
+    plotter = getPlotter(blind=False)
+    fullSelection = ' && '.join([selection,'hpp_mass<100']+['{0}_passMedium'.format(lep) for lep in leps])
+    mcscale = '*'.join(['genWeight','pileupWeight','triggerEfficiency'] + ['{0}_mediumScale'.format(lep) for lep in leps])
+    plotter.plot(variable,savename,selection=fullSelection,binning=binning,mcscalefactor=mcscale,**kwargs)
