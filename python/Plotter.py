@@ -50,13 +50,14 @@ class Plotter(PlotterBase):
         self.styles = {}
         self.signals = []
         self.histScales = {}
+        self.sampleSelection = {}
         self.j = 0
 
-    def __exit__(self, type, value, traceback):
-        self.finish()
+    #def __exit__(self, type, value, traceback):
+    #    self.finish()
 
-    def __del__(self):
-        self.finish()
+    #def __del__(self):
+    #    self.finish()
 
     def finish(self):
         '''Cleanup stuff'''
@@ -70,6 +71,10 @@ class Plotter(PlotterBase):
         if sampleName not in self.sampleFiles[analysis]:
             self.sampleFiles[analysis][sampleName] = NtupleWrapper(analysis,sampleName,**kwargs)
             ROOT.gROOT.cd()
+
+    def setSelectionMap(self,selMap):
+        '''Set a map of per sample selections.'''
+        self.sampleSelection = selMap
 
     def addHistogramToStack(self,histName,histConstituents,style={},**kwargs):
         '''
@@ -109,6 +114,7 @@ class Plotter(PlotterBase):
         self.styles = {}
         self.signals = []
         self.histScales = {}
+        self.sampleSelection = {}
 
     def _readSampleVariable(self,sampleName,variable,**kwargs):
         '''Read the histogram from file'''
@@ -146,40 +152,44 @@ class Plotter(PlotterBase):
         if isinstance(variable,basestring): # its a single variable
             variable = [variable]
         # it is now a list
-        if histName in self.histDict:
-            hists = ROOT.TList()
-            logging.debug('Reading histName')
-            for varName in variable:
-                for sampleName in self.histDict[histName]:
-                    if selection and binning: # get temp hist
-                        sf = '*'.join([scalefactor,datascalefactor if isData(sampleName) else mcscalefactor])
-                        hist = self._getTempHistogram(sampleName,histName,selection,sf,varName,binning,analysis=analysis)
-                    else:
-                        hist = self._readSampleVariable(sampleName,varName,analysis=analysis)
-                    if hist: hists.Add(hist)
-            if hists.IsEmpty(): return 0
-            hist = hists[0].Clone('h_{0}_{1}'.format(histName,varName.replace('/','_')))
-            hist.Reset()
-            hist.Merge(hists)
-            if rebin:
-                if type(rebin) in [list,tuple]:
-                    hist = hist.Rebin(len(rebin)-1,'',array('d',rebin))
-                else:
-                    hist = hist.Rebin(rebin)
-            style = self.styles[histName]
-            hist.SetTitle(style['name'])
-            if 'linecolor' in style:
-                hist.SetLineColor(style['linecolor'])
-                hist.SetMarkerColor(style['linecolor'])
-            if 'linestyle' in style:
-                hist.SetLineStyle(style['linestyle'])
-            if not nofill:
-                if 'fillstyle' in style: hist.SetFillStyle(style['fillstyle'])
-                if 'fillcolor' in style: hist.SetFillColor(style['fillcolor'])
-            return hist
-        else:
+        if histName not in self.histDict:
             logging.error('{0} not defined.'.format(histName))
             return 0
+
+        # get histogram
+        hists = ROOT.TList()
+        logging.debug('Reading histName')
+        for varName in variable:
+            for sampleName in self.histDict[histName]:
+                if selection and binning: # get temp hist
+                    sf = '*'.join([scalefactor,datascalefactor if isData(sampleName) else mcscalefactor])
+                    thissel = '{0} && {1}'.format(selection, self.sampleSelection[sampleName]) if sampleName in self.sampleSelection else selection
+                    hist = self._getTempHistogram(sampleName,histName,thissel,sf,varName,binning,analysis=analysis)
+                else:
+                    hist = self._readSampleVariable(sampleName,varName,analysis=analysis)
+                if hist: hists.Add(hist)
+        if hists.IsEmpty(): return 0
+        hist = hists[0].Clone('h_{0}_{1}'.format(histName,varName.replace('/','_')))
+        hist.Reset()
+        hist.Merge(hists)
+
+        # style it
+        if rebin:
+            if type(rebin) in [list,tuple]:
+                hist = hist.Rebin(len(rebin)-1,'',array('d',rebin))
+            else:
+                hist = hist.Rebin(rebin)
+        style = self.styles[histName]
+        hist.SetTitle(style['name'])
+        if 'linecolor' in style:
+            hist.SetLineColor(style['linecolor'])
+            hist.SetMarkerColor(style['linecolor'])
+        if 'linestyle' in style:
+            hist.SetLineStyle(style['linestyle'])
+        if not nofill:
+            if 'fillstyle' in style: hist.SetFillStyle(style['fillstyle'])
+            if 'fillcolor' in style: hist.SetFillColor(style['fillcolor'])
+        return hist
 
     def _getHistogramCounts(self,histName,variables,**kwargs):
         '''Get the integral of each given histogram'''
@@ -326,8 +336,8 @@ class Plotter(PlotterBase):
         yaxis = kwargs.pop('yaxis', 'Events')
         logy = kwargs.pop('logy',False)
         logx = kwargs.pop('logx',False)
-        ymin = kwargs.pop('ymax',None)
-        ymax = kwargs.pop('ymin',None)
+        ymin = kwargs.pop('ymin',None)
+        ymax = kwargs.pop('ymax',None)
         yscale = kwargs.pop('yscale',5 if logy else 1.2)
         numcol = kwargs.pop('numcol',1)
         legendpos = kwargs.pop('legendpos',33)
@@ -1030,7 +1040,7 @@ class Plotter(PlotterBase):
         '''Plot a variable and save'''
         xaxis = kwargs.pop('xaxis', 'Variable')
         yaxis = kwargs.pop('yaxis', 'Events')
-        ymin = kwargs.pop('ymax',None)
+        ymin = kwargs.pop('ymin',None)
         ymax = kwargs.pop('ymax',None)
         numcol = kwargs.pop('numcol',1)
         legendpos = kwargs.pop('legendpos',33)
@@ -1074,7 +1084,7 @@ class Plotter(PlotterBase):
     def plotEnvelope(self,variable,savename,xvalMap,envelopePoints,**kwargs):
         xaxis = kwargs.pop('xaxis', 'Variable')
         yaxis = kwargs.pop('yaxis', 'Variable')
-        ymin = kwargs.pop('ymax',None)
+        ymin = kwargs.pop('ymin',None)
         ymax = kwargs.pop('ymax',None)
         numcol = kwargs.pop('numcol',1)
         legendpos = kwargs.pop('legendpos',33)
