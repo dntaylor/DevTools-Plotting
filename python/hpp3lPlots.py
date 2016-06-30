@@ -38,12 +38,13 @@ chans = getChannels('Hpp3l')
 chanLabels = getChannelLabels('Hpp3l')
 genRecoMap = getGenRecoChannelMap('Hpp3l')
 sigMap = getSigMap('Hpp3l')
+sigMapDD = getSigMap('Hpp3l',datadriven=True)
 
 allmasses = [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500]
 masses = [200,400,600,800,1000]
 
 samples = ['TTV','VVV','ZZ','WZ']
-allsamples = ['W','T','TT','TTVall','Z','WW','VVV','ZZall','WZall']
+allsamples = ['W','T','TT','TTV','Z','WW','VVV','ZZ','WZ']
 signals = ['HppHmm500GeV']
 
 allSamplesDict = {'BG':[]}
@@ -52,7 +53,7 @@ for s in allsamples:
 
 datadrivenSamples = []
 for s in samples + ['data']:
-    datadrivenSamples += sigMap[s]
+    datadrivenSamples += sigMapDD[s]
 
 sigColors = {
     200 : ROOT.TColor.GetColor('#000000'),
@@ -252,7 +253,7 @@ envelope_cust = {
 ############################
 if plotMC:
     for s in allsamples:
-        hpp3lPlotter.addHistogramToStack(s.replace('all',''),sigMap[s])
+        hpp3lPlotter.addHistogramToStack(s,sigMap[s])
 
     for signal in signals:
         hpp3lPlotter.addHistogram(signal,sigMap[signal],signal=True)
@@ -283,12 +284,12 @@ if plotDatadriven:
     hpp3lPlotter.addHistogramToStack('datadriven',datadrivenSamples)
 
     for s in samples:
-        hpp3lPlotter.addHistogramToStack(s,sigMap[s])
+        hpp3lPlotter.addHistogramToStack(s,sigMapDD[s])
 
     for signal in signals:
-        hpp3lPlotter.addHistogram(signal,sigMap[signal],signal=True)
+        hpp3lPlotter.addHistogram(signal,sigMapDD[signal],signal=True)
 
-    if not blind: hpp3lPlotter.addHistogram('data',sigMap['data'])
+    if not blind: hpp3lPlotter.addHistogram('data',sigMapDD['data'])
 
     if plotCount: plotCounts(hpp3lPlotter,baseDir='',saveDir='datadriven',datadriven=True)
 
@@ -298,7 +299,7 @@ if plotDatadriven:
 
     # partially blinded plots
     if blind:
-        hpp3lPlotter.addHistogram('data',sigMap['data'])
+        hpp3lPlotter.addHistogram('data',sigMapDD['data'])
 
         for plot in blind_cust:
             kwargs = deepcopy(plots[plot])
@@ -312,7 +313,7 @@ if plotFakeRegions:
     hpp3lPlotter.clearHistograms()
 
     for s in allsamples:
-        hpp3lPlotter.addHistogramToStack(s.replace('all',''),sigMap[s])
+        hpp3lPlotter.addHistogramToStack(s,sigMap[s])
     for signal in signals:
         hpp3lPlotter.addHistogram(signal,sigMap[signal],signal=True)
 
@@ -333,7 +334,7 @@ if plotMC:
     hpp3lPlotter.clearHistograms()
 
     for s in allsamples:
-        hpp3lPlotter.addHistogramToStack(s.replace('all',''),sigMap[s])
+        hpp3lPlotter.addHistogramToStack(s,sigMap[s])
     hpp3lPlotter.addHistogram('data',sigMap['data'])
 
     if plotCount: plotCounts(hpp3lPlotter,baseDir='lowmass',saveDir='lowmass')
@@ -352,9 +353,9 @@ if plotDatadriven:
     hpp3lPlotter.addHistogramToStack('datadriven',datadrivenSamples)
 
     for s in samples:
-        hpp3lPlotter.addHistogramToStack(s,sigMap[s])
+        hpp3lPlotter.addHistogramToStack(s,sigMapDD[s])
 
-    hpp3lPlotter.addHistogram('data',sigMap['data'])
+    hpp3lPlotter.addHistogram('data',sigMapDD['data'])
 
     if plotCount: plotCounts(hpp3lPlotter,baseDir='lowmass',saveDir='lowmass/datadriven',datadriven=True)
 
@@ -370,7 +371,7 @@ if plotFakeRegions:
     hpp3lPlotter.clearHistograms()
 
     for s in allsamples:
-        hpp3lPlotter.addHistogramToStack(s.replace('all',''),sigMap[s])
+        hpp3lPlotter.addHistogramToStack(s,sigMap[s])
 
     hpp3lPlotter.addHistogram('data',sigMap['data'])
 

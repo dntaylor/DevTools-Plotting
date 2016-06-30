@@ -38,12 +38,13 @@ chans = getChannels('Hpp4l')
 chanLabels = getChannelLabels('Hpp4l')
 genRecoMap = getGenRecoChannelMap('Hpp4l')
 sigMap = getSigMap('Hpp4l')
+sigMapDD = getSigMap('Hpp4l',datadriven=True)
 
 allmasses = [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500]
 masses = [200,400,600,800,1000]
 
-samples = ['TTV','VH','VVV','ZZ']
-allsamples = ['W','T','TT','TTVall','Z','WW','VHall','WZ','VVV','ZZall']
+samples = ['TTV','VVV','ZZ']
+allsamples = ['TT','TTV','Z','WZ','VVV','ZZ']
 signals = ['HppHmm500GeV']
 
 allSamplesDict = {'BG':[]}
@@ -52,7 +53,7 @@ for s in allsamples:
 
 datadrivenSamples = []
 for s in samples + ['data']:
-    datadrivenSamples += sigMap[s]
+    datadrivenSamples += sigMapDD[s]
 
 sigColors = {
     200 : ROOT.TColor.GetColor('#000000'),
@@ -276,7 +277,7 @@ envelope_cust = {
 ############################
 if plotMC:
     for s in allsamples:
-        hpp4lPlotter.addHistogramToStack(s.replace('all',''),sigMap[s])
+        hpp4lPlotter.addHistogramToStack(s,sigMap[s])
     
     for signal in signals:
         hpp4lPlotter.addHistogram(signal,sigMap[signal],signal=True)
@@ -372,12 +373,12 @@ if plotDatadriven:
     hpp4lPlotter.addHistogramToStack('datadriven',datadrivenSamples)
     
     for s in samples:
-        hpp4lPlotter.addHistogramToStack(s,sigMap[s])
+        hpp4lPlotter.addHistogramToStack(s,sigMapDD[s])
     
     for signal in signals:
-        hpp4lPlotter.addHistogram(signal,sigMap[signal],signal=True)
+        hpp4lPlotter.addHistogram(signal,sigMapDD[signal],signal=True)
 
-    if not blind: hpp4lPlotter.addHistogram('data',sigMap['data'])
+    if not blind: hpp4lPlotter.addHistogram('data',sigMapDD['data'])
     
     if plotCount: plotCounts(hpp4lPlotter,baseDir='',saveDir='datadriven',datadriven=True)
     
@@ -387,7 +388,7 @@ if plotDatadriven:
     
     # partially blinded plots
     if blind:
-        hpp4lPlotter.addHistogram('data',sigMap['data'])
+        hpp4lPlotter.addHistogram('data',sigMapDD['data'])
     
         for plot in blind_cust:
             kwargs = deepcopy(plots[plot])
@@ -401,7 +402,7 @@ if plotFakeRegions:
     hpp4lPlotter.clearHistograms()
     
     for s in allsamples:
-        hpp4lPlotter.addHistogramToStack(s.replace('all',''),sigMap[s])
+        hpp4lPlotter.addHistogramToStack(s,sigMap[s])
     for signal in signals:
         hpp4lPlotter.addHistogram(signal,sigMap[signal],signal=True)
 
@@ -421,7 +422,7 @@ if plotMC:
     hpp4lPlotter.clearHistograms()
     
     for s in allsamples:
-        hpp4lPlotter.addHistogramToStack(s.replace('all',''),sigMap[s])
+        hpp4lPlotter.addHistogramToStack(s,sigMap[s])
     hpp4lPlotter.addHistogram('data',sigMap['data'])
     
     if plotCount: plotCounts(hpp4lPlotter,baseDir='lowmass',saveDir='lowmass')
@@ -440,9 +441,9 @@ if plotDatadriven:
     hpp4lPlotter.addHistogramToStack('datadriven',datadrivenSamples)
     
     for s in samples:
-        hpp4lPlotter.addHistogramToStack(s,sigMap[s])
+        hpp4lPlotter.addHistogramToStack(s,sigMapDD[s])
     
-    hpp4lPlotter.addHistogram('data',sigMap['data'])
+    hpp4lPlotter.addHistogram('data',sigMapDD['data'])
     
     if plotCount: plotCounts(hpp4lPlotter,baseDir='lowmass',saveDir='lowmass/datadriven',datadriven=True)
     
