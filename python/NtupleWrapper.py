@@ -119,7 +119,7 @@ class NtupleWrapper(object):
         hist.Write('',ROOT.TObject.kOverwrite)
         self.outfile.Close()
 
-    def __read(self,variable):
+    def __read(self,variable,fromProjection=False):
         '''Read the histogram from file'''
         # attempt to read
         if os.path.isfile(self.proj):
@@ -137,6 +137,9 @@ class NtupleWrapper(object):
                 hist.SetDirectory(0)
                 return hist
             # attempt to project
+            if not fromProjection:
+                logging.warning('Caught a loop: {0}'.format(variable))
+                return 0
             hist = self.__projectChannel(variable,temp=True)
             if hist:
                 hist = hist.Clone('h_{0}_{1}'.format(self.sample,variable.replace('/','_')))
@@ -514,7 +517,7 @@ class NtupleWrapper(object):
         #if passHash: return 0
         # not project
         histNameND = '/'.join([selectionName,histName])
-        histNd = self.__read(histNameND)
+        histNd = self.__read(histNameND,fromProjection=True)
         if histNd and histNd.InheritsFrom('TH3'):
             if genchannel:
                 directory = '/'.join([selectionName,channel,genchannel])

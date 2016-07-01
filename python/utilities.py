@@ -73,7 +73,7 @@ latestNtuples['80X'] = {
     'Tau'            : '2016-06-25_TauAnalysis_80X_v1-merge',
     'TauCharge'      : '2016-06-28_TauChargeAnalysis_80X_v1-merge',
     'WTauFakeRate'   : '2016-06-28_WTauFakeRateAnalysis_80X_v1-merge',
-    'WZ'             : '2016-05-28_WZAnalysis_80X_v1-merge',
+    'WZ'             : '2016-06-30_WZAnalysis_80X_v2-merge',
 }
 
 def getNtupleDirectory(analysis,local=False,version=getCMSSWVersion()):

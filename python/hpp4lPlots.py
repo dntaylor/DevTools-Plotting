@@ -14,14 +14,14 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 
 blind = True
 doCat = True
-plotMC = False
-plotDatadriven = False
-plotFakeRegions = False
-plotSignal = False
-plotROC = False
+plotMC = True
+plotDatadriven = True
+plotFakeRegions = True
+plotSignal = True
+plotROC = True
 plotNormalization = False
 plotSOverB = False
-plotCount = False
+plotCount = True
 plotAllMasses = True
 
 hpp4lPlotter = Plotter('Hpp4l')
@@ -284,11 +284,11 @@ if plotMC:
     
     if not blind: hpp4lPlotter.addHistogram('data',sigMap['data'])
     
-    if plotCount: plotCounts(hpp4lPlotter,baseDir='default')
+    if plotCount: plotCounts(hpp4lPlotter,baseDir='default',saveDir='mc')
     
     for plot in plots:
         kwargs = deepcopy(plots[plot])
-        plotWithCategories(hpp4lPlotter,plot,baseDir='default',**kwargs)
+        plotWithCategories(hpp4lPlotter,plot,baseDir='default',saveDir='mc',**kwargs)
     
     # partially blinded plots
     if blind:
@@ -297,7 +297,7 @@ if plotMC:
         for plot in blind_cust:
             kwargs = deepcopy(plots[plot])
             kwargs.update(blind_cust[plot])
-            plotWithCategories(hpp4lPlotter,plot,baseDir='default',postfix='blinder',**kwargs)
+            plotWithCategories(hpp4lPlotter,plot,baseDir='default',saveDir='mc',postfix='blinder',**kwargs)
 
 ## multiple st cuts on same plot:
 #hpp4lPlotter.clearHistograms()
@@ -409,11 +409,11 @@ if plotFakeRegions:
     hpp4lPlotter.addHistogram('data',sigMap['data'])
     
     for fr in ['3P1F','2P2F','1P3F','0P4F']:
-        if plotCount: plotCounts(hpp4lPlotter,baseDir='{0}_regular'.format(fr),saveDir=fr)
+        if plotCount: plotCounts(hpp4lPlotter,baseDir='{0}_regular'.format(fr),saveDir='mc/{0}'.format(fr))
         
         for plot in plots:
             kwargs = deepcopy(plots[plot])
-            plotWithCategories(hpp4lPlotter,plot,baseDir='{0}_regular'.format(fr),saveDir=fr,**kwargs)
+            plotWithCategories(hpp4lPlotter,plot,baseDir='{0}_regular'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
 
 ########################
 ### low mass control ###
@@ -445,12 +445,12 @@ if plotDatadriven:
     
     hpp4lPlotter.addHistogram('data',sigMapDD['data'])
     
-    if plotCount: plotCounts(hpp4lPlotter,baseDir='lowmass',saveDir='lowmass/datadriven',datadriven=True)
+    if plotCount: plotCounts(hpp4lPlotter,baseDir='lowmass',saveDir='lowmass-datadriven',datadriven=True)
     
     for plot in plots:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
-        plotWithCategories(hpp4lPlotter,plot,baseDir='lowmass',saveDir='lowmass/datadriven',datadriven=True,**kwargs)
+        plotWithCategories(hpp4lPlotter,plot,baseDir='lowmass',saveDir='lowmass-datadriven',datadriven=True,**kwargs)
 
 ############################
 ### Fake Regions lowmass ###

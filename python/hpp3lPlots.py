@@ -160,6 +160,7 @@ plots = {
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
     'mass'                  : {'xaxis': 'm_{3l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
     'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': 10},
+    'nJets'                 : {'xaxis': 'Number of jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'rebin': 1},
 }
 
 blind_cust = {
@@ -260,11 +261,11 @@ if plotMC:
 
     if not blind: hpp3lPlotter.addHistogram('data',sigMap['data'])
 
-    if plotCount: plotCounts(hpp3lPlotter,baseDir='default')
+    if plotCount: plotCounts(hpp3lPlotter,saveDir='mc',baseDir='default')
 
     for plot in plots:
         kwargs = deepcopy(plots[plot])
-        plotWithCategories(hpp3lPlotter,plot,baseDir='default',**kwargs)
+        plotWithCategories(hpp3lPlotter,plot,saveDir='mc',baseDir='default',**kwargs)
 
     # partially blinded plots
     if blind:
@@ -273,7 +274,7 @@ if plotMC:
         for plot in blind_cust:
             kwargs = deepcopy(plots[plot])
             kwargs.update(blind_cust[plot])
-            plotWithCategories(hpp3lPlotter,plot,baseDir='default',postfix='blinder',**kwargs)
+            plotWithCategories(hpp3lPlotter,plot,saveDir='mc',baseDir='default',postfix='blinder',**kwargs)
 
 ##############################
 ### datadriven backgrounds ###
@@ -320,11 +321,11 @@ if plotFakeRegions:
     hpp3lPlotter.addHistogram('data',sigMap['data'])
 
     for fr in ['2P1F','1P2F','0P3F']:
-        if plotCount: plotCounts(hpp3lPlotter,baseDir='{0}_regular'.format(fr),saveDir=fr)
+        if plotCount: plotCounts(hpp3lPlotter,baseDir='{0}_regular'.format(fr),saveDir='mc/{0}'.format(fr))
 
         for plot in plots:
             kwargs = deepcopy(plots[plot])
-            plotWithCategories(hpp3lPlotter,plot,baseDir='{0}_regular'.format(fr),saveDir=fr,**kwargs)
+            plotWithCategories(hpp3lPlotter,plot,baseDir='{0}_regular'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
 
 
 ########################
@@ -357,12 +358,12 @@ if plotDatadriven:
 
     hpp3lPlotter.addHistogram('data',sigMapDD['data'])
 
-    if plotCount: plotCounts(hpp3lPlotter,baseDir='lowmass',saveDir='lowmass/datadriven',datadriven=True)
+    if plotCount: plotCounts(hpp3lPlotter,baseDir='lowmass',saveDir='lowmass-datadriven',datadriven=True)
 
     for plot in plots:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
-        plotWithCategories(hpp3lPlotter,plot,baseDir='lowmass',saveDir='lowmass/datadriven',datadriven=True,**kwargs)
+        plotWithCategories(hpp3lPlotter,plot,baseDir='lowmass',saveDir='lowmass-datadriven',datadriven=True,**kwargs)
 
 ############################
 ### Fake Regions lowmass ###
