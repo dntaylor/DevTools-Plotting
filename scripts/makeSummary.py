@@ -165,7 +165,7 @@ class HTML :
 '''
 
     plotRow = '''
-      <tr style="text-align: center; max-width: 90%;">
+      <tr style="text-align: center;">
         {rowCells}
       </tr>
 '''
