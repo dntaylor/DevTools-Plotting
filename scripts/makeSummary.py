@@ -94,6 +94,7 @@ def buildHTML(plotDir):
         index.write(
             HTML.header.format(
                 analysis=analysis,
+                scripts=HTML.scripts,
                 navbar=buildMenu(allPlots,rows),
             )
         )
@@ -110,30 +111,45 @@ class HTML :
     header = '''<html>
 <head>
     <title>{analysis} Plots</title>
-    <style type="text/css">
-        div.plotSet {{
-            margin: auto;
-            width: 90%;
-            max-width: 1200px;
-            border: 2px solid #888888;
-        }}
-        img.plot {{
-            max-width: 100%;
-            height: auto;
-            width: 100%;
-        }}
-
-        table {{
-            width: 100%;
-        }}
-    </style>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    {scripts}
 </head>
 <body>
 {navbar}
 <div class="tab-content">
+'''
+
+    scripts = '''<style type="text/css">
+        div.plotSet {
+            margin: auto;
+            width: 90%;
+            max-width: 1200px;
+            border: 2px solid #888888;
+        }
+        img.plot {
+            max-width: 100%;
+            height: auto;
+            width: 100%;
+        }
+        table {
+            width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+$(function(){
+  var hash = window.location.hash;
+  hash && $('ul.nav a[href="' + hash + '"]').tab('show');
+
+  $('.nav-tabs a').click(function (e) {
+    $(this).tab('show');
+    var scrollmem = $('body').scrollTop() || $('html').scrollTop();
+    window.location.hash = this.hash;
+    $('html,body').scrollTop(scrollmem);
+  });
+});
+    </script>
 '''
 
     navbar = '''<ul class="nav nav-tabs">

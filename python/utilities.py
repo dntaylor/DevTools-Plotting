@@ -60,6 +60,7 @@ latestNtuples['76X'] = {
     'Tau'            : '2016-05-11_TauAnalysis_v1-merge',      # Addition of new DMs
     'TauCharge'      : '',
     'WTauFakeRate'   : '',
+    'WFakeRate'      : '',
     'WZ'             : '2016-04-29_WZAnalysis_v1-merge',
 }
 latestNtuples['80X'] = {
@@ -73,6 +74,7 @@ latestNtuples['80X'] = {
     'Tau'            : '2016-06-25_TauAnalysis_80X_v1-merge',
     'TauCharge'      : '2016-06-28_TauChargeAnalysis_80X_v1-merge',
     'WTauFakeRate'   : '2016-06-28_WTauFakeRateAnalysis_80X_v1-merge',
+    'WFakeRate'      : '2016-07-03_WFakeRateAnalysis_80X_v1-merge',
     'WZ'             : '2016-06-30_WZAnalysis_80X_v2-merge',
 }
 
@@ -102,6 +104,7 @@ treeMap = {
     'Tau'            : 'TTree',
     'TauCharge'      : 'TauChargeTree',
     'WTauFakeRate'   : 'WTauFakeRateTree',
+    'WFakeRate'      : 'WFakeRateTree',
     'WZ'             : 'WZTree',
 }
 
