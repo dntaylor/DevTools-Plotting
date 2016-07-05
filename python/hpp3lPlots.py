@@ -89,7 +89,7 @@ def getDataDrivenPlot(*plots):
 
 def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False,postfix=''):
     # per channel counts
-    countVars = ['/'.join([x for x in [baseDir,'count'] if x])] + ['/'.join([x for x in [baseDir,chan,'count'] if x]) for chan in chans]
+    countVars = ['/'.join([x for x in [baseDir,'count'] if x])] + ['/'.join([x for x in [baseDir,chan,'count'] if x]) for chan in sorted(chans)]
     if datadriven:
         for i in range(len(countVars)):
             countVars[i] = getDataDrivenPlot(countVars[i])

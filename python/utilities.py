@@ -31,9 +31,8 @@ def isData(sample):
     dataSamples = ['DoubleMuon','DoubleEG','MuonEG','SingleMuon','SingleElectron','Tau']
     return sample in dataSamples
 
-def getLumi():
+def getLumi(version=getCMSSWVersion()):
     '''Get the integrated luminosity to scale monte carlo'''
-    version = getCMSSWVersion()
     if version=='76X':
         #return 2263 # december jamboree golden json
         return 2318 # moriond golden json

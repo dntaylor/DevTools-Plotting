@@ -16,13 +16,13 @@ blind = True
 doCat = True
 plotCount = True
 plotMC = True
-plotDatadriven = True
-plotFakeRegions = True
-plotSignal = True
-plotROC = True
+plotDatadriven = False
+plotFakeRegions = False
+plotSignal = False
+plotROC = False
 plotNormalization = False
 plotSOverB = False
-plotAllMasses = True
+plotAllMasses = False
 
 hpp4lPlotter = Plotter('Hpp4l')
 
@@ -89,7 +89,7 @@ def getDataDrivenPlot(*plots):
 
 def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False,postfix=''):
     # per channel counts
-    countVars = ['/'.join([x for x in [baseDir,'count'] if x])] + ['/'.join([x for x in [baseDir,chan,'count'] if x]) for chan in chans]
+    countVars = ['/'.join([x for x in [baseDir,'count'] if x])] + ['/'.join([x for x in [baseDir,chan,'count'] if x]) for chan in sorted(chans)]
     if datadriven:
         for i in range(len(countVars)):
             countVars[i] = getDataDrivenPlot(countVars[i])
@@ -150,24 +150,26 @@ plots = {
     'hppMass'               : {'xaxis': 'm_{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': True},
     'hppMt'                 : {'xaxis': 'm_{T}^{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': True},
     'hppPt'                 : {'xaxis': 'p_{T}^{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
-    'hppDeltaR'             : {'xaxis': '#DeltaR(l^{+}l^{+})', 'yaxis': 'Events', 'rebin': 2},
+    'hppDeltaR'             : {'xaxis': '#DeltaR(l^{+}l^{+})', 'yaxis': 'Events', 'rebin': 5},
     'hppLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{++}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
     'hppSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{++}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
     # hmm
     'hmmMass'               : {'xaxis': 'm_{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': True},
     'hmmMt'                 : {'xaxis': 'm_{T}^{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': True},
     'hmmPt'                 : {'xaxis': 'p_{T}^{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
-    'hmmDeltaR'             : {'xaxis': '#DeltaR(l^{-}l^{-})', 'yaxis': 'Events', 'rebin': 2},
+    'hmmDeltaR'             : {'xaxis': '#DeltaR(l^{-}l^{-})', 'yaxis': 'Events', 'rebin': 5},
     'hmmLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{--}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
     'hmmSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{--}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
     # z cand
     'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': 1},
-    'mllMinusMZ'            : {'xaxis': '|m_{l^{+}l^{-}}-m_{Z}| (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': 1},
+    'zDeltaR'               : {'xaxis': '#DeltaR(l^{+}l^{-})', 'yaxis': 'Events', 'rebin': 5},
+    'mllMinusMZ'            : {'xaxis': '|m_{l^{+}l^{-}}-m_{Z}| (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 1},
     # event
     'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
     'mass'                  : {'xaxis': 'm_{4l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
     'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
+    'nJets'                 : {'xaxis': 'Number of jets (p_{T} > 30 GeV)', 'yaxis': 'Events'},
 }
 
 blind_cust = {
@@ -189,12 +191,12 @@ lowmass_cust = {
     'hmmLeadingLeptonPt'   : {'rangex': [0,300]},
     'hmmSubLeadingLeptonPt': {'rangex': [0,300]},
     # z
-    'zMass'                : {'rangex': [60,120]},
+    'zMass'                : {'rangex': [0,200]},
     'mllMinusMZ'           : {'rangex': [0,60]},
     # event
     'met'                  : {'rangex': [0,200]},
-    'mass'                 : {'rangex': [0,600], 'rebin':25, 'xaxis': 'Events / 25 GeV'},
-    'st'                   : {'rangex': [0,400], 'rebin':25, 'xaxis': 'Events / 25 GeV'},
+    'mass'                 : {'rangex': [0,600], 'rebin':5, 'yaxis': 'Events / 50 GeV'},
+    'st'                   : {'rangex': [0,400], 'rebin':5, 'yaxis': 'Events / 50 GeV'},
 }
 
 norm_cust = {

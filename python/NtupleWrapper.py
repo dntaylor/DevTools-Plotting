@@ -77,7 +77,7 @@ class NtupleWrapper(object):
             tfile.Close()
             tchain.Add(f)
         if not summedWeights and not isData(self.sample): logging.warning('No events for sample {0}'.format(self.sample))
-        self.intLumi = getLumi()
+        self.intLumi = float(getLumi())
         self.xsec = getXsec(self.sample)
         if not self.xsec: logging.error('No xsec for sample {0}'.format(self.sample))
         self.sampleLumi = float(summedWeights)/self.xsec if self.xsec else 0.
@@ -240,7 +240,7 @@ class NtupleWrapper(object):
 
     def __getHist1D(self,histName,selection,scalefactor,xVariable,xBinning):
         if not self.initialized: self.__initializeNtuple()
-        if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi) if self.sampleLumi else '0'
+        if not isData(self.sample): scalefactor = '{0}*({1})'.format(scalefactor,float(self.intLumi)/self.sampleLumi) if self.sampleLumi else '0'
         binning = xBinning
         tree = self.sampleTree
         if not tree: 
@@ -274,7 +274,7 @@ class NtupleWrapper(object):
 
     def __getHist2D(self,histName,selection,scalefactor,xVariable,yVariable,xBinning,yBinning):
         if not self.initialized: self.__initializeNtuple()
-        if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi) if self.sampleLumi else '0'
+        if not isData(self.sample): scalefactor = '{0}*({1})'.format(scalefactor,float(self.intLumi)/self.sampleLumi) if self.sampleLumi else '0'
         binning = xBinning+yBinning
         tree = self.sampleTree
         if not tree:
@@ -308,7 +308,7 @@ class NtupleWrapper(object):
 
     def __getHist3D(self,histName,selection,scalefactor,xVariable,yVariable,zVariable,xBinning,yBinning,zBinning):
         if not self.initialized: self.__initializeNtuple()
-        if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi) if self.sampleLumi else '0'
+        if not isData(self.sample): scalefactor = '{0}*({1})'.format(scalefactor,float(self.intLumi)/self.sampleLumi) if self.sampleLumi else '0'
         binning = xBinning+yBinning+zBinning
         tree = self.sampleTree
         if not tree:
