@@ -90,6 +90,7 @@ class NtupleWrapper(object):
         self.files = allFiles
         self.initialized = True
         if not self.temp: self.fileHash = hashFile(*self.files)
+        logging.debug('Initialized {0}: summedWeights = {1}; xsec = {2}; sampleLumi = {3}; intLumi = {4}'.format(self.sample,summedWeights,self.xsec,self.sampleLumi,self.intLumi))
 
     def getTree(self):
         if not self.initialized: self.__initializeNtuple()
@@ -240,7 +241,7 @@ class NtupleWrapper(object):
 
     def __getHist1D(self,histName,selection,scalefactor,xVariable,xBinning):
         if not self.initialized: self.__initializeNtuple()
-        if not isData(self.sample): scalefactor = '{0}*({1})'.format(scalefactor,float(self.intLumi)/self.sampleLumi) if self.sampleLumi else '0'
+        if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi) if self.sampleLumi else '0'
         binning = xBinning
         tree = self.sampleTree
         if not tree: 
@@ -264,6 +265,8 @@ class NtupleWrapper(object):
         drawString = '{0}>>{1}({2})'.format(xVariable,histName,', '.join([str(x) for x in binning]))
         selectionString = '{0}*({1})'.format(scalefactor,selection)
         #selectionString = '{0}*(1)'.format(scalefactor)
+        logging.debug('drawString: {0}'.format(drawString))
+        logging.debug('selectionString: {0}'.format(selectionString))
         tree.Draw(drawString,selectionString,'goff')
         #tree.SetEntryList(self.entryListMap['1'])
         if ROOT.gDirectory.Get(histName):
@@ -274,7 +277,7 @@ class NtupleWrapper(object):
 
     def __getHist2D(self,histName,selection,scalefactor,xVariable,yVariable,xBinning,yBinning):
         if not self.initialized: self.__initializeNtuple()
-        if not isData(self.sample): scalefactor = '{0}*({1})'.format(scalefactor,float(self.intLumi)/self.sampleLumi) if self.sampleLumi else '0'
+        if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi) if self.sampleLumi else '0'
         binning = xBinning+yBinning
         tree = self.sampleTree
         if not tree:
@@ -298,6 +301,8 @@ class NtupleWrapper(object):
         drawString = '{0}:{1}>>{2}({3})'.format(yVariable,xVariable,histName,', '.join([str(x) for x in binning]))
         selectionString = '{0}*({1})'.format(scalefactor,selection)
         #selectionString = '{0}*(1)'.format(scalefactor)
+        logging.debug('drawString: {0}'.format(drawString))
+        logging.debug('selectionString: {0}'.format(selectionString))
         tree.Draw(drawString,selectionString,'goff')
         #tree.SetEntryList(self.entryListMap['1'])
         if ROOT.gDirectory.Get(histName):
@@ -308,7 +313,7 @@ class NtupleWrapper(object):
 
     def __getHist3D(self,histName,selection,scalefactor,xVariable,yVariable,zVariable,xBinning,yBinning,zBinning):
         if not self.initialized: self.__initializeNtuple()
-        if not isData(self.sample): scalefactor = '{0}*({1})'.format(scalefactor,float(self.intLumi)/self.sampleLumi) if self.sampleLumi else '0'
+        if not isData(self.sample): scalefactor = '{0}*{1}'.format(scalefactor,float(self.intLumi)/self.sampleLumi) if self.sampleLumi else '0'
         binning = xBinning+yBinning+zBinning
         tree = self.sampleTree
         if not tree:
@@ -332,6 +337,8 @@ class NtupleWrapper(object):
         drawString = '{0}:{1}:{2}>>{3}({4})'.format(zVariable,yVariable,xVariable,histName,', '.join([str(x) for x in binning]))
         selectionString = '{0}*({1})'.format(scalefactor,selection)
         #selectionString = '{0}*(1)'.format(scalefactor)
+        logging.debug('drawString: {0}'.format(drawString))
+        logging.debug('selectionString: {0}'.format(selectionString))
         tree.Draw(drawString,selectionString,'goff')
         #tree.SetEntryList(self.entryListMap['1'])
         if ROOT.gDirectory.Get(histName):
@@ -547,11 +554,15 @@ class NtupleWrapper(object):
 
     def getTempHist(self,histName,selection,scalefactor,variable,binning):
         '''Get a histogram that is not saved in flat ntuple.'''
-        return self.__getHist1D(histName,selection,scalefactor,variable,binning)
+        self.j += 1
+        tempname = '{0}_{1}_{2}_{3}'.format(histName,self.analysis,self.sample,self.j)
+        return self.__getHist1D(tempname,selection,scalefactor,variable,binning)
 
     def getTempHist2D(self,histName,selection,scalefactor,xVariable,yVariable,xBinning,yBinning):
         '''Get a histogram that is not saved in flat ntuple.'''
-        return self.__getHist2D(histName,selection,scalefactor,xVariable,yVariable,xBinning,yBinning)
+        self.j += 1
+        tempname = '{0}_{1}_{2}_{3}'.format(histName,self.analysis,self.sample,self.j)
+        return self.__getHist2D(tempname,selection,scalefactor,xVariable,yVariable,xBinning,yBinning)
 
     def getTempCount(self,selection,scalefactor):
         '''Get a histogram that is a single bin of counts with statistical error'''

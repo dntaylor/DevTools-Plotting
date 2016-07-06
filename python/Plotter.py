@@ -130,10 +130,13 @@ class Plotter(PlotterBase):
         '''Read the histogram from file'''
         analysis = kwargs.pop('analysis',self.analysis)
         hist = self.sampleFiles[analysis][sampleName].getTempHist(histName,selection,scalefactor,variable,binning)
-        logging.debug('Read temp {0} {1} {2}: {3}'.format(analysis, sampleName, histName, hist))
+        logging.debug('Create temp {0} {1} {2}: {3}'.format(analysis, sampleName, histName, hist))
         if hist:
             self.j += 1
             hist = hist.Clone('h_temp_{0}'.format(self.j))
+            logging.debug(' - Integral: {0}; Entries: {1};'.format(hist.Integral(),hist.GetEntries()))
+        else:
+            logging.debug(' - Failed')
         return hist
 
     def _getHistogram(self,histName,variable,**kwargs):
@@ -158,7 +161,7 @@ class Plotter(PlotterBase):
 
         # get histogram
         hists = ROOT.TList()
-        logging.debug('Reading histName')
+        logging.debug('Reading {0}'.format(histName))
         for varName in variable:
             for sampleName in self.histDict[histName]:
                 if selection and binning: # get temp hist
@@ -172,6 +175,8 @@ class Plotter(PlotterBase):
         hist = hists[0].Clone('h_{0}_{1}'.format(histName,varName.replace('/','_')))
         hist.Reset()
         hist.Merge(hists)
+
+        logging.debug('{0} - Integral: {1}'.format(histName, hist.Integral()))
 
         # style it
         if rebin:

@@ -1,5 +1,5 @@
 '''
-Functions to produce a single plot for the Hpp3l analysis.
+Functions to produce a single plot for the Hpp4l analysis.
 '''
 import os
 import json
@@ -19,21 +19,21 @@ blind = True
 ### Define categories ###
 #########################
 
-cats = getCategories('Hpp3l')
-catLabels = getCategoryLabels('Hpp3l')
-subCatChannels = getSubCategories('Hpp3l')
-subCatLabels = getSubCategoryLabels('Hpp3l')
-chans = getChannels('Hpp3l')
-chanLabels = getChannelLabels('Hpp3l')
-genRecoMap = getGenRecoChannelMap('Hpp3l')
-sigMap = getSigMap('Hpp3l')
-sigMapDD = getSigMap('Hpp3l',datadriven=True)
+cats = getCategories('Hpp4l')
+catLabels = getCategoryLabels('Hpp4l')
+subCatChannels = getSubCategories('Hpp4l')
+subCatLabels = getSubCategoryLabels('Hpp4l')
+chans = getChannels('Hpp4l')
+chanLabels = getChannelLabels('Hpp4l')
+genRecoMap = getGenRecoChannelMap('Hpp4l')
+sigMap = getSigMap('Hpp4l')
+sigMapDD = getSigMap('Hpp4l',datadriven=True)
 
 allmasses = [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500]
 masses = [200,400,600,800,1000]
 
-samples = ['TTV','VVV','ZZ','WZ']
-allsamples = ['W','T','TT','TTV','Z','WW','VVV','ZZ','WZ']
+samples = ['TTV','VVV','ZZ']
+allsamples = ['TT','TTV','Z','VVV','ZZ','WZ']
 signals = ['HppHmm500GeV']
 
 allSamplesDict = {'BG':[]}
@@ -80,14 +80,14 @@ sampleCuts = {
     'W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          : 'numGenJets==4',
 }
 
-leps = ['hpp1','hpp2','hm1']
+leps = ['hpp1','hpp2','hmm1','hmm2']
 
 ##########################
 ### build the plotters ###
 ##########################
 
 def getPlotter(blind=True,datadriven=False,control=False):
-     plotter = Plotter('Hpp3l')
+     plotter = Plotter('Hpp4l')
      plotter.setSelectionMap(sampleCuts)
      
      if datadriven: plotter.addHistogramToStack('datadriven',datadrivenSamples)
@@ -127,7 +127,7 @@ def makeLowMassPlot(savename,variable,binning,selection='1',**kwargs):
     '''
     cat = kwargs.pop('category','')
     plotter = getPlotter(blind=False,control=True)
-    fullSelection = ' && '.join([selection,'hpp_mass<100']+['{0}_passMedium'.format(lep) for lep in leps])
+    fullSelection = ' && '.join([selection,'(hpp_mass<100 || hmm_mass<100)']+['{0}_passMedium'.format(lep) for lep in leps])
     if cat in cats:
         channelCut = '(' + ' || '.join(['channel=="{0}"'.format(c) for subcat in subCatChannels[cat] for chan in subCatChannels[cat][subcat] for c in chans[chan]]) + ')'
         fullSelection = '{0} && {1}'.format(fullSelection,channelCut)
