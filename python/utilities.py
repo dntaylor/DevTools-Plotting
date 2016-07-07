@@ -41,7 +41,8 @@ def getLumi(version=getCMSSWVersion()):
         #return 589 # second golden json 80X
         #return 804.2 # third golden json 80X
         #return 2070 # fourth golden json 80X
-        return 3997 # fifth golden json 80X
+        #return 3997 # fifth golden json 80X
+        return 4336.100 # updated offline lumi 80X
 
 
 latestNtuples = {}
@@ -70,11 +71,12 @@ latestNtuples['80X'] = {
     'Hpp4l'          : '2016-07-04_Hpp4lAnalysis_80X_v1-merge',
     'Electron'       : '2016-06-25_ElectronAnalysis_80X_v1-merge',
     'Muon'           : '2016-06-25_MuonAnalysis_80X_v1-merge',
-    'Tau'            : '2016-06-25_TauAnalysis_80X_v1-merge',
+    'Tau'            : '2016-07-06_TauAnalysis_80X_v1-merge',
     'TauCharge'      : '2016-06-28_TauChargeAnalysis_80X_v1-merge',
     'WTauFakeRate'   : '2016-06-28_WTauFakeRateAnalysis_80X_v1-merge',
     'WFakeRate'      : '2016-07-03_WFakeRateAnalysis_80X_v1-merge',
     'WZ'             : '2016-06-30_WZAnalysis_80X_v2-merge',
+    'ZZ'             : '2016-07-06_ZZAnalysis_80X_v2-merge',
 }
 
 def getNtupleDirectory(analysis,local=False,version=getCMSSWVersion()):
@@ -105,10 +107,11 @@ treeMap = {
     'WTauFakeRate'   : 'WTauFakeRateTree',
     'WFakeRate'      : 'WFakeRateTree',
     'WZ'             : 'WZTree',
+    'ZZ'             : 'ZZTree',
 }
 
 def getTreeName(analysis):
-    return treeMap[analysis] if analysis in treeMap else ''
+    return treeMap[analysis] if analysis in treeMap else analysis+'Tree'
 
 def addChannels(params,var,n):
     for hist in params:

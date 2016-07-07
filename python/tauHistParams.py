@@ -14,9 +14,10 @@ fakeTauCut = '({0}_genMatch==0 || ({0}_genMatch==1 && {0}_genDeltaR>0.1))'
 def buildTau(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams):
 
     histParams['Tau'] = {
-        'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
-        'pt'                          : {'xVariable': 't_pt',                           'xBinning': [2000,0,2000],           },
-        'eta'                         : {'xVariable': 't_eta',                          'xBinning': [600,-3.,3.],            },
+        'count'                       : {'xVariable': '1',                                   'xBinning': [1,0,2],                 }, # just a count of events passing selection
+        'pt'                          : {'xVariable': 't_pt',                                'xBinning': [2000,0,2000],           },
+        'eta'                         : {'xVariable': 't_eta',                               'xBinning': [600,-3.,3.],            },
+        'isoMVAold'                   : {'xVariable': 't_byIsolationMVArun2v1DBoldDMwLTraw', 'xBinning': [1000,-1.,1.],           },
     }
 
     selectionParams['Tau'] = {
@@ -38,13 +39,16 @@ def buildTau(selectionParams,sampleSelectionParams,projectionParams,sampleProjec
     }
     oldId = 't_decayModeFinding==1'
     oldIsolation = {
-        'loose' : 't_byLooseIsolationMVArun2v1DBoldDMwLT==1',
-        'medium': 't_byMediumIsolationMVArun2v1DBoldDMwLT==1',
-        'tight' : 't_byTightIsolationMVArun2v1DBoldDMwLT==1',
-        'vtight': 't_byVTightIsolationMVArun2v1DBoldDMwLT==1',
+        'vvloose': 't_byIsolationMVArun2v1DBoldDMwLTraw>-0.9',
+        'vloose' : 't_byVLooseIsolationMVArun2v1DBoldDMwLT==1',
+        'loose'  : 't_byLooseIsolationMVArun2v1DBoldDMwLT==1',
+        'medium' : 't_byMediumIsolationMVArun2v1DBoldDMwLT==1',
+        'tight'  : 't_byTightIsolationMVArun2v1DBoldDMwLT==1',
+        'vtight' : 't_byVTightIsolationMVArun2v1DBoldDMwLT==1',
     }
     newId = 't_decayModeFindingNewDMs==1'
     newIsolation = {
+        'vloose': 't_byVLooseIsolationMVArun2v1DBnewDMwLT==1',
         'loose' : 't_byLooseIsolationMVArun2v1DBnewDMwLT==1',
         'medium': 't_byMediumIsolationMVArun2v1DBnewDMwLT==1',
         'tight' : 't_byTightIsolationMVArun2v1DBnewDMwLT==1',
@@ -52,9 +56,13 @@ def buildTau(selectionParams,sampleSelectionParams,projectionParams,sampleProjec
     }
     idCuts = {}
     cutLists = [
+        ('vloose','loose','vvloose'),
+        ('vloose','loose','vloose'),
         ('vloose','loose','loose'),
         ('vloose','loose','tight'),
         ('vloose','loose','vtight'),
+        ('tight','tight','vvloose'),
+        ('tight','tight','vloose'),
         ('tight','tight','loose'),
         ('tight','tight','tight'),
         ('tight','tight','vtight'),
@@ -62,7 +70,7 @@ def buildTau(selectionParams,sampleSelectionParams,projectionParams,sampleProjec
     for cl in cutLists:
         el,mu,iso = cl
         idCuts['old_{0}Electron_{1}Muon_{2}Isolation'.format(el,mu,iso)] = ' && '.join([oldId, againstElectron[el], againstMuon[mu], oldIsolation[iso]])
-        idCuts['new_{0}Electron_{1}Muon_{2}Isolation'.format(el,mu,iso)] = ' && '.join([newId, againstElectron[el], againstMuon[mu], newIsolation[iso]])
+        if iso!='vvloose': idCuts['new_{0}Electron_{1}Muon_{2}Isolation'.format(el,mu,iso)] = ' && '.join([newId, againstElectron[el], againstMuon[mu], newIsolation[iso]])
         idCuts['old_{0}Electron_{1}Muon_noIsolation'.format(el,mu)] = ' && '.join([oldId, againstElectron[el], againstMuon[mu]])
         idCuts['new_{0}Electron_{1}Muon_noIsolation'.format(el,mu)] = ' && '.join([newId, againstElectron[el], againstMuon[mu]])
         if iso!='vtight': continue

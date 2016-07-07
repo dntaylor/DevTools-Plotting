@@ -14,6 +14,7 @@ from tauChargeHistParams import buildTauCharge
 from chargeHistParams import buildCharge
 from dyHistParams import buildDY
 from wzHistParams import buildWZ
+from zzHistParams import buildZZ
 from hpp4lHistParams import buildHpp4l
 from hpp3lHistParams import buildHpp3l
 
@@ -53,6 +54,7 @@ buildTauCharge(selectionParams,sampleSelectionParams,projectionParams,sampleProj
 buildCharge(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
 buildDY(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
 buildWZ(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+buildZZ(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
 buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
 buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
 
