@@ -124,7 +124,7 @@ def buildZZ(selectionParams,sampleSelectionParams,projectionParams,sampleProject
                 'mcscalefactor': regionMCScaleFactor_regular,
             }
         }
-        selectionParams['ZZ']['{0}/lowmass'.format(name_regular)] = {
+        selectionParams['ZZ']['{0}/zWindow'.format(name_regular)] = {
             'args': [zWindow + ' && ' + regionCut],
             'kwargs': {
                 'mcscalefactor': regionMCScaleFactor_regular,

@@ -58,7 +58,8 @@ sigMap = {
              'WWToLNuQQ_13TeV-powheg',
             ],
     'W'   : [
-             'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             #'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
     'Z'   : [
              'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',

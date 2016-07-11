@@ -39,7 +39,7 @@ def buildTau(selectionParams,sampleSelectionParams,projectionParams,sampleProjec
     }
     oldId = 't_decayModeFinding==1'
     oldIsolation = {
-        'vvloose': 't_byIsolationMVArun2v1DBoldDMwLTraw>-0.9',
+        'vvloose': 't_byIsolationMVArun2v1DBoldDMwLTraw>-0.8',
         'vloose' : 't_byVLooseIsolationMVArun2v1DBoldDMwLT==1',
         'loose'  : 't_byLooseIsolationMVArun2v1DBoldDMwLT==1',
         'medium' : 't_byMediumIsolationMVArun2v1DBoldDMwLT==1',
@@ -70,14 +70,14 @@ def buildTau(selectionParams,sampleSelectionParams,projectionParams,sampleProjec
     for cl in cutLists:
         el,mu,iso = cl
         idCuts['old_{0}Electron_{1}Muon_{2}Isolation'.format(el,mu,iso)] = ' && '.join([oldId, againstElectron[el], againstMuon[mu], oldIsolation[iso]])
-        if iso!='vvloose': idCuts['new_{0}Electron_{1}Muon_{2}Isolation'.format(el,mu,iso)] = ' && '.join([newId, againstElectron[el], againstMuon[mu], newIsolation[iso]])
+        #if iso!='vvloose': idCuts['new_{0}Electron_{1}Muon_{2}Isolation'.format(el,mu,iso)] = ' && '.join([newId, againstElectron[el], againstMuon[mu], newIsolation[iso]])
         idCuts['old_{0}Electron_{1}Muon_noIsolation'.format(el,mu)] = ' && '.join([oldId, againstElectron[el], againstMuon[mu]])
-        idCuts['new_{0}Electron_{1}Muon_noIsolation'.format(el,mu)] = ' && '.join([newId, againstElectron[el], againstMuon[mu]])
+        #idCuts['new_{0}Electron_{1}Muon_noIsolation'.format(el,mu)] = ' && '.join([newId, againstElectron[el], againstMuon[mu]])
         if iso!='vtight': continue
         idCuts['old_{0}Electron_noMuon_{1}Isolation'.format(el,iso)] = ' && '.join([oldId, againstElectron[el], oldIsolation[iso]])
-        idCuts['new_{0}Electron_noMuon_{1}Isolation'.format(el,iso)] = ' && '.join([newId, againstElectron[el], newIsolation[iso]])
+        #idCuts['new_{0}Electron_noMuon_{1}Isolation'.format(el,iso)] = ' && '.join([newId, againstElectron[el], newIsolation[iso]])
         idCuts['old_noElectron_{0}Muon_{1}Isolation'.format(el,mu,iso)] = ' && '.join([oldId, againstMuon[mu], oldIsolation[iso]])
-        idCuts['new_noElectron_{0}Muon_{1}Isolation'.format(el,mu,iso)] = ' && '.join([newId, againstMuon[mu], newIsolation[iso]])
+        #idCuts['new_noElectron_{0}Muon_{1}Isolation'.format(el,mu,iso)] = ' && '.join([newId, againstMuon[mu], newIsolation[iso]])
     
     for sel in sels:
         for idName in idCuts:

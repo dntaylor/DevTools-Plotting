@@ -20,48 +20,13 @@ fakerateMaker = HistMaker(
 )
 
 sigMap = {
-    'WZ'  : [
-             'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
-             'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-             'WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8',
-             'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-            ],
-    'ZZ'  : [
-             'ZZTo4L_13TeV_powheg_pythia8',
-             'GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo2mu2tau_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8',
-             'ZZTo2L2Nu_13TeV_powheg_pythia8',
-             'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-            ],
-    'VVV' : [
-             'WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
-             'WWG_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
-            ],
-    'VH'  : [
-             'WH_HToBB_WToLNu_M125_13TeV_amcatnloFXFX_madspin_pythia8',
-             'ZH_HToBB_ZToLL_M125_13TeV_amcatnloFXFX_madspin_pythia8',
-             'ZH_HToBB_ZToNuNu_M125_13TeV_amcatnloFXFX_madspin_pythia8',
-             'ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8',
-             'ZH_HToGG_ZToAll_M125_13TeV_powheg_pythia8',
-             'ZH_HToZG_ZToAll_M-125_13TeV_powheg_pythia8',
-             'ZH_HToZZ_4LFilter_M125_13TeV_powheg2-minlo-HZJ_JHUgenV6_pythia8',
-            ],
-    'TTV' : [
-             'ttWJets_13TeV_madgraphMLM',
-             'ttZJets_13TeV_madgraphMLM',
-             'ttH_M125_13TeV_powheg_pythia8',
-             'tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
-             'tZq_nunu_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
-            ],
     'WW'  : [
              'WWTo2L2Nu_13TeV-powheg',
              'WWToLNuQQ_13TeV-powheg',
             ],
     'W'   : [
-             'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             #'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
     'Z'   : [
              'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
@@ -118,7 +83,7 @@ sigMap = {
     'HppHmm1000GeV': ['HPlusPlusHMinusMinusHTo4L_M-1000_13TeV-pythia8'],
 }
 
-samples = ['T','TT','TTV','Z','WW','VH','WZ','VVV','ZZ']
+samples = ['T','TT','Z','WW']
 
 allSamplesDict = {'MC':[]}
 
@@ -147,7 +112,7 @@ for num,denom in numDenom:
         # get the histogram
         numname = '{0}/all/etaBin{1}/tPt'.format(num,e)
         denomname = '{0}/all/etaBin{1}/tPt'.format(denom,e)
-        savename = 'filler'
+        savename = '{0}_{1}'.format(num,denom)
         subtractMap = {
             'data': ['MC'],
         }

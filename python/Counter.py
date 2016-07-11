@@ -33,16 +33,6 @@ class Counter(object):
         self.scales = {}
         self.j = 0
 
-    def __exit__(self, type, value, traceback):
-        self.finish()
-
-    def __del__(self):
-        self.finish()
-
-    def finish(self):
-        '''Cleanup stuff'''
-        logging.info('Finished')
-
     def _openFile(self,sampleName,**kwargs):
         '''Verify and open a sample'''
         analysis = kwargs.pop('analysis',self.analysis)
