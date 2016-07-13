@@ -434,6 +434,20 @@ for sigMap in sigMaps:
     sigMaps[sigMap]['HppHmm1400GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1400_TuneCUETP8M1_13TeV_pythia8']
     sigMaps[sigMap]['HppHmm1500GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1500_TuneCUETP8M1_13TeV_pythia8']
 
+    sigMaps[sigMap]['HppHm200GeV']   = ['HPlusPlusHMinusHTo3L_M-200_TuneCUETP8M1_13TeV_calchep-pythia8']
+    sigMaps[sigMap]['HppHm300GeV']   = ['HPlusPlusHMinusHTo3L_M-300_TuneCUETP8M1_13TeV_calchep-pythia8']
+    sigMaps[sigMap]['HppHm400GeV']   = ['HPlusPlusHMinusHTo3L_M-400_TuneCUETP8M1_13TeV_calchep-pythia8']
+    sigMaps[sigMap]['HppHm500GeV']   = ['HPlusPlusHMinusHTo3L_M-500_TuneCUETP8M1_13TeV_calchep-pythia8']
+    sigMaps[sigMap]['HppHm600GeV']   = ['HPlusPlusHMinusHTo3L_M-600_TuneCUETP8M1_13TeV_calchep-pythia8']
+    sigMaps[sigMap]['HppHm700GeV']   = ['HPlusPlusHMinusHTo3L_M-700_TuneCUETP8M1_13TeV_calchep-pythia8']
+    sigMaps[sigMap]['HppHm800GeV']   = ['HPlusPlusHMinusHTo3L_M-800_TuneCUETP8M1_13TeV_calchep-pythia8']
+    sigMaps[sigMap]['HppHm900GeV']   = ['HPlusPlusHMinusHTo3L_M-900_TuneCUETP8M1_13TeV_calchep-pythia8']
+    sigMaps[sigMap]['HppHm1000GeV']  = ['HPlusPlusHMinusHTo3L_M-1000_TuneCUETP8M1_13TeV_calchep-pythia8']
+    sigMaps[sigMap]['HppHm1100GeV']  = ['HPlusPlusHMinusHTo3L_M-1100_TuneCUETP8M1_13TeV_calchep-pythia8']
+    sigMaps[sigMap]['HppHm1200GeV']  = ['HPlusPlusHMinusHTo3L_M-1200_TuneCUETP8M1_13TeV_calchep-pythia8']
+    sigMaps[sigMap]['HppHm1300GeV']  = ['HPlusPlusHMinusHTo3L_M-1300_TuneCUETP8M1_13TeV_calchep-pythia8']
+    sigMaps[sigMap]['HppHm1400GeV']  = ['HPlusPlusHMinusHTo3L_M-1400_TuneCUETP8M1_13TeV_calchep-pythia8']
+    sigMaps[sigMap]['HppHm1500GeV']  = ['HPlusPlusHMinusHTo3L_M-1500_TuneCUETP8M1_13TeV_calchep-pythia8']
 
 ##################
 ### Selections ###

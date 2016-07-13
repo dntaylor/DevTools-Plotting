@@ -15,14 +15,14 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 blind = True
 plotCount = True
 doCat = True
-plotMC = True
-plotDatadriven = True
-plotFakeRegions = True
-plotSignal = False
-plotROC = False
+plotMC = False
+plotDatadriven = False
+plotFakeRegions = False
+plotSignal = True
+plotROC = True
 plotNormalization = False
 plotSOverB = False
-plotAllMasses = False
+plotAllMasses = True
 
 hpp3lPlotter = Plotter('Hpp3l')
 
@@ -45,7 +45,7 @@ masses = [200,400,600,800,1000]
 
 samples = ['TTV','VVV','ZZ','WZ']
 allsamples = ['W','T','TT','TTV','Z','WW','VVV','ZZ','WZ']
-signals = ['HppHmm500GeV']
+signals = ['HppHm500GeV']
 
 allSamplesDict = {'BG':[]}
 for s in allsamples:
@@ -424,7 +424,7 @@ if plotSOverB:
     sigOrder = []
     bgOrder = []
     for mass in masses:
-        name = 'HppHmm{0}GeV'.format(mass)
+        name = 'HppHm{0}GeV'.format(mass)
         sigOrder += [name]
         bgOrder += ['BG']
         hpp3lPlotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': sigColors[mass]})
@@ -450,8 +450,8 @@ if plotAllMasses:
 
     xvals = {}
     for mass in allmasses:
-        hpp3lPlotter.addHistogram('HppHmm{0}GeV'.format(mass),sigMap['HppHmm{0}GeV'.format(mass)],signal=True,style={'linecolor': sigColors[mass]})
-        xvals[mass] = 'HppHmm{0}GeV'.format(mass)
+        hpp3lPlotter.addHistogram('HppHm{0}GeV'.format(mass),sigMap['HppHm{0}GeV'.format(mass)],signal=True,style={'linecolor': sigColors[mass]})
+        xvals[mass] = 'HppHm{0}GeV'.format(mass)
 
     fitvalues = {
         'hppMass': {0.:[0.,0.9],1:[0.,0.4],2:[0.,0.3]},
@@ -488,8 +488,8 @@ if plotAllMasses:
             genChans = []
             recoChans = []
             for gen in genRecoMap:
-                if len(gen)==3: continue # 4l for now
-                if gen[:2].count('t')!=nTau or gen[2:].count('t')!=nTau: continue # 4l for now
+                if len(gen)==4: continue 
+                if gen[:2].count('t')!=nTau: continue
                 genChans += [gen]
                 for r in genRecoMap[gen]:
                     recoChans += chans[r]
@@ -506,7 +506,7 @@ if plotSignal:
     hpp3lPlotter.clearHistograms()
 
     for mass in masses:
-        hpp3lPlotter.addHistogram('HppHmm{0}GeV'.format(mass),sigMap['HppHmm{0}GeV'.format(mass)],signal=True,style={'linecolor': sigColors[mass]})
+        hpp3lPlotter.addHistogram('HppHm{0}GeV'.format(mass),sigMap['HppHm{0}GeV'.format(mass)],signal=True,style={'linecolor': sigColors[mass]})
 
     catRebin = {
         'I'  : 1,
@@ -538,7 +538,7 @@ if plotSignal:
                 plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
             savename = 'signal/{0}/{1}'.format(cat,plot)
             catkwargs = deepcopy(kwargs)
-            if cat in catRebin and 'rebin' in catkwargs and plot in ['hppMass','hmmMass']: catkwargs['rebin'] = catkwargs['rebin'] * catRebin[cat]
+            if cat in catRebin and 'rebin' in catkwargs and plot in ['hppMass']: catkwargs['rebin'] = catkwargs['rebin'] * catRebin[cat]
             if doCat: hpp3lPlotter.plotNormalized(plotnames,savename,**catkwargs)
 
     for plot in eff_cust:
@@ -547,7 +547,6 @@ if plotSignal:
         for higgsChan in ['ee','em','et','mm','mt','tt']:
             # reco
             plotnames = ['default/{0}/{1}'.format(chan,plot) for chan in chans if chan[:2]==higgsChan]
-            if 'hpp' in plot: plotnames += ['default/{0}/{1}'.format(chan,plot.replace('hpp','hmm')) for chan in chans if chan[2:]==higgsChan]
             savename = 'signal/{0}/{1}'.format(higgsChan,plot)
             genkwargs = deepcopy(kwargs)
             effkwargs = deepcopy(plots[plot])
@@ -557,11 +556,10 @@ if plotSignal:
             # and the gen truth
             plotnames = []
             for gen in genRecoMap:
+                if len(gen)==4: continue
                 for reco in genRecoMap[gen]:
                     if gen[:2]==higgsChan:
                         plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot)]
-                    if gen[2:]==higgsChan and 'hpp' in plot:
-                        plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot.replace('hpp','hmm'))]
             if plotnames:
                 savename = 'signal/{0}/{1}_genMatched'.format(higgsChan,plot)
                 hpp3lPlotter.plotNormalized(plotnames,savename,**genkwargs)
@@ -582,7 +580,7 @@ if plotROC:
         'st'         : {},
     }
     for mass in masses:
-        name = 'HppHmm{0}GeV'.format(mass)
+        name = 'HppHm{0}GeV'.format(mass)
         sigOrder += [name]
         bgOrder += ['BG']
         hpp3lPlotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': sigColors[mass]})
@@ -599,12 +597,11 @@ if plotROC:
             plotnames = []
             bgnames = []
             for gen in genRecoMap:
+                if len(gen)==4: continue
                 for reco in genRecoMap[gen]:
                     if gen[:2]==higgsChan:
                         plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot)]
                         bgnames += ['default/{0}/{1}'.format(reco,plot)]
-                    if gen[2:]==higgsChan and 'hpp' in plot:
-                        plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot.replace('hpp','hmm'))]
             if plotnames:
                 savename = 'signal/{0}/{1}_genMatched_roc'.format(higgsChan,plot)
                 wp = workingPoints[plot] if plot in workingPoints else {}

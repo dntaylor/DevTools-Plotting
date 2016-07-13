@@ -180,11 +180,18 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
     sampleProjectionParams['Hpp3l'] = {}
     sampleSelectionParams['Hpp3l'] = {}
     for mass in masses:
+        # pp
         sampleName = 'HPlusPlusHMinusMinusHTo4L_M-{0}_13TeV-pythia8'.format(mass)
         if version=='80X': sampleName = 'HPlusPlusHMinusMinusHTo4L_M-{0}_TuneCUETP8M1_13TeV_pythia8'.format(mass)
         sampleHistParams['Hpp3l'][sampleName] = addChannels(deepcopy(histParams['Hpp3l']),'genChannel',len(genChannelsPP))
         sampleProjectionParams['Hpp3l'][sampleName] = {}
         for genChan in genChannelsPP:
+            sampleProjectionParams['Hpp3l'][sampleName]['gen_{0}'.format(genChan)] = [genChan]
+        # ap
+        sampleName = 'HPlusPlusHMinusHTo3L_M-{0}_TuneCUETP8M1_13TeV_calchep-pythia8'.format(mass)
+        sampleHistParams['Hpp3l'][sampleName] = addChannels(deepcopy(histParams['Hpp3l']),'genChannel',len(genChannelsAP))
+        sampleProjectionParams['Hpp3l'][sampleName] = {}
+        for genChan in genChannelsAP:
             sampleProjectionParams['Hpp3l'][sampleName]['gen_{0}'.format(genChan)] = [genChan]
     
     # special selections for samples

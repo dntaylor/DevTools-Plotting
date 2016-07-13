@@ -23,7 +23,7 @@ class LimitPlotter(PlotterBase):
 
     def __init__(self,**kwargs):
         '''Initialize the plotter'''
-        super(LimitPlotter, self).__init__(**kwargs)
+        super(LimitPlotter, self).__init__('Limits',**kwargs)
         # initialize stuff
 
     def _readLimit(self,filename):
@@ -70,14 +70,18 @@ class LimitPlotter(PlotterBase):
         oneSigma = ROOT.TGraph(2*n)
         expected = ROOT.TGraph(n)
         observed = ROOT.TGraph(n)
+        oneSigma_low = ROOT.TGraph(n)
+        oneSigma_high = ROOT.TGraph(n)
 
         for i in range(len(xvals)):
-            twoSigma.SetPoint(i,   xvals[i],     limits[xvals[i]][0]) # 0.025
-            oneSigma.SetPoint(i,   xvals[i],     limits[xvals[i]][1]) # 0.16
-            expected.SetPoint(i,   xvals[i],     limits[xvals[i]][2]) # 0.5
-            oneSigma.SetPoint(n+i, xvals[n-i-1], limits[xvals[n-i-1]][3]) # 0.84
-            twoSigma.SetPoint(n+i, xvals[n-i-1], limits[xvals[n-i-1]][4]) # 0.975
-            observed.SetPoint(i,   xvals[i],     limits[xvals[i]][5]) # obs
+            twoSigma.SetPoint(i,      xvals[i],     limits[xvals[i]][0]) # 0.025
+            oneSigma.SetPoint(i,      xvals[i],     limits[xvals[i]][1]) # 0.16
+            expected.SetPoint(i,      xvals[i],     limits[xvals[i]][2]) # 0.5
+            oneSigma.SetPoint(n+i,    xvals[n-i-1], limits[xvals[n-i-1]][3]) # 0.84
+            twoSigma.SetPoint(n+i,    xvals[n-i-1], limits[xvals[n-i-1]][4]) # 0.975
+            observed.SetPoint(i,      xvals[i],     limits[xvals[i]][5]) # obs
+            oneSigma_low.SetPoint(i,  xvals[i],     limits[xvals[i]][1]) # 0.16
+            oneSigma_high.SetPoint(i, xvals[i],     limits[xvals[i]][3]) # 0.84
 
         twoSigma.SetFillColor(ROOT.kYellow)
         twoSigma.SetLineColor(ROOT.kYellow)
@@ -119,3 +123,30 @@ class LimitPlotter(PlotterBase):
         self._setStyle(canvas,position=lumipos,preliminary=isprelim)
 
         self._save(canvas,savename)
+
+        # get expected limit
+        y = 0
+        for x in range(1,1500):
+            y = expected.Eval(x)
+            if y > 1: break
+        y = 0
+        for l in range(1,1500):
+            y = oneSigma_low.Eval(l)
+            if y > 1: break
+        y = 0
+        for h in range(1,1500):
+            y = oneSigma_high.Eval(h)
+            if y > 1: break
+
+        # get observed limit
+        if not blind:
+            dy = 0
+            for dx in range(1,1500):
+                dy = observed.Eval(dx)
+                if dy > 1: break
+        else:
+            dx = 0
+
+
+        logging.info("Expected Limit: %i GeV (+%i, -%i)" % (x, h-x, x-l))
+        if not blind: logging.info("Observed Limit: %i GeV" % (dx))
