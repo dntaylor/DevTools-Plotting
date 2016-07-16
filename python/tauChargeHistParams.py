@@ -39,8 +39,8 @@ def buildTauCharge(selectionParams,sampleSelectionParams,projectionParams,sample
     selectionParams['TauCharge'] = {
         'OS'       : {'args': [chargeOS],                   'kwargs': {'mcscalefactor': chargeScaleFactor}},
         'SS'       : {'args': [chargeSS],                   'kwargs': {'mcscalefactor': chargeScaleFactor}},
-        'OS/mtCut' : {'args': [chargeOS + ' && wm_mt<40.'], 'kwargs': {'mcscalefactor': chargeScaleFactor}},
-        'SS/mtCut' : {'args': [chargeSS + ' && wm_mt<40.'], 'kwargs': {'mcscalefactor': chargeScaleFactor}},
+        'OS/mtCut' : {'args': [chargeOS + ' && wm_mt>60.'], 'kwargs': {'mcscalefactor': chargeScaleFactor}},
+        'SS/mtCut' : {'args': [chargeSS + ' && wm_mt>60.'], 'kwargs': {'mcscalefactor': chargeScaleFactor}},
     }
     
     channelMap = {

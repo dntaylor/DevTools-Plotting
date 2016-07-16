@@ -52,7 +52,6 @@ latestNtuples['76X'] = {
     'DijetFakeRate'  : '',
     'Electron'       : '2016-04-14_ElectronAnalysis_v1-merge',
     'Hpp3l'          : '2016-05-16_Hpp3lAnalysis_v1-merge',           # fix for gen channel
-    #'Hpp4l'          : '2016-06-07_Hpp4lAnalysis_76X_HZZIDs_v1-merge',# hzz ids
     'Hpp4l'          : '2016-06-07_Hpp4lAnalysis_76X_WZIDs_v1-merge', # wz ids
     'Muon'           : '2016-04-14_MuonAnalysis_v1-merge',
     'SingleElectron' : '',
@@ -76,7 +75,7 @@ latestNtuples['80X'] = {
     'WTauFakeRate'   : '2016-07-10_WTauFakeRateAnalysis_80X_v1-merge',
     'WFakeRate'      : '2016-07-10_WFakeRateAnalysis_80X_v1-merge',
     'WZ'             : '2016-06-30_WZAnalysis_80X_v2-merge',
-    'ZZ'             : '2016-07-06_ZZAnalysis_80X_v2-merge',
+    'ZZ'             : '2016-07-13_ZZAnalysis_80X_v1-merge',
 }
 
 def getNtupleDirectory(analysis,local=False,version=getCMSSWVersion()):

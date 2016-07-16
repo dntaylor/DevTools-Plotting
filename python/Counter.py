@@ -105,19 +105,26 @@ class Counter(object):
                     if selection:
                         logging.debug('Custom selection')
                         sf = '*'.join([scalefactor,datascalefactor if isData(sampleName) else mcscalefactor])
-                        if processName in self.scales:
-                            if sampleName in self.scales[processName]:
-                                sf += '*{0}'.format(self.scales[processName][sampleName])
                         fullcut = ' && '.join([selection,mccut]) if mccut and not isData(sampleName) else selection
                         if processName in self.processSampleCuts:
                             if sampleName in self.processSampleCuts[processName]:
                                 fullcut += ' && {0}'.format(self.processSampleCuts[processName][sampleName])
-                        count = self._getTempCount(sampleName,fullcut,sf,analysis=analysis)
-                        logging.debug('Count: {0} +/- {1}'.format(*count))
+                        # scale a sample via a cut
+                        if processName in self.scales and sampleName in self.scales[processName]:
+                            for cut in self.scales[processName][sampleName]:
+                                thissf = '{0}*{1}'.format(sf,self.scales[processName][sampleName][cut])
+                                thisFullCut = '{0} && {1}'.format(fullcut, cut)
+                                count = self._getTempCount(sampleName,thisFullCut,thissf,analysis=analysis)
+                                logging.debug('Count: {0} +/- {1}'.format(*count))
+                                if count: counts += [count]
+                        else:
+                            count = self._getTempCount(sampleName,fullcut,sf,analysis=analysis)
+                            logging.debug('Count: {0} +/- {1}'.format(*count))
+                            if count: counts += [count]
                     else:
                         count = self._readSampleCount(sampleName,dirName,analysis=analysis)
                         logging.debug('Count: {0} +/- {1}'.format(*count))
-                    if count: counts += [count]
+                        if count: counts += [count]
             if not counts:
                 logging.debug('No entries for {0}'.format(processName))
                 return (0.,0.)
