@@ -20,9 +20,9 @@ plotDatadriven = True
 plotFakeRegions = True
 plotSignal = False
 plotROC = False
-plotNormalization = False
+plotNormalization = True
 plotSOverB = False
-plotAllMasses = False
+plotAllMasses = True
 
 hpp4lPlotter = Plotter('Hpp4l')
 
@@ -178,8 +178,8 @@ plots = {
 }
 
 blind_cust = {
-    'hppMass': {'blinder': [200,1600]},
-    'hmmMass': {'blinder': [200,1600]},
+    'hppMass': {'blinder': [200,1600], 'rangex': [0,800],},
+    'hmmMass': {'blinder': [200,1600], 'rangex': [0,800],},
 }
 
 lowmass_cust = {

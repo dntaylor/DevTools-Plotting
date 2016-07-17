@@ -15,12 +15,12 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 blind = True
 plotCount = True
 doCat = True
-plotMC = False
-plotDatadriven = False
-plotFakeRegions = False
-plotSignal = True
-plotROC = True
-plotNormalization = False
+plotMC = True
+plotDatadriven = True
+plotFakeRegions = True
+plotSignal = False
+plotROC = False
+plotNormalization = True
 plotSOverB = False
 plotAllMasses = True
 
@@ -171,7 +171,7 @@ plots = {
 }
 
 blind_cust = {
-    'hppMass': {'blinder': [100,1200]},
+    'hppMass': {'blinder': [200,1600], 'rangex': [0,800],},
 }
 
 lowmass_cust = {

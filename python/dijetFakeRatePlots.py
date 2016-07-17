@@ -36,10 +36,10 @@ sigMap = {
              #'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
              #'WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
              #'WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
     'Z'   : [
              #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
@@ -48,10 +48,10 @@ sigMap = {
              #'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
              #'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
              'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
     'TT'  : [
              'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
@@ -177,7 +177,6 @@ for plot in ['pt']:
         for chan in chans:
             plotname = {}
             for jetPt in jetPts:
-                #plotname['jetPt{0}'.format(jetPt)] = '{0}/pt20/{1}/jetPt{2}/{3}'.format(lepton,chan,jetPt,plot)
                 plotname['jetPt{0}'.format(jetPt)] = '{0}/{1}/jetPt{2}/{3}'.format(lepton,chan,jetPt,plot)
             dyvars = ['dy/{1}/{2}'.format(lepton,wzchan,ptVarMap[p]) for wzchan,p in [(c,i) for i in range(3) for c in leptonBin[chan][i]]]
             ttvars = ['tt/{1}/{2}'.format(lepton,wzchan,ptVarMap[p]) for wzchan,p in [(c,i) for i in range(3) for c in leptonBin[chan][i]]]
@@ -188,7 +187,6 @@ for plot in ['pt']:
             for lepBin in range(3):
                 plotname = {}
                 for jetPt in jetPts:
-                    #plotname['jetPt{0}'.format(jetPt)] = '{0}/pt20/{1}/jetPt{2}/{3}'.format(lepton,chan,jetPt,plot)
                     plotname['jetPt{0}'.format(jetPt)] = '{0}/{1}/jetPt{2}/{3}'.format(lepton,chan,jetPt,plot)
                 dyvars = ['dy/{1}/{2}'.format(lepton,wzchan,ptVarMap[p]) for wzchan,p in [(c,lepBin) for c in leptonBin[chan][lepBin]]]
                 ttvars = ['tt/{1}/{2}'.format(lepton,wzchan,ptVarMap[p]) for wzchan,p in [(c,lepBin) for c in leptonBin[chan][lepBin]]]

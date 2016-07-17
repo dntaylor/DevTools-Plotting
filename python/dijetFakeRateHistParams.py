@@ -34,9 +34,6 @@ def buildDijetFakeRate(selectionParams,sampleSelectionParams,projectionParams,sa
         'loose'      : {'args': [frBaseCutLoose],                   'kwargs': {'mcscalefactor': frScaleFactorLoose,  'datascalefactor': dataScaleFactor}},
         'medium'     : {'args': [frBaseCutMedium],                  'kwargs': {'mcscalefactor': frScaleFactorMedium, 'datascalefactor': dataScaleFactor}},
         'tight'      : {'args': [frBaseCutTight],                   'kwargs': {'mcscalefactor': frScaleFactorTight,  'datascalefactor': dataScaleFactor}},
-        'loose/pt20' : {'args': [frBaseCutLoose + ' && l1_pt>20'],  'kwargs': {'mcscalefactor': frScaleFactorLoose,  'datascalefactor': dataScaleFactor}},
-        'medium/pt20': {'args': [frBaseCutMedium + ' && l1_pt>20'], 'kwargs': {'mcscalefactor': frScaleFactorMedium, 'datascalefactor': dataScaleFactor}},
-        'tight/pt20' : {'args': [frBaseCutTight + ' && l1_pt>20'],  'kwargs': {'mcscalefactor': frScaleFactorTight,  'datascalefactor': dataScaleFactor}},
     }
     
     channels = ['e','m']
@@ -52,7 +49,7 @@ def buildDijetFakeRate(selectionParams,sampleSelectionParams,projectionParams,sa
     
     jetPtBins = [10,15,20,25,30,35,40,45,50]
     
-    for sel in ['loose','medium','tight','loose/pt20','medium/pt20','tight/pt20']:
+    for sel in ['loose','medium','tight']:
         for chan in channels:
             name = '{0}/{1}'.format(sel,chan)
             selectionParams['DijetFakeRate'][name] = deepcopy(selectionParams['DijetFakeRate'][sel])
@@ -70,4 +67,29 @@ def buildDijetFakeRate(selectionParams,sampleSelectionParams,projectionParams,sa
                 selectionParams['DijetFakeRate'][name] = deepcopy(selectionParams['DijetFakeRate'][sel])
                 args = selectionParams['DijetFakeRate'][name]['args']
                 selectionParams['DijetFakeRate'][name]['args'][0] = args[0] + '&& channel=="{0}" && fabs(l1_eta)>={1} && fabs(l1_eta)<{2}'.format(chan,etaBins[chan][eb],etaBins[chan][eb+1])
+
+
+    # special selections for samples
+    # DY-10 0, 1, 2 bins (0 includes 3+)
+    # DY-50 0, 1, 2, 3, 4 bins (0 includes 5+)
+    sampleCuts = {
+        #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8' : '(numGenJets==0 || numGenJets>2)',
+        #'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': 'numGenJets==1',
+        #'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': 'numGenJets==2',
+        'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'      : '(numGenJets==0 || numGenJets>4)',
+        'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==1',
+        'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==2',
+        'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==3',
+        'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==4',
+        'WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'           : '(numGenJets==0 || numGenJets>4)',
+        'W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          : 'numGenJets==1',
+        'W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          : 'numGenJets==2',
+        'W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          : 'numGenJets==3',
+        'W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          : 'numGenJets==4',
+    }
+    sampleSelectionParams['DijetFakeRate'] = {}
+    for sample,cut in sampleCuts.iteritems():
+        sampleSelectionParams['DijetFakeRate'][sample] = deepcopy(selectionParams['DijetFakeRate'])
+        for sel in selectionParams['DijetFakeRate'].keys():
+            sampleSelectionParams['DijetFakeRate'][sample][sel]['args'][0] += ' && {0}'.format(cut)
 
