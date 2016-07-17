@@ -2,7 +2,7 @@ from copy import deepcopy
 from itertools import product, combinations_with_replacement
 
 from DevTools.Plotter.utilities import ZMASS, addChannels
-from DevTools.Plotter.higgsUtilities import getChannels, getGenChannels, getOldSelections
+from DevTools.Plotter.higgsUtilities import getChannels, getGenChannels, getSelections
 
 from DevTools.Utilities.utilities import getCMSSWVersion
 
@@ -51,14 +51,14 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
         # event
         'mass'                        : {'xVariable': '3l_mass',                        'xBinning': [2000, 0, 2000],         },
         'st'                          : {'xVariable': 'hpp1_pt+hpp2_pt+hm1_pt',         'xBinning': [2000, 0, 2000],         },
+        'nJets'                       : {'xVariable': 'numJetsTight30',                 'xBinning': [11, -0.5, 10.5],        },
         # gen truth
         #'hppLeadingLeptonGenMatch'    : {'xVariable': 'hpp1_genMatch',                  'xBinning': [2, 0, 2],               },
-        'hppLeadingLeptonGenDeltaR'   : {'xVariable': 'hpp1_genDeltaR',                 'xBinning': [1000, 0, 5],            },
+        #'hppLeadingLeptonGenDeltaR'   : {'xVariable': 'hpp1_genDeltaR',                 'xBinning': [1000, 0, 5],            },
         #'hppSubLeadingLeptonGenMatch' : {'xVariable': 'hpp2_genMatch',                  'xBinning': [2, 0, 2],               },
-        'hpmSubLeadingLeptonGenDeltaR': {'xVariable': 'hpp2_genDeltaR',                 'xBinning': [1000, 0, 5],            },
+        #'hpmSubLeadingLeptonGenDeltaR': {'xVariable': 'hpp2_genDeltaR',                 'xBinning': [1000, 0, 5],            },
         #'hmLeptonGenMatch'            : {'xVariable': 'hm1_genMatch',                   'xBinning': [2, 0, 2],               },
-        'hmLeptonGenDeltaR'           : {'xVariable': 'hm1_genDeltaR',                  'xBinning': [1000, 0, 5],            },
-        'nJets'                       : {'xVariable': 'numJetsTight30',                 'xBinning': [11, -0.5, 10.5],        },
+        #'hmLeptonGenDeltaR'           : {'xVariable': 'hm1_genDeltaR',                  'xBinning': [1000, 0, 5],            },
     }
 
     masses = [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500]
@@ -115,10 +115,10 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
     cuts3l = sorted(['st','zveto','dr','mass','met'])
     for mass in masses:
         for hppTaus in range(3):
-            sideband = getOldSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=[],invcuts=['mass'])
-            massWindow = getOldSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['mass'])
-            allSideband = getOldSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr'],invcuts=['mass'])
-            allMassWindow = getOldSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr','mass'])
+            sideband = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=[],invcuts=['mass'],mode='old')
+            massWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['mass'],mode='old')
+            allSideband = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr'],invcuts=['mass'],mode='old')
+            allMassWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr','mass'],mode='old')
             selectionParams['Hpp3l']['old/sideband/{0}/hpp{1}'.format(mass,hppTaus,)] =      {'args': [hpp3lCutMap['PPP'] + ' && ' + sideband],      'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
             selectionParams['Hpp3l']['old/massWindow/{0}/hpp{1}'.format(mass,hppTaus,)] =    {'args': [hpp3lCutMap['PPP'] + ' && ' + massWindow],    'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
             selectionParams['Hpp3l']['old/allSideband/{0}/hpp{1}'.format(mass,hppTaus,)] =   {'args': [hpp3lCutMap['PPP'] + ' && ' + allSideband],   'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
@@ -132,6 +132,14 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
             #        sel = getOldSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=[cuta,cutb])
             #        if not sel: continue
             #        selectionParams['Hpp3l']['old/{0}_{1}/{2}/hpp{3}'.format(cuta,cutb,mass,hppTaus)] = {'args': [hpp3lCutMap['PPP'] + ' && ' + sel], 'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
+            sideband = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=[],invcuts=['mass'],mode='new')
+            massWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['mass'],mode='new')
+            allSideband = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr'],invcuts=['mass'],mode='new')
+            allMassWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr','mass'],mode='new')
+            selectionParams['Hpp3l']['new/sideband/{0}/hpp{1}'.format(mass,hppTaus,)] =      {'args': [hpp3lCutMap['PPP'] + ' && ' + sideband],      'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
+            selectionParams['Hpp3l']['new/massWindow/{0}/hpp{1}'.format(mass,hppTaus,)] =    {'args': [hpp3lCutMap['PPP'] + ' && ' + massWindow],    'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
+            selectionParams['Hpp3l']['new/allSideband/{0}/hpp{1}'.format(mass,hppTaus,)] =   {'args': [hpp3lCutMap['PPP'] + ' && ' + allSideband],   'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
+            selectionParams['Hpp3l']['new/allMassWindow/{0}/hpp{1}'.format(mass,hppTaus,)] = {'args': [hpp3lCutMap['PPP'] + ' && ' + allMassWindow], 'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
     
     # fake regions via modes
     for nf in range(4):

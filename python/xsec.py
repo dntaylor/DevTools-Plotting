@@ -35,8 +35,8 @@ xsecs = {
     'QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8'                     :           0.00682981  * PB,
     'QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8'                      :           0.000165445 * PB,
 
-    'DYJetsToLL_M-5to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'        :   7160        * PB * 1.216, # 1.216 LO -> NNLO
-    'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'       :   7160        * PB * 1.216,
+    'DYJetsToLL_M-5to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'        :  71310        * PB,
+    'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'       :  18610        * PB,
     'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'      :  18610.       * PB, # already NNLO
     'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'          :   6025.2      * PB,
     'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'           :   4895        * PB * 1.216,
@@ -83,18 +83,18 @@ xsecs = {
     'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'               :  61526.7      * PB,
     'WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'                :  61526.7      * PB,
 
-    'W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'               :   9493        * PB,
-    'W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'               :   3120        * PB,
-    'W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'               :    942.3      * PB,
-    'W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'               :    524.2      * PB,    
+    'W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'               :   9493        * PB * 1.214,
+    'W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'               :   3120        * PB * 1.214,
+    'W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'               :    942.3      * PB * 1.214,
+    'W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'               :    524.2      * PB * 1.214,    
 
-    'WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :   1345        * PB,
-    'WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :    359.7      * PB,
-    'WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :     48.91     * PB,
-    'WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :     12.05     * PB,
-    'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'   :      5.501    * PB,
-    'WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'  :      1.329    * PB,
-    'WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'   :      0.03216  * PB,
+    'WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :   1345        * PB * 1.214,
+    'WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :    359.7      * PB * 1.214,
+    'WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :     48.91     * PB * 1.214,
+    'WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :     12.05     * PB * 1.214,
+    'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'   :      5.501    * PB * 1.214,
+    'WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'  :      1.329    * PB * 1.214,
+    'WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'   :      0.03216  * PB * 1.214,
                                                                                                 
     'ZGTo2LG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                  :    117.864    * PB,    
     'WGToLNuG_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                 :    489.       * PB,

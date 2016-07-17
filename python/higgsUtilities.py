@@ -452,44 +452,87 @@ for sigMap in sigMaps:
 ##################
 ### Selections ###
 ##################
-selections_old = {
-    'Hpp3l': {
-        0: {
-            'st'   : 'hpp1_pt+hpp2_pt+hm1_pt>1.07*{mass}+45',
-            'zveto': 'fabs(z_mass-{0})>80'.format(ZMASS),
-            'dr'   : '(h{sign}_mass<400 ? h{sign}_deltaR<{mass}/380.+2.06 : h{sign}_deltaR<{mass}/1200.+2.77)',
-            'mass' : 'h{sign}_mass>0.9*{mass} && h{sign}_mass<1.1*{mass}',
+selections = {
+    'old' : {
+        'Hpp3l': {
+            0: {
+                'st'   : 'hpp1_pt+hpp2_pt+hm1_pt>1.07*{mass}+45',
+                'zveto': 'fabs(z_mass-{0})>80'.format(ZMASS),
+                'dr'   : '(h{sign}_mass<400 ? h{sign}_deltaR<{mass}/380.+2.06 : h{sign}_deltaR<{mass}/1200.+2.77)',
+                'mass' : 'h{sign}_mass>0.9*{mass} && h{sign}_mass<1.1*{mass}',
+            },
+            1: {
+                'st'   : 'hpp1_pt+hpp2_pt+hm1_pt>0.72*{mass}+50',
+                'zveto': 'fabs(z_mass-{0})>80'.format(ZMASS),
+                'met'  : 'met_pt>20',
+                'dr'   : '(h{sign}_mass<400 ? h{sign}_deltaR<{mass}/380.+1.96 : h{sign}_deltaR<{mass}/1000.+2.6)',
+                'mass' : 'h{sign}_mass>0.5*{mass} && h{sign}_mass<1.1*{mass}',
+            },
+            2: {
+                'st'   : 'hpp1_pt+hpp2_pt+hm1_pt>0.44*{mass}+65',
+                'zveto': 'fabs(z_mass-{0})>50'.format(ZMASS),
+                'met'  : 'met_pt>20',
+                'dr'   : '(h{sign}_mass<400 ? h{sign}_deltaR<{mass}/380.+1.86 : h{sign}_deltaR<{mass}/750.+2.37)',
+                'mass' : 'h{sign}_mass>0.5*{mass} && h{sign}_mass<1.1*{mass}',
+            },
         },
-        1: {
-            'st'   : 'hpp1_pt+hpp2_pt+hm1_pt>0.72*{mass}+50',
-            'zveto': 'fabs(z_mass-{0})>80'.format(ZMASS),
-            'met'  : 'met_pt>20',
-            'dr'   : '(h{sign}_mass<400 ? h{sign}_deltaR<{mass}/380.+1.96 : h{sign}_deltaR<{mass}/1000.+2.6)',
-            'mass' : 'h{sign}_mass>0.5*{mass} && h{sign}_mass<1.1*{mass}',
-        },
-        2: {
-            'st'   : 'hpp1_pt+hpp2_pt+hm1_pt>0.44*{mass}+65',
-            'zveto': 'fabs(z_mass-{0})>50'.format(ZMASS),
-            'met'  : 'met_pt>20',
-            'dr'   : '(h{sign}_mass<400 ? h{sign}_deltaR<{mass}/380.+1.86 : h{sign}_deltaR<{mass}/750.+2.37)',
-            'mass' : 'h{sign}_mass>0.5*{mass} && h{sign}_mass<1.1*{mass}',
+        'Hpp4l': {
+            0: {
+                'st'   : 'hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>0.6*{mass}+130',
+                'mass' : 'h{sign}_mass>0.9*{mass} && h{sign}_mass<1.1*{mass}',
+            },
+            1: {
+                'st'   : '(hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>{mass}+100 || hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>400)',
+                'zveto': 'fabs(z_mass-{0})>10'.format(ZMASS),
+                'mass' : 'h{sign}_mass>0.5*{mass} && h{sign}_mass<1.1*{mass}',
+            },
+            2: {
+                'st'   : '(hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>120)',
+                'zveto': 'fabs(z_mass-{0})>50'.format(ZMASS),
+                'dr'   : 'h{sign}_deltaR<{mass}/1400.+2.43',
+                'mass' : 'h{sign}_mass>0.5*{mass} && h{sign}_mass<1.1*{mass}',
+            },
         },
     },
-    'Hpp4l': {
-        0: {
-            'st'   : 'hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>0.6*{mass}+130',
-            'mass' : 'h{sign}_mass>0.9*{mass} && h{sign}_mass<1.1*{mass}',
+    'new' : {
+        'Hpp3l': {
+            0: {
+                'st'   : 'hpp1_pt+hpp2_pt+hm1_pt>0.81*{mass}+88',
+                'zveto': 'fabs(z_mass-{0})>80'.format(ZMASS),
+                'dr'   : '(h{sign}_mass<400 ? h{sign}_deltaR<{mass}/380.+2.06 : h{sign}_deltaR<{mass}/1200.+2.77)',
+                'mass' : 'h{sign}_mass>0.9*{mass} && h{sign}_mass<1.1*{mass}',
+            },
+            1: {
+                'st'   : 'hpp1_pt+hpp2_pt+hm1_pt>0.58*{mass}+85',
+                'zveto': 'fabs(z_mass-{0})>80'.format(ZMASS),
+                'met'  : 'met_pt>20',
+                'dr'   : '(h{sign}_mass<400 ? h{sign}_deltaR<{mass}/380.+1.96 : h{sign}_deltaR<{mass}/1000.+2.6)',
+                'mass' : 'h{sign}_mass>0.4*{mass} && h{sign}_mass<1.1*{mass}',
+            },
+            2: {
+                'st'   : 'hpp1_pt+hpp2_pt+hm1_pt>0.35*{mass}+81',
+                'zveto': 'fabs(z_mass-{0})>50'.format(ZMASS),
+                'met'  : 'met_pt>20',
+                'dr'   : '(h{sign}_mass<400 ? h{sign}_deltaR<{mass}/380.+1.86 : h{sign}_deltaR<{mass}/750.+2.37)',
+                'mass' : 'h{sign}_mass>0.3*{mass} && h{sign}_mass<1.1*{mass}',
+            },
         },
-        1: {
-            'st'   : '(hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>{mass}+100 || hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>400)',
-            'zveto': 'fabs(z_mass-{0})>10'.format(ZMASS),
-            'mass' : 'h{sign}_mass>0.5*{mass} && h{sign}_mass<1.1*{mass}',
-        },
-        2: {
-            'st'   : '(hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>120)',
-            'zveto': 'fabs(z_mass-{0})>50'.format(ZMASS),
-            'dr'   : 'h{sign}_deltaR<{mass}/1400.+2.43',
-            'mass' : 'h{sign}_mass>0.5*{mass} && h{sign}_mass<1.1*{mass}',
+        'Hpp4l': {
+            0: {
+                'st'   : 'hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>1.23*{mass}+54',
+                'mass' : 'h{sign}_mass>0.9*{mass} && h{sign}_mass<1.1*{mass}',
+            },
+            1: {
+                'st'   : 'hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>0.88*{mass}+73',
+                'zveto': 'fabs(z_mass-{0})>10'.format(ZMASS),
+                'mass' : 'h{sign}_mass>0.4*{mass} && h{sign}_mass<1.1*{mass}',
+            },
+            2: {
+                'st'   : 'hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt>0.46*{mass}+108',
+                'zveto': 'fabs(z_mass-{0})>50'.format(ZMASS),
+                'dr'   : 'h{sign}_deltaR<{mass}/1400.+2.43',
+                'mass' : 'h{sign}_mass>0.3*{mass} && h{sign}_mass<1.1*{mass}',
+            },
         },
     },
 }
@@ -497,11 +540,11 @@ selections_old = {
 ###########################
 ### Functions to access ###
 ###########################
-def getOldSelections(analysis,mass,nTaus=[0,0],cuts=['st','zveto','met','dr','mass'],invcuts=[]):
+def getSelections(analysis,mass,nTaus=[0,0],cuts=['st','zveto','met','dr','mass'],invcuts=[],mode='old'):
     selString = ''
     if analysis=='Hpp3l':
         # hpp/hmm
-        cutMap = selections_old[analysis][nTaus[0]]
+        cutMap = selections[mode][analysis][nTaus[0]]
         cutlist = []
         cutlist += [cutMap[cutName].format(sign='pp',mass=mass) for cutName in cuts if cutName in cutMap]
         cutlist += ['!({0})'.format(cutMap[cutName].format(sign='pp',mass=mass)) for cutName in invcuts if cutName in cutMap]
@@ -510,20 +553,20 @@ def getOldSelections(analysis,mass,nTaus=[0,0],cuts=['st','zveto','met','dr','ma
         cutlist = []
         for cut in cuts:
             if cut in ['st','zveto','met']:
-                cutMap = selections_old[analysis][max(nTaus)]
+                cutMap = selections[mode][analysis][max(nTaus)]
                 if cut in cutMap: cutlist += [cutMap[cut].format(mass=mass)]
             else:
-                cutMapPP = selections_old[analysis][nTaus[0]]
-                cutMapMM = selections_old[analysis][nTaus[1]]
+                cutMapPP = selections[mode][analysis][nTaus[0]]
+                cutMapMM = selections[mode][analysis][nTaus[1]]
                 if cut in cutMapPP: cutlist += [cutMapPP[cut].format(sign='pp',mass=mass)]
                 if cut in cutMapMM: cutlist += [cutMapMM[cut].format(sign='mm',mass=mass)]
         for cut in invcuts:
             if cut in ['st','zveto','met']:
-                cutMap = selections_old[analysis][max(nTaus)]
+                cutMap = selections[mode][analysis][max(nTaus)]
                 if cut in cutMap: cutlist += ['!({0})'.format(cutMap[cut].format(mass=mass))]
             else:
-                cutMapPP = selections_old[analysis][nTaus[0]]
-                cutMapMM = selections_old[analysis][nTaus[1]]
+                cutMapPP = selections[mode][analysis][nTaus[0]]
+                cutMapMM = selections[mode][analysis][nTaus[1]]
                 if cut in cutMapPP and cut in cutMapMM: cutlist += ['!({0} && {1})'.format(cutMapPP[cut].format(sign='pp',mass=mass),cutMapMM[cut].format(sign='mm',mass=mass))]
         selString = ' && '.join(cutlist)
     return selString

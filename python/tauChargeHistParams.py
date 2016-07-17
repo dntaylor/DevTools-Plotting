@@ -39,8 +39,8 @@ def buildTauCharge(selectionParams,sampleSelectionParams,projectionParams,sample
     selectionParams['TauCharge'] = {
         'OS'       : {'args': [chargeOS],                   'kwargs': {'mcscalefactor': chargeScaleFactor}},
         'SS'       : {'args': [chargeSS],                   'kwargs': {'mcscalefactor': chargeScaleFactor}},
-        'OS/mtCut' : {'args': [chargeOS + ' && wm_mt>60.'], 'kwargs': {'mcscalefactor': chargeScaleFactor}},
-        'SS/mtCut' : {'args': [chargeSS + ' && wm_mt>60.'], 'kwargs': {'mcscalefactor': chargeScaleFactor}},
+        'OS/mtCut' : {'args': [chargeOS + ' && wm_mt<40.'], 'kwargs': {'mcscalefactor': chargeScaleFactor}},
+        'SS/mtCut' : {'args': [chargeSS + ' && wm_mt<40.'], 'kwargs': {'mcscalefactor': chargeScaleFactor}},
     }
     
     channelMap = {
@@ -50,4 +50,29 @@ def buildTauCharge(selectionParams,sampleSelectionParams,projectionParams,sample
     for chan in channelMap:
         projectionParams['TauCharge'][chan] = channelMap[chan]
     histParams['TauCharge'].update(addChannels(deepcopy(histParams['TauCharge']),'channel',len(channelMap)))
+
+    # special selections for samples
+    # DY-10 0, 1, 2 bins (0 includes 3+)
+    # DY-50 0, 1, 2, 3, 4 bins (0 includes 5+)
+    sampleCuts = {
+        #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8' : '(numGenJets==0 || numGenJets>2)',
+        #'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': 'numGenJets==1',
+        #'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': 'numGenJets==2',
+        'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'      : '(numGenJets==0 || numGenJets>4)',
+        'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==1',
+        'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==2',
+        'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==3',
+        'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==4',
+        'WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'           : '(numGenJets==0 || numGenJets>4)',
+        'W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          : 'numGenJets==1',
+        'W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          : 'numGenJets==2',
+        'W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          : 'numGenJets==3',
+        'W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          : 'numGenJets==4',
+    }
+    sampleSelectionParams['TauCharge'] = {}
+    for sample,cut in sampleCuts.iteritems():
+        sampleSelectionParams['TauCharge'][sample] = deepcopy(selectionParams['TauCharge'])
+        for sel in selectionParams['TauCharge'].keys():
+            sampleSelectionParams['TauCharge'][sample][sel]['args'][0] += ' && {0}'.format(cut)
+
 
