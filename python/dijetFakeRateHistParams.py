@@ -13,10 +13,7 @@ def buildDijetFakeRate(selectionParams,sampleSelectionParams,projectionParams,sa
 
     histParams['DijetFakeRate'] = {
         'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
-        'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
-        'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
         'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
-        'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
         'pt'                          : {'xVariable': 'l1_pt',                          'xBinning': [2000,0,2000],           },
         'eta'                         : {'xVariable': 'l1_eta',                         'xBinning': [600,-3.,3.],            },
         'wMass'                       : {'xVariable': 'w_mt',                           'xBinning': [500, 0, 500],           },

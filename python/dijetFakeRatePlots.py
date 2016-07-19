@@ -27,31 +27,22 @@ sigMap = {
              'WWToLNuQQ_13TeV-powheg',
             ],
     'W'   : [
-             #'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-             'WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             #'WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
     'Z'   : [
-             #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-             'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             #'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-             #'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-             #'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-             'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
     'TT'  : [
              'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
@@ -201,7 +192,7 @@ dijetFakeRatePlotter.addHistogram('MC',allSamplesDict['MC'])
 dijetFakeRatePlotter.addHistogram('data',sigMap['data'],style={'linecolor':ROOT.kBlack,'name':'EWK Corrected'})
 dijetFakeRatePlotter.addHistogram('data_uncorrected',sigMap['data'],style={'linecolor':ROOT.kRed,'name':'Uncorrected'})
 
-ptbins = [0,10,15,20,25,30,40,50,60,100]#,200,1000]
+ptbins = [0,10,15,20,25,30,50,100]#,200,1000]
 etabins = [-2.5,-2.0,-1.479,-1.0,-0.5,0.,0.5,1.0,1.479,2.0,2.5]
 
 medium_cust = {

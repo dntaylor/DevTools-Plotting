@@ -65,7 +65,7 @@ latestNtuples['76X'] = {
 latestNtuples['80X'] = {
     'Charge'         : '2016-07-16_ChargeAnalysis_80X_v1-merge',
     'DY'             : '2016-07-16_DYAnalysis_80X_v2-merge',
-    'DijetFakeRate'  : '2016-07-10_DijetFakeRateAnalysis_80X_v1-merge',
+    'DijetFakeRate'  : '2016-07-18_DijetFakeRateAnalysis_80X_v2-merge',
     'Hpp3l'          : '2016-07-16_Hpp3lAnalysis_80X_v1-merge',
     'Hpp4l'          : '2016-07-16_Hpp4lAnalysis_80X_v1-merge',
     'Electron'       : '2016-06-25_ElectronAnalysis_80X_v1-merge',
@@ -74,6 +74,7 @@ latestNtuples['80X'] = {
     'TauCharge'      : '2016-07-16_TauChargeAnalysis_80X_v1-merge',
     'WTauFakeRate'   : '2016-07-10_WTauFakeRateAnalysis_80X_v1-merge',
     'WFakeRate'      : '2016-07-10_WFakeRateAnalysis_80X_v1-merge',
+    'ZFakeRate'      : '2016-07-18_ZFakeRateAnalysis_80X_v2-merge',
     'WZ'             : '2016-06-30_WZAnalysis_80X_v2-merge',
     'ZZ'             : '2016-07-13_ZZAnalysis_80X_v1-merge',
 }
@@ -105,6 +106,7 @@ treeMap = {
     'TauCharge'      : 'TauChargeTree',
     'WTauFakeRate'   : 'WTauFakeRateTree',
     'WFakeRate'      : 'WFakeRateTree',
+    'ZFakeRate'      : 'ZFakeRateTree',
     'WZ'             : 'WZTree',
     'ZZ'             : 'ZZTree',
 }

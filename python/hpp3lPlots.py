@@ -146,7 +146,7 @@ def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postf
 ########################
 plots = {
     # hpp
-    'hppMass'               : {'xaxis': 'm_{l^{#pm}l^{#pm}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 10, 'logy': True},
+    'hppMass'               : {'xaxis': 'm_{l^{#pm}l^{#pm}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 10, 'logy': True, 'rangex': [0,800]},
     #'hppMt'                 : {'xaxis': 'm_{T}^{l^{#pm}l^{#pm}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': True},
     'hppPt'                 : {'xaxis': 'p_{T}^{l^{#pm}l^{#pm}} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': 10},
     'hppDeltaR'             : {'xaxis': '#DeltaR(l^{#pm}l^{#pm})', 'yaxis': 'Events', 'rebin': 25},
@@ -171,7 +171,7 @@ plots = {
 }
 
 blind_cust = {
-    'hppMass': {'blinder': [200,1600], 'rangex': [0,800],},
+    'hppMass': {'blinder': [100,1600], 'rangex': [0,800],},
 }
 
 lowmass_cust = {
