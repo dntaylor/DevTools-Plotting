@@ -19,51 +19,54 @@ from hpp4lHistParams import buildHpp4l
 from hpp3lHistParams import buildHpp3l
 
 
-#############
-### hists ###
-#############
-histParams = {}
-sampleHistParams = {}
+def buildHistParams(analysis,**kwargs):
+    #############
+    ### hists ###
+    #############
+    histParams = {}
+    sampleHistParams = {}
+    
+    ###################
+    ### Projections ###
+    ###################
+    projectionParams = {
+        'common' : {
+            'all' : [], # empty list defaults to sum all channels
+        },
+    }
+    sampleProjectionParams = {}
+    
+    ##################
+    ### selections ###
+    ##################
+    selectionParams = {}
+    sampleSelectionParams = {}
+    
+    ############################
+    ### Build all parameters ###
+    ############################
+    if analysis=='Electron':      buildElectron(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='Muon':          buildMuon(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='Tau':           buildTau(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='WTauFakeRate':  buildWTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='WFakeRate':     buildWFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='DijetFakeRate': buildDijetFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='TauCharge':     buildTauCharge(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='Charge':        buildCharge(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='DY':            buildDY(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='WZ':            buildWZ(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='ZZ':            buildZZ(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='Hpp4l':         buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams,**kwargs)
+    if analysis=='Hpp3l':         buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams,**kwargs)
 
-###################
-### Projections ###
-###################
-projectionParams = {
-    'common' : {
-        'all' : [], # empty list defaults to sum all channels
-    },
-}
-sampleProjectionParams = {}
-
-##################
-### selections ###
-##################
-selectionParams = {}
-sampleSelectionParams = {}
-
-############################
-### Build all parameters ###
-############################
-buildElectron(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
-buildMuon(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
-buildTau(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
-buildWTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
-buildWFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
-buildDijetFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
-buildTauCharge(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
-buildCharge(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
-buildDY(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
-buildWZ(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
-buildZZ(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
-buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
-buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
-
+    return selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams
 
 
 #############################
 ### functions to retrieve ###
 #############################
-def getHistParams(analysis,sample=''):
+def getHistParams(analysis,sample='',**kwargs):
+    selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams = buildHistParams(analysis,**kwargs)
     params = {}
     if analysis in histParams:
         params.update(histParams[analysis])
@@ -72,7 +75,8 @@ def getHistParams(analysis,sample=''):
             params.update(sampleHistParams[analysis][sample])
     return params
 
-def getHistSelections(analysis,sample=''):
+def getHistSelections(analysis,sample='',**kwargs):
+    selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams = buildHistParams(analysis,**kwargs)
     params = {}
     if analysis in selectionParams:
         params.update(selectionParams[analysis])
@@ -81,7 +85,8 @@ def getHistSelections(analysis,sample=''):
             params.update(sampleSelectionParams[analysis][sample])
     return params
 
-def getProjectionParams(analysis,sample=''):
+def getProjectionParams(analysis,sample='',**kwargs):
+    selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams = buildHistParams(analysis,**kwargs)
     params = deepcopy(projectionParams['common'])
     if analysis in projectionParams:
         params.update(projectionParams[analysis])
