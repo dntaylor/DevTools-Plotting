@@ -75,7 +75,7 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
     histParams['Hpp3l'].update(addChannels(deepcopy(histParams['Hpp3l']),'channel',len(allChans)))
     
     leps = ['hpp1','hpp2','hm1']
-    hpp4lBaseScaleFactor = '*'.join(['genWeight','pileupWeight','triggerEfficiency'])
+    hpp3lBaseScaleFactor = '*'.join(['genWeight','pileupWeight','triggerEfficiency'])
     if shift=='trigUp': hpp4lBaseScaleFactor = '*'.join(['genWeight','pileupWeight','triggerEfficiencyUp'])
     if shift=='trigDown': hpp4lBaseScaleFactor = '*'.join(['genWeight','pileupWeight','triggerEfficiencyDown'])
     if shift=='puUp': hpp4lBaseScaleFactor = '*'.join(['genWeight','pileupWeightUp','triggerEfficiency'])
