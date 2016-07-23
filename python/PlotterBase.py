@@ -76,7 +76,7 @@ class PlotterBase(object):
             legend.AddEntry(*entryArg)
         return legend
 
-    def _setStyle(self,pad,position=11,preliminary=True):
+    def _setStyle(self,pad,position=11,preliminary=True,personal=False):
         '''Set style for plots based on the CMS TDR style guidelines.
            https://twiki.cern.ch/twiki/bin/view/CMS/Internal/PubGuidelines#Figures_and_tables
            https://ghm.web.cern.ch/ghm/plots/'''
@@ -86,8 +86,9 @@ class PlotterBase(object):
         period_int = 4
         # set position
         # 11: upper left, 33 upper right
-        CMS_lumi.wrtieExtraText = preliminary
-        CMS_lumi.extraText = "Preliminary"
+        CMS_lumi.cmsText = 'CMS' if not personal else 'Devin N. Taylor'
+        CMS_lumi.writeExtraText = preliminary if not personal else True
+        CMS_lumi.extraText = "Preliminary" if not personal else 'Analysis in Progress'
         CMS_lumi.lumi_13TeV = "%0.1f fb^{-1}" % (float(getLumi())/1000.)
         if getLumi < 1000:
             CMS_lumi.lumi_13TeV = "%0.1f pb^{-1}" % (float(getLumi))

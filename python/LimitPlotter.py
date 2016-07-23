@@ -8,6 +8,7 @@ from collections import OrderedDict
 import ROOT
 
 from DevTools.Plotter.PlotterBase import PlotterBase
+from DevTools.Plotter.xsec import xsecs
 from DevTools.Plotter.utilities import python_mkdir, getLumi
 from DevTools.Plotter.style import getStyle
 import DevTools.Plotter.CMS_lumi as CMS_lumi
@@ -164,6 +165,130 @@ class LimitPlotter(PlotterBase):
 
         return [l2,l1,x,h1,h2,dx]
 
+    def plotCrossSectionLimit(self,xvals,apfns,ppfns,savename,**kwargs):
+        '''Plot limits'''
+        xaxis = kwargs.pop('xaxis','')
+        yaxis = kwargs.pop('yaxis','')
+        blind = kwargs.pop('blind',True)
+        lumipos = kwargs.pop('lumipos',0)
+        isprelim = kwargs.pop('isprelim',True)
+        legendpos = kwargs.pop('legendpos',34)
+        numcol = kwargs.pop('numcol',2)
+
+        logging.info('Plotting {0}'.format(savename))
+
+        canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
+        canvas.SetLogy(1)
+        canvas.Divide(1,2)
+
+        limits = {}
+        limits['AP'] = self._readLimits(xvals,apfns)
+        limits['PP'] = self._readLimits(xvals,ppfns)
+        if not limits['AP'] or not limits['PP']: return
+
+
+
+
+        # get cross sections
+        n = len(xvals)
+        xsecMap = {'AP':{},'PP':{}}
+        xsecGraph = {'AP':ROOT.TGraph(n),'PP':ROOT.TGraph(n)}
+        for i,mass in enumerate(xvals):
+            sample_4l = 'HPlusPlusHMinusMinusHTo4L_M-{0}_TuneCUETP8M1_13TeV_pythia8'
+            sample_3l = 'HPlusPlusHMinusHTo3L_M-{0}_TuneCUETP8M1_13TeV_calchep-pythia8'
+            xsecMap['PP'][mass] = xsecs[sample_4l.format(mass)]
+            xsecMap['AP'][mass] = xsecs[sample_3l.format(mass)]
+            xsecGraph['AP'].SetPoint(i,mass,xsecMap['AP'][mass])
+            xsecGraph['PP'].SetPoint(i,mass,xsecMap['PP'][mass])
+        for prod in ['AP','PP']:
+            xsecGraph[prod].SetMarkerStyle(0)
+            xsecGraph[prod].SetFillStyle(0)
+            xsecGraph[prod].SetLineColor(ROOT.kBlue if prod=='AP' else ROOT.kRed)
+            xsecGraph[prod].GetXaxis().SetLimits(xvals[0],xvals[-1])
+            xsecGraph[prod].GetYaxis().SetTitleOffset(1.)
+            xsecGraph[prod].GetYaxis().SetTitleSize(0.06)
+        xsecGraph['AP'].GetXaxis().SetTitle('#Phi^{++} Mass (GeV)')
+        xsecGraph['PP'].GetXaxis().SetTitle('#Phi^{++} Mass (GeV)')
+        xsecGraph['AP'].GetYaxis().SetTitle('#sigma #upoint BR (pb)')
+        xsecGraph['PP'].GetYaxis().SetTitle('#sigma #upoint BR^{2} (pb)')
+
+        # AP/PP limits
+        twoSigma = {}
+        oneSigma = {}
+        expected = {}
+        observed = {}
+        pad = {}
+        for p,prod in enumerate(['AP','PP']):
+            #pad[prod] = ROOT.TPad(prod, prod, 0.0, 0.5 if prod=='AP' else 0.0, 1.0, 1.0 if prod=='AP' else 0.5)
+            pad[prod] = canvas.cd(p+1)
+            pad[prod].SetLeftMargin(0.12)
+            pad[prod].SetRightMargin(0.00)
+            if prod=='AP': pad[prod].SetTopMargin(0.08)
+            if prod=='PP': pad[prod].SetBottomMargin(0.12)
+            pad[prod].SetTickx(1)
+            pad[prod].SetTicky(1)
+            pad[prod].SetLogy(1)
+            pad[prod].Draw()
+
+            twoSigma[prod] = ROOT.TGraph(2*n)
+            oneSigma[prod] = ROOT.TGraph(2*n)
+            expected[prod] = ROOT.TGraph(n)
+            observed[prod] = ROOT.TGraph(n)
+
+            for i in range(len(xvals)):
+                twoSigma[prod].SetPoint(i,      xvals[i],     limits[prod][xvals[i]][0]    *xsecMap[prod][xvals[i]]) # 0.025
+                oneSigma[prod].SetPoint(i,      xvals[i],     limits[prod][xvals[i]][1]    *xsecMap[prod][xvals[i]]) # 0.16
+                expected[prod].SetPoint(i,      xvals[i],     limits[prod][xvals[i]][2]    *xsecMap[prod][xvals[i]]) # 0.5
+                oneSigma[prod].SetPoint(n+i,    xvals[n-i-1], limits[prod][xvals[n-i-1]][3]*xsecMap[prod][xvals[n-i-1]]) # 0.84
+                twoSigma[prod].SetPoint(n+i,    xvals[n-i-1], limits[prod][xvals[n-i-1]][4]*xsecMap[prod][xvals[n-i-1]]) # 0.975
+                observed[prod].SetPoint(i,      xvals[i],     limits[prod][xvals[i]][5]    *xsecMap[prod][xvals[i]]) # obs
+
+            twoSigma[prod].SetFillColor(ROOT.kYellow)
+            twoSigma[prod].SetLineColor(ROOT.kYellow)
+            twoSigma[prod].SetMarkerStyle(0)
+            oneSigma[prod].SetFillColor(ROOT.kSpring)
+            oneSigma[prod].SetLineColor(ROOT.kSpring)
+            oneSigma[prod].SetMarkerStyle(0)
+            expected[prod].SetLineStyle(7)
+            expected[prod].SetMarkerStyle(0)
+            expected[prod].SetFillStyle(0)
+            observed[prod].SetMarkerStyle(0)
+            observed[prod].SetFillStyle(0)
+
+            expected[prod].GetXaxis().SetLimits(xvals[0],xvals[-1])
+            expected[prod].GetXaxis().SetTitle(xaxis)
+            expected[prod].GetYaxis().SetTitle(yaxis)
+
+            xsecGraph[prod].Draw()
+            twoSigma[prod].Draw('f')
+            oneSigma[prod].Draw('f')
+            expected[prod].Draw('same')
+            xsecGraph[prod].Draw('same')
+            ROOT.gPad.RedrawAxis()
+            if not blind: observed[prod].Draw('same')
+
+            #canvas.cd()
+
+        canvas.cd()
+        # get the legend
+        entries = [
+            #[expected['AP'],'Expected','l'],
+            #[twoSigma['AP'],'Expected 2#sigma','F'],
+            #[oneSigma['AP'],'Expected 1#sigma','F'],
+            [xsecGraph['AP'],'#splitline{Assoc. Prod.}{Cross Section}','l'],
+            [xsecGraph['PP'],'#splitline{Pair Prod.}{Cross Section}','l'],
+        ]
+        #if not blind: entries = [[observed['AP'],'Observed','l']] + entries
+        legend = self._getLegend(entries=entries,numcol=numcol,position=legendpos)
+        legend.Draw()
+
+        # cms lumi styling
+        self._setStyle(canvas,position=lumipos,preliminary=isprelim)
+
+        self._save(canvas,savename)
+
+
+
     def moneyPlot(self,limvals,savename,**kwargs):
         xaxis = kwargs.pop('xaxis','Excluded Masses (GeV)')
         yaxis = kwargs.pop('yaxis','')
@@ -175,14 +300,14 @@ class LimitPlotter(PlotterBase):
 
         logging.info('Plotting {0}'.format(savename))
 
-        canvas = ROOT.TCanvas(savename,savename,50,50,800,600)
+        canvas = ROOT.TCanvas(savename,savename,50,50,800,900)
         canvas.SetFillColor(0)
         canvas.SetBorderMode(0)
         canvas.SetFrameFillStyle(0)
         canvas.SetFrameBorderMode(0)
         canvas.SetLeftMargin(0.22)
         canvas.SetRightMargin(0.04)
-        canvas.SetTopMargin(0.08)
+        canvas.SetTopMargin(0.05)
         canvas.SetBottomMargin(0.12)
 
         labels = OrderedDict()
@@ -198,51 +323,52 @@ class LimitPlotter(PlotterBase):
         labels['BP4']   = 'Benchmark 4'
 
         colors = {
-            'Combined' : {
+            'HppComb' : {
                 1: ROOT.kSpring,
                 2: ROOT.kYellow,
             },
-            'AP' : {
+            'HppAP' : {
                 1: ROOT.TColor.GetColor('#FF6633'),
                 2: ROOT.TColor.GetColor('#FFCC33'),
             },
-            'PP' : {
+            'HppPP' : {
                 1: ROOT.TColor.GetColor('#3399FF'),
                 2: ROOT.TColor.GetColor('#33FFFF'),
             },
         }
 
         prodLabels = {
-            'AP' : 'Assoc. Prod.',
-            'PP' : 'Pair Prod.',
-            'Combined': 'Combined',
+            'HppAP'  : 'Assoc. Prod.',
+            'HppPP'  : 'Pair Prod.',
+            'HppComb': 'Combined',
         }
 
         nl = len(labels)
-        h = ROOT.TH2F("h", "h; {0}; ".format(xaxis), 1,0,1500,nl+2,0.5,nl+2.5)
-        h.GetYaxis().SetRangeUser(2,nl+1)
+        h = ROOT.TH2F("h", "h; {0}; ".format(xaxis), 1,0,1700,2*nl+4,0.5,nl+2.5)
+        h.GetYaxis().SetRangeUser(1.,nl+2.)
+        h.GetYaxis().SetTickSize(0)
         h.Draw()
 
-        cur = len(labels)*3. + 8
+        cur = len(labels)*4. + 10
         errors_one = {}
         errors_two = {}
         expected = {}
         observed = {}
         for i,mode in enumerate(labels):
-            h.GetYaxis().SetBinLabel(nl+1-i,labels[mode])
-            cur -= 3
+            h.GetYaxis().SetBinLabel(2*nl+2-2*i,labels[mode])
+            cur -= 4
             errors_one[mode] = {}
             errors_two[mode] = {}
             expected[mode] = {}
             observed[mode] = {}
             sub = 0
-            for prod in ['AP','PP']:
+            for prod in ['HppAP','HppPP','HppComb']:
                 sub += 1
                 l2, l1, exp, h1, h2, obs = limvals[mode][prod]
-                errors_one[mode][prod] = ROOT.TGraphAsymmErrors(1,array('d',[exp]),array('d',[(cur-sub)/3]),array('d',[exp-l1]),array('d',[h1-exp]),array('d',[0.5/3]),array('d',[0.5/3]))
-                errors_two[mode][prod] = ROOT.TGraphAsymmErrors(1,array('d',[exp]),array('d',[(cur-sub)/3]),array('d',[exp-l2]),array('d',[h2-exp]),array('d',[0.5/3]),array('d',[0.5/3]))
-                expected[mode][prod]   = ROOT.TGraphAsymmErrors(1,array('d',[exp]),array('d',[(cur-sub)/3]),array('d',[0.]),array('d',[0.]),array('d',[0.5/3]),array('d',[0.5/3]))
-                observed[mode][prod]   = ROOT.TGraph(1,array('d',[exp if blind else obs]),array('d',[(cur-sub)/3]))
+                errors_one[mode][prod] = ROOT.TGraphAsymmErrors(1,array('d',[exp]),array('d',[(cur-sub)/4]),array('d',[exp-l1]),array('d',[h1-exp]),array('d',[0.5/4]),array('d',[0.5/4]))
+                errors_two[mode][prod] = ROOT.TGraphAsymmErrors(1,array('d',[exp]),array('d',[(cur-sub)/4]),array('d',[exp-l2]),array('d',[h2-exp]),array('d',[0.5/4]),array('d',[0.5/4]))
+                expected[mode][prod]   = ROOT.TGraphAsymmErrors(1,array('d',[exp]),array('d',[(cur-sub)/4]),array('d',[0.]),array('d',[0.]),array('d',[0.5/4]),array('d',[0.5/4]))
+                observed[mode][prod]   = ROOT.TGraph(1,array('d',[exp if blind else obs]),array('d',[(cur-sub)/4]))
                 errors_one[mode][prod].SetFillColor(colors[prod][1])
                 errors_two[mode][prod].SetFillColor(colors[prod][2])
                 errors_two[mode][prod].Draw('2')
@@ -258,9 +384,9 @@ class LimitPlotter(PlotterBase):
         latex = ROOT.TLatex()
         latex.SetTextFont(42)
         latex.SetTextColor(ROOT.kBlack)
-        latex.SetTextSize(0.08)
+        latex.SetTextSize(0.14)
         
-        legend = ROOT.TPad('legend','legend',0.65,0.5,0.95,0.85)
+        legend = ROOT.TPad('legend','legend',0.60,0.2,0.95,0.4)
         legend.SetTopMargin(0)
         legend.SetBottomMargin(0)
         legend.SetLeftMargin(0)
@@ -273,7 +399,7 @@ class LimitPlotter(PlotterBase):
         hl.Draw('AH')
 
         legendErrors = {}
-        for i,prod in enumerate(['AP','PP','Combined']):
+        for i,prod in enumerate(['HppAP','HppPP','HppComb']):
             legendErrors[prod] = {}
             legendErrors[prod]['two'] = ROOT.TGraphAsymmErrors(1,array('d',[0.]),array('d',[3.-i*2./3]),array('d',[1.0]),array('d',[1.0]),array('d',[0.5/2]),array('d',[0.5/2]))
             legendErrors[prod]['one'] = ROOT.TGraphAsymmErrors(1,array('d',[0.]),array('d',[3.-i*2./3]),array('d',[0.5]),array('d',[0.5]),array('d',[0.5/2]),array('d',[0.5/2]))
