@@ -37,12 +37,8 @@ def getLumi(version=getCMSSWVersion()):
         #return 2263 # december jamboree golden json
         return 2318 # moriond golden json
     else:
-        #return 221 # first golden json 80X
-        #return 589 # second golden json 80X
-        #return 804.2 # third golden json 80X
-        #return 2070 # fourth golden json 80X
-        #return 3997 # fifth golden json 80X
-        return 4336.100 # updated offline lumi 80X
+        #return 4336.100 # previous "frozen"
+        return 12918.141 # ichep dataset golden json
 
 
 latestNtuples = {}
