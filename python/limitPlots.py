@@ -2,7 +2,10 @@ import os
 import sys
 import logging
 from itertools import product, combinations_with_replacement
+import json
+import pickle
 
+from DevTools.Utilities.utilities import python_mkdir
 from DevTools.Plotter.LimitPlotter import LimitPlotter
 from copy import deepcopy
 import ROOT
@@ -21,16 +24,29 @@ filenames = {mode: {} for mode in modes}
 
 for analysis,prod in [('Hpp3l','AP'),('Hpp3l','PP'),('Hpp4l',''),('HppAP',''),('HppPP',''),('HppComb','')]:
     for mode in modes:
-        filenames[mode][analysis+prod] = ['asymptotic/{0}/{1}/{2}/limits{3}.txt'.format(analysis,mode,mass,prod) for mass in masses]
+        label = analysis+prod
+        filenames[mode][label] = ['asymptotic/{0}/{1}/{2}/limits{3}.txt'.format(analysis,mode,mass,prod) for mass in masses]
         kwargs = {
             'xaxis': '#Phi^{++} Mass (GeV)',
             'yaxis': '95% CLs Upper Limit on #sigma/#sigma_{model}',
         }
-        label = analysis+prod
-        limvals[mode][label] = limitPlotter.plotLimit(masses,filenames[mode][analysis+prod],'{0}{1}/{2}'.format(analysis,prod,mode),**kwargs)
+        limvals[mode][label] = limitPlotter.plotLimit(masses,filenames[mode][label],'{0}/{1}'.format(label,mode),**kwargs)
 
 for mode in modes:
     limitPlotter.plotCrossSectionLimit(masses,filenames[mode]['HppAP'],filenames[mode]['HppPP'],'HppComb/{0}_crossSection'.format(mode))
 
 limitPlotter.moneyPlot(limvals,'moneyPlot')
 
+def dumpResults(results,analysis,name):
+    jfile = 'jsons/{0}/{1}.json'.format(analysis,name)
+    pfile = 'pickles/{0}/{1}.pkl'.format(analysis,name)
+    python_mkdir(os.path.dirname(jfile))
+    python_mkdir(os.path.dirname(pfile))
+    with open(jfile,'w') as f:
+        f.write(json.dumps(results, indent=4, sort_keys=True))
+    with open(pfile,'wb') as f:
+        pickle.dump(results,f)
+
+
+# save the limvals to a json file
+dumpResults(limvals,'Limits','values')

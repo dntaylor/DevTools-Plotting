@@ -29,6 +29,8 @@ def flatten(analysis,sample,**kwargs):
     histSelections = kwargs.pop('histSelections',{})
     inputFileList = kwargs.pop('inputFileList','')
     outputFile = kwargs.pop('outputFile','')
+    shift = kwargs.pop('shift','')
+    countOnly = kwargs.pop('countOnly',False)
     if hasProgress:
         pbar = kwargs.pop('progressbar',ProgressBar(widgets=['{0}: '.format(sample),' ',SimpleProgress(),' histograms ',Percentage(),' ',Bar(),' ',ETA()]))
     else:
@@ -37,9 +39,9 @@ def flatten(analysis,sample,**kwargs):
     if outputFile:
         flat = outputFile
         proj = outputFile.replace('.root','_projection.root')
-        flattener = FlattenTree(analysis,sample,inputFileList=inputFileList,flat=flat,proj=proj)
+        flattener = FlattenTree(analysis,sample,inputFileList=inputFileList,flat=flat,proj=proj,shift=shift,countOnly=countOnly)
     else:
-        flattener = FlattenTree(analysis,sample,inputFileList=inputFileList)
+        flattener = FlattenTree(analysis,sample,inputFileList=inputFileList,shift=shift,countOnly=countOnly)
 
     for histName, params in histParams.iteritems():
         flattener.addHistogram(histName,**params)
@@ -57,8 +59,8 @@ def getSampleDirectories(analysis,sampleList):
             directories += [d]
     return directories
 
-def getSelectedHistParams(analysis,hists,sample):
-    allHistParams = getHistParams(analysis,sample)
+def getSelectedHistParams(analysis,hists,sample,**kwargs):
+    allHistParams = getHistParams(analysis,sample,**kwargs)
     params = {}
     params.update(allHistParams)
     if 'all' in hists: return params
@@ -67,16 +69,16 @@ def getSelectedHistParams(analysis,hists,sample):
         if h in allHistParams: selectedHistParams[h] = allHistParams[h]
     return selectedHistParams
 
-def getSelectedHistSelections(analysis,sels,sample):
-    allHistSelections = getHistSelections(analysis,sample)
+def getSelectedHistSelections(analysis,sels,sample,**kwargs):
+    allHistSelections = getHistSelections(analysis,sample,**kwargs)
     if 'all' in sels: return allHistSelections
     selectedHistSelections = {}
     for s in sels:
         if s in allHistSelections: selectedHistSelections[s] = allHistSelections[s]
     return selectedHistSelections
 
-def getSelectedProjections(analysis,projs,sample):
-    allProjections = getProjectionParams(analysis,sample)
+def getSelectedProjections(analysis,projs,sample,**kwargs):
+    allProjections = getProjectionParams(analysis,sample,**kwargs)
     if 'all' in projs: return allProjections
     selectedProjections = {}
     for p in projs:
@@ -91,7 +93,9 @@ def parse_command_line(argv):
     parser.add_argument('--hists', nargs='+', type=str, default=['all'], help='Histograms to flatten.')
     parser.add_argument('--selections', nargs='+', type=str, default=['all'], help='Selections to flatten.')
     parser.add_argument('--channels', nargs='+', type=str, default=['all'], help='Channels to project.')
+    parser.add_argument('--shift', type=str, default='', help='Shift to apply to scale factors')
     parser.add_argument('--skipProjection', action='store_true', help='Skip projecting')
+    parser.add_argument('--countOnly', action='store_true', help='Only do counts, no distributions')
     parser.add_argument('-j',type=int,default=1,help='Number of cores to use')
 
     return parser.parse_args(argv)
@@ -119,34 +123,38 @@ def main(argv=None):
         logging.info('Will flatten {0} samples'.format(len(directories)))
 
     if grid:
-        histParams = getSelectedHistParams(args.analysis,args.hists,sample)
-        histSelections = getSelectedHistSelections(args.analysis,args.selections,sample)
+        histParams = getSelectedHistParams(args.analysis,args.hists,sample,shift=args.shift,countOnly=args.countOnly)
+        histSelections = getSelectedHistSelections(args.analysis,args.selections,sample,shift=args.shift,countOnly=args.countOnly)
         flatten(args.analysis,
                 sample,
                 histParams=histParams,
                 histSelections=histSelections,
                 #inputFileList=inputFileList,
                 outputFile=outputFile,
+                shift=args.shift,
+                countOnly=args.countOnly,
                 )
     elif args.j>1 and hasProgress:
         multi = MultiProgress(args.j)
         for directory in directories:
             sample = directory.split('/')[-1]
             if sample.endswith('.root'): sample = sample[:-5]
-            histParams = getSelectedHistParams(args.analysis,args.hists,sample)
-            histSelections = getSelectedHistSelections(args.analysis,args.selections,sample)
-            multi.addJob(sample,flatten,args=(args.analysis,sample,),kwargs={'histParams':histParams,'histSelections':histSelections})
+            histParams = getSelectedHistParams(args.analysis,args.hists,sample,shift=args.shift,countOnly=args.countOnly)
+            histSelections = getSelectedHistSelections(args.analysis,args.selections,sample,shift=args.shift,countOnly=args.countOnly)
+            multi.addJob(sample,flatten,args=(args.analysis,sample,),kwargs={'histParams':histParams,'histSelections':histSelections,'shift':args.shift,'countOnly':args.countOnly,})
         multi.retrieve()
     else:
         for directory in directories:
             sample = directory.split('/')[-1]
             if sample.endswith('.root'): sample = sample[:-5]
-            histParams = getSelectedHistParams(args.analysis,args.hists,sample)
-            histSelections = getSelectedHistSelections(args.analysis,args.selections,sample)
+            histParams = getSelectedHistParams(args.analysis,args.hists,sample,shift=args.shift,countOnly=args.countOnly)
+            histSelections = getSelectedHistSelections(args.analysis,args.selections,sample,shift=args.shift,countOnly=args.countOnly)
             flatten(args.analysis,
                     sample,
                     histParams=histParams,
                     histSelections=histSelections,
+                    shift=args.shift,
+                    countOnly=args.countOnly,
                     )
 
     logging.info('Finished')

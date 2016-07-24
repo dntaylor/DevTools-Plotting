@@ -75,8 +75,8 @@ sigMap = {
             ],
 }
 
-samples = ['TT','TTV','Z','WW','WZ','VVV','ZZ']
-#samples = ['TT','Z']
+#samples = ['TT','TTV','Z','WW','WZ','VVV','ZZ']
+samples = ['TT','Z']
 
 for s in samples:
     dyPlotter.addHistogramToStack(s,sigMap[s])
@@ -94,7 +94,6 @@ dyPlotter.plotCounts(countVars,countLabels,savename,numcol=2)
 plots = {
     # z cand
     'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 2 GeV', 'rebin': 20, 'rangex': [0,200], 'logy':1},
-    'mllMinusMZ'            : {'xaxis': '|m_{l^{+}l^{-}}-m_{Z}| (GeV)', 'yaxis': 'Events / 1 GeV', 'rebin': 10, 'rangex': [0,60]},
     'zPt'                   : {'xaxis': 'p_{T}^{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 50, 'rangex': [0,150]},
     'zDeltaR'               : {'xaxis': '#DeltaR(l^{+}l^{-})', 'yaxis': 'Events', 'rebin': 10},
     'zLeadingLeptonPt'      : {'xaxis': 'p_{T}^{Z_{lead}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 50, 'rangex': [0,150]},
@@ -104,6 +103,7 @@ plots = {
     'numVertices_noreweight': {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5, 'rangex': [0,200]},
     'metPhi'                : {'xaxis': '#phi_{E_{T}^{miss}}', 'yaxis': 'Events', 'rebin': 10, 'numcol': 3, 'legendpos': 34},
+    'nJets'                 : {'xaxis': 'Number of jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'rebin': 1},
 }
 
 # signal region
@@ -118,6 +118,11 @@ for plot in plots:
 # pileup plots
 
 pileup = {
+    'numVertices_60000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_61000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_62000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_63000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_64000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'numVertices_65000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'numVertices_66000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'numVertices_67000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
@@ -128,6 +133,12 @@ pileup = {
     'numVertices_72000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'numVertices_73000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'numVertices_74000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_75000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    #'numVertices_76000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    #'numVertices_77000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    #'numVertices_78000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    #'numVertices_79000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    #'numVertices_80000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'numVertices_noreweight': {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
 }
 

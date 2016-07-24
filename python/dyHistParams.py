@@ -15,6 +15,11 @@ def buildDY(selectionParams,sampleSelectionParams,projectionParams,sampleProject
         'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
         'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
         'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
+        'numVertices_60000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_60000/pileupWeight'},
+        'numVertices_61000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_61000/pileupWeight'},
+        'numVertices_62000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_62000/pileupWeight'},
+        'numVertices_63000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_63000/pileupWeight'},
+        'numVertices_64000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_64000/pileupWeight'},
         'numVertices_65000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_65000/pileupWeight'},
         'numVertices_66000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_66000/pileupWeight'},
         'numVertices_67000'           : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': 'pileupWeight_67000/pileupWeight'},
@@ -34,9 +39,7 @@ def buildDY(selectionParams,sampleSelectionParams,projectionParams,sampleProject
         'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
         'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
         'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [5000, 0, 500],          },
-        'mllMinusMZ'                  : {'xVariable': 'fabs(z_mass-{0})'.format(ZMASS), 'xBinning': [2000, 0, 200],          },
         'zPt'                         : {'xVariable': 'z_pt',                           'xBinning': [5000, 0, 500],          },
-        'zEta'                        : {'xVariable': 'z_eta',                          'xBinning': [1000, -5, 5],           },
         'zDeltaR'                     : {'xVariable': 'z_deltaR',                       'xBinning': [500, 0, 5],             },
         'zLeadingLeptonPt'            : {'xVariable': 'z1_pt',                          'xBinning': [10000, 0, 1000],        },
         'zLeadingLeptonEta'           : {'xVariable': 'z1_eta',                         'xBinning': [500, -2.5, 2.5],        },
@@ -54,9 +57,9 @@ def buildDY(selectionParams,sampleSelectionParams,projectionParams,sampleProject
     
     selectionParams['DY'] = {
         'default' : {'args': [dyBaseCut],              'kwargs': {'mcscalefactor': dyScaleFactor}},
-        'bbCut'   : {'args': [dyBaseCut+' && '+bbCut], 'kwargs': {'mcscalefactor': dyScaleFactor}},
-        'ebCut'   : {'args': [dyBaseCut+' && '+ebCut], 'kwargs': {'mcscalefactor': dyScaleFactor}},
-        'eeCut'   : {'args': [dyBaseCut+' && '+eeCut], 'kwargs': {'mcscalefactor': dyScaleFactor}},
+        #'bbCut'   : {'args': [dyBaseCut+' && '+bbCut], 'kwargs': {'mcscalefactor': dyScaleFactor}},
+        #'ebCut'   : {'args': [dyBaseCut+' && '+ebCut], 'kwargs': {'mcscalefactor': dyScaleFactor}},
+        #'eeCut'   : {'args': [dyBaseCut+' && '+eeCut], 'kwargs': {'mcscalefactor': dyScaleFactor}},
     }
     
     channels = ['ee','mm']

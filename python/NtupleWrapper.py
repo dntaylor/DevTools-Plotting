@@ -33,9 +33,9 @@ class NtupleWrapper(object):
         self.flat = kwargs.pop('flat','{0}/src/flat/{1}/{2}.root'.format(CMSSW_BASE,self.analysis,self.sample))
         self.proj = kwargs.pop('proj','{0}/src/projections/{1}/{2}.root'.format(CMSSW_BASE,self.analysis,self.sample))
         # get stuff needed to flatten
-        self.histParams = getHistParams(self.analysis,self.sample)
-        self.selections = getHistSelections(self.analysis,self.sample)
-        self.projections = getProjectionParams(self.analysis,self.sample)
+        self.histParams = getHistParams(self.analysis,self.sample,**kwargs)
+        self.selections = getHistSelections(self.analysis,self.sample,**kwargs)
+        self.projections = getProjectionParams(self.analysis,self.sample,**kwargs)
         self.infile = 0
         self.outfile = 0
         self.infile = 0
