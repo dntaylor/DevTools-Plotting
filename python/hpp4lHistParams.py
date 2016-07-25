@@ -18,14 +18,14 @@ def buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
     histParams['Hpp4l'] = {
         'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                }, # just a count of events passing selection
         'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],              },
-        'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
+        #'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
         'met'                         : {'xVariable': 'met_pt',                         'xBinning': [50, 0, 500],           },
         'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [50, -3.14159, 3.14159],},
         # h++
         'hppMass'                     : {'xVariable': 'hpp_mass',                       'xBinning': [160, 0, 1600],         },
         'hppMt'                       : {'xVariable': 'hppmet_mt',                      'xBinning': [160, 0, 1600],         },
         'hppPt'                       : {'xVariable': 'hpp_pt',                         'xBinning': [160, 0, 1600],         },
-        'hppEta'                      : {'xVariable': 'hpp_eta',                        'xBinning': [100, -5, 5],           },
+        #'hppEta'                      : {'xVariable': 'hpp_eta',                        'xBinning': [100, -5, 5],           },
         'hppDeltaR'                   : {'xVariable': 'hpp_deltaR',                     'xBinning': [50, 0, 5],             },
         'hppLeadingLeptonPt'          : {'xVariable': 'hpp1_pt',                        'xBinning': [100, 0, 1000],         },
         'hppLeadingLeptonEta'         : {'xVariable': 'hpp1_eta',                       'xBinning': [50, -2.5, 2.5],        },
@@ -35,7 +35,7 @@ def buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
         'hmmMass'                     : {'xVariable': 'hmm_mass',                       'xBinning': [160, 0, 1600],         },
         'hmmMt'                       : {'xVariable': 'hmmmet_mt',                      'xBinning': [160, 0, 1600],         },
         'hmmPt'                       : {'xVariable': 'hmm_pt',                         'xBinning': [160, 0, 1600],         },
-        'hmmEta'                      : {'xVariable': 'hmm_eta',                        'xBinning': [100, -5, 5],           },
+        #'hmmEta'                      : {'xVariable': 'hmm_eta',                        'xBinning': [100, -5, 5],           },
         'hmmDeltaR'                   : {'xVariable': 'hmm_deltaR',                     'xBinning': [50, 0, 5],             },
         'hmmLeadingLeptonPt'          : {'xVariable': 'hmm1_pt',                        'xBinning': [100, 0, 1000],         },
         'hmmLeadingLeptonEta'         : {'xVariable': 'hmm1_eta',                       'xBinning': [50, -2.5, 2.5],        },
@@ -45,12 +45,12 @@ def buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
         'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [50, 0, 500],            'selection': 'z_mass>0.',},
         'mllMinusMZ'                  : {'xVariable': 'fabs(z_mass-{0})'.format(ZMASS), 'xBinning': [5, 0, 100],             'selection': 'z_mass>0.',},
         'zPt'                         : {'xVariable': 'z_pt',                           'xBinning': [50, 0, 500],            'selection': 'z_mass>0.',},
-        'zEta'                        : {'xVariable': 'z_eta',                          'xBinning': [100, -5, 5],            'selection': 'z_mass>0.',},
+        #'zEta'                        : {'xVariable': 'z_eta',                          'xBinning': [100, -5, 5],            'selection': 'z_mass>0.',},
         'zDeltaR'                     : {'xVariable': 'z_deltaR',                       'xBinning': [50, 0, 5],              'selection': 'z_mass>0.',},
-        'zLeadingLeptonPt'            : {'xVariable': 'z1_pt',                          'xBinning': [100, 0, 1000],          'selection': 'z_mass>0.',},
-        'zLeadingLeptonEta'           : {'xVariable': 'z1_eta',                         'xBinning': [50, -2.5, 2.5],         'selection': 'z_mass>0.',},
-        'zSubLeadingLeptonPt'         : {'xVariable': 'z2_pt',                          'xBinning': [100, 0, 1000],          'selection': 'z_mass>0.',},
-        'zSubLeadingLeptonEta'        : {'xVariable': 'z2_eta',                         'xBinning': [50, -2.5, 2.5],         'selection': 'z_mass>0.',},
+        #'zLeadingLeptonPt'            : {'xVariable': 'z1_pt',                          'xBinning': [100, 0, 1000],          'selection': 'z_mass>0.',},
+        #'zLeadingLeptonEta'           : {'xVariable': 'z1_eta',                         'xBinning': [50, -2.5, 2.5],         'selection': 'z_mass>0.',},
+        #'zSubLeadingLeptonPt'         : {'xVariable': 'z2_pt',                          'xBinning': [100, 0, 1000],          'selection': 'z_mass>0.',},
+        #'zSubLeadingLeptonEta'        : {'xVariable': 'z2_eta',                         'xBinning': [50, -2.5, 2.5],         'selection': 'z_mass>0.',},
         # event
         'mass'                        : {'xVariable': '4l_mass',                        'xBinning': [200, 0, 2000],         },
         'st'                          : {'xVariable': 'hpp1_pt+hpp2_pt+hmm1_pt+hmm2_pt','xBinning': [200, 0, 2000],         },
@@ -168,6 +168,7 @@ def buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
                 selectionParams['Hpp4l']['new/allMassWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] = {'args': [hpp4lCutMap['PPPP'] + ' && ' + allMassWindow], 'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
     
     # fake regions via modes
+    #for nf in range(3): # limit to speed up
     for nf in range(5):
         name = '{0}P{1}F'.format(4-nf,nf)
         name_regular = '{0}P{1}F_regular'.format(4-nf,nf)

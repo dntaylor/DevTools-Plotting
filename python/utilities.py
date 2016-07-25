@@ -2,6 +2,7 @@
 import os
 import sys
 import hashlib
+import glob
 
 from DevTools.Utilities.utilities import python_mkdir, ZMASS, getCMSSWVersion
 
@@ -38,7 +39,7 @@ def getLumi(version=getCMSSWVersion()):
         return 2318 # moriond golden json
     else:
         #return 4336.100 # previous "frozen"
-        return 12918.141 # ichep dataset golden json
+        return 12892.762 # ichep dataset golden json
 
 
 latestNtuples = {}
@@ -60,10 +61,10 @@ latestNtuples['76X'] = {
 }
 latestNtuples['80X'] = {
     'Charge'         : '2016-07-24_ChargeAnalysis_80X_v1-merge',
-    'DY'             : '2016-07-23_DYAnalysis_80X_v1-merge',
+    'DY'             : '2016-07-24_DYAnalysis_80X_v1-merge',
     'DijetFakeRate'  : '2016-07-24_DijetFakeRateAnalysis_80X_v1-merge',
-    'Hpp3l'          : '2016-07-16_Hpp3lAnalysis_80X_v1-merge',
-    'Hpp4l'          : '2016-07-16_Hpp4lAnalysis_80X_v1-merge',
+    'Hpp3l'          : '2016-07-24_Hpp3lAnalysis_80X_v1-merge',
+    'Hpp4l'          : '2016-07-24_Hpp4lAnalysis_80X_v1-merge',
     'Electron'       : '2016-06-25_ElectronAnalysis_80X_v1-merge',
     'Muon'           : '2016-06-25_MuonAnalysis_80X_v1-merge',
     'Tau'            : '2016-07-06_TauAnalysis_80X_v1-merge',
@@ -86,6 +87,48 @@ def getNtupleDirectory(analysis,local=False,version=getCMSSWVersion()):
     baseDir = '/hdfs/store/user/dntaylor'
     if analysis in latestNtuples[version] and latestNtuples[version][analysis]:
         return os.path.join(baseDir,latestNtuples[version][analysis])
+
+latestHistograms = {}
+latestHistograms['80X'] = {}
+latestHistograms['80X']['Hpp3l'] = {
+    'lepUp'    : '2016-07-25_Hpp3lHistograms_lepUp_80X_v1',
+    'lepDown'  : '2016-07-25_Hpp3lHistograms_lepDown_80X_v1',
+    'trigUp'   : '2016-07-25_Hpp3lHistograms_trigUp_80X_v1',
+    'trigDown' : '2016-07-25_Hpp3lHistograms_trigDown_80X_v1',
+    'puUp'     : '2016-07-25_Hpp3lHistograms_puUp_80X_v1',
+    'puDown'   : '2016-07-25_Hpp3lHistograms_puDown_80X_v1',
+    'fakeUp'   : '2016-07-25_Hpp3lHistograms_fakeUp_80X_v1',
+    'fakeDown' : '2016-07-25_Hpp3lHistograms_fakeDown_80X_v1',
+}
+latestHistograms['80X']['Hpp4l'] = {
+    'lepUp'    : '2016-07-25_Hpp4lHistograms_lepUp_80X_v1',
+    'lepDown'  : '2016-07-25_Hpp4lHistograms_lepDown_80X_v1',
+    'trigUp'   : '2016-07-25_Hpp4lHistograms_trigUp_80X_v1',
+    'trigDown' : '2016-07-25_Hpp4lHistograms_trigDown_80X_v1',
+    'puUp'     : '2016-07-25_Hpp4lHistograms_puUp_80X_v1',
+    'puDown'   : '2016-07-25_Hpp4lHistograms_puDown_80X_v1',
+    'fakeUp'   : '2016-07-25_Hpp4lHistograms_fakeUp_80X_v1',
+    'fakeDown' : '2016-07-25_Hpp4lHistograms_fakeDown_80X_v1',
+}
+
+def getFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
+    flat = 'flat/{0}/{1}.root'.format(analysis,sample)
+    if shift in latestHistograms.get(version,{}).get(analysis,{}):
+        baseDir = '/hdfs/store/user/dntaylor'
+        flatpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],analysis)
+        for fname in glob.glob('{0}/*.root'.format(flatpath)):
+            if 'projection' not in fname: flat = fname
+    return flat
+        
+def getProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
+    proj = 'projection/{0}/{1}.root'.format(analysis,sample)
+    if shift in latestHistograms.get(version,{}).get(analysis,{}):
+        baseDir = '/hdfs/store/user/dntaylor'
+        projpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],analysis)
+        for fname in glob.glob('{0}/*.root'.format(projpath)):
+            if 'projection' in fname: proj = fname
+    return proj
+        
 
 treeMap = {
     ''               : 'Tree',

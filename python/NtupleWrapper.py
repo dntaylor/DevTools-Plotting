@@ -25,7 +25,7 @@ class NtupleWrapper(object):
         self.analysis = analysis
         self.sample = sample
         # backup passing custom parameters
-        self.ntuple = kwargs.pop('ntuple','{0}/src/ntuples/{1}/{2}.root'.format(CMSSW_BASE,self.analysis,self.sample))
+        #self.ntuple = kwargs.pop('ntuple','{0}/src/ntuples/{1}/{2}.root'.format(CMSSW_BASE,self.analysis,self.sample))
         self.ntupleDirectory = kwargs.pop('ntupleDirectory','{0}/{1}'.format(getNtupleDirectory(self.analysis),self.sample))
         self.inputFileList = kwargs.pop('inputFileList','')
         self.treeName = kwargs.pop('treeName',getTreeName(self.analysis))
@@ -65,10 +65,10 @@ class NtupleWrapper(object):
             with open(self.inputFileList,'r') as f:
                 for line in f.readlines():
                    allFiles += [line.strip()]
-        elif os.path.isfile(self.ntuple): # reading a single root file
-            allFiles = [self.ntuple]
         else: # reading from an input directory (all files in directory will be processed)
             allFiles = glob.glob('{0}/*.root'.format(self.ntupleDirectory))
+        #elif os.path.isfile(self.ntuple): # reading a single root file
+        #    allFiles = [self.ntuple]
         if len(allFiles)==0: logging.error('No files found for sample {0}'.format(self.sample))
         summedWeights = 0.
         for f in allFiles:
