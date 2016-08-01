@@ -12,7 +12,7 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 
 from DevTools.Plotter.xsec import getXsec
-from DevTools.Plotter.utilities import getLumi, isData, hashFile, hashString, python_mkdir, getTreeName, getNtupleDirectory
+from DevTools.Plotter.utilities import getLumi, isData, hashFile, hashString, python_mkdir, getTreeName, getNtupleDirectory, getFlatHistograms, getProjectionHistograms
 from DevTools.Plotter.histParams import getHistParams, getHistSelections, getProjectionParams
 
 CMSSW_BASE = os.environ['CMSSW_BASE']
@@ -24,14 +24,16 @@ class NtupleWrapper(object):
         # default to access via sample/analysis
         self.analysis = analysis
         self.sample = sample
+        self.shift = kwargs.pop('shift','')
+        logging.debug('Initializing {0} {1} {2}'.format(self.analysis,self.sample,self.shift))
         # backup passing custom parameters
         #self.ntuple = kwargs.pop('ntuple','{0}/src/ntuples/{1}/{2}.root'.format(CMSSW_BASE,self.analysis,self.sample))
         self.ntupleDirectory = kwargs.pop('ntupleDirectory','{0}/{1}'.format(getNtupleDirectory(self.analysis),self.sample))
         self.inputFileList = kwargs.pop('inputFileList','')
         self.treeName = kwargs.pop('treeName',getTreeName(self.analysis))
         #self.flat = kwargs.pop('flat','flat/{0}/{1}.root'.format(self.analysis,self.sample))
-        self.flat = kwargs.pop('flat','{0}/src/flat/{1}/{2}.root'.format(CMSSW_BASE,self.analysis,self.sample))
-        self.proj = kwargs.pop('proj','{0}/src/projections/{1}/{2}.root'.format(CMSSW_BASE,self.analysis,self.sample))
+        self.flat = kwargs.pop('flat',getFlatHistograms(self.analysis,self.sample,shift=self.shift))
+        self.proj = kwargs.pop('proj',getProjectionHistograms(self.analysis,self.sample,shift=self.shift))
         # get stuff needed to flatten
         self.histParams = getHistParams(self.analysis,self.sample,**kwargs)
         self.selections = getHistSelections(self.analysis,self.sample,**kwargs)
@@ -578,6 +580,7 @@ class NtupleWrapper(object):
         if histName not in self.histParams:
             logging.error('Unrecognized histogram {0}'.format(histName))
         params = self.histParams[histName]
+        if not params: return
         if selectionName not in self.selections:
             logging.error('Unrecognized selection {0}'.format(selectionName))
         selection = self.selections[selectionName]['args'][0]

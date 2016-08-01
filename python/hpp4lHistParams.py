@@ -169,6 +169,7 @@ def buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
     
     # fake regions via modes
     #for nf in range(3): # limit to speed up
+    # TODO: change to only add for 4 real leptons and data
     for nf in range(5):
         name = '{0}P{1}F'.format(4-nf,nf)
         name_regular = '{0}P{1}F_regular'.format(4-nf,nf)
@@ -282,12 +283,24 @@ def buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
         sampleProjectionParams['Hpp4l'][sampleName] = {}
         for genChan in genChannelsPP:
             sampleProjectionParams['Hpp4l'][sampleName]['gen_{0}'.format(genChan)] = [genChan]
+        sampleSelectionParams['Hpp4l'][sampleName] = deepcopy(selectionParams['Hpp4l'])
+        for sel in selectionParams['Hpp4l']:
+            if sel.split('/')[0] in ['3P1F','2P2F','1P3F','0P4F']:
+                sampleSelectionParams['Hpp4l'][sampleName][sel] = {}
+            if str(mass) in sel.split('/'):
+                sampleSelectionParams['Hpp4l'][sampleName][sel] = {}
         # ap
         sampleName = 'HPlusPlusHMinusHTo3L_M-{0}_TuneCUETP8M1_13TeV_calchep-pythia8'.format(mass)
         sampleHistParams['Hpp4l'][sampleName] = addChannels(deepcopy(histParams['Hpp4l']),'genChannel',len(genChannelsAP))
         sampleProjectionParams['Hpp4l'][sampleName] = {}
         for genChan in genChannelsAP:
             sampleProjectionParams['Hpp4l'][sampleName]['gen_{0}'.format(genChan)] = [genChan]
+        sampleSelectionParams['Hpp4l'][sampleName] = deepcopy(selectionParams['Hpp4l'])
+        for sel in selectionParams['Hpp4l']:
+            if sel.split('/')[0] in ['3P1F','2P2F','1P3F','0P4F']:
+                sampleSelectionParams['Hpp4l'][sampleName][sel] = {}
+            if str(mass) in sel.split('/'):
+                sampleSelectionParams['Hpp4l'][sampleName][sel] = {}
     
     # special selections for samples
     # DY-10 0, 1, 2 bins (0 includes 3+)

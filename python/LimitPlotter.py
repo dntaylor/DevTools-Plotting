@@ -13,6 +13,7 @@ from DevTools.Plotter.utilities import python_mkdir, getLumi
 from DevTools.Plotter.style import getStyle
 import DevTools.Plotter.CMS_lumi as CMS_lumi
 import DevTools.Plotter.tdrstyle as tdrstyle
+from DevTools.Limits.prevLimits import prevLimits
 
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
 ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 1001;")
@@ -297,6 +298,7 @@ class LimitPlotter(PlotterBase):
         isprelim = kwargs.pop('isprelim',True)
         legendpos = kwargs.pop('legendpos',31)
         numcol = kwargs.pop('numcol',1)
+        doPreviousExclusion = kwargs.pop('doPreviousExclusion',False)
 
         logging.info('Plotting {0}'.format(savename))
 
@@ -344,9 +346,10 @@ class LimitPlotter(PlotterBase):
         }
 
         nl = len(labels)
-        h = ROOT.TH2F("h", "h; {0}; ".format(xaxis), 1,0,1700,2*nl+4,0.5,nl+2.5)
+        h = ROOT.TH2F("h", "h; {0}; ".format(xaxis), 1,0,1900,2*nl+4,0.5,nl+2.5)
         h.GetYaxis().SetRangeUser(1.,nl+2.)
         h.GetYaxis().SetTickSize(0)
+        h.GetXaxis().SetLabelSize(0.030)
         h.Draw()
 
         cur = len(labels)*4. + 10
@@ -354,6 +357,7 @@ class LimitPlotter(PlotterBase):
         errors_two = {}
         expected = {}
         observed = {}
+        prevExclusion = {}
         for i,mode in enumerate(labels):
             h.GetYaxis().SetBinLabel(2*nl+2-2*i,labels[mode])
             cur -= 4
@@ -361,9 +365,11 @@ class LimitPlotter(PlotterBase):
             errors_two[mode] = {}
             expected[mode] = {}
             observed[mode] = {}
+            prevExclusion[mode] = {}
             sub = 0
             for prod in ['HppAP','HppPP','HppComb']:
                 sub += 1
+                # get current expected and observed limits, draw as tgraphs
                 l2, l1, exp, h1, h2, obs = limvals[mode][prod]
                 errors_one[mode][prod] = ROOT.TGraphAsymmErrors(1,array('d',[exp]),array('d',[(cur-sub)/4]),array('d',[exp-l1]),array('d',[h1-exp]),array('d',[0.5/4]),array('d',[0.5/4]))
                 errors_two[mode][prod] = ROOT.TGraphAsymmErrors(1,array('d',[exp]),array('d',[(cur-sub)/4]),array('d',[exp-l2]),array('d',[h2-exp]),array('d',[0.5/4]),array('d',[0.5/4]))
@@ -371,12 +377,20 @@ class LimitPlotter(PlotterBase):
                 observed[mode][prod]   = ROOT.TGraph(1,array('d',[exp if blind else obs]),array('d',[(cur-sub)/4]))
                 errors_one[mode][prod].SetFillColor(colors[prod][1])
                 errors_two[mode][prod].SetFillColor(colors[prod][2])
-                errors_two[mode][prod].Draw('2')
+                #errors_two[mode][prod].Draw('2')
                 errors_one[mode][prod].Draw('2')
                 expected[mode][prod].SetMarkerStyle(1)
                 expected[mode][prod].Draw('same Z')
                 observed[mode][prod].SetMarkerStyle(20)
                 if not blind: observed[mode][prod].Draw('P')
+                # get previous exclusions, draw as filled tgraph bar chart
+                prevExclusion[mode][prod] = ROOT.TGraph(4)
+                prevExclusion[mode][prod].SetPoint(0,0.,              (cur-sub)/4-0.5/4)
+                prevExclusion[mode][prod].SetPoint(1,prevLimits[mode][prod],(cur-sub)/4-0.5/4)
+                prevExclusion[mode][prod].SetPoint(2,prevLimits[mode][prod],(cur-sub)/4+0.5/4)
+                prevExclusion[mode][prod].SetPoint(3,0.,              (cur-sub)/4+0.5/4)
+                prevExclusion[mode][prod].SetFillStyle(3002)
+                if doPreviousExclusion: prevExclusion[mode][prod].Draw('f')
 
         ROOT.gPad.RedrawAxis()
 
@@ -395,10 +409,19 @@ class LimitPlotter(PlotterBase):
         legend.Draw()
         legend.cd()
         
-        hl = ROOT.TH2F("hl", "hl; ; ", 1,-5.5,1.5,3,0.5,3.5)
+        hl = ROOT.TH2F("hl", "hl; ; ", 1,-6.,1.5,3,0.5,4)
         hl.Draw('AH')
 
         legendErrors = {}
+        legendErrors['excluded'] = ROOT.TGraph(4)
+        legendErrors['excluded'].SetPoint(0, -0.5, 3.+2./3-0.5/2)
+        legendErrors['excluded'].SetPoint(1,  0.5, 3.+2./3-0.5/2)
+        legendErrors['excluded'].SetPoint(2,  0.5, 3.+2./3+0.5/2)
+        legendErrors['excluded'].SetPoint(3, -0.5, 3.+2./3+0.5/2)
+        legendErrors['excluded'].SetFillStyle(3002)
+        if doPreviousExclusion:
+            legendErrors['excluded'].Draw('f')
+            latex.DrawLatex(-5.5,2.9+2./3,'8 TeV Excluded')
         for i,prod in enumerate(['HppAP','HppPP','HppComb']):
             legendErrors[prod] = {}
             legendErrors[prod]['two'] = ROOT.TGraphAsymmErrors(1,array('d',[0.]),array('d',[3.-i*2./3]),array('d',[1.0]),array('d',[1.0]),array('d',[0.5/2]),array('d',[0.5/2]))
@@ -406,14 +429,14 @@ class LimitPlotter(PlotterBase):
             legendErrors[prod]['exp'] = ROOT.TGraphAsymmErrors(1,array('d',[0.]),array('d',[3.-i*2./3]),array('d',[0.0]),array('d',[0.0]),array('d',[0.5/2]),array('d',[0.5/2]))
             legendErrors[prod]['two'].SetFillColor(colors[prod][2])
             legendErrors[prod]['one'].SetFillColor(colors[prod][1])
-            legendErrors[prod]['two'].Draw('2')
+            #legendErrors[prod]['two'].Draw('2')
             legendErrors[prod]['one'].Draw('2')
             legendErrors[prod]['exp'].SetMarkerStyle(1)
             legendErrors[prod]['exp'].Draw('same Z')
-            latex.DrawLatex(-5,2.9-i*2./3,prodLabels[prod])
+            latex.DrawLatex(-5.5,2.9-i*2./3,prodLabels[prod])
         legendErrors['obs'] = ROOT.TGraph(1,array('d',[0.]),array('d',[1.]))
         legendErrors['obs'].Draw('P')
-        latex.DrawLatex(-5,0.9,'Observed')
+        latex.DrawLatex(-5.5,0.9,'Observed')
 
         canvas.cd()
         ROOT.gPad.RedrawAxis()

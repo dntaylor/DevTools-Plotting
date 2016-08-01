@@ -57,6 +57,8 @@ class FlattenTree(object):
 
     def flattenAll(self,**kwargs):
         '''Flatten all selections'''
+        njobs = kwargs.pop('njobs',-1)
+        startjob = kwargs.pop('startjob',0)
         if hasProgress:
             pbar = kwargs.pop('progressbar',ProgressBar(widgets=['{0}: '.format(self.sample),' ',SimpleProgress(),' histograms ',Percentage(),' ',Bar(),' ',ETA()]))
         else:
@@ -66,6 +68,7 @@ class FlattenTree(object):
             for histName in self.histParameters:
                 if selName in self.countOnly and 'count' not in histName: continue
                 allJobs += [[histName,selName]]
+        allJobs = sorted(allJobs)[startjob:startjob+njobs] if njobs>0 and startjob>=0 and startjob<len(allJobs) and startjob+njobs<=len(allJobs) else sorted(allJobs)
         if hasProgress:
             for args in pbar(allJobs):
                 self.ntuple.flatten(*args)

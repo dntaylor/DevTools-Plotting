@@ -19,7 +19,7 @@ limitPlotter = LimitPlotter()
 masses = [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500]
 modes = ['ee100','em100','et100','mm100','mt100','tt100','BP1','BP2','BP3','BP4']
 
-limvals = {mode: {'AP':[],'PP':[]} for mode in modes}
+limvals = {mode: {} for mode in modes}
 filenames = {mode: {} for mode in modes}
 
 for analysis,prod in [('Hpp3l','AP'),('Hpp3l','PP'),('Hpp4l',''),('HppAP',''),('HppPP',''),('HppComb','')]:
@@ -36,6 +36,7 @@ for mode in modes:
     limitPlotter.plotCrossSectionLimit(masses,filenames[mode]['HppAP'],filenames[mode]['HppPP'],'HppComb/{0}_crossSection'.format(mode))
 
 limitPlotter.moneyPlot(limvals,'moneyPlot')
+limitPlotter.moneyPlot(limvals,'moneyPlot_prevExclusion',doPreviousExclusion=True)
 
 def dumpResults(results,analysis,name):
     jfile = 'jsons/{0}/{1}.json'.format(analysis,name)

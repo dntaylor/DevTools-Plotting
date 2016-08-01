@@ -62,7 +62,7 @@ latestNtuples['76X'] = {
 latestNtuples['80X'] = {
     'Charge'         : '2016-07-24_ChargeAnalysis_80X_v1-merge',
     'DY'             : '2016-07-24_DYAnalysis_80X_v1-merge',
-    'DijetFakeRate'  : '2016-07-24_DijetFakeRateAnalysis_80X_v1-merge',
+    'DijetFakeRate'  : '2016-07-26_DijetFakeRateAnalysis_80X_v1-merge',
     'Hpp3l'          : '2016-07-24_Hpp3lAnalysis_80X_v1-merge',
     'Hpp4l'          : '2016-07-24_Hpp4lAnalysis_80X_v1-merge',
     'Electron'       : '2016-06-25_ElectronAnalysis_80X_v1-merge',
@@ -115,16 +115,16 @@ def getFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
     flat = 'flat/{0}/{1}.root'.format(analysis,sample)
     if shift in latestHistograms.get(version,{}).get(analysis,{}):
         baseDir = '/hdfs/store/user/dntaylor'
-        flatpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],analysis)
+        flatpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],sample)
         for fname in glob.glob('{0}/*.root'.format(flatpath)):
             if 'projection' not in fname: flat = fname
     return flat
         
 def getProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
-    proj = 'projection/{0}/{1}.root'.format(analysis,sample)
+    proj = 'projections/{0}/{1}.root'.format(analysis,sample)
     if shift in latestHistograms.get(version,{}).get(analysis,{}):
         baseDir = '/hdfs/store/user/dntaylor'
-        projpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],analysis)
+        projpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],sample)
         for fname in glob.glob('{0}/*.root'.format(projpath)):
             if 'projection' in fname: proj = fname
     return proj

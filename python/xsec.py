@@ -1,5 +1,7 @@
 import logging
 from xsec_Hpp4l import xsecs as xsecs_4l
+from xsec_Hpp4l import xsecs_NLO as xsecs_4l_NLO
+from xsec_Hpp4l import xsecs_kfactor as xsecs_4l_kfactor
 
 PB = 1.
 pb = PB
@@ -164,35 +166,26 @@ xsecs = {
     'WWG_TuneCUETP8M1_13TeV-amcatnlo-pythia8'                          :      0.2147   * PB,
     'WZG_TuneCUETP8M1_13TeV-amcatnlo-pythia8'                          :      0.04123  * PB,
 
-    'HPlusPlusHMinusMinusHTo4L_M-200_13TeV-pythia8'                    :      6.787e-02 * PB, # LO output from pythia8
-    'HPlusPlusHMinusMinusHTo4L_M-300_13TeV-pythia8'                    :      1.413e-02 * PB,
-    'HPlusPlusHMinusMinusHTo4L_M-400_13TeV-pythia8'                    :      4.160e-03 * PB,
-    'HPlusPlusHMinusMinusHTo4L_M-500_13TeV-pythia8'                    :      1.487e-03 * PB,
-    'HPlusPlusHMinusMinusHTo4L_M-600_13TeV-pythia8'                    :      6.080e-04 * PB,
-    'HPlusPlusHMinusMinusHTo4L_M-700_13TeV-pythia8'                    :      2.806e-04 * PB,
-    'HPlusPlusHMinusMinusHTo4L_M-800_13TeV-pythia8'                    :      1.300e-04 * PB,
-    'HPlusPlusHMinusMinusHTo4L_M-900_13TeV-pythia8'                    :      6.820e-05 * PB,
-    'HPlusPlusHMinusMinusHTo4L_M-1000_13TeV-pythia8'                   :      3.477e-05 * PB,
-
-    'HPlusPlusHMinusHTo3L_M-200_TuneCUETP8M1_13TeV_calchep-pythia8'    :      0.12572    * PB,
-    'HPlusPlusHMinusHTo3L_M-300_TuneCUETP8M1_13TeV_calchep-pythia8'    :      0.026895   * PB,
-    'HPlusPlusHMinusHTo3L_M-400_TuneCUETP8M1_13TeV_calchep-pythia8'    :      0.0083070  * PB,
-    'HPlusPlusHMinusHTo3L_M-500_TuneCUETP8M1_13TeV_calchep-pythia8'    :      0.0031227  * PB,
-    'HPlusPlusHMinusHTo3L_M-600_TuneCUETP8M1_13TeV_calchep-pythia8'    :      0.0013286  * PB,
-    'HPlusPlusHMinusHTo3L_M-700_TuneCUETP8M1_13TeV_calchep-pythia8'    :      0.00061233 * PB,
-    'HPlusPlusHMinusHTo3L_M-800_TuneCUETP8M1_13TeV_calchep-pythia8'    :      0.00029918 * PB,
-    'HPlusPlusHMinusHTo3L_M-900_TuneCUETP8M1_13TeV_calchep-pythia8'    :      0.00015252 * PB,
-    'HPlusPlusHMinusHTo3L_M-1000_TuneCUETP8M1_13TeV_calchep-pythia8'   :      8.0121e-05 * PB,
-    'HPlusPlusHMinusHTo3L_M-1100_TuneCUETP8M1_13TeV_calchep-pythia8'   :      4.3159e-05 * PB,
-    'HPlusPlusHMinusHTo3L_M-1200_TuneCUETP8M1_13TeV_calchep-pythia8'   :      2.3647e-05 * PB,
-    'HPlusPlusHMinusHTo3L_M-1300_TuneCUETP8M1_13TeV_calchep-pythia8'   :      1.3142e-05 * PB,
-    'HPlusPlusHMinusHTo3L_M-1400_TuneCUETP8M1_13TeV_calchep-pythia8'   :      7.3782e-06 * PB,
-    'HPlusPlusHMinusHTo3L_M-1500_TuneCUETP8M1_13TeV_calchep-pythia8'   :      4.1720e-06 * PB,
+    'HPlusPlusHMinusHTo3L_M-200_TuneCUETP8M1_13TeV_calchep-pythia8'    :      0.12572    * PB * xsecs_41_kfactor[200], # LO from calchep * kfactor from PP
+    'HPlusPlusHMinusHTo3L_M-300_TuneCUETP8M1_13TeV_calchep-pythia8'    :      0.026895   * PB * xsecs_41_kfactor[300],
+    'HPlusPlusHMinusHTo3L_M-400_TuneCUETP8M1_13TeV_calchep-pythia8'    :      0.0083070  * PB * xsecs_41_kfactor[400],
+    'HPlusPlusHMinusHTo3L_M-500_TuneCUETP8M1_13TeV_calchep-pythia8'    :      0.0031227  * PB * xsecs_41_kfactor[500],
+    'HPlusPlusHMinusHTo3L_M-600_TuneCUETP8M1_13TeV_calchep-pythia8'    :      0.0013286  * PB * xsecs_41_kfactor[600],
+    'HPlusPlusHMinusHTo3L_M-700_TuneCUETP8M1_13TeV_calchep-pythia8'    :      0.00061233 * PB * xsecs_41_kfactor[700],
+    'HPlusPlusHMinusHTo3L_M-800_TuneCUETP8M1_13TeV_calchep-pythia8'    :      0.00029918 * PB * xsecs_41_kfactor[800],
+    'HPlusPlusHMinusHTo3L_M-900_TuneCUETP8M1_13TeV_calchep-pythia8'    :      0.00015252 * PB * xsecs_41_kfactor[900],
+    'HPlusPlusHMinusHTo3L_M-1000_TuneCUETP8M1_13TeV_calchep-pythia8'   :      8.0121e-05 * PB * xsecs_41_kfactor[1000],
+    'HPlusPlusHMinusHTo3L_M-1100_TuneCUETP8M1_13TeV_calchep-pythia8'   :      4.3159e-05 * PB * xsecs_41_kfactor[1100],
+    'HPlusPlusHMinusHTo3L_M-1200_TuneCUETP8M1_13TeV_calchep-pythia8'   :      2.3647e-05 * PB * xsecs_41_kfactor[1200],
+    'HPlusPlusHMinusHTo3L_M-1300_TuneCUETP8M1_13TeV_calchep-pythia8'   :      1.3142e-05 * PB * xsecs_41_kfactor[1300],
+    'HPlusPlusHMinusHTo3L_M-1400_TuneCUETP8M1_13TeV_calchep-pythia8'   :      7.3782e-06 * PB * xsecs_41_kfactor[1400],
+    'HPlusPlusHMinusHTo3L_M-1500_TuneCUETP8M1_13TeV_calchep-pythia8'   :      4.1720e-06 * PB * xsecs_41_kfactor[1500],
 
 }
 
 for mass in xsecs_4l:
-    xsecs['HPlusPlusHMinusMinusHTo4L_M-{0}_TuneCUETP8M1_13TeV_pythia8'.format(mass)] = xsecs_4l[mass]
+    xsecs['HPlusPlusHMinusMinusHTo4L_M-{0}_TuneCUETP8M1_13TeV_pythia8'.format(mass)] = xsecs_4l_NLO[mass]
+    xsecs['HPlusPlusHMinusMinusHTo4L_M-{0}_13TeV-pythia8'.format(mass)] = xsecs_4l_NLO[mass]
 
 
 def getXsec(sample):

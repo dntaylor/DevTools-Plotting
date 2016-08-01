@@ -51,7 +51,7 @@ def buildWTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sam
         'SS'     : 't_charge==m_charge',
         'ZVeto'  : '(z_mass<40 || z_mass>100)',
         'WMt'    : 'wm_mt>60.',
-        'all'    : '(z_mass<40 || z_mass>100) && wm_mt>60.',
+        'all'    : '(z_mass<40 || z_mass>100) && wm_mt>60. && t_charge==m_charge',
     }
     
     for sel in ['loose','medium','tight']:

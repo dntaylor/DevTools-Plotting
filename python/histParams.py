@@ -18,8 +18,15 @@ from zzHistParams import buildZZ
 from hpp4lHistParams import buildHpp4l
 from hpp3lHistParams import buildHpp3l
 
+cachedParams = {}
 
 def buildHistParams(analysis,**kwargs):
+
+    key = analysis
+    for arg,val in kwargs.iteritems():
+        key += str(arg)+str(val)
+    if key in cachedParams: return cachedParams[key]
+
     #############
     ### hists ###
     #############
@@ -59,7 +66,8 @@ def buildHistParams(analysis,**kwargs):
     if analysis=='Hpp4l':         buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams,**kwargs)
     if analysis=='Hpp3l':         buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams,**kwargs)
 
-    return selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams
+    cachedParams[key] = (selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    return cachedParams[key]
 
 
 #############################

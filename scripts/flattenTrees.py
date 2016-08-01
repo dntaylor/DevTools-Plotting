@@ -47,7 +47,7 @@ def flatten(analysis,sample,**kwargs):
         flattener.addHistogram(histName,**params)
 
     for selName, sel in histSelections.iteritems():
-        flattener.addSelection(selName,**sel['kwargs'])
+        if sel: flattener.addSelection(selName,**sel['kwargs'])
 
     flattener.flattenAll(progressbar=pbar)
 
