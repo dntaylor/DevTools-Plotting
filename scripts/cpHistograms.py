@@ -7,6 +7,7 @@ import glob
 import os
 import sys
 import logging
+from DevTools.Utilities.utilities import runCommand
 
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
@@ -41,15 +42,13 @@ def main(argv=None):
         flats = [x for x in files if '_projection.root' not in x]
         projs = [x for x in files if '_projection.root' in x]
         if flats:
-            flatsource = flats[0]
             flatfile = '{0}/{1}.root'.format(args.flat,destname)
-            command = 'cp {0} {1}'.format(flatsource,flatfile)
-            os.system(command)
+            command = 'hadd -f {0} {1}'.format(flatfile,' '.join(flats))
+            runCommand(command)
         if projs:
-            projsource = projs[0]
             projfile = '{0}/{1}.root'.format(args.projection,destname)
-            command = 'cp {0} {1}'.format(projsource,projfile)
-            os.system(command)
+            command = 'hadd -f {0} {1}'.format(projfile,' '.join(projs))
+            runCommand(command)
 
 
 if __name__ == "__main__":

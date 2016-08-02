@@ -31,6 +31,8 @@ def flatten(analysis,sample,**kwargs):
     outputFile = kwargs.pop('outputFile','')
     shift = kwargs.pop('shift','')
     countOnly = kwargs.pop('countOnly',False)
+    njobs = kwargs.pop('njobs',1)
+    job = kwargs.pop('job',0)
     if hasProgress:
         pbar = kwargs.pop('progressbar',ProgressBar(widgets=['{0}: '.format(sample),' ',SimpleProgress(),' histograms ',Percentage(),' ',Bar(),' ',ETA()]))
     else:
@@ -49,7 +51,7 @@ def flatten(analysis,sample,**kwargs):
     for selName, sel in histSelections.iteritems():
         if sel: flattener.addSelection(selName,**sel['kwargs'])
 
-    flattener.flattenAll(progressbar=pbar)
+    flattener.flattenAll(progressbar=pbar,njobs=njobs,job=job)
 
 def getSampleDirectories(analysis,sampleList):
     source = getNtupleDirectory(analysis)
@@ -116,7 +118,15 @@ def main(argv=None):
         # figureout the sample
         with open(inputFileList,'r') as f:
             inputfiles = [x.strip() for x in f.readlines()]
-            sample = inputfiles[0].split('/')[-2]
+            jobparams = inputfiles[0].split('/')
+            if '.root' in jobparams[-1]:
+                sample = jobparams[-2]
+                njobs = 1
+                job = 0
+            else:
+                sample = jobparams[-4]
+                njobs = int(jobparams[-2])
+                job = int(jobparams[-1])
         grid = True
     else:
         directories = getSampleDirectories(args.analysis,args.samples)
@@ -133,6 +143,8 @@ def main(argv=None):
                 outputFile=outputFile,
                 shift=args.shift,
                 countOnly=args.countOnly,
+                njobs=njobs,
+                job=job,
                 )
     elif args.j>1 and hasProgress:
         multi = MultiProgress(args.j)

@@ -76,7 +76,38 @@ latestNtuples['80X'] = {
     'ZZ'             : '2016-07-13_ZZAnalysis_80X_v1-merge',
 }
 
-def getNtupleDirectory(analysis,local=False,version=getCMSSWVersion()):
+latestShifts = {}
+latestShifts['80X'] = {}
+latestShifts['80X']['Hpp3l'] = {
+    'ElectronEnUp'     : '2016-07-31_Hpp3lAnalysis_ElectronEnUp_80X_v1-merge',
+    'ElectronEnDown'   : '2016-07-31_Hpp3lAnalysis_ElectronEnDown_80X_v1-merge',
+    'MuonEnUp'         : '2016-07-31_Hpp3lAnalysis_MuonEnUp_80X_v1-merge',
+    'MuonEnDown'       : '2016-07-31_Hpp3lAnalysis_MuonEnDown_80X_v1-merge',
+    'TauEnUp'          : '2016-07-31_Hpp3lAnalysis_TauEnUp_80X_v1-merge',
+    'TauEnDown'        : '2016-07-31_Hpp3lAnalysis_TauEnDown_80X_v1-merge',
+    'JetEnUp'          : '2016-07-31_Hpp3lAnalysis_JetEnUp_80X_v1-merge',
+    'JetEnDown'        : '2016-07-31_Hpp3lAnalysis_JetEnDown_80X_v1-merge',
+    'JetResUp'         : '2016-07-31_Hpp3lAnalysis_JetResUp_80X_v1-merge',
+    'JetResDown'       : '2016-07-31_Hpp3lAnalysis_JetResDown_80X_v1-merge',
+    'UnclusteredEnUp'  : '2016-08-01_Hpp3lAnalysis_UnclusteredEnUp_80X_v1-merge',
+    'UnclusteredEnDown': '2016-08-01_Hpp3lAnalysis_UnclusteredEnDown_80X_v1-merge',
+}
+latestShifts['80X']['Hpp4l'] = {
+    'ElectronEnUp'     : '2016-07-31_Hpp4lAnalysis_ElectronEnUp_80X_v1-merge',
+    'ElectronEnDown'   : '2016-07-31_Hpp4lAnalysis_ElectronEnDown_80X_v1-merge',
+    'MuonEnUp'         : '2016-07-31_Hpp4lAnalysis_MuonEnUp_80X_v1-merge',
+    'MuonEnDown'       : '2016-07-31_Hpp4lAnalysis_MuonEnDown_80X_v1-merge',
+    'TauEnUp'          : '2016-07-31_Hpp4lAnalysis_TauEnUp_80X_v1-merge',
+    'TauEnDown'        : '2016-07-31_Hpp4lAnalysis_TauEnDown_80X_v1-merge',
+    'JetEnUp'          : '2016-07-31_Hpp4lAnalysis_JetEnUp_80X_v1-merge',
+    'JetEnDown'        : '2016-07-31_Hpp4lAnalysis_JetEnDown_80X_v1-merge',
+    'JetResUp'         : '2016-07-31_Hpp4lAnalysis_JetResUp_80X_v1-merge',
+    'JetResDown'       : '2016-07-31_Hpp4lAnalysis_JetResDown_80X_v1-merge',
+    'UnclusteredEnUp'  : '2016-08-01_Hpp4lAnalysis_UnclusteredEnUp_80X_v1-merge',
+    'UnclusteredEnDown': '2016-08-01_Hpp4lAnalysis_UnclusteredEnDown_80X_v1-merge',
+}
+
+def getNtupleDirectory(analysis,local=False,version=getCMSSWVersion(),shift=''):
     # first grab the local one
     if local:
         #ntupleDir = '{0}/src/ntuples/{0}'.format(CMSSW_BASE,analysis)
@@ -85,6 +116,8 @@ def getNtupleDirectory(analysis,local=False,version=getCMSSWVersion()):
             return ntupleDir
     # if not read from hdfs
     baseDir = '/hdfs/store/user/dntaylor'
+    if shift and analysis in latestShifts[version] and shift in latestShifts[version][analysis]:
+        return os.path.join(baseDir,latestShifts[version][analysis][shift])
     if analysis in latestNtuples[version] and latestNtuples[version][analysis]:
         return os.path.join(baseDir,latestNtuples[version][analysis])
 

@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+import math
 
 sys.argv.append('-b')
 import ROOT
@@ -57,18 +58,25 @@ class FlattenTree(object):
 
     def flattenAll(self,**kwargs):
         '''Flatten all selections'''
-        njobs = kwargs.pop('njobs',-1)
-        startjob = kwargs.pop('startjob',0)
+        njobs = int(kwargs.pop('njobs',1))
+        job = int(kwargs.pop('job',0))
         if hasProgress:
             pbar = kwargs.pop('progressbar',ProgressBar(widgets=['{0}: '.format(self.sample),' ',SimpleProgress(),' histograms ',Percentage(),' ',Bar(),' ',ETA()]))
         else:
             pbar = None
+        # setup all jobs
         allJobs = []
         for selName in self.selections:
             for histName in self.histParameters:
                 if selName in self.countOnly and 'count' not in histName: continue
                 allJobs += [[histName,selName]]
-        allJobs = sorted(allJobs)[startjob:startjob+njobs] if njobs>0 and startjob>=0 and startjob<len(allJobs) and startjob+njobs<=len(allJobs) else sorted(allJobs)
+        # split into multiple jobs
+        totjobs = len(allJobs)
+        nperjob = math.ceil(float(totjobs)/njobs)
+        startjob = int(job*nperjob)
+        endjob = int((job+1)*nperjob)
+        allJobs = sorted(allJobs)[startjob:endjob]
+        # flatten
         if hasProgress:
             for args in pbar(allJobs):
                 self.ntuple.flatten(*args)
