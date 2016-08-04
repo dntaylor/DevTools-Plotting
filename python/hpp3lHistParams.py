@@ -263,24 +263,24 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
         sampleProjectionParams['Hpp3l'][sampleName] = {}
         for genChan in genChannelsPP:
             sampleProjectionParams['Hpp3l'][sampleName]['gen_{0}'.format(genChan)] = [genChan]
-        sampleSelectionParams['Hpp3l'][sampleName] = deepcopy(selectionParams['Hpp3l'])
-        for sel in selectionParams['Hpp3l']:
-            if sel.split('/')[0] in ['2P1F','1P2F','0P3F']:
-                sampleSelectionParams['Hpp3l'][sampleName][sel] = {}
-            if str(mass) in sel.split('/'):
-                sampleSelectionParams['Hpp3l'][sampleName][sel] = {}
+        #sampleSelectionParams['Hpp3l'][sampleName] = deepcopy(selectionParams['Hpp3l'])
+        #for sel in selectionParams['Hpp3l']:
+        #    if sel.split('/')[0] in ['2P1F','1P2F','0P3F']:
+        #        sampleSelectionParams['Hpp3l'][sampleName][sel] = {}
+        #    if str(mass) in sel.split('/'):
+        #        sampleSelectionParams['Hpp3l'][sampleName][sel] = {}
         # ap
         sampleName = 'HPlusPlusHMinusHTo3L_M-{0}_TuneCUETP8M1_13TeV_calchep-pythia8'.format(mass)
         sampleHistParams['Hpp3l'][sampleName] = addChannels(deepcopy(histParams['Hpp3l']),'genChannel',len(genChannelsAP))
         sampleProjectionParams['Hpp3l'][sampleName] = {}
         for genChan in genChannelsAP:
             sampleProjectionParams['Hpp3l'][sampleName]['gen_{0}'.format(genChan)] = [genChan]
-        sampleSelectionParams['Hpp3l'][sampleName] = deepcopy(selectionParams['Hpp3l'])
-        for sel in selectionParams['Hpp3l']:
-            if sel.split('/')[0] in ['2P1F','1P2F','0P3F']:
-                sampleSelectionParams['Hpp3l'][sampleName][sel] = {}
-            if str(mass) in sel.split('/'):
-                sampleSelectionParams['Hpp3l'][sampleName][sel] = {}
+        #sampleSelectionParams['Hpp3l'][sampleName] = deepcopy(selectionParams['Hpp3l'])
+        #for sel in selectionParams['Hpp3l']:
+        #    if sel.split('/')[0] in ['2P1F','1P2F','0P3F']:
+        #        sampleSelectionParams['Hpp3l'][sampleName][sel] = {}
+        #    if str(mass) in sel.split('/'):
+        #        sampleSelectionParams['Hpp3l'][sampleName][sel] = {}
     
     # special selections for samples
     # DY-10 0, 1, 2 bins (0 includes 3+)

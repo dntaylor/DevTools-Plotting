@@ -33,7 +33,8 @@ def flatten(analysis,sample,**kwargs):
     countOnly = kwargs.pop('countOnly',False)
     njobs = kwargs.pop('njobs',1)
     job = kwargs.pop('job',0)
-    if hasProgress:
+    multi = kwargs.pop('multi',False)
+    if hasProgress and multi:
         pbar = kwargs.pop('progressbar',ProgressBar(widgets=['{0}: '.format(sample),' ',SimpleProgress(),' histograms ',Percentage(),' ',Bar(),' ',ETA()]))
     else:
         pbar = None
@@ -51,7 +52,7 @@ def flatten(analysis,sample,**kwargs):
     for selName, sel in histSelections.iteritems():
         if sel: flattener.addSelection(selName,**sel['kwargs'])
 
-    flattener.flattenAll(progressbar=pbar,njobs=njobs,job=job)
+    flattener.flattenAll(progressbar=pbar,njobs=njobs,job=job,multi=multi)
 
 def getSampleDirectories(analysis,sampleList):
     source = getNtupleDirectory(analysis)
@@ -153,7 +154,7 @@ def main(argv=None):
             if sample.endswith('.root'): sample = sample[:-5]
             histParams = getSelectedHistParams(args.analysis,args.hists,sample,shift=args.shift,countOnly=args.countOnly)
             histSelections = getSelectedHistSelections(args.analysis,args.selections,sample,shift=args.shift,countOnly=args.countOnly)
-            multi.addJob(sample,flatten,args=(args.analysis,sample,),kwargs={'histParams':histParams,'histSelections':histSelections,'shift':args.shift,'countOnly':args.countOnly,})
+            multi.addJob(sample,flatten,args=(args.analysis,sample,),kwargs={'histParams':histParams,'histSelections':histSelections,'shift':args.shift,'countOnly':args.countOnly,'multi':True,})
         multi.retrieve()
     else:
         for directory in directories:
@@ -167,6 +168,7 @@ def main(argv=None):
                     histSelections=histSelections,
                     shift=args.shift,
                     countOnly=args.countOnly,
+                    multi=False,
                     )
 
     logging.info('Finished')

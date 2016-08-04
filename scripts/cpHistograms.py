@@ -43,11 +43,13 @@ def main(argv=None):
         projs = [x for x in files if '_projection.root' in x]
         if flats:
             flatfile = '{0}/{1}.root'.format(args.flat,destname)
-            command = 'hadd -f {0} {1}'.format(flatfile,' '.join(flats))
+            command = 'cp {0} {1}'.format(flats[0],flatfile)
+            #command = 'hadd -f {0} {1}'.format(flatfile,' '.join(flats))
             runCommand(command)
         if projs:
             projfile = '{0}/{1}.root'.format(args.projection,destname)
-            command = 'hadd -f {0} {1}'.format(projfile,' '.join(projs))
+            command = 'cp {0} {1}'.format(projs[0],projfile)
+            #command = 'hadd -f {0} {1}'.format(projfile,' '.join(projs))
             runCommand(command)
 
 

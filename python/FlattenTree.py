@@ -60,7 +60,8 @@ class FlattenTree(object):
         '''Flatten all selections'''
         njobs = int(kwargs.pop('njobs',1))
         job = int(kwargs.pop('job',0))
-        if hasProgress:
+        multi = kwargs.pop('multi',False)
+        if hasProgress and multi:
             pbar = kwargs.pop('progressbar',ProgressBar(widgets=['{0}: '.format(self.sample),' ',SimpleProgress(),' histograms ',Percentage(),' ',Bar(),' ',ETA()]))
         else:
             pbar = None
@@ -77,7 +78,7 @@ class FlattenTree(object):
         endjob = int((job+1)*nperjob)
         allJobs = sorted(allJobs)[startjob:endjob]
         # flatten
-        if hasProgress:
+        if hasProgress and multi:
             for args in pbar(allJobs):
                 self.ntuple.flatten(*args)
         else:
