@@ -35,9 +35,9 @@ class NtupleWrapper(object):
         self.flat = kwargs.pop('flat',getFlatHistograms(self.analysis,self.sample,shift=self.shift))
         self.proj = kwargs.pop('proj',getProjectionHistograms(self.analysis,self.sample,shift=self.shift))
         # get stuff needed to flatten
-        self.histParams = getHistParams(self.analysis,self.sample,**kwargs)
-        self.selections = getHistSelections(self.analysis,self.sample,**kwargs)
-        self.projections = getProjectionParams(self.analysis,self.sample,**kwargs)
+        self.histParams = getHistParams(self.analysis,self.sample,shift=self.shift,**kwargs)
+        self.selections = getHistSelections(self.analysis,self.sample,shift=self.shift,**kwargs)
+        self.projections = getProjectionParams(self.analysis,self.sample,shift=self.shift,**kwargs)
         self.infile = 0
         self.outfile = 0
         self.infile = 0
