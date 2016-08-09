@@ -63,8 +63,8 @@ latestNtuples['80X'] = {
     'Charge'         : '2016-07-24_ChargeAnalysis_80X_v1-merge',
     'DY'             : '2016-07-24_DYAnalysis_80X_v1-merge',
     'DijetFakeRate'  : '2016-07-26_DijetFakeRateAnalysis_80X_v1-merge',
-    'Hpp3l'          : '2016-07-24_Hpp3lAnalysis_80X_v1-merge',
-    'Hpp4l'          : '2016-07-24_Hpp4lAnalysis_80X_v1-merge',
+    'Hpp3l'          : '2016-08-07_Hpp3lAnalysis_80X_v1-merge',
+    'Hpp4l'          : '2016-08-07_Hpp4lAnalysis_80X_v1-merge',
     'Electron'       : '2016-06-25_ElectronAnalysis_80X_v1-merge',
     'Muon'           : '2016-06-25_MuonAnalysis_80X_v1-merge',
     'Tau'            : '2016-07-06_TauAnalysis_80X_v1-merge',
@@ -72,39 +72,39 @@ latestNtuples['80X'] = {
     'WTauFakeRate'   : '2016-07-24_WTauFakeRateAnalysis_80X_v1-merge',
     'WFakeRate'      : '2016-07-24_WFakeRateAnalysis_80X_v1-merge',
     'ZFakeRate'      : '2016-07-24_ZFakeRateAnalysis_80X_v1-merge',
-    'WZ'             : '2016-07-20_WZAnalysis_80X_v1-merge',
-    'ZZ'             : '2016-07-13_ZZAnalysis_80X_v1-merge',
+    'WZ'             : '2016-08-08_WZAnalysis_80X_v1-merge',
+    'ZZ'             : '2016-08-08_ZZAnalysis_80X_v1-merge',
 }
 
 latestShifts = {}
 latestShifts['80X'] = {}
 latestShifts['80X']['Hpp3l'] = {
-    'ElectronEnUp'     : '2016-07-31_Hpp3lAnalysis_ElectronEnUp_80X_v1-merge',
-    'ElectronEnDown'   : '2016-07-31_Hpp3lAnalysis_ElectronEnDown_80X_v1-merge',
-    'MuonEnUp'         : '2016-07-31_Hpp3lAnalysis_MuonEnUp_80X_v1-merge',
-    'MuonEnDown'       : '2016-07-31_Hpp3lAnalysis_MuonEnDown_80X_v1-merge',
-    'TauEnUp'          : '2016-07-31_Hpp3lAnalysis_TauEnUp_80X_v1-merge',
-    'TauEnDown'        : '2016-07-31_Hpp3lAnalysis_TauEnDown_80X_v1-merge',
-    'JetEnUp'          : '2016-07-31_Hpp3lAnalysis_JetEnUp_80X_v1-merge',
-    'JetEnDown'        : '2016-07-31_Hpp3lAnalysis_JetEnDown_80X_v1-merge',
-    'JetResUp'         : '2016-07-31_Hpp3lAnalysis_JetResUp_80X_v1-merge',
-    'JetResDown'       : '2016-07-31_Hpp3lAnalysis_JetResDown_80X_v1-merge',
-    'UnclusteredEnUp'  : '2016-08-01_Hpp3lAnalysis_UnclusteredEnUp_80X_v1-merge',
-    'UnclusteredEnDown': '2016-08-01_Hpp3lAnalysis_UnclusteredEnDown_80X_v1-merge',
+    'ElectronEnUp'     : '2016-08-07_Hpp3lAnalysis_ElectronEnUp_80X_v1-merge',
+    'ElectronEnDown'   : '2016-08-07_Hpp3lAnalysis_ElectronEnDown_80X_v1-merge',
+    'MuonEnUp'         : '2016-08-07_Hpp3lAnalysis_MuonEnUp_80X_v1-merge',
+    'MuonEnDown'       : '2016-08-07_Hpp3lAnalysis_MuonEnDown_80X_v1-merge',
+    'TauEnUp'          : '2016-08-07_Hpp3lAnalysis_TauEnUp_80X_v1-merge',
+    'TauEnDown'        : '2016-08-07_Hpp3lAnalysis_TauEnDown_80X_v1-merge',
+    'JetEnUp'          : '2016-08-07_Hpp3lAnalysis_JetEnUp_80X_v1-merge',
+    'JetEnDown'        : '2016-08-07_Hpp3lAnalysis_JetEnDown_80X_v1-merge',
+    'JetResUp'         : '2016-08-07_Hpp3lAnalysis_JetResUp_80X_v1-merge',
+    'JetResDown'       : '2016-08-07_Hpp3lAnalysis_JetResDown_80X_v1-merge',
+    'UnclusteredEnUp'  : '2016-08-07_Hpp3lAnalysis_UnclusteredEnUp_80X_v1-merge',
+    'UnclusteredEnDown': '2016-08-07_Hpp3lAnalysis_UnclusteredEnDown_80X_v1-merge',
 }
 latestShifts['80X']['Hpp4l'] = {
-    'ElectronEnUp'     : '2016-07-31_Hpp4lAnalysis_ElectronEnUp_80X_v1-merge',
-    'ElectronEnDown'   : '2016-07-31_Hpp4lAnalysis_ElectronEnDown_80X_v1-merge',
-    'MuonEnUp'         : '2016-07-31_Hpp4lAnalysis_MuonEnUp_80X_v1-merge',
-    'MuonEnDown'       : '2016-07-31_Hpp4lAnalysis_MuonEnDown_80X_v1-merge',
-    'TauEnUp'          : '2016-07-31_Hpp4lAnalysis_TauEnUp_80X_v1-merge',
-    'TauEnDown'        : '2016-07-31_Hpp4lAnalysis_TauEnDown_80X_v1-merge',
-    'JetEnUp'          : '2016-07-31_Hpp4lAnalysis_JetEnUp_80X_v1-merge',
-    'JetEnDown'        : '2016-07-31_Hpp4lAnalysis_JetEnDown_80X_v1-merge',
-    'JetResUp'         : '2016-07-31_Hpp4lAnalysis_JetResUp_80X_v1-merge',
-    'JetResDown'       : '2016-07-31_Hpp4lAnalysis_JetResDown_80X_v1-merge',
-    'UnclusteredEnUp'  : '2016-08-01_Hpp4lAnalysis_UnclusteredEnUp_80X_v1-merge',
-    'UnclusteredEnDown': '2016-08-01_Hpp4lAnalysis_UnclusteredEnDown_80X_v1-merge',
+    'ElectronEnUp'     : '2016-08-07_Hpp4lAnalysis_ElectronEnUp_80X_v1-merge',
+    'ElectronEnDown'   : '2016-08-07_Hpp4lAnalysis_ElectronEnDown_80X_v1-merge',
+    'MuonEnUp'         : '2016-08-07_Hpp4lAnalysis_MuonEnUp_80X_v1-merge',
+    'MuonEnDown'       : '2016-08-07_Hpp4lAnalysis_MuonEnDown_80X_v1-merge',
+    'TauEnUp'          : '2016-08-07_Hpp4lAnalysis_TauEnUp_80X_v1-merge',
+    'TauEnDown'        : '2016-08-07_Hpp4lAnalysis_TauEnDown_80X_v1-merge',
+    'JetEnUp'          : '2016-08-07_Hpp4lAnalysis_JetEnUp_80X_v1-merge',
+    'JetEnDown'        : '2016-08-07_Hpp4lAnalysis_JetEnDown_80X_v1-merge',
+    'JetResUp'         : '2016-08-07_Hpp4lAnalysis_JetResUp_80X_v1-merge',
+    'JetResDown'       : '2016-08-07_Hpp4lAnalysis_JetResDown_80X_v1-merge',
+    'UnclusteredEnUp'  : '2016-08-07_Hpp4lAnalysis_UnclusteredEnUp_80X_v1-merge',
+    'UnclusteredEnDown': '2016-08-07_Hpp4lAnalysis_UnclusteredEnDown_80X_v1-merge',
 }
 
 def getNtupleDirectory(analysis,local=False,version=getCMSSWVersion(),shift=''):
@@ -186,6 +186,70 @@ def getProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
             if 'projection' in fname: proj = fname
     return proj
         
+latestSkims = {}
+latestSkims['80X'] = {}
+latestSkims['80X']['Hpp3l'] = {
+    'ElectronEnUp'     : '2016-08-09_Hpp3lSkims_ElectronEnUp_80X_v1',
+    'ElectronEnDown'   : '2016-08-09_Hpp3lSkims_ElectronEnDown_80X_v1',
+    'MuonEnUp'         : '2016-08-09_Hpp3lSkims_MuonEnUp_80X_v1',
+    'MuonEnDown'       : '2016-08-09_Hpp3lSkims_MuonEnDown_80X_v1',
+    'TauEnUp'          : '2016-08-09_Hpp3lSkims_TauEnUp_80X_v1',
+    'TauEnDown'        : '2016-08-09_Hpp3lSkims_TauEnDown_80X_v1',
+    'JetEnUp'          : '2016-08-09_Hpp3lSkims_JetEnUp_80X_v1',
+    'JetEnDown'        : '2016-08-09_Hpp3lSkims_JetEnDown_80X_v1',
+    'JetResUp'         : '2016-08-09_Hpp3lSkims_JetResUp_80X_v1',
+    'JetResDown'       : '2016-08-09_Hpp3lSkims_JetResDown_80X_v1',
+    'UnclusteredEnUp'  : '2016-08-09_Hpp3lSkims_UnclusteredEnUp_80X_v1',
+    'UnclusteredEnDown': '2016-08-09_Hpp3lSkims_UnclusteredEnDown_80X_v1',
+    'lepUp'            : '2016-08-09_Hpp3lSkims_lepUp_80X_v1',
+    'lepDown'          : '2016-08-09_Hpp3lSkims_lepDown_80X_v1',
+    'trigUp'           : '2016-08-09_Hpp3lSkims_trigUp_80X_v1',
+    'trigDown'         : '2016-08-09_Hpp3lSkims_trigDown_80X_v1',
+    'puUp'             : '2016-08-09_Hpp3lSkims_puUp_80X_v1',
+    'puDown'           : '2016-08-09_Hpp3lSkims_puDown_80X_v1',
+    'fakeUp'           : '2016-08-09_Hpp3lSkims_fakeUp_80X_v1',
+    'fakeDown'         : '2016-08-09_Hpp3lSkims_fakeDown_80X_v1',
+}
+latestSkims['80X']['Hpp4l'] = {
+    'ElectronEnUp'     : '2016-08-09_Hpp4lSkims_ElectronEnUp_80X_v1',
+    'ElectronEnDown'   : '2016-08-09_Hpp4lSkims_ElectronEnDown_80X_v1',
+    'MuonEnUp'         : '2016-08-09_Hpp4lSkims_MuonEnUp_80X_v1',
+    'MuonEnDown'       : '2016-08-09_Hpp4lSkims_MuonEnDown_80X_v1',
+    'TauEnUp'          : '2016-08-09_Hpp4lSkims_TauEnUp_80X_v1',
+    'TauEnDown'        : '2016-08-09_Hpp4lSkims_TauEnDown_80X_v1',
+    'JetEnUp'          : '2016-08-09_Hpp4lSkims_JetEnUp_80X_v1',
+    'JetEnDown'        : '2016-08-09_Hpp4lSkims_JetEnDown_80X_v1',
+    'JetResUp'         : '2016-08-09_Hpp4lSkims_JetResUp_80X_v1',
+    'JetResDown'       : '2016-08-09_Hpp4lSkims_JetResDown_80X_v1',
+    'UnclusteredEnUp'  : '2016-08-09_Hpp4lSkims_UnclusteredEnUp_80X_v1',
+    'UnclusteredEnDown': '2016-08-09_Hpp4lSkims_UnclusteredEnDown_80X_v1',
+    'lepUp'            : '2016-08-09_Hpp4lSkims_lepUp_80X_v1',
+    'lepDown'          : '2016-08-09_Hpp4lSkims_lepDown_80X_v1',
+    'trigUp'           : '2016-08-09_Hpp4lSkims_trigUp_80X_v1',
+    'trigDown'         : '2016-08-09_Hpp4lSkims_trigDown_80X_v1',
+    'puUp'             : '2016-08-09_Hpp4lSkims_puUp_80X_v1',
+    'puDown'           : '2016-08-09_Hpp4lSkims_puDown_80X_v1',
+    'fakeUp'           : '2016-08-09_Hpp4lSkims_fakeUp_80X_v1',
+    'fakeDown'         : '2016-08-09_Hpp4lSkims_fakeDown_80X_v1',
+}
+
+def getSkimJson(analysis,sample,version=getCMSSWVersion(),shift=''):
+    jfile = 'jsons/{0}/skims/{1}.json'.format(analysis,sample)
+    if shift in latestSkims.get(version,{}).get(analysis,{}):
+        baseDir = '/hdfs/store/user/dntaylor'
+        jpath = os.path.join(baseDir,latestSkims[version][analysis][shift],sample)
+        for fname in glob.glob('{0}/*.root'.format(jpath)):
+            if 'json' in fname: jfile = fname
+    return jfile
+
+def getSkimPickle(analysis,sample,version=getCMSSWVersion(),shift=''):
+    pfile = 'pickles/{0}/skims/{1}.pkl'.format(analysis,sample)
+    if shift in latestSkims.get(version,{}).get(analysis,{}):
+        baseDir = '/hdfs/store/user/dntaylor'
+        ppath = os.path.join(baseDir,latestSkims[version][analysis][shift],sample)
+        for fname in glob.glob('{0}/*.root'.format(ppath)):
+            if 'pkl' in fname: pfile = fname
+    return pfile
 
 treeMap = {
     ''               : 'Tree',

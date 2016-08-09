@@ -43,8 +43,10 @@ def buildDY(selectionParams,sampleSelectionParams,projectionParams,sampleProject
         'zDeltaR'                     : {'xVariable': 'z_deltaR',                       'xBinning': [500, 0, 5],             },
         'zLeadingLeptonPt'            : {'xVariable': 'z1_pt',                          'xBinning': [10000, 0, 1000],        },
         'zLeadingLeptonEta'           : {'xVariable': 'z1_eta',                         'xBinning': [500, -2.5, 2.5],        },
+        'zLeadingLeptonIso'           : {'xVariable': 'z1_isolation',                   'xBinning': [500, 0, 0.5],           },
         'zSubLeadingLeptonPt'         : {'xVariable': 'z2_pt',                          'xBinning': [10000, 0, 1000],        },
         'zSubLeadingLeptonEta'        : {'xVariable': 'z2_eta',                         'xBinning': [500, -2.5, 2.5],        },
+        'zSubLeadingLeptonIso'        : {'xVariable': 'z2_isolation',                   'xBinning': [500, 0, 0.5],           },
         'nJets'                       : {'xVariable': 'numJetsTight30',                 'xBinning': [11, -0.5, 10.5],        },
     }
 

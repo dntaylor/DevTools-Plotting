@@ -3,6 +3,7 @@ import os
 import sys
 import glob
 import json
+import pickle
 
 sys.argv.append('-b')
 import ROOT
@@ -12,7 +13,7 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 
 from DevTools.Plotter.xsec import getXsec
-from DevTools.Plotter.utilities import getLumi, isData, hashFile, hashString, python_mkdir, getTreeName, getNtupleDirectory, getFlatHistograms, getProjectionHistograms
+from DevTools.Plotter.utilities import getLumi, isData, hashFile, hashString, python_mkdir, getTreeName, getNtupleDirectory, getFlatHistograms, getProjectionHistograms, getSkimJson, getSkimPickle
 from DevTools.Plotter.histParams import getHistParams, getHistSelections, getProjectionParams
 
 CMSSW_BASE = os.environ['CMSSW_BASE']
@@ -34,6 +35,9 @@ class NtupleWrapper(object):
         #self.flat = kwargs.pop('flat','flat/{0}/{1}.root'.format(self.analysis,self.sample))
         self.flat = kwargs.pop('flat',getFlatHistograms(self.analysis,self.sample,shift=self.shift))
         self.proj = kwargs.pop('proj',getProjectionHistograms(self.analysis,self.sample,shift=self.shift))
+        self.json = kwargs.pop('json',getSkimJson(self.analysis,self.sample,shift=self.shift))
+        self.pickle = kwargs.pop('pickle',getSkimPickle(self.analysis,self.sample,shift=self.shift))
+        self.skimInitialized = False
         # get stuff needed to flatten
         self.histParams = getHistParams(self.analysis,self.sample,shift=self.shift,**kwargs)
         self.selections = getHistSelections(self.analysis,self.sample,shift=self.shift,**kwargs)
@@ -540,6 +544,21 @@ class NtupleWrapper(object):
             hist = 0
         return hist
 
+    def __readSkim(self,directory):
+        '''Read a value from the skim file.'''
+        if not self.skimInitialized:
+            with open(self.pickle,'rb') as f:
+                self.skim = pickle.load(f)
+            self.skimInitialized = True
+        components = directory.split('/')
+        if components[-1] == 'all': components = components[:-1]
+        # first try finding
+        key = '/'.join(components)
+        if key in self.skim:
+            return self.skim[key]['val'], self.skim[key]['err2']**0.5
+        #logging.warning('Unrecognized selection {0}'.format(directory))
+        return 0.,0.
+
     def getHist(self,variable):
         '''Get a histogram'''
         hist = self.__read(variable)
@@ -552,6 +571,8 @@ class NtupleWrapper(object):
 
     def getCount(self,directory):
         '''Get a count'''
+        count = self.__readSkim(directory)
+        if count is not None: return count
         return self.__read('{0}/count'.format(directory))
 
     def getTempHist(self,histName,selection,scalefactor,variable,binning):

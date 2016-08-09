@@ -97,7 +97,9 @@ plots = {
     'zPt'                   : {'xaxis': 'p_{T}^{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 50, 'rangex': [0,150]},
     'zDeltaR'               : {'xaxis': '#DeltaR(l^{+}l^{-})', 'yaxis': 'Events', 'rebin': 10},
     'zLeadingLeptonPt'      : {'xaxis': 'p_{T}^{Z_{lead}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 50, 'rangex': [0,150]},
+    'zLeadingLeptonIso'     : {'xaxis': 'Rel. Iso.', 'yaxis': 'Events', 'rebin': 10, 'rangex': [0,0.2]},
     'zSubLeadingLeptonPt'   : {'xaxis': 'p_{T}^{Z_{sublead}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 50, 'rangex': [0,150]},
+    'zSubLeadingLeptonIso'  : {'xaxis': 'Rel. Iso.', 'yaxis': 'Events', 'rebin': 10, 'rangex': [0,0.2]},
     # event
     'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'numVertices_noreweight': {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},

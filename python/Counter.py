@@ -70,9 +70,13 @@ class Counter(object):
         '''Read the count from file'''
         analysis = kwargs.pop('analysis',self.analysis)
         hist = self.sampleFiles[analysis][sampleName].getCount(directory)
-        val = hist.GetBinContent(1) if hist else 0.
-        err = hist.GetBinError(1) if hist else 0.
-        return val,err
+        if isinstance(hist,list) or isinstance(hist,tuple):
+            return hist
+        if isinstance(hist,ROOT.TH1):
+            val = hist.GetBinContent(1) if hist else 0.
+            err = hist.GetBinError(1) if hist else 0.
+            return val,err
+        return 0.,0.
 
     def _getTempCount(self,sampleName,selection,scalefactor,**kwargs):
         '''Get a temporary count'''
