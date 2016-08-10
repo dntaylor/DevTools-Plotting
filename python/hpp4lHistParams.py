@@ -145,7 +145,8 @@ def buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
     
     # setup working points
     cuts4l = sorted(['st','zveto','dr','mass'])
-    for mass in masses:
+    #for mass in masses:
+    for mass in [500]:
         for hppTaus in range(3):
             for hmmTaus in range(3):
                 # old
@@ -158,14 +159,17 @@ def buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
                 #selectionParams['Hpp4l']['old/allSideband/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] =   {'args': [hpp4lCutMap['PPPP'] + ' && ' + allSideband],   'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
                 #selectionParams['Hpp4l']['old/allMassWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] = {'args': [hpp4lCutMap['PPPP'] + ' && ' + allMassWindow], 'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
                 # new
-                sideband = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=[],invcuts=['st','zveto','met','dr','mass'],mode='new')
-                massWindow = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['mass'],invcuts=['st','zveto','met','dr'],mode='new')
-                allSideband = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['st','zveto','met','dr'],invcuts=['mass'],mode='new')
-                allMassWindow = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['st','zveto','met','dr','mass'],invcuts=[],mode='new')
-                selectionParams['Hpp4l']['new/sideband/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] =      {'args': [hpp4lCutMap['PPPP'] + ' && ' + sideband],      'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
-                selectionParams['Hpp4l']['new/massWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] =    {'args': [hpp4lCutMap['PPPP'] + ' && ' + massWindow],    'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
-                selectionParams['Hpp4l']['new/allSideband/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] =   {'args': [hpp4lCutMap['PPPP'] + ' && ' + allSideband],   'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
-                selectionParams['Hpp4l']['new/allMassWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] = {'args': [hpp4lCutMap['PPPP'] + ' && ' + allMassWindow], 'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
+                #sideband = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=[],invcuts=['st','zveto','met','dr','mass'],mode='new')
+                #massWindow = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['mass'],invcuts=['st','zveto','met','dr'],mode='new')
+                #allSideband = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['st','zveto','met','dr'],invcuts=['mass'],mode='new')
+                #allMassWindow = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['st','zveto','met','dr','mass'],invcuts=[],mode='new')
+                #selectionParams['Hpp4l']['new/sideband/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] =      {'args': [hpp4lCutMap['PPPP'] + ' && ' + sideband],      'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
+                #selectionParams['Hpp4l']['new/massWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] =    {'args': [hpp4lCutMap['PPPP'] + ' && ' + massWindow],    'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
+                #selectionParams['Hpp4l']['new/allSideband/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] =   {'args': [hpp4lCutMap['PPPP'] + ' && ' + allSideband],   'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
+                #selectionParams['Hpp4l']['new/allMassWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] = {'args': [hpp4lCutMap['PPPP'] + ' && ' + allMassWindow], 'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
+                # n-1
+                nMinusOneMassWindow = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['st','zveto','met','dr'],invcuts=[],mode='new')
+                selectionParams['Hpp4l']['nMinusOne/massWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] = {'args': [hpp4lCutMap['PPPP'] + ' && ' + nMinusOneMassWindow], 'kwargs': {'mcscalefactor': hpp4lScaleFactor,}}
     
     # fake regions via modes
     #for nf in range(3): # limit to speed up
@@ -213,7 +217,8 @@ def buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
         }
         # setup working points
         cuts4l = sorted(['st','zveto','dr','mass'])
-        for mass in masses:
+        #for mass in masses:
+        for mass in [500]:
             for hppTaus in range(3):
                 for hmmTaus in range(3):
                     # old
@@ -226,44 +231,54 @@ def buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
                     #selectionParams['Hpp4l']['old/allSideband/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] =   {'args': [hpp4lCutMap['PPPP'] + ' && ' + allSideband],   'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
                     #selectionParams['Hpp4l']['old/allMassWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] = {'args': [hpp4lCutMap['PPPP'] + ' && ' + allMassWindow], 'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
                     # new
-                    sideband = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=[],invcuts=['st','zveto','met','dr','mass'],mode='new')
-                    massWindow = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['mass'],invcuts=['st','zveto','met','dr'],mode='new')
-                    allSideband = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['st','zveto','met','dr'],invcuts=['mass'],mode='new')
-                    allMassWindow = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['st','zveto','met','dr','mass'],invcuts=[],mode='new')
-                    selectionParams['Hpp4l']['{3}/new/sideband/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus,name)] =      {
-                        'args': [hpp4lBaseCut + ' && ' + regionCut + ' && ' + sideband],      
+                    #sideband = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=[],invcuts=['st','zveto','met','dr','mass'],mode='new')
+                    #massWindow = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['mass'],invcuts=['st','zveto','met','dr'],mode='new')
+                    #allSideband = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['st','zveto','met','dr'],invcuts=['mass'],mode='new')
+                    #allMassWindow = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['st','zveto','met','dr','mass'],invcuts=[],mode='new')
+                    #selectionParams['Hpp4l']['{3}/new/sideband/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus,name)] =      {
+                    #    'args': [hpp4lBaseCut + ' && ' + regionCut + ' && ' + sideband],      
+                    #    'kwargs': {
+                    #        'mccut': hpp4lMCCut,
+                    #        'mcscalefactor': regionMCScaleFactor,
+                    #        'datascalefactor': regionDataScaleFactor,
+                    #        'countOnly': True,
+                    #    },
+                    #}
+                    #selectionParams['Hpp4l']['{3}/new/massWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus,name)] =    {
+                    #    'args': [hpp4lBaseCut + ' && ' + regionCut + ' && ' + massWindow],    
+                    #    'kwargs': {
+                    #        'mccut': hpp4lMCCut,
+                    #        'mcscalefactor': regionMCScaleFactor,
+                    #        'datascalefactor': regionDataScaleFactor,
+                    #        'countOnly': True,
+                    #    },
+                    #}
+                    #selectionParams['Hpp4l']['{3}/new/allSideband/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus,name)] =   {
+                    #    'args': [hpp4lBaseCut + ' && ' + regionCut + ' && ' + allSideband],   
+                    #    'kwargs': {
+                    #        'mccut': hpp4lMCCut,
+                    #        'mcscalefactor': regionMCScaleFactor,
+                    #        'datascalefactor': regionDataScaleFactor,
+                    #        'countOnly': True,
+                    #    },
+                    #}
+                    #selectionParams['Hpp4l']['{3}/new/allMassWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus,name)] = {
+                    #    'args': [hpp4lBaseCut + ' && ' + regionCut + ' && ' + allMassWindow], 
+                    #    'kwargs': {
+                    #        'mccut': hpp4lMCCut,
+                    #        'mcscalefactor': regionMCScaleFactor,
+                    #        'datascalefactor': regionDataScaleFactor,
+                    #        'countOnly': True,
+                    #    },
+                    #}
+                    # n-1
+                    nMinusOneMassWindow = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['st','zveto','met','dr'],invcuts=[],mode='new')
+                    selectionParams['Hpp4l']['{3}/nMinusOne/massWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus,name)] = {
+                        'args': [hpp4lBaseCut + ' && ' + regionCut + ' && ' + nMinusOneMassWindow], 
                         'kwargs': {
                             'mccut': hpp4lMCCut,
                             'mcscalefactor': regionMCScaleFactor,
                             'datascalefactor': regionDataScaleFactor,
-                            'countOnly': True,
-                        },
-                    }
-                    selectionParams['Hpp4l']['{3}/new/massWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus,name)] =    {
-                        'args': [hpp4lBaseCut + ' && ' + regionCut + ' && ' + massWindow],    
-                        'kwargs': {
-                            'mccut': hpp4lMCCut,
-                            'mcscalefactor': regionMCScaleFactor,
-                            'datascalefactor': regionDataScaleFactor,
-                            'countOnly': True,
-                        },
-                    }
-                    selectionParams['Hpp4l']['{3}/new/allSideband/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus,name)] =   {
-                        'args': [hpp4lBaseCut + ' && ' + regionCut + ' && ' + allSideband],   
-                        'kwargs': {
-                            'mccut': hpp4lMCCut,
-                            'mcscalefactor': regionMCScaleFactor,
-                            'datascalefactor': regionDataScaleFactor,
-                            'countOnly': True,
-                        },
-                    }
-                    selectionParams['Hpp4l']['{3}/new/allMassWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus,name)] = {
-                        'args': [hpp4lBaseCut + ' && ' + regionCut + ' && ' + allMassWindow], 
-                        'kwargs': {
-                            'mccut': hpp4lMCCut,
-                            'mcscalefactor': regionMCScaleFactor,
-                            'datascalefactor': regionDataScaleFactor,
-                            'countOnly': True,
                         },
                     }
     

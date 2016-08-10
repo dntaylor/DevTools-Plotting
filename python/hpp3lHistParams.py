@@ -136,7 +136,8 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
     
     # setup working points
     cuts3l = sorted(['st','zveto','dr','mass','met'])
-    for mass in masses:
+    #for mass in masses:
+    for mass in [500]:
         for hppTaus in range(3):
             # old
             #sideband = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=[],invcuts=['mass'],mode='old')
@@ -148,14 +149,17 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
             #selectionParams['Hpp3l']['old/allSideband/{0}/hpp{1}'.format(mass,hppTaus,)] =   {'args': [hpp3lCutMap['PPP'] + ' && ' + allSideband],   'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
             #selectionParams['Hpp3l']['old/allMassWindow/{0}/hpp{1}'.format(mass,hppTaus,)] = {'args': [hpp3lCutMap['PPP'] + ' && ' + allMassWindow], 'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
             # new
-            sideband = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=[],invcuts=['st','zveto','met','dr','mass'],mode='new')
-            massWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['mass'],invcuts=['st','zveto','met','dr'],mode='new')
-            allSideband = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr'],invcuts=['mass'],mode='new')
-            allMassWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr','mass'],invcuts=[],mode='new')
-            selectionParams['Hpp3l']['new/sideband/{0}/hpp{1}'.format(mass,hppTaus,)] =      {'args': [hpp3lCutMap['PPP'] + ' && ' + sideband],      'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
-            selectionParams['Hpp3l']['new/massWindow/{0}/hpp{1}'.format(mass,hppTaus,)] =    {'args': [hpp3lCutMap['PPP'] + ' && ' + massWindow],    'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
-            selectionParams['Hpp3l']['new/allSideband/{0}/hpp{1}'.format(mass,hppTaus,)] =   {'args': [hpp3lCutMap['PPP'] + ' && ' + allSideband],   'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
-            selectionParams['Hpp3l']['new/allMassWindow/{0}/hpp{1}'.format(mass,hppTaus,)] = {'args': [hpp3lCutMap['PPP'] + ' && ' + allMassWindow], 'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
+            #sideband = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=[],invcuts=['st','zveto','met','dr','mass'],mode='new')
+            #massWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['mass'],invcuts=['st','zveto','met','dr'],mode='new')
+            #allSideband = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr'],invcuts=['mass'],mode='new')
+            #allMassWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr','mass'],invcuts=[],mode='new')
+            #selectionParams['Hpp3l']['new/sideband/{0}/hpp{1}'.format(mass,hppTaus,)] =      {'args': [hpp3lCutMap['PPP'] + ' && ' + sideband],      'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
+            #selectionParams['Hpp3l']['new/massWindow/{0}/hpp{1}'.format(mass,hppTaus,)] =    {'args': [hpp3lCutMap['PPP'] + ' && ' + massWindow],    'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
+            #selectionParams['Hpp3l']['new/allSideband/{0}/hpp{1}'.format(mass,hppTaus,)] =   {'args': [hpp3lCutMap['PPP'] + ' && ' + allSideband],   'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
+            #selectionParams['Hpp3l']['new/allMassWindow/{0}/hpp{1}'.format(mass,hppTaus,)] = {'args': [hpp3lCutMap['PPP'] + ' && ' + allMassWindow], 'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
+            # n-1 mass window
+            nMinusOneMassWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr'],mode='new')
+            selectionParams['Hpp3l']['nMinusOne/massWindow/{0}/hpp{1}'.format(mass,hppTaus,)] = {'args': [hpp3lCutMap['PPP'] + ' && ' + nMinusOneMassWindow], 'kwargs': {'mcscalefactor': hpp3lScaleFactor,}}
     
     # fake regions via modes
     # TODO: change to only add for 3 real leptons and data
@@ -202,7 +206,8 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
         }
         # setup working points
         cuts3l = sorted(['st','zveto','dr','mass','met'])
-        for mass in masses:
+        #for mass in masses:
+        for mass in [500]:
             for hppTaus in range(3):
                 # old
                 #sideband = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=[],invcuts=['mass'],mode='old')
@@ -214,36 +219,54 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
                 #selectionParams['Hpp3l']['old/allSideband/{0}/hpp{1}'.format(mass,hppTaus,)] =   {'args': [hpp3lCutMap['PPP'] + ' && ' + allSideband],   'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
                 #selectionParams['Hpp3l']['old/allMassWindow/{0}/hpp{1}'.format(mass,hppTaus,)] = {'args': [hpp3lCutMap['PPP'] + ' && ' + allMassWindow], 'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
                 # new
-                sideband = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=[],invcuts=['st','zveto','met','dr','mass'],mode='new')
-                massWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['mass'],invcuts=['st','zveto','met','dr'],mode='new')
-                allSideband = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr'],invcuts=['mass'],mode='new')
-                allMassWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr','mass'],invcuts=[],mode='new')
-                selectionParams['Hpp3l']['{2}/new/sideband/{0}/hpp{1}'.format(mass,hppTaus,name)] =      {
-                    'args': [hpp3lCutMap['PPP'] + ' && ' + sideband],      
+                #sideband = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=[],invcuts=['st','zveto','met','dr','mass'],mode='new')
+                #massWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['mass'],invcuts=['st','zveto','met','dr'],mode='new')
+                #allSideband = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr'],invcuts=['mass'],mode='new')
+                #allMassWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr','mass'],invcuts=[],mode='new')
+                #selectionParams['Hpp3l']['{2}/new/sideband/{0}/hpp{1}'.format(mass,hppTaus,name)] =      {
+                #    'args': [hpp3lBaseCut + ' && ' + regionCut + ' && ' + sideband],      
+                #    'kwargs': {
+                #        'mccut': hpp3lMCCut,
+                #        'mcscalefactor': regionMCScaleFactor,
+                #        'datascalefactor': regionDataScaleFactor,
+                #        'countOnly': True,
+                #    },
+                #}
+                #selectionParams['Hpp3l']['{2}/new/massWindow/{0}/hpp{1}'.format(mass,hppTaus,name)] =    {
+                #    'args': [hpp3lBaseCut + ' && ' + regionCut + ' && ' + massWindow],    
+                #    'kwargs': {
+                #        'mccut': hpp3lMCCut,
+                #        'mcscalefactor': regionMCScaleFactor,
+                #        'datascalefactor': regionDataScaleFactor,
+                #        'countOnly': True,
+                #    },
+                #}
+                #selectionParams['Hpp3l']['{2}/new/allSideband/{0}/hpp{1}'.format(mass,hppTaus,name)] =   {
+                #    'args': [hpp3lBaseCut + ' && ' + regionCut + ' && ' + allSideband],   
+                #    'kwargs': {
+                #        'mccut': hpp3lMCCut,
+                #        'mcscalefactor': regionMCScaleFactor,
+                #        'datascalefactor': regionDataScaleFactor,
+                #        'countOnly': True,
+                #    },
+                #}
+                #selectionParams['Hpp3l']['{2}/new/allMassWindow/{0}/hpp{1}'.format(mass,hppTaus,name)] = {
+                #    'args': [hpp3lBaseCut + ' && ' + regionCut + ' && ' + allMassWindow], 
+                #    'kwargs': {
+                #        'mccut': hpp3lMCCut,
+                #        'mcscalefactor': regionMCScaleFactor,
+                #        'datascalefactor': regionDataScaleFactor,
+                #        'countOnly': True,
+                #    },
+                #}
+                # n-1
+                nMinusOneMassWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr'],mode='new')
+                selectionParams['Hpp3l']['{2}/nMinusOne/massWindow/{0}/hpp{1}'.format(mass,hppTaus,name)] = {
+                    'args': [hpp3lBaseCut + ' && ' + regionCut + ' && ' + nMinusOneMassWindow], 
                     'kwargs': {
-                        'mcscalefactor': hpp3lScaleFactor, 
-                        'countOnly': True,
-                    },
-                }
-                selectionParams['Hpp3l']['{2}/new/massWindow/{0}/hpp{1}'.format(mass,hppTaus,name)] =    {
-                    'args': [hpp3lCutMap['PPP'] + ' && ' + massWindow],    
-                    'kwargs': {
-                        'mcscalefactor': hpp3lScaleFactor, 
-                        'countOnly': True,
-                    },
-                }
-                selectionParams['Hpp3l']['{2}/new/allSideband/{0}/hpp{1}'.format(mass,hppTaus,name)] =   {
-                    'args': [hpp3lCutMap['PPP'] + ' && ' + allSideband],   
-                    'kwargs': {
-                        'mcscalefactor': hpp3lScaleFactor, 
-                        'countOnly': True,
-                    },
-                }
-                selectionParams['Hpp3l']['{2}/new/allMassWindow/{0}/hpp{1}'.format(mass,hppTaus,name)] = {
-                    'args': [hpp3lCutMap['PPP'] + ' && ' + allMassWindow], 
-                    'kwargs': {
-                        'mcscalefactor': hpp3lScaleFactor, 
-                        'countOnly': True,
+                        'mccut': hpp3lMCCut,
+                        'mcscalefactor': regionMCScaleFactor,
+                        'datascalefactor': regionDataScaleFactor,
                     },
                 }
 
