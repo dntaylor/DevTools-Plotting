@@ -291,7 +291,7 @@ class LimitPlotter(PlotterBase):
 
 
     def moneyPlot(self,limvals,savename,**kwargs):
-        xaxis = kwargs.pop('xaxis','Excluded Masses (GeV)')
+        xaxis = kwargs.pop('xaxis','#Phi^{#pm#pm} Mass (GeV)')
         yaxis = kwargs.pop('yaxis','')
         blind = kwargs.pop('blind',True)
         lumipos = kwargs.pop('lumipos',0)
@@ -325,23 +325,15 @@ class LimitPlotter(PlotterBase):
         labels['BP4']   = 'Benchmark 4'
 
         colors = {
-            'HppComb' : {
-                1: ROOT.kSpring,
-                2: ROOT.kYellow,
-            },
-            'HppAP' : {
-                1: ROOT.TColor.GetColor('#3399FF'),
-                2: ROOT.TColor.GetColor('#33FFFF'),
-            },
-            'HppPP' : {
-                1: ROOT.TColor.GetColor('#FF6633'),
-                2: ROOT.TColor.GetColor('#FFCC33'),
-            },
+            # mode : { 1: 13TeV Exp, 2: 13TeV Exc, 3: 8TeV Exp, 4: 8TeV Exc},
+            'HppComb': {1: ROOT.TColor.GetColor('#248F24'), 2: ROOT.TColor.GetColor('#2EB82E'), 3: ROOT.TColor.GetColor('#999900'), 4: ROOT.TColor.GetColor('#CCCC00'), },
+            'HppAP'  : {1: ROOT.TColor.GetColor('#0073E6'), 2: ROOT.TColor.GetColor('#1A8CFF'), 3: ROOT.TColor.GetColor('#009999'), 4: ROOT.TColor.GetColor('#00CCCC'), },
+            'HppPP'  : {1: ROOT.TColor.GetColor('#B32400'), 2: ROOT.TColor.GetColor('#E62E00'), 3: ROOT.TColor.GetColor('#990099'), 4: ROOT.TColor.GetColor('#CC00CC'), },
         }
 
         prodLabels = {
-            'HppAP'  : 'Assoc. Prod.',
-            'HppPP'  : 'Pair Prod.',
+            'HppAP'  : 'Associated Production',
+            'HppPP'  : 'Pair Production',
             'HppComb': 'Combined',
         }
 
@@ -359,6 +351,12 @@ class LimitPlotter(PlotterBase):
         observed = {}
         prevExpExclusion = {}
         prevExclusion = {}
+
+        multiExpected = ROOT.TMultiGraph()
+        multiObserved = ROOT.TMultiGraph()
+        multiPrevExpected = ROOT.TMultiGraph()
+        multiPrevObserved = ROOT.TMultiGraph()
+
         for i,mode in enumerate(labels):
             h.GetYaxis().SetBinLabel(2*nl+2-2*i,labels[mode])
             cur -= 4
@@ -373,84 +371,104 @@ class LimitPlotter(PlotterBase):
                 sub += 1
                 # get current expected and observed limits, draw as tgraphs
                 l2, l1, exp, h1, h2, obs = limvals[mode][prod]
-                errors_one[mode][prod] = ROOT.TGraphAsymmErrors(1,array('d',[exp]),array('d',[(cur-sub)/4]),array('d',[exp-l1]),array('d',[h1-exp]),array('d',[0.5/4]),array('d',[0.5/4]))
-                errors_two[mode][prod] = ROOT.TGraphAsymmErrors(1,array('d',[exp]),array('d',[(cur-sub)/4]),array('d',[exp-l2]),array('d',[h2-exp]),array('d',[0.5/4]),array('d',[0.5/4]))
-                expected[mode][prod]   = ROOT.TGraphAsymmErrors(1,array('d',[exp]),array('d',[(cur-sub)/4]),array('d',[0.]),array('d',[0.]),array('d',[0.5/4]),array('d',[0.5/4]))
-                observed[mode][prod]   = ROOT.TGraph(1,array('d',[exp if blind else obs]),array('d',[(cur-sub)/4]))
-                errors_one[mode][prod].SetFillColor(colors[prod][1])
-                errors_two[mode][prod].SetFillColor(colors[prod][2])
-                #errors_two[mode][prod].Draw('2')
-                errors_one[mode][prod].Draw('2')
-                expected[mode][prod].SetMarkerStyle(1)
-                expected[mode][prod].Draw('same Z')
-                observed[mode][prod].SetMarkerStyle(20)
-                if not blind: observed[mode][prod].Draw('P')
+
+                expected[mode][prod] = ROOT.TGraph(2,array('d',[exp,exp]),array('d',[(cur-sub+0.5)/4,(cur-sub-0.5)/4]))
+                expected[mode][prod].SetFillColor(colors[prod][1])
+                expected[mode][prod].SetLineColor(colors[prod][1])
+                expected[mode][prod].SetLineWidth(-504)
+                expected[mode][prod].SetFillStyle(3004)
+                expected[mode][prod].SetFillColor(colors[prod][1])
+                multiExpected.Add(expected[mode][prod])
+
+                observed[mode][prod] = ROOT.TGraph(2,array('d',[exp,exp] if blind else [obs,obs]),array('d',[(cur-sub+0.5)/4,(cur-sub-0.5)/4]))
+                observed[mode][prod].SetFillColorAlpha(colors[prod][2],0.35)
+                observed[mode][prod].SetLineColor(colors[prod][2])
+                observed[mode][prod].SetLineWidth(-9001)
+                multiObserved.Add(observed[mode][prod])
+
                 # get previous exclusions, draw as filled tgraph bar chart
-                prevExpExclusion[mode][prod] = ROOT.TGraph(4)
-                prevExpExclusion[mode][prod].SetPoint(0,0.,                       (cur-sub)/4-0.5/4)
-                prevExpExclusion[mode][prod].SetPoint(1,prevExpLimits[mode][prod],(cur-sub)/4-0.5/4)
-                prevExpExclusion[mode][prod].SetPoint(2,prevExpLimits[mode][prod],(cur-sub)/4+0.5/4)
-                prevExpExclusion[mode][prod].SetPoint(3,0.,                       (cur-sub)/4+0.5/4)
-                prevExpExclusion[mode][prod].SetFillStyle(3002)
-                prevExclusion[mode][prod] = ROOT.TGraph(1,array('d',[prevLimits[mode][prod]]),array('d',[(cur-sub)/4]))
-                prevExclusion[mode][prod].SetMarkerStyle(24)
-                if doPreviousExclusion: prevExpExclusion[mode][prod].Draw('f')
-                if doPreviousExclusion: prevExclusion[mode][prod].Draw('P')
+                prevExp = prevExpLimits[mode][prod]
+                prevExpExclusion[mode][prod] = ROOT.TGraph(2,array('d',[prevExp,prevExp]),array('d',[(cur-sub+0.5)/4,(cur-sub-0.5)/4]))
+                prevExpExclusion[mode][prod].SetFillColor(colors[prod][3])
+                prevExpExclusion[mode][prod].SetLineColor(colors[prod][3])
+                prevExpExclusion[mode][prod].SetLineWidth(-504)
+                prevExpExclusion[mode][prod].SetFillStyle(3004)
+                multiPrevExpected.Add(prevExpExclusion[mode][prod])
+
+                prevExc = prevLimits[mode][prod]
+                prevExclusion[mode][prod] = ROOT.TGraph(2,array('d',[prevExc,prevExc]),array('d',[(cur-sub+0.5)/4,(cur-sub-0.5)/4]))
+                prevExclusion[mode][prod].SetFillColorAlpha(colors[prod][4],0.35)
+                prevExclusion[mode][prod].SetLineColor(colors[prod][4])
+                prevExclusion[mode][prod].SetLineWidth(-9001)
+                multiPrevObserved.Add(prevExclusion[mode][prod])
+
+        multiExpected.Draw('L')
+        if not blind: multiObserved.Draw('L')
+        if doPreviousExclusion: multiPrevExpected.Draw('L')
+        if doPreviousExclusion: multiPrevObserved.Draw('L')
 
         ROOT.gPad.RedrawAxis()
 
-        # custom legend
-        latex = ROOT.TLatex()
-        latex.SetTextFont(42)
-        latex.SetTextColor(ROOT.kBlack)
-        latex.SetTextSize(0.14)
-        
-        legend = ROOT.TPad('legend','legend',0.60,0.2,0.95,0.4)
-        legend.SetTopMargin(0)
-        legend.SetBottomMargin(0)
-        legend.SetLeftMargin(0)
-        legend.SetRightMargin(0)
-        legend.SetFrameLineWidth(0)
-        legend.Draw()
-        legend.cd()
-        
-        hl = ROOT.TH2F("hl", "hl; ; ", 1,-6.,1.5,3,0.5,4)
-        hl.Draw('AH')
 
-        legendErrors = {}
-        legendErrors['excluded'] = ROOT.TGraph(4)
-        legendErrors['excluded'].SetPoint(0, -0.5, 3.+2./3-0.5/2)
-        legendErrors['excluded'].SetPoint(1,  0.5, 3.+2./3-0.5/2)
-        legendErrors['excluded'].SetPoint(2,  0.5, 3.+2./3+0.5/2)
-        legendErrors['excluded'].SetPoint(3, -0.5, 3.+2./3+0.5/2)
-        legendErrors['excluded'].SetFillStyle(3002)
-        legendErrors['excludedObserved'] = ROOT.TGraph(1,array('d',[0.]),array('d',[3.+2./3]))
-        legendErrors['excludedObserved'].SetMarkerStyle(24)
+        obsleg = ROOT.TGraph()
+        obsleg.SetLineColor(ROOT.kBlack)
+        obsleg.SetFillColorAlpha(ROOT.kBlack,0.35)
+
+        expleg = ROOT.TGraph()
+        expleg.SetLineWidth(4)
+        expleg.SetFillStyle(3004)
+
+        curr = {}
+        for prod in ['HppAP','HppPP','HppComb']:
+            curr[prod+'8'] = ROOT.TGraph()
+            curr[prod+'8'].SetLineColor(colors[prod][4])
+            curr[prod+'8'].SetFillColorAlpha(colors[prod][4],0.35)
+            curr[prod+'13'] = ROOT.TGraph()
+            curr[prod+'13'].SetLineColor(colors[prod][2])
+            curr[prod+'13'].SetFillColorAlpha(colors[prod][2],0.35)
+
         if doPreviousExclusion:
-            legendErrors['excluded'].Draw('f')
-            legendErrors['excludedObserved'].Draw('P')
-            latex.DrawLatex(-5.5,2.9+2./3,'8 TeV Excluded')
-        for i,prod in enumerate(['HppAP','HppPP','HppComb']):
-            legendErrors[prod] = {}
-            legendErrors[prod]['two'] = ROOT.TGraphAsymmErrors(1,array('d',[0.]),array('d',[3.-i*2./3]),array('d',[1.0]),array('d',[1.0]),array('d',[0.5/2]),array('d',[0.5/2]))
-            legendErrors[prod]['one'] = ROOT.TGraphAsymmErrors(1,array('d',[0.]),array('d',[3.-i*2./3]),array('d',[0.5]),array('d',[0.5]),array('d',[0.5/2]),array('d',[0.5/2]))
-            legendErrors[prod]['exp'] = ROOT.TGraphAsymmErrors(1,array('d',[0.]),array('d',[3.-i*2./3]),array('d',[0.0]),array('d',[0.0]),array('d',[0.5/2]),array('d',[0.5/2]))
-            legendErrors[prod]['two'].SetFillColor(colors[prod][2])
-            legendErrors[prod]['one'].SetFillColor(colors[prod][1])
-            #legendErrors[prod]['two'].Draw('2')
-            legendErrors[prod]['one'].Draw('2')
-            legendErrors[prod]['exp'].SetMarkerStyle(1)
-            legendErrors[prod]['exp'].Draw('same Z')
-            latex.DrawLatex(-5.5,2.9-i*2./3,prodLabels[prod])
-        legendErrors['obs'] = ROOT.TGraph(1,array('d',[0.]),array('d',[1.]))
-        legendErrors['obs'].Draw('P')
-        latex.DrawLatex(-5.5,0.9,'Observed')
+            legend = ROOT.TLegend(0.55,0.44,0.95,0.52,'','NDC')
+            legend.SetTextFont(42)
+            legend.SetTextSize(0.02)
+            legend.SetBorderSize(0)
+            legend.SetFillColor(0)
 
-        canvas.cd()
-        ROOT.gPad.RedrawAxis()
+            legend.AddEntry(obsleg,'Observed exclusion 95% CL','f')
+            legend.AddEntry(expleg,'Expected exclusion 95% CL','lf')
+            legend.Draw()
+
+            sublegends = {}
+            for i,prod in enumerate(['HppAP','HppPP','HppComb']):
+                sublegends[prod] = ROOT.TLegend(0.558,0.44-0.04*2*(i+1),0.95,0.44-0.04*2*i,'','NDC')
+                sublegends[prod].SetTextFont(42)
+                sublegends[prod].SetTextSize(0.02)
+                sublegends[prod].SetBorderSize(0)
+                sublegends[prod].SetFillColor(0)
+                sublegends[prod].SetHeader(prodLabels[prod])
+                sublegends[prod].SetNColumns(2)
+                sublegends[prod].AddEntry(curr[prod+'8'],'19.7 fb^{-1} (8 TeV)','f')
+                sublegends[prod].AddEntry(curr[prod+'13'],'12.9 fb^{-1} (13 TeV)','f')
+                sublegends[prod].Draw()
+        else:
+            legend = ROOT.TLegend(0.60,0.2,0.95,0.4,'','NDC')
+            legend.SetTextFont(42)
+            legend.SetBorderSize(0)
+            legend.SetFillColor(0)
+
+            legend.AddEntry(obsleg,'Observed exclusion 95% CL','f')
+            legend.AddEntry(expleg,'Expected exclusion 95% CL','lf')
+            for prod in ['HppAP','HppPP','HppComb']:
+                legend.AddEntry(curr[prod+'13'],prodLabels[prod],'f')
+
+            legend.Draw()
+
 
         # cms lumi styling
-        self._setStyle(canvas,position=lumipos,preliminary=isprelim)
+        if doPreviousExclusion:
+            self._setStyle(canvas,position=lumipos,preliminary=isprelim,period_int=0)
+        else:
+            self._setStyle(canvas,position=lumipos,preliminary=isprelim)
 
         self._save(canvas,savename)
 

@@ -126,6 +126,26 @@ def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False,postfix='')
     if postfix: savename += '_{0}'.format(postfix)
     plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=100,ymin=0.001)
 
+# variable binning
+variable_binning = {
+    'hppMass': {
+        'I'  : [0,50,100,150,200,250,300,400,500,600,800,1000,1650],
+        'II' : [0,50,100,150,200,300,400,600,1000,1650],
+        'III': [0,200,600,1650],
+        'IV' : [0,50,100,200,300,400,1650],
+        'V'  : [0,50,100,200,400,1650],
+        'VI' : [0,200,1650],
+    },
+    'st': {
+        'I'  : [0,50,100,150,200,250,300,400,500,600,800,1000,1400,2000],
+        'II' : [0,50,100,150,200,300,400,600,1000,2000],
+        'III': [0,200,600,2000],
+        'IV' : [0,50,100,200,300,400,2000],
+        'V'  : [0,50,100,200,400,2000],
+        'VI' : [0,200,2000],
+    },
+}
+
 def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postfix='',**kwargs):
     plotname = '/'.join([x for x in [baseDir,plot] if x])
     plotvars = getDataDrivenPlot(plotname) if datadriven else plotname
@@ -139,6 +159,9 @@ def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postf
         plotvars = getDataDrivenPlot(*plotnames) if datadriven else plotnames
         savename = '/'.join([x for x in [saveDir,cat,plot] if x])
         if postfix: savename += '_{0}'.format(postfix)
+        if plot in variable_binning:
+            kwargs['rebin'] = variable_binning[plot][cat]
+            kwargs['yaxis'] = 'Events / 1 GeV'
         if doCat: plotter.plot(plotvars,savename,**kwargs)
 
 
@@ -147,7 +170,7 @@ def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postf
 ########################
 plots = {
     # hpp
-    'hppMass'               : {'xaxis': 'm_{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': False, 'rangex': [0,800]},
+    'hppMass'               : {'xaxis': 'm_{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': True, 'rangex': [0,1650]},
     'hppMt'                 : {'xaxis': 'm_{T}^{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': False},
     'hppPt'                 : {'xaxis': 'p_{T}^{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
     'hppDeltaR'             : {'xaxis': '#DeltaR(l^{+}l^{+})', 'yaxis': 'Events', 'rebin': 5},
@@ -177,9 +200,11 @@ plots = {
     'nJets'                 : {'xaxis': 'Number of jets (p_{T} > 30 GeV)', 'yaxis': 'Events'},
 }
 
+
+
 blind_cust = {
-    'hppMass': {'blinder': [200,1600], 'rangex': [0,800],},
-    'hmmMass': {'blinder': [200,1600], 'rangex': [0,800],},
+    'hppMass': {'blinder': [200,1650], 'rangex': [0,1650],},
+    'hmmMass': {'blinder': [200,1650], 'rangex': [0,1650],},
 }
 
 lowmass_cust = {

@@ -126,7 +126,46 @@ def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False,postfix='')
     if postfix: savename += '_{0}'.format(postfix)
     plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=1000,ymin=1)
 
-def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postfix='',**kwargs):
+# variable binning
+variable_binning = {
+    'hppMass': {
+        'I'  : [x*10 for x in range(20)]+[200+x*20 for x in range(15)]+[500+x*50 for x in range(10)]+[1000+x*100 for x in range(4)]+[1650],
+        'II' : [0,20,40,60,80,100,140,180,220,260,300,350,400,500,600,800,1650],
+        'III': [x*10 for x in range(20)]+[200+x*20 for x in range(15)]+[500+x*100 for x in range(5)]+[1000,1200,1400,1650],
+        'IV' : [0,20,40,60,80,100,140,180,220,260,300,400,600,1650],
+        'V'  : [0,20,40,60,80,100,150,200,300,400,600,800,1650],
+        'VI' : [0,20,40,60,80,100,140,180,220,260,300,350,400,600,1650],
+    },
+    'st': {
+        'I'  : [60+x*10 for x in range(14)]+[200+x*20 for x in range(15)]+[500+x*100 for x in range(5)]+[1000,1200,1400,2000],
+        'II' : [70,80,90,100,120,140,160,180,200,250,300,350,400,500,600,800,2000],
+        'III': [70+x*10 for x in range(13)]+[200+x*20 for x in range(15)]+[500+x*100 for x in range(5)]+[1000,1200,1400,2000],
+        'IV' : [60,70,80,90,100,120,140,160,180,200,250,300,350,400,500,600,2000],
+        'V'  : [60,70,80,90,100,120,140,160,180,200,250,300,350,400,500,600,2000],
+        'VI' : [100,125,150,200,300,2000],
+    },
+}
+
+ymin = {
+    'hppMass': {
+        'I'  : 0.001,
+        'II' : 0.0001,
+        'III': 0.001,
+        'IV' : 0.001,
+        'V'  : 0.0001,
+        'VI' : 0.00001,
+    },
+    'st': {
+        'I'  : 0.0001,
+        'II' : 0.0001,
+        'III': 0.0001,
+        'IV' : 0.0001,
+        'V'  : 0.0001,
+        'VI' : 0.00001,
+    },
+}
+
+def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postfix='',perCatBins=False,**kwargs):
     plotname = '/'.join([x for x in [baseDir,plot] if x])
     plotvars = getDataDrivenPlot(plotname) if datadriven else plotname
     savename = '/'.join([x for x in [saveDir,plot] if x])
@@ -139,6 +178,10 @@ def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postf
         plotvars = getDataDrivenPlot(*plotnames) if datadriven else plotnames
         savename = '/'.join([x for x in [saveDir,cat,plot] if x])
         if postfix: savename += '_{0}'.format(postfix)
+        if perCatBins and plot in variable_binning:
+            kwargs['rebin'] = variable_binning[plot][cat]
+            kwargs['yaxis'] = 'Events / 1 GeV'
+        if perCatBins and plot in ymin and kwargs.get('logy',False): kwargs['ymin'] = ymin[plot][cat]
         if doCat: plotter.plot(plotvars,savename,**kwargs)
 
 ########################
@@ -146,7 +189,7 @@ def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postf
 ########################
 plots = {
     # hpp
-    'hppMass'               : {'xaxis': 'm_{l^{#pm}l^{#pm}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 10, 'logy': True, 'rangex': [0,800]},
+    'hppMass'               : {'xaxis': 'm_{l^{#pm}l^{#pm}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 10, 'logy': True, 'rangex': [0,1650]},
     #'hppMt'                 : {'xaxis': 'm_{T}^{l^{#pm}l^{#pm}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': True},
     'hppPt'                 : {'xaxis': 'p_{T}^{l^{#pm}l^{#pm}} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': 10},
     'hppDeltaR'             : {'xaxis': '#DeltaR(l^{#pm}l^{#pm})', 'yaxis': 'Events', 'rebin': 25},
@@ -166,12 +209,12 @@ plots = {
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
     'metPhi'                : {'xaxis': '#phi(E_{T}^{miss})', 'yaxis': 'Events', 'rebin': 20},
     'mass'                  : {'xaxis': 'm_{3l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
-    'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': 10},
+    'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': 10, 'logy': True, 'numcol': 2},
     'nJets'                 : {'xaxis': 'Number of jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'rebin': 1},
 }
 
 blind_cust = {
-    'hppMass': {'blinder': [100,1600], 'rangex': [0,800],},
+    'hppMass': {'blinder': [100,1650], 'rangex': [0,1650],},
 }
 
 lowmass_cust = {
@@ -190,7 +233,7 @@ lowmass_cust = {
     # event
     'met'                  : {'rangex': [0,200]},
     'mass'                 : {'rangex': [0,600]},
-    'st'                   : {'rangex': [0,400]},
+    'st'                   : {'rangex': [0,400], 'logy': False},
 }
 
 norm_cust = {
@@ -275,7 +318,7 @@ if plotMC:
 
     for plot in plots:
         kwargs = deepcopy(plots[plot])
-        plotWithCategories(hpp3lPlotter,plot,saveDir='mc',baseDir='default',**kwargs)
+        plotWithCategories(hpp3lPlotter,plot,saveDir='mc',baseDir='default',perCatBins=True,**kwargs)
 
     # partially blinded plots
     if blind:
@@ -284,7 +327,7 @@ if plotMC:
         for plot in blind_cust:
             kwargs = deepcopy(plots[plot])
             kwargs.update(blind_cust[plot])
-            plotWithCategories(hpp3lPlotter,plot,saveDir='mc',baseDir='default',postfix='blinder',**kwargs)
+            plotWithCategories(hpp3lPlotter,plot,saveDir='mc',baseDir='default',postfix='blinder',perCatBins=True,**kwargs)
 
 ##############################
 ### datadriven backgrounds ###
@@ -316,26 +359,6 @@ if plotDatadriven:
             kwargs = deepcopy(plots[plot])
             kwargs.update(blind_cust[plot])
             plotWithCategories(hpp3lPlotter,plot,baseDir='',saveDir='datadriven',postfix='blinder',datadriven=True,**kwargs)
-
-####################
-### Fake Regions ###
-####################
-if plotFakeRegions:
-    hpp3lPlotter.clearHistograms()
-
-    for s in allsamples:
-        hpp3lPlotter.addHistogramToStack(s,sigMap[s])
-    for signal in signals:
-        hpp3lPlotter.addHistogram(signal,sigMap[signal],signal=True)
-
-    hpp3lPlotter.addHistogram('data',sigMap['data'])
-
-    for fr in ['2P1F','1P2F','0P3F']:
-        if plotCount: plotCounts(hpp3lPlotter,baseDir='{0}_regular'.format(fr),saveDir='mc/{0}'.format(fr))
-
-        for plot in plots:
-            kwargs = deepcopy(plots[plot])
-            plotWithCategories(hpp3lPlotter,plot,baseDir='{0}_regular'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
 
 
 ########################
@@ -374,6 +397,26 @@ if plotDatadriven:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
         plotWithCategories(hpp3lPlotter,plot,baseDir='lowmass',saveDir='lowmass-datadriven',datadriven=True,**kwargs)
+
+####################
+### Fake Regions ###
+####################
+if plotFakeRegions:
+    hpp3lPlotter.clearHistograms()
+
+    for s in allsamples:
+        hpp3lPlotter.addHistogramToStack(s,sigMap[s])
+    for signal in signals:
+        hpp3lPlotter.addHistogram(signal,sigMap[signal],signal=True)
+
+    hpp3lPlotter.addHistogram('data',sigMap['data'])
+
+    for fr in ['2P1F','1P2F','0P3F']:
+        if plotCount: plotCounts(hpp3lPlotter,baseDir='{0}_regular'.format(fr),saveDir='mc/{0}'.format(fr))
+
+        for plot in plots:
+            kwargs = deepcopy(plots[plot])
+            plotWithCategories(hpp3lPlotter,plot,baseDir='{0}_regular'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
 
 ############################
 ### Fake Regions lowmass ###

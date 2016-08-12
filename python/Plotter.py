@@ -182,6 +182,8 @@ class Plotter(PlotterBase):
         if rebin:
             if type(rebin) in [list,tuple]:
                 hist = hist.Rebin(len(rebin)-1,'',array('d',rebin))
+                # normalize to the bin width
+                hist.Scale(1,'width')
             else:
                 hist = hist.Rebin(rebin)
         style = self.styles[histName]

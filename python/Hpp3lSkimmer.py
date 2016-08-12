@@ -43,7 +43,10 @@ class Hpp3lSkimmer(NtupleSkimmer):
                     base += ['{0}_mediumScaleDown'.format(lep) if p else '{0}_looseScaleDown'.format(lep)]
                 else:
                     base += ['{0}_mediumScale'.format(lep) if p else '{0}_looseScale'.format(lep)]
-            weight = prod([getattr(row,scale) for scale in base])
+            vals = [getattr(row,scale) for scale in base]
+            for scale,val in zip(base,vals):
+                if val != val: logging.warning('{0}: {1} is NaN'.format(row.channel,scale))
+            weight = prod([val for val in vals if val==val])
             # scale to lumi/xsec
             weight *= float(self.intLumi)/self.sampleLumi if self.sampleLumi else 0.
         # fake scales

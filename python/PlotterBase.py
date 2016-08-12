@@ -76,14 +76,13 @@ class PlotterBase(object):
             legend.AddEntry(*entryArg)
         return legend
 
-    def _setStyle(self,pad,position=11,preliminary=True,personal=False):
+    def _setStyle(self,pad,position=11,preliminary=True,personal=False,period_int=4):
         '''Set style for plots based on the CMS TDR style guidelines.
            https://twiki.cern.ch/twiki/bin/view/CMS/Internal/PubGuidelines#Figures_and_tables
            https://ghm.web.cern.ch/ghm/plots/'''
         # set period (used in CMS_lumi)
         # period : sqrts
         # 1 : 7, 2 : 8, 3 : 7+8, 4 : 13, ... 7 : 7+8+13
-        period_int = 4
         # set position
         # 11: upper left, 33 upper right
         CMS_lumi.cmsText = 'CMS' if not personal else 'Devin N. Taylor'

@@ -151,6 +151,8 @@ class NtupleSkimmer(object):
 
     def increment(self,cutName,val,chan,genChan='all'):
         '''Increment all counts'''
+        if val!=val:
+            logging.warning('{0} {1} {2} attempted to add NaN'.format(cutName,chan,genChan))
         if cutName not in self.counts:
             self.counts[cutName] = {'val':0.,'count':0,'err2':0.,}
         self.counts[cutName]['val'] += val
