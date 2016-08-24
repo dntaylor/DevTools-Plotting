@@ -17,7 +17,8 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
     histParams['Hpp3l'] = {
         'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
         'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
-        #'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
+        #'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               'mcscale': '1./pileupWeight'},
+        #'pileupWeight'                : {'xVariable': 'pileupWeight',                   'xBinning': [30,0,3],                'mcscale': '1./pileupWeight'},
         'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
         'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
         # h++/h--

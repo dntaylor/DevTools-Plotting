@@ -12,7 +12,7 @@ import ROOT
 
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-blind = True
+blind = False
 
 limitPlotter = LimitPlotter()
 
@@ -30,13 +30,13 @@ for analysis,prod in [('Hpp3l','AP'),('Hpp3l','PP'),('Hpp4l',''),('HppAP',''),('
             'xaxis': '#Phi^{++} Mass (GeV)',
             'yaxis': '95% CLs Upper Limit on #sigma/#sigma_{model}',
         }
-        limvals[mode][label] = limitPlotter.plotLimit(masses,filenames[mode][label],'{0}/{1}'.format(label,mode),**kwargs)
+        limvals[mode][label] = limitPlotter.plotLimit(masses,filenames[mode][label],'{0}/{1}'.format(label,mode),blind=blind,**kwargs)
 
 for mode in modes:
-    limitPlotter.plotCrossSectionLimit(masses,filenames[mode]['HppAP'],filenames[mode]['HppPP'],'HppComb/{0}_crossSection'.format(mode))
+    limitPlotter.plotCrossSectionLimit(masses,filenames[mode]['HppAP'],filenames[mode]['HppPP'],'HppComb/{0}_crossSection'.format(mode),blind=blind)
 
-limitPlotter.moneyPlot(limvals,'moneyPlot')
-limitPlotter.moneyPlot(limvals,'moneyPlot_prevExclusion',doPreviousExclusion=True)
+limitPlotter.moneyPlot(limvals,'moneyPlot',blind=blind)
+limitPlotter.moneyPlot(limvals,'moneyPlot_prevExclusion',doPreviousExclusion=True,blind=blind)
 
 def dumpResults(results,analysis,name):
     jfile = 'jsons/{0}/{1}.json'.format(analysis,name)

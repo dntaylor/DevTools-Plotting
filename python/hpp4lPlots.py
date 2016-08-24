@@ -12,7 +12,7 @@ import ROOT
 
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-blind = True
+blind = False
 doCat = True
 plotCount = True
 plotMC = True
@@ -145,8 +145,9 @@ variable_binning = {
         'VI' : [0,200,2000],
     },
 }
+variable_binning['hmmMass'] = variable_binning['hppMass']
 
-def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postfix='',**kwargs):
+def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postfix='',perCatBins=False,**kwargs):
     plotname = '/'.join([x for x in [baseDir,plot] if x])
     plotvars = getDataDrivenPlot(plotname) if datadriven else plotname
     savename = '/'.join([x for x in [saveDir,plot] if x])
@@ -196,7 +197,7 @@ plots = {
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
     'metPhi'                : {'xaxis': '#phi(E_{T}^{miss})', 'yaxis': 'Events', 'rebin': 5},
     'mass'                  : {'xaxis': 'm_{4l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
-    'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
+    'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2, 'logy': True},
     'nJets'                 : {'xaxis': 'Number of jets (p_{T} > 30 GeV)', 'yaxis': 'Events'},
 }
 
@@ -226,7 +227,7 @@ lowmass_cust = {
     # event
     'met'                  : {'rangex': [0,200]},
     'mass'                 : {'rangex': [0,600], 'rebin':5, 'yaxis': 'Events / 50 GeV'},
-    'st'                   : {'rangex': [0,400], 'rebin':5, 'yaxis': 'Events / 50 GeV'},
+    'st'                   : {'rangex': [0,400], 'rebin':5, 'yaxis': 'Events / 50 GeV', 'logy': False},
 }
 
 norm_cust = {
@@ -320,7 +321,14 @@ if plotMC:
     
     for plot in plots:
         kwargs = deepcopy(plots[plot])
-        plotWithCategories(hpp4lPlotter,plot,baseDir='default',saveDir='mc',**kwargs)
+        plotWithCategories(hpp4lPlotter,plot,baseDir='default',saveDir='mc',perCatBins=True,**kwargs)
+    
+    # selection assuming 500
+    if plotCount: plotCounts(hpp4lPlotter,baseDir='nMinusOne/massWindow/500/hpp2hmm2',saveDir='sig500')
+    
+    for plot in plots:
+        kwargs = deepcopy(plots[plot])
+        plotWithCategories(hpp4lPlotter,plot,baseDir='nMinusOne/massWindow/500/hpp2hmm2',saveDir='sig500',perCatBins=True,**kwargs)
     
     # partially blinded plots
     if blind:
@@ -329,7 +337,7 @@ if plotMC:
         for plot in blind_cust:
             kwargs = deepcopy(plots[plot])
             kwargs.update(blind_cust[plot])
-            plotWithCategories(hpp4lPlotter,plot,baseDir='default',saveDir='mc',postfix='blinder',**kwargs)
+            plotWithCategories(hpp4lPlotter,plot,baseDir='default',saveDir='mc',postfix='blinder',perCatBins=True,**kwargs)
 
 ## multiple st cuts on same plot:
 #hpp4lPlotter.clearHistograms()
@@ -416,7 +424,14 @@ if plotDatadriven:
     
     for plot in plots:
         kwargs = deepcopy(plots[plot])
-        plotWithCategories(hpp4lPlotter,plot,baseDir='',saveDir='datadriven',datadriven=True,**kwargs)
+        plotWithCategories(hpp4lPlotter,plot,baseDir='',saveDir='datadriven',datadriven=True,perCatBins=True,**kwargs)
+    
+    # selection assuming 500
+    if plotCount: plotCounts(hpp4lPlotter,baseDir='nMinusOne/massWindow/500/hpp2hmm2',saveDir='sig500-datadriven',datadriven=True)
+    
+    for plot in plots:
+        kwargs = deepcopy(plots[plot])
+        plotWithCategories(hpp4lPlotter,plot,baseDir='nMinusOne/massWindow/500/hpp2hmm2',saveDir='sig500-datadriven',datadriven=True,perCatBins=True,**kwargs)
     
     # partially blinded plots
     if blind:
@@ -425,7 +440,7 @@ if plotDatadriven:
         for plot in blind_cust:
             kwargs = deepcopy(plots[plot])
             kwargs.update(blind_cust[plot])
-            plotWithCategories(hpp4lPlotter,plot,baseDir='',saveDir='datadriven',postfix='blinder',datadriven=True,**kwargs)
+            plotWithCategories(hpp4lPlotter,plot,baseDir='',saveDir='datadriven',postfix='blinder',datadriven=True,perCatBins=True,**kwargs)
 
 ####################
 ### Fake Regions ###

@@ -18,7 +18,8 @@ def buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
     histParams['Hpp4l'] = {
         'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                }, # just a count of events passing selection
         'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],              },
-        #'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
+        #'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],              'mcscale': '1./pileupWeight'},
+        #'pileupWeight'                : {'xVariable': 'pileupWeight',                   'xBinning': [40,0,40],              'mcscale': '1./pileupWeight'},
         'met'                         : {'xVariable': 'met_pt',                         'xBinning': [50, 0, 500],           },
         'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [50, -3.14159, 3.14159],},
         # h++

@@ -12,7 +12,7 @@ import ROOT
 
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-blind = True
+blind = False
 plotCount = True
 doCat = True
 plotMC = True
@@ -203,6 +203,7 @@ plots = {
     'hmLeptonEta'           : {'xaxis': '#eta^{#Phi_{lepton}^{#mp}}', 'yaxis': 'Events', 'rebin': 20},
     # z cand
     'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 3 GeV', 'rebin': 3},
+    'zPt'                   : {'xaxis': 'p_{T}^{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': 10},
     'mllMinusMZ'            : {'xaxis': '|m_{l^{+}l^{-}}-m_{Z}| (GeV)', 'yaxis': 'Events / 2 GeV', 'rebin': 2},
     # event
     'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
@@ -211,6 +212,7 @@ plots = {
     'mass'                  : {'xaxis': 'm_{3l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 20},
     'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': 10, 'logy': True, 'numcol': 2},
     'nJets'                 : {'xaxis': 'Number of jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'rebin': 1},
+    #'pileupWeight'          : {'xaxis': 'Pileup Weight', 'yaxis': 'Events'},
 }
 
 blind_cust = {
@@ -320,6 +322,13 @@ if plotMC:
         kwargs = deepcopy(plots[plot])
         plotWithCategories(hpp3lPlotter,plot,saveDir='mc',baseDir='default',perCatBins=True,**kwargs)
 
+    # selection assuming mass 500
+    if plotCount: plotCounts(hpp3lPlotter,saveDir='sig500',baseDir='nMinusOne/massWindow/500/hpp2')
+
+    for plot in plots:
+        kwargs = deepcopy(plots[plot])
+        plotWithCategories(hpp3lPlotter,plot,saveDir='sig500',baseDir='nMinusOne/massWindow/500/hpp2',perCatBins=True,**kwargs)
+
     # partially blinded plots
     if blind:
         hpp3lPlotter.addHistogram('data',sigMap['data'])
@@ -328,6 +337,7 @@ if plotMC:
             kwargs = deepcopy(plots[plot])
             kwargs.update(blind_cust[plot])
             plotWithCategories(hpp3lPlotter,plot,saveDir='mc',baseDir='default',postfix='blinder',perCatBins=True,**kwargs)
+
 
 ##############################
 ### datadriven backgrounds ###
@@ -349,7 +359,14 @@ if plotDatadriven:
 
     for plot in plots:
         kwargs = deepcopy(plots[plot])
-        plotWithCategories(hpp3lPlotter,plot,baseDir='',saveDir='datadriven',datadriven=True,**kwargs)
+        plotWithCategories(hpp3lPlotter,plot,baseDir='',saveDir='datadriven',datadriven=True,perCatBins=True,**kwargs)
+
+    # selection assuming mass 500
+    if plotCount: plotCounts(hpp3lPlotter,baseDir='nMinusOne/massWindow/500/hpp2',saveDir='sig500-datadriven',datadriven=True)
+
+    for plot in plots:
+        kwargs = deepcopy(plots[plot])
+        plotWithCategories(hpp3lPlotter,plot,baseDir='nMinusOne/massWindow/500/hpp2',saveDir='sig500-datadriven',datadriven=True,perCatBins=True,**kwargs)
 
     # partially blinded plots
     if blind:
@@ -358,7 +375,7 @@ if plotDatadriven:
         for plot in blind_cust:
             kwargs = deepcopy(plots[plot])
             kwargs.update(blind_cust[plot])
-            plotWithCategories(hpp3lPlotter,plot,baseDir='',saveDir='datadriven',postfix='blinder',datadriven=True,**kwargs)
+            plotWithCategories(hpp3lPlotter,plot,baseDir='',saveDir='datadriven',postfix='blinder',datadriven=True,perCatBins=True,**kwargs)
 
 
 ########################

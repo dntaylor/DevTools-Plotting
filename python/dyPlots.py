@@ -52,14 +52,14 @@ sigMap = {
              'GluGluWWTo2L2Nu_MCFM_13TeV',
             ],
     'Z'   : [
-             #'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-             #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-             'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
-             'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
     'TT'  : [
              'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
@@ -69,7 +69,6 @@ sigMap = {
     'data': [
              'DoubleMuon',
              'DoubleEG',
-             'MuonEG',
              'SingleMuon',
              'SingleElectron',
             ],
@@ -144,11 +143,11 @@ pileup = {
     'numVertices_noreweight': {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
 }
 
-for plot in pileup:
-    plotname = 'default/{0}'.format(plot)
-    savename = 'pileup/{0}'.format(plot)
-    dyPlotter.plot(plotname,savename,**pileup[plot])
-    for chan in chans:
-        plotname = 'default/{0}/{1}'.format(chan,plot)
-        savename = '{0}/pileup/{1}'.format(chan,plot)
-        dyPlotter.plot(plotname,savename,**pileup[plot])
+#for plot in pileup:
+#    plotname = 'default/{0}'.format(plot)
+#    savename = 'pileup/{0}'.format(plot)
+#    dyPlotter.plot(plotname,savename,**pileup[plot])
+#    for chan in chans:
+#        plotname = 'default/{0}/{1}'.format(chan,plot)
+#        savename = '{0}/pileup/{1}'.format(chan,plot)
+#        dyPlotter.plot(plotname,savename,**pileup[plot])
