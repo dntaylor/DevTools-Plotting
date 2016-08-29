@@ -196,6 +196,11 @@ class Plotter(PlotterBase):
         if not nofill:
             if 'fillstyle' in style: hist.SetFillStyle(style['fillstyle'])
             if 'fillcolor' in style: hist.SetFillColor(style['fillcolor'])
+
+        # remove bins < 0
+        for b in range(hist.GetNbinsX()):
+            if hist.GetBinContent(b+1)<0.: hist.SetBinContent(b+1,0.)
+
         return hist
 
     def _getHistogramCounts(self,histName,variables,**kwargs):

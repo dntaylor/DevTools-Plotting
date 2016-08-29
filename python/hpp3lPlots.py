@@ -17,12 +17,12 @@ plotCount = True
 doCat = True
 plotMC = True
 plotDatadriven = True
-plotFakeRegions = True
-plotSignal = True
+plotFakeRegions = False
+plotSignal = False
 plotROC = False
-plotNormalization = True
+plotNormalization = False
 plotSOverB = False
-plotAllMasses = True
+plotAllMasses = False
 
 hpp3lPlotter = Plotter('Hpp3l')
 
@@ -79,7 +79,8 @@ sigColors = {
 def getDataDrivenPlot(*plots):
     histMap = {}
     regions = ['2P1F','1P2F','0P3F']
-    #regions = ['3P1F','2P2F']
+    #regions = ['2P1F','1P2F']
+    #regions = ['2P1F']
     for s in samples + signals + ['data','datadriven']: histMap[s] = []
     for plot in plots:
         plotdirs = plot.split('/')
@@ -129,7 +130,7 @@ def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False,postfix='')
 # variable binning
 variable_binning = {
     'hppMass': {
-        'I'  : [x*10 for x in range(20)]+[200+x*20 for x in range(15)]+[500+x*50 for x in range(10)]+[1000+x*100 for x in range(4)]+[1650],
+        'I'  : [x*20 for x in range(10)]+[200+x*20 for x in range(15)]+[500+x*50 for x in range(10)]+[1000+x*100 for x in range(4)]+[1650],
         'II' : [0,20,40,60,80,100,140,180,220,260,300,350,400,500,600,800,1650],
         'III': [x*10 for x in range(20)]+[200+x*20 for x in range(15)]+[500+x*100 for x in range(5)]+[1000,1200,1400,1650],
         'IV' : [0,20,40,60,80,100,140,180,220,260,300,400,600,1650],
@@ -183,6 +184,14 @@ def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postf
             kwargs['yaxis'] = 'Events / 1 GeV'
         if perCatBins and plot in ymin and kwargs.get('logy',False): kwargs['ymin'] = ymin[plot][cat]
         if doCat: plotter.plot(plotvars,savename,**kwargs)
+
+def plotChannels(plotter,plot,baseDir='',saveDir='',datadriven=False,postfix='',**kwargs):
+    for chan in chans:
+        plotname = '/'.join([x for x in [baseDir,chan,plot] if x])
+        plotvars = getDataDrivenPlot(plotname) if datadriven else plotname
+        savename = '/'.join([x for x in [saveDir,'channels',plot+'_'+chan] if x])
+        if postfix: savename += '_{0}'.format(postfix)
+        plotter.plot(plotvars,savename,**kwargs)
 
 ########################
 ### plot definitions ###
@@ -321,6 +330,7 @@ if plotMC:
     for plot in plots:
         kwargs = deepcopy(plots[plot])
         plotWithCategories(hpp3lPlotter,plot,saveDir='mc',baseDir='default',perCatBins=True,**kwargs)
+        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='mc',baseDir='default',**kwargs)
 
     # selection assuming mass 500
     if plotCount: plotCounts(hpp3lPlotter,saveDir='sig500',baseDir='nMinusOne/massWindow/500/hpp2')
@@ -328,6 +338,7 @@ if plotMC:
     for plot in plots:
         kwargs = deepcopy(plots[plot])
         plotWithCategories(hpp3lPlotter,plot,saveDir='sig500',baseDir='nMinusOne/massWindow/500/hpp2',perCatBins=True,**kwargs)
+        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='sig500',baseDir='nMinusOne/massWindow/500/hpp2',**kwargs)
 
     # partially blinded plots
     if blind:
@@ -360,6 +371,7 @@ if plotDatadriven:
     for plot in plots:
         kwargs = deepcopy(plots[plot])
         plotWithCategories(hpp3lPlotter,plot,baseDir='',saveDir='datadriven',datadriven=True,perCatBins=True,**kwargs)
+        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='datadriven',baseDir='',datadriven=True,**kwargs)
 
     # selection assuming mass 500
     if plotCount: plotCounts(hpp3lPlotter,baseDir='nMinusOne/massWindow/500/hpp2',saveDir='sig500-datadriven',datadriven=True)
@@ -367,6 +379,7 @@ if plotDatadriven:
     for plot in plots:
         kwargs = deepcopy(plots[plot])
         plotWithCategories(hpp3lPlotter,plot,baseDir='nMinusOne/massWindow/500/hpp2',saveDir='sig500-datadriven',datadriven=True,perCatBins=True,**kwargs)
+        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='sig500-datadriven',baseDir='nMinusOne/massWindow/500/hpp2',datadriven=True,**kwargs)
 
     # partially blinded plots
     if blind:
@@ -394,6 +407,7 @@ if plotMC:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
         plotWithCategories(hpp3lPlotter,plot,baseDir='lowmass',saveDir='lowmass',**kwargs)
+        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='lowmass',baseDir='lowmass',**kwargs)
 
 ######################################
 ### lowmass datadriven backgrounds ###
@@ -414,6 +428,7 @@ if plotDatadriven:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
         plotWithCategories(hpp3lPlotter,plot,baseDir='lowmass',saveDir='lowmass-datadriven',datadriven=True,**kwargs)
+        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='lowmass-datadriven',baseDir='lowmass',datadriven=True,**kwargs)
 
 ####################
 ### Fake Regions ###
@@ -434,6 +449,7 @@ if plotFakeRegions:
         for plot in plots:
             kwargs = deepcopy(plots[plot])
             plotWithCategories(hpp3lPlotter,plot,baseDir='{0}_regular'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
+            if plot=='hppMass': plotChannels(hpp3lPlotter,plot,baseDir='{0}_regular'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
 
 ############################
 ### Fake Regions lowmass ###
@@ -452,6 +468,7 @@ if plotFakeRegions:
         for plot in plots:
             kwargs = deepcopy(plots[plot])
             plotWithCategories(hpp3lPlotter,plot,baseDir='{0}_regular/lowmass'.format(fr),saveDir='lowmass/{0}'.format(fr),**kwargs)
+            if plot=='hppMass': plotChannels(hpp3lPlotter,plot,baseDir='{0}_regular/lowmass'.format(fr),saveDir='lowmass/{0}'.format(fr),**kwargs)
 
 
 ########################
