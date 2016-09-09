@@ -47,7 +47,7 @@ def buildWZ(selectionParams,sampleSelectionParams,projectionParams,sampleProject
     
     # the cuts
     baseCutMap = {
-        'zptCut'   : 'z1_pt>20 && z2_pt>10',
+        'zptCut'   : 'z1_pt>25 && z2_pt>15',
         'wptCut'   : 'w1_pt>20',
         'bvetoCut' : 'numBjetsTight30==0',
         'metCut'   : 'met_pt>30',
@@ -102,8 +102,8 @@ def buildWZ(selectionParams,sampleSelectionParams,projectionParams,sampleProject
     wzScaleFactorMap['loose'] = '*'.join(['{0}_looseScale'.format(x) for x in ['z1','z2','w1']])
     wzScaleFactorMap['medium'] = '*'.join(['{0}_mediumScale'.format(x) for x in ['z1','z2','w1']])
     wzScaleFactorMap['tight'] = '*'.join(['{0}_tightScale'.format(x) for x in ['z1','z2','w1']])
-    dySimpleCut = 'z1_pt>20 && z2_pt>10 && w1_pt>20 && fabs(z_mass-{0})<15 && 3l_mass>100 && met_pt<25 && w_mt<25'.format(ZMASS)
-    ttSimpleCut = 'z1_pt>20 && z2_pt>10 && w1_pt>20 && fabs(z_mass-{0})>5 && 3l_mass>100 && numBjetsTight30>0'.format(ZMASS)
+    dySimpleCut = 'z1_pt>25 && z2_pt>15 && w1_pt>20 && fabs(z_mass-{0})<15 && 3l_mass>100 && met_pt<25 && w_mt<25'.format(ZMASS)
+    ttSimpleCut = 'z1_pt>25 && z2_pt>15 && w1_pt>20 && fabs(z_mass-{0})>5 && 3l_mass>100 && numBjetsTight30>0'.format(ZMASS)
     wzCutMap['dy'] = dySimpleCut
     wzCutMap['tt'] = ttSimpleCut
     

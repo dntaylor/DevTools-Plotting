@@ -13,6 +13,7 @@ import ROOT
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 blind = False
+limitMode = 'fullCLs'
 
 limitPlotter = LimitPlotter()
 
@@ -25,7 +26,7 @@ filenames = {mode: {} for mode in modes}
 for analysis,prod in [('Hpp3l','AP'),('Hpp3l','PP'),('Hpp4l',''),('HppAP',''),('HppPP',''),('HppComb','')]:
     for mode in modes:
         label = analysis+prod
-        filenames[mode][label] = ['asymptotic/{0}/{1}/{2}/limits{3}.txt'.format(analysis,mode,mass,prod) for mass in masses]
+        filenames[mode][label] = ['{0}/{1}/{2}/{3}/limits{4}.txt'.format(limitMode,analysis,mode,mass,prod) for mass in masses]
         kwargs = {
             'xaxis': '#Phi^{++} Mass (GeV)',
             'yaxis': '95% CLs Upper Limit on #sigma/#sigma_{model}',
