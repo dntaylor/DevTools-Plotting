@@ -36,6 +36,11 @@ def buildWZ(selectionParams,sampleSelectionParams,projectionParams,sampleProject
         'mass'                        : {'xVariable': '3l_mass',                        'xBinning': [500, 0, 500],           },
         'nJets'                       : {'xVariable': 'numJetsTight30',                 'xBinning': [11, -0.5, 10.5],        },
         'nBjets'                      : {'xVariable': 'numBjetsTight30',                'xBinning': [10, 0, 10],             },
+        # vbf
+        'leadJetPt'                   : {'xVariable': 'leadJet_pt',                     'xBinning': [500, 0, 500],           'selection': 'leadJet_pt>0.',},
+        'subleadJetPt'                : {'xVariable': 'subleadJet_pt',                  'xBinning': [500, 0, 500],           'selection': 'subleadJet_pt>0.',},
+        'dijetMass'                   : {'xVariable': 'dijet_mass',                     'xBinning': [500, 0, 500],           'selection': 'dijet_mass>0.',},
+
     }
 
     # setup the reco channels
