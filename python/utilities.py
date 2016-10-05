@@ -61,7 +61,7 @@ latestNtuples['76X'] = {
 }
 latestNtuples['80X'] = {
     'Charge'         : '2016-07-24_ChargeAnalysis_80X_v1-merge',
-    'DY'             : '2016-08-23_DYAnalysis_80X_v1-merge',
+    'DY'             : '2016-09-27_DYAnalysis_80X_v1-merge',
     'DijetFakeRate'  : '2016-07-26_DijetFakeRateAnalysis_80X_v1-merge',
     'Hpp3l'          : '2016-08-23_Hpp3lAnalysis_80X_v1-merge',
     'Hpp4l'          : '2016-08-23_Hpp4lAnalysis_80X_v1-merge',

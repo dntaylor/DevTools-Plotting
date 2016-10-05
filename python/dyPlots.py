@@ -102,6 +102,8 @@ plots = {
     # event
     'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'numVertices_noreweight': {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'rho'                   : {'xaxis': '#rho', 'yaxis': 'Events'},
+    'rho_noreweight'        : {'xaxis': '#rho', 'yaxis': 'Events'},
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5, 'rangex': [0,200]},
     'metPhi'                : {'xaxis': '#phi_{E_{T}^{miss}}', 'yaxis': 'Events', 'rebin': 10, 'numcol': 3, 'legendpos': 34},
     'nJets'                 : {'xaxis': 'Number of jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'rebin': 1},
@@ -135,11 +137,11 @@ pileup = {
     'numVertices_73000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'numVertices_74000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'numVertices_75000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
-    #'numVertices_76000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
-    #'numVertices_77000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
-    #'numVertices_78000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
-    #'numVertices_79000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
-    #'numVertices_80000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_76000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_77000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_78000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_79000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    'numVertices_80000'     : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'numVertices_noreweight': {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
 }
 

@@ -180,7 +180,8 @@ class LimitPlotter(PlotterBase):
 
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
         canvas.SetLogy(1)
-        canvas.Divide(1,2)
+        #canvas.Divide(1,2,0.,0.)
+        #canvas.Divide(1,2)
 
         limits = {}
         limits['AP'] = self._readLimits(xvals,apfns)
@@ -206,12 +207,19 @@ class LimitPlotter(PlotterBase):
             xsecGraph[prod].SetFillStyle(0)
             xsecGraph[prod].SetLineColor(ROOT.kBlue if prod=='AP' else ROOT.kRed)
             xsecGraph[prod].GetXaxis().SetLimits(xvals[0],xvals[-1])
-            xsecGraph[prod].GetYaxis().SetTitleOffset(1.)
-            xsecGraph[prod].GetYaxis().SetTitleSize(0.06)
-        xsecGraph['AP'].GetXaxis().SetTitle('#Phi^{++} Mass (GeV)')
+        xsecGraph['AP'].GetYaxis().SetTitleOffset(0.75)
+        xsecGraph['AP'].GetYaxis().SetTitleSize(0.105)
+        xsecGraph['PP'].GetYaxis().SetTitleOffset(0.85)
+        xsecGraph['PP'].GetYaxis().SetTitleSize(0.095)
+        xsecGraph['AP'].GetXaxis().SetTitle('')
         xsecGraph['PP'].GetXaxis().SetTitle('#Phi^{++} Mass (GeV)')
+        xsecGraph['PP'].GetXaxis().SetTitleSize(0.110)
+        xsecGraph['PP'].GetXaxis().SetLabelSize(0.073)
+        xsecGraph['PP'].GetXaxis().SetLabelOffset(0.012)
         xsecGraph['AP'].GetYaxis().SetTitle('#sigma #upoint BR (pb)')
         xsecGraph['PP'].GetYaxis().SetTitle('#sigma #upoint BR^{2} (pb)')
+        xsecGraph['AP'].GetYaxis().SetLabelSize(0.095)
+        xsecGraph['PP'].GetYaxis().SetLabelSize(0.08)
 
         # AP/PP limits
         twoSigma = {}
@@ -219,13 +227,22 @@ class LimitPlotter(PlotterBase):
         expected = {}
         observed = {}
         pad = {}
+        pad['AP'] = ROOT.TPad('AP', 'AP', 0.0, 0.54, 1.0, 1.0)
+        pad['AP'].Draw()
+        pad['PP'] = ROOT.TPad('AP', 'AP', 0.0, 0.0, 1.0, 0.54)
+        pad['PP'].Draw()
+        canvas.cd()
         for p,prod in enumerate(['AP','PP']):
-            #pad[prod] = ROOT.TPad(prod, prod, 0.0, 0.5 if prod=='AP' else 0.0, 1.0, 1.0 if prod=='AP' else 0.5)
-            pad[prod] = canvas.cd(p+1)
-            pad[prod].SetLeftMargin(0.12)
-            pad[prod].SetRightMargin(0.00)
-            if prod=='AP': pad[prod].SetTopMargin(0.08)
-            if prod=='PP': pad[prod].SetBottomMargin(0.12)
+            #pad[prod] = canvas.cd(p+1)
+            pad[prod].cd()
+            pad[prod].SetLeftMargin(0.16)
+            pad[prod].SetRightMargin(0.02)
+            if prod=='AP': 
+                pad[prod].SetTopMargin(0.11)
+                pad[prod].SetBottomMargin(0.)
+            if prod=='PP': 
+                pad[prod].SetTopMargin(0.)
+                pad[prod].SetBottomMargin(0.24)
             pad[prod].SetTickx(1)
             pad[prod].SetTicky(1)
             pad[prod].SetLogy(1)
@@ -268,9 +285,9 @@ class LimitPlotter(PlotterBase):
             ROOT.gPad.RedrawAxis()
             if not blind: observed[prod].Draw('same')
 
-            #canvas.cd()
+            canvas.cd()
 
-        canvas.cd()
+        #canvas.cd()
         # get the legend
         entries = [
             #[expected['AP'],'Expected','l'],
@@ -299,16 +316,17 @@ class LimitPlotter(PlotterBase):
         legendpos = kwargs.pop('legendpos',31)
         numcol = kwargs.pop('numcol',1)
         doPreviousExclusion = kwargs.pop('doPreviousExclusion',False)
+        offAxis = kwargs.pop('offAxis',False)
 
         logging.info('Plotting {0}'.format(savename))
 
-        canvas = ROOT.TCanvas(savename,savename,50,50,800,900)
+        canvas = ROOT.TCanvas(savename,savename,50,50,1000 if offAxis else 800,900)
         canvas.SetFillColor(0)
         canvas.SetBorderMode(0)
         canvas.SetFrameFillStyle(0)
         canvas.SetFrameBorderMode(0)
         canvas.SetLeftMargin(0.22)
-        canvas.SetRightMargin(0.04)
+        canvas.SetRightMargin(0.24 if offAxis else 0.04)
         canvas.SetTopMargin(0.05)
         canvas.SetBottomMargin(0.12)
 
@@ -338,7 +356,7 @@ class LimitPlotter(PlotterBase):
         }
 
         nl = len(labels)
-        h = ROOT.TH2F("h", "h; {0}; ".format(xaxis), 1,0,1900,2*nl+4,0.5,nl+2.5)
+        h = ROOT.TH2F("h", "h; {0}; ".format(xaxis), 1,0,1000 if offAxis else 1900,2*nl+4,0.5,nl+2.5)
         h.GetYaxis().SetRangeUser(1.,nl+2.)
         h.GetYaxis().SetTickSize(0)
         h.GetXaxis().SetLabelSize(0.030)
@@ -428,30 +446,37 @@ class LimitPlotter(PlotterBase):
             curr[prod+'13'].SetFillColorAlpha(colors[prod][2],0.35)
 
         if doPreviousExclusion:
-            legend = ROOT.TLegend(0.55,0.44,0.95,0.52,'','NDC')
+            legend = ROOT.TLegend(0.765 if offAxis else 0.55,0.64 if offAxis else 0.44,0.99 if offAxis else 0.95,0.72 if offAxis else 0.52,'','NDC')
             legend.SetTextFont(42)
             legend.SetTextSize(0.02)
             legend.SetBorderSize(0)
             legend.SetFillColor(0)
 
-            legend.AddEntry(obsleg,'Observed exclusion 95% CL','f')
-            legend.AddEntry(expleg,'Expected exclusion 95% CL','lf')
+            if offAxis:
+                legend.AddEntry(obsleg,'Obs. exclusion 95% CL','f')
+                legend.AddEntry(expleg,'Exp. exclusion 95% CL','lf')
+            else:
+                legend.AddEntry(obsleg,'Observed exclusion 95% CL','f')
+                legend.AddEntry(expleg,'Expected exclusion 95% CL','lf')
             legend.Draw()
 
             sublegends = {}
             for i,prod in enumerate(['HppAP','HppPP','HppComb']):
-                sublegends[prod] = ROOT.TLegend(0.558,0.44-0.04*2*(i+1),0.95,0.44-0.04*2*i,'','NDC')
+                if offAxis:
+                    sublegends[prod] = ROOT.TLegend(0.765,0.64-0.04*3*(i+1),0.99,0.64-0.04*3*i,'','NDC')
+                else:
+                    sublegends[prod] = ROOT.TLegend(0.558,0.44-0.04*2*(i+1),0.95,0.44-0.04*2*i,'','NDC')
                 sublegends[prod].SetTextFont(42)
                 sublegends[prod].SetTextSize(0.02)
                 sublegends[prod].SetBorderSize(0)
                 sublegends[prod].SetFillColor(0)
                 sublegends[prod].SetHeader(prodLabels[prod])
-                sublegends[prod].SetNColumns(2)
+                sublegends[prod].SetNColumns(1 if offAxis else 2)
                 sublegends[prod].AddEntry(curr[prod+'8'],'19.7 fb^{-1} (8 TeV)','f')
                 sublegends[prod].AddEntry(curr[prod+'13'],'12.9 fb^{-1} (13 TeV)','f')
                 sublegends[prod].Draw()
         else:
-            legend = ROOT.TLegend(0.60,0.2,0.95,0.4,'','NDC')
+            legend = ROOT.TLegend(0.765 if offAxis else 0.60,0.4 if offAxis else 0.2,0.99 if offAxis else 0.95,0.6 if offAxis else 0.4,'','NDC')
             legend.SetTextFont(42)
             legend.SetBorderSize(0)
             legend.SetFillColor(0)
