@@ -58,6 +58,7 @@ class LimitPlotter(PlotterBase):
         isprelim = kwargs.pop('isprelim',True)
         legendpos = kwargs.pop('legendpos',31)
         numcol = kwargs.pop('numcol',1)
+        asymptoticFilenames = kwargs.pop('asymptoticFilenames',[])
 
         logging.info('Plotting {0}'.format(savename))
 
@@ -66,6 +67,7 @@ class LimitPlotter(PlotterBase):
 
         limits = self._readLimits(xvals,filenames)
         if not limits: return
+        if asymptoticFilenames: limits_asym = self._readLimits(xvals,asymptoticFilenames)
 
         n = len(xvals)
         twoSigma = ROOT.TGraph(2*n)
@@ -76,18 +78,29 @@ class LimitPlotter(PlotterBase):
         twoSigma_high = ROOT.TGraph(n)
         oneSigma_low = ROOT.TGraph(n)
         oneSigma_high = ROOT.TGraph(n)
+        twoSigma_asym = ROOT.TGraph(2*n)
+        oneSigma_asym = ROOT.TGraph(2*n)
+        expected_asym = ROOT.TGraph(n)
+        observed_asym = ROOT.TGraph(n)
 
         for i in range(len(xvals)):
-            twoSigma.SetPoint(i,      xvals[i],     limits[xvals[i]][0]) # 0.025
-            oneSigma.SetPoint(i,      xvals[i],     limits[xvals[i]][1]) # 0.16
-            expected.SetPoint(i,      xvals[i],     limits[xvals[i]][2]) # 0.5
-            oneSigma.SetPoint(n+i,    xvals[n-i-1], limits[xvals[n-i-1]][3]) # 0.84
-            twoSigma.SetPoint(n+i,    xvals[n-i-1], limits[xvals[n-i-1]][4]) # 0.975
-            observed.SetPoint(i,      xvals[i],     limits[xvals[i]][5]) # obs
-            twoSigma_high.SetPoint(i,  xvals[i],    limits[xvals[i]][0]) # 0.025
-            oneSigma_high.SetPoint(i,  xvals[i],    limits[xvals[i]][1]) # 0.16
-            oneSigma_low.SetPoint(i, xvals[n-i-1],  limits[xvals[n-i-1]][3]) # 0.84
-            twoSigma_low.SetPoint(i, xvals[n-i-1],  limits[xvals[n-i-1]][4]) # 0.975
+            twoSigma.SetPoint(i,       xvals[i],     limits[xvals[i]][0]) # 0.025
+            oneSigma.SetPoint(i,       xvals[i],     limits[xvals[i]][1]) # 0.16
+            expected.SetPoint(i,       xvals[i],     limits[xvals[i]][2]) # 0.5
+            oneSigma.SetPoint(n+i,     xvals[n-i-1], limits[xvals[n-i-1]][3]) # 0.84
+            twoSigma.SetPoint(n+i,     xvals[n-i-1], limits[xvals[n-i-1]][4]) # 0.975
+            observed.SetPoint(i,       xvals[i],     limits[xvals[i]][5]) # obs
+            twoSigma_high.SetPoint(i,  xvals[i],     limits[xvals[i]][0]) # 0.025
+            oneSigma_high.SetPoint(i,  xvals[i],     limits[xvals[i]][1]) # 0.16
+            oneSigma_low.SetPoint(i,   xvals[n-i-1], limits[xvals[n-i-1]][3]) # 0.84
+            twoSigma_low.SetPoint(i,   xvals[n-i-1], limits[xvals[n-i-1]][4]) # 0.975
+            if asymptoticFilenames:
+                twoSigma_asym.SetPoint(i,  xvals[i],     limits_asym[xvals[i]][0]) # 0.025
+                oneSigma_asym.SetPoint(i,  xvals[i],     limits_asym[xvals[i]][1]) # 0.16
+                expected_asym.SetPoint(i,  xvals[i],     limits_asym[xvals[i]][2]) # 0.5
+                oneSigma_asym.SetPoint(n+i,xvals[n-i-1], limits_asym[xvals[n-i-1]][3]) # 0.84
+                twoSigma_asym.SetPoint(n+i,xvals[n-i-1], limits_asym[xvals[n-i-1]][4]) # 0.975
+                observed_asym.SetPoint(i,  xvals[i],     limits_asym[xvals[i]][5]) # obs
 
         twoSigma.SetFillColor(ROOT.kYellow)
         twoSigma.SetLineColor(ROOT.kYellow)
@@ -101,6 +114,19 @@ class LimitPlotter(PlotterBase):
         observed.SetMarkerStyle(0)
         observed.SetFillStyle(0)
 
+        if asymptoticFilenames:
+            twoSigma_asym.SetLineColor(ROOT.kViolet-1)
+            twoSigma_asym.SetMarkerStyle(0)
+            oneSigma_asym.SetLineColor(ROOT.kViolet)
+            oneSigma_asym.SetMarkerStyle(0)
+            expected_asym.SetLineStyle(7)
+            expected_asym.SetLineColor(ROOT.kMagenta)
+            expected_asym.SetMarkerStyle(0)
+            expected_asym.SetFillStyle(0)
+            observed_asym.SetLineColor(ROOT.kMagenta)
+            observed_asym.SetMarkerStyle(0)
+            observed_asym.SetFillStyle(0)
+
         expected.GetXaxis().SetLimits(xvals[0],xvals[-1])
         expected.GetXaxis().SetTitle(xaxis)
         expected.GetYaxis().SetTitle(yaxis)
@@ -108,6 +134,14 @@ class LimitPlotter(PlotterBase):
         expected.Draw()
         twoSigma.Draw('f')
         oneSigma.Draw('f')
+
+        if asymptoticFilenames:
+            twoSigma_asym.Draw('same')
+            oneSigma_asym.Draw('same')
+            expected_asym.Draw('same')
+            ROOT.gPad.RedrawAxis()
+            if not blind: observed_asym.Draw('same')
+
         expected.Draw('same')
         ROOT.gPad.RedrawAxis()
         if not blind: observed.Draw('same')
@@ -122,7 +156,18 @@ class LimitPlotter(PlotterBase):
             [oneSigma,'Expected 1#sigma','F'],
         ]
         if not blind: entries = [[observed,'Observed','l']] + entries
-        legend = self._getLegend(entries=entries,numcol=numcol,position=legendpos)
+        if asymptoticFilenames:
+            entries_asym = [
+                [expected_asym,'Expected (asym.)','l'],
+                [twoSigma_asym,'Expected (asym.) 2#sigma','l'],
+                [oneSigma_asym,'Expected (asym.) 1#sigma','l'],
+            ]
+            if not blind: entries_asym = [[observed_asym,'Observed (asym.)','l']] + entries_asym
+        if asymptoticFilenames:
+            order = [x for pair in zip(entries,entries_asym) for x in pair]
+            legend = self._getLegend(entries=order,numcol=numcol+1,position=legendpos)
+        else:
+            legend = self._getLegend(entries=entries,numcol=numcol,position=legendpos)
         legend.Draw()
 
         # cms lumi styling

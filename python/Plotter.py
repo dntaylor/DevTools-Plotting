@@ -776,10 +776,13 @@ class Plotter(PlotterBase):
         canvas.SetLogy(logy)
         canvas.SetLogx(logx)
 
+        canvas.SetLogy(True)
+
         if isinstance(signals,str): signals = [signals]
         if isinstance(backgrounds,str): backgrounds = [backgrounds]*len(signals)
 
         highestMax = 0.
+        lowestMin = 999999.
         hists = OrderedDict()
 
         for i,histNames in enumerate(zip(signals,backgrounds)):
@@ -790,6 +793,7 @@ class Plotter(PlotterBase):
             self.j += 1
             name = 'h_sOverB_{0}'.format(self.j)
             sOverB = ROOT.TH1F(name,name,numBins,sig.GetXaxis().GetXmin(),sig.GetXaxis().GetXmax())
+            thisMin = 999999.
             for b in range(numBins):
                 blow = 1 if invert else b+1
                 bhigh = b+1 if invert else numBins
@@ -803,8 +807,11 @@ class Plotter(PlotterBase):
                     bgVal += bg.GetBinContent(j)
                     bgErr2 += bg.GetBinError(j)**2
                 sOverBVal = divWithError((sigVal,sigErr2**0.5),(bgVal,bgErr2**0.5))
+                if sOverBVal>0: thisMin = min(thisMin,sOverBVal)
                 sOverB.SetBinContent(b+1,sOverBVal[0])
                 sOverB.SetBinError(b+1,sOverBVal[1])
+            lowestMin = min(lowestMin,thisMin)
+            sOverB.SetMinimum(lowestMin)
             style = self.styles[signal]
             sOverB.SetLineWidth(2)
             sOverB.SetLineColor(style['linecolor'])
@@ -815,7 +822,7 @@ class Plotter(PlotterBase):
                 sOverB.GetXaxis().SetTitle(xaxis)
                 sOverB.GetYaxis().SetTitle(yaxis)
                 sOverB.GetYaxis().SetTitleOffset(1.2)
-                sOverB.SetMinimum(0.)
+                #sOverB.SetMinimum(0.)
                 if ymax!=None: sOverB.SetMaximum(ymax)
                 if ymin!=None: sOverB.SetMinimum(ymin)
             else:

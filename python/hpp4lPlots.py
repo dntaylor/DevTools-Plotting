@@ -15,14 +15,14 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 blind = False
 doCat = True
 plotCount = True
-plotMC = True
-plotDatadriven = True
-plotFakeRegions = True
+plotMC = False
+plotDatadriven = False
+plotFakeRegions = False
 plotSignal = False
 plotROC = False
-plotNormalization = True
-plotSOverB = False
-plotAllMasses = True
+plotNormalization = False
+plotSOverB = True
+plotAllMasses = False
 
 hpp4lPlotter = Plotter('Hpp4l')
 
@@ -273,7 +273,7 @@ sOverB_cust = {
     'hppMass'               : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     'hppMt'                 : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     'hppPt'                 : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1, 'numcol': 2},
-    'hppDeltaR'             : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1, 'invert': True},
+    'hppDeltaR'             : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     'hppLeadingLeptonPt'    : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     'hppSubLeadingLeptonPt' : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     'st'                    : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},

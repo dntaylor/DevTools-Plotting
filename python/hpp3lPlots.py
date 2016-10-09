@@ -15,13 +15,13 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 blind = False
 plotCount = True
 doCat = True
-plotMC = True
-plotDatadriven = True
+plotMC = False
+plotDatadriven = False
 plotFakeRegions = False
 plotSignal = False
 plotROC = False
 plotNormalization = False
-plotSOverB = False
+plotSOverB = True
 plotAllMasses = False
 
 hpp3lPlotter = Plotter('Hpp3l')
@@ -283,7 +283,7 @@ sOverB_cust = {
     'hppMass'               : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     #'hppMt'                 : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     'hppPt'                 : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1, 'numcol': 2},
-    'hppDeltaR'             : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1, 'invert': True},
+    'hppDeltaR'             : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     'hppLeadingLeptonPt'    : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     'hppSubLeadingLeptonPt' : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     'st'                    : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
@@ -494,6 +494,9 @@ if plotNormalization:
             savename = 'normalized/{0}/{1}'.format(cat,plot)
             if doCat: hpp3lPlotter.plotNormalized(plotnames,savename,**kwargs)
 
+####################################
+### Signal over background plots ###
+####################################
 if plotSOverB:
     hpp3lPlotter.clearHistograms()
 

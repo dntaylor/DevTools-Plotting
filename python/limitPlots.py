@@ -22,16 +22,19 @@ modes = ['ee100','em100','et100','mm100','mt100','tt100','BP1','BP2','BP3','BP4'
 
 limvals = {mode: {} for mode in modes}
 filenames = {mode: {} for mode in modes}
+filenames_asym = {mode: {} for mode in modes}
 
 for analysis,prod in [('Hpp3l','AP'),('Hpp3l','PP'),('Hpp4l',''),('HppAP',''),('HppPP',''),('HppComb','')]:
     for mode in modes:
         label = analysis+prod
         filenames[mode][label] = ['{0}/{1}/{2}/{3}/limits{4}.txt'.format(limitMode,analysis,mode,mass,prod) for mass in masses]
+        filenames_asym[mode][label] = ['{0}/{1}/{2}/{3}/limits{4}.txt'.format('asymptotic',analysis,mode,mass,prod) for mass in masses]
         kwargs = {
             'xaxis': '#Phi^{++} Mass (GeV)',
             'yaxis': '95% CLs Upper Limit on #sigma/#sigma_{model}',
         }
         limvals[mode][label] = limitPlotter.plotLimit(masses,filenames[mode][label],'{0}/{1}'.format(label,mode),blind=blind,**kwargs)
+        if limitMode=='fullCLs': temp = limitPlotter.plotLimit(masses,filenames[mode][label],'{0}/{1}_both'.format(label,mode),blind=blind,asymptoticFilenames=filenames_asym[mode][label],**kwargs)
 
 limitPlotter.moneyPlot(limvals,'moneyPlot_prevExclusion',doPreviousExclusion=True,blind=blind)
 limitPlotter.moneyPlot(limvals,'moneyPlot_offAxis',blind=blind,offAxis=True)
