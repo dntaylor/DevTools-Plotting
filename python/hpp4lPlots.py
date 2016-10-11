@@ -21,7 +21,8 @@ plotFakeRegions = False
 plotSignal = False
 plotROC = False
 plotNormalization = False
-plotSOverB = True
+plotSOverB = False
+plotSignificance = True
 plotAllMasses = False
 
 hpp4lPlotter = Plotter('Hpp4l')
@@ -279,6 +280,19 @@ sOverB_cust = {
     'st'                    : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     'mllMinusMZ'            : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     'met'                   : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
+}
+
+significance_cust = {
+    # hpp
+    'hppMass'               : {'yaxis': 'Significance', 'logy': 0, 'rebin': 1},
+    'hppMt'                 : {'yaxis': 'Significance', 'logy': 0, 'rebin': 1},
+    'hppPt'                 : {'yaxis': 'Significance', 'logy': 0, 'rebin': 1},
+    'hppDeltaR'             : {'yaxis': 'Significance', 'logy': 0, 'rebin': 1, 'ymin': 0.001, 'invert': True},
+    'hppLeadingLeptonPt'    : {'yaxis': 'Significance', 'logy': 0, 'rebin': 1},
+    'hppSubLeadingLeptonPt' : {'yaxis': 'Significance', 'logy': 0, 'rebin': 1},
+    'st'                    : {'yaxis': 'Significance', 'logy': 0, 'rebin': 1},
+    'mllMinusMZ'            : {'yaxis': 'Significance', 'logy': 0, 'rebin': 1, 'ymin': 0.001},
+    'met'                   : {'yaxis': 'Significance', 'logy': 0, 'rebin': 1, 'ymin': 0.001},
 }
 
 roc_cust = {
@@ -564,6 +578,31 @@ if plotSOverB:
                 plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
             savename = 'sOverB/{0}/{1}'.format(cat,plot)
             if doCat: hpp4lPlotter.plotSOverB(plotnames,sigOrder,bgOrder,savename,**kwargs)
+
+if plotSignificance:
+    hpp4lPlotter.clearHistograms()
+    
+    hpp4lPlotter.addHistogram('BG',allSamplesDict['BG'])
+    sigOrder = []
+    bgOrder = []
+    for mass in masses:
+        name = 'HppHmm{0}GeV'.format(mass)
+        sigOrder += [name]
+        bgOrder += ['BG']
+        hpp4lPlotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': sigColors[mass]})
+
+    for plot in significance_cust:
+        plotname = 'default/{0}'.format(plot)
+        savename = 'significance/{0}'.format(plot)
+        kwargs = deepcopy(plots[plot])
+        if plot in significance_cust: kwargs.update(significance_cust[plot])
+        hpp4lPlotter.plotSignificance(plotname,sigOrder,bgOrder,savename,**kwargs)
+        for cat in cats:
+            plotnames = []
+            for subcat in subCatChannels[cat]:
+                plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
+            savename = 'significance/{0}/{1}'.format(cat,plot)
+            if doCat: hpp4lPlotter.plotSignificance(plotnames,sigOrder,bgOrder,savename,**kwargs)
 
 
 ##############################

@@ -21,7 +21,8 @@ plotFakeRegions = False
 plotSignal = False
 plotROC = False
 plotNormalization = False
-plotSOverB = True
+plotSOverB = False
+plotSignificance = True
 plotAllMasses = False
 
 hpp3lPlotter = Plotter('Hpp3l')
@@ -291,6 +292,19 @@ sOverB_cust = {
     'met'                   : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
 }
 
+significance_cust = {
+    # hpp
+    'hppMass'               : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
+    #'hppMt'                 : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
+    'hppPt'                 : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
+    'hppDeltaR'             : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1, 'invert': True},
+    'hppLeadingLeptonPt'    : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
+    'hppSubLeadingLeptonPt' : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
+    'st'                    : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
+    'mllMinusMZ'            : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
+    'met'                   : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
+}
+
 roc_cust = {
     # hpp
     'hppMass'               : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1,'logy':0},
@@ -521,6 +535,34 @@ if plotSOverB:
                 plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
             savename = 'sOverB/{0}/{1}'.format(cat,plot)
             if doCat: hpp3lPlotter.plotSOverB(plotnames,sigOrder,bgOrder,savename,**kwargs)
+
+##########################
+### Significance plots ###
+##########################
+if plotSignificance:
+    hpp3lPlotter.clearHistograms()
+
+    hpp3lPlotter.addHistogram('BG',allSamplesDict['BG'])
+    sigOrder = []
+    bgOrder = []
+    for mass in masses:
+        name = 'HppHm{0}GeV'.format(mass)
+        sigOrder += [name]
+        bgOrder += ['BG']
+        hpp3lPlotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': sigColors[mass]})
+
+    for plot in significance_cust:
+        plotname = 'default/{0}'.format(plot)
+        savename = 'significance/{0}'.format(plot)
+        kwargs = deepcopy(plots[plot])
+        if plot in significance_cust: kwargs.update(significance_cust[plot])
+        hpp3lPlotter.plotSignificance(plotname,sigOrder,bgOrder,savename,**kwargs)
+        for cat in cats:
+            plotnames = []
+            for subcat in subCatChannels[cat]:
+                plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
+            savename = 'significance/{0}/{1}'.format(cat,plot)
+            if doCat: hpp3lPlotter.plotSignificance(plotnames,sigOrder,bgOrder,savename,**kwargs)
 
 ##############################
 ### all signal on one plot ###

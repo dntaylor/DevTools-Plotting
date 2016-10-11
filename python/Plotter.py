@@ -843,6 +843,90 @@ class Plotter(PlotterBase):
         else:
             return self._saveTemp(canvas)
 
+    def plotSignificance(self,variable,signals,backgrounds,savename,**kwargs):
+        '''Plot ROC curve'''
+        xaxis = kwargs.pop('xaxis', 'Variable')
+        yaxis = kwargs.pop('yaxis', 'Significance')
+        logy = kwargs.pop('logy',False)
+        logx = kwargs.pop('logx',False)
+        invert = kwargs.pop('invert',False)
+        yscale = kwargs.pop('yscale',5 if logy else 1.2)
+        ymin = kwargs.pop('ymin',None)
+        ymax = kwargs.pop('ymax',2)
+        numcol = kwargs.pop('numcol',3)
+        legendpos = kwargs.pop('legendpos',34)
+        save = kwargs.pop('save',True)
+
+        logging.info('Plotting {0}'.format(savename))
+        canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
+        #ROOT.SetOwnership(canvas,False)
+        canvas.SetLogy(logy)
+        canvas.SetLogx(logx)
+
+        canvas.SetLogy(True)
+
+        if isinstance(signals,str): signals = [signals]
+        if isinstance(backgrounds,str): backgrounds = [backgrounds]*len(signals)
+
+        highestMax = 0.
+        lowestMin = 999999.
+        hists = OrderedDict()
+
+        for i,histNames in enumerate(zip(signals,backgrounds)):
+            signal, background = histNames
+            sig = self._getHistogram(signal,variable,nofill=True,**kwargs)
+            bg = self._getHistogram(background,variable,nofill=True,**kwargs)
+            numBins = sig.GetNbinsX()
+            self.j += 1
+            name = 'h_sOverB_{0}'.format(self.j)
+            significance = ROOT.TH1F(name,name,numBins,sig.GetXaxis().GetXmin(),sig.GetXaxis().GetXmax())
+            thisMin = 999999.
+            for b in range(numBins):
+                blow = 1 if invert else b+1
+                bhigh = b+1 if invert else numBins
+                sigVal = 0
+                sigErr2 = 0
+                bgVal = 0
+                bgErr2 = 0
+                for j in range(blow,bhigh+1):
+                    sigVal += sig.GetBinContent(j)
+                    sigErr2 += sig.GetBinError(j)**2
+                    bgVal += bg.GetBinContent(j)
+                    bgErr2 += bg.GetBinError(j)**2
+                significanceVal = sigVal / (sigVal+bgVal) if sigVal+bgVal else 0.
+                if significanceVal>0: thisMin = min(thisMin,significanceVal)
+                significance.SetBinContent(b+1,significanceVal)
+                significance.SetBinError(b+1,0.)
+            lowestMin = min(lowestMin,thisMin)
+            significance.SetMinimum(lowestMin)
+            style = self.styles[signal]
+            significance.SetLineWidth(2)
+            significance.SetLineColor(style['linecolor'])
+            significance.SetMarkerColor(style['linecolor'])
+            significance.SetFillColor(0)
+            if i==0:
+                significance.Draw('e0')
+                significance.GetXaxis().SetTitle(xaxis)
+                significance.GetYaxis().SetTitle(yaxis)
+                significance.GetYaxis().SetTitleOffset(1.2)
+                if ymax!=None: significance.SetMaximum(ymax)
+                if ymin!=None: significance.SetMinimum(ymin)
+            else:
+                significance.Draw('e0 same')
+            significance.SetTitle(style['name'])
+            hists[signal] = significance
+
+        legend = self._getLegend(hists=hists,numcol=numcol,position=legendpos)
+        legend.Draw()
+
+        self._setStyle(canvas)
+
+        # save
+        if save:
+            self._save(canvas,savename)
+        else:
+            return self._saveTemp(canvas)
+
 
     def plotEfficiency(self,variable,savename,**kwargs):
         '''Plot ROC curve'''
