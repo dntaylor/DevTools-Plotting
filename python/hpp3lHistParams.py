@@ -323,4 +323,13 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
             sampleSelectionParams['Hpp3l'][sample][sel]['args'][0] += ' && {0}'.format(cut)
 
 
+    # speacial scales for individual samples
+    sampleScales = {
+        'ZZTo4L_13TeV_powheg_pythia8'       : 'qqZZkfactor/1.1',
+        'ZZTo4L_13TeV-amcatnloFXFX-pythia8' : 'qqZZkfactor/1.1',
+    }
+    for sample,scale in sampleScales.iteritems():
+        sampleSelectionParams['Hpp3l'][sample] = deepcopy(selectionParams['Hpp3l'])
+        for sel in selectionParams['Hpp3l'].keys():
+            sampleSelectionParams['Hpp3l'][sample][sel]['kwargs']['mcscalefactor'] = '*'.join([sampleSelectionParams['Hpp3l'][sample][sel]['kwargs']['mcscalefactor'],scale])
 

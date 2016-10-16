@@ -103,6 +103,8 @@ class NtupleSkimmer(object):
             # local running
             jfile = self.json
             pfile = self.pickle
+            python_mkdir(os.path.dirname(jfile))
+            python_mkdir(os.path.dirname(pfile))
         with open(jfile,'w') as f:
             f.write(json.dumps(self.counts, indent=4, sort_keys=True))
         with open(pfile,'wb') as f:

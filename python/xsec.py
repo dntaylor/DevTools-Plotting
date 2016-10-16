@@ -79,6 +79,7 @@ xsecs = {
     'ttWJets_13TeV_madgraphMLM'                                        :      0.243    * PB,
     'ttH_M125_13TeV_powheg_pythia8'                                    :      0.5085   * PB,
 
+    'tZq_ll_4f_13TeV-amcatnlo-pythia8'                                 :      0.0758   * PB,
     'tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1'                    :      0.0758   * PB,
     'tZq_nunu_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1'                  :      0.1379   * PB,
 

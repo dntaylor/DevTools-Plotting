@@ -63,8 +63,8 @@ latestNtuples['80X'] = {
     'Charge'         : '2016-07-24_ChargeAnalysis_80X_v1-merge',
     'DY'             : '2016-09-27_DYAnalysis_80X_v1-merge',
     'DijetFakeRate'  : '2016-07-26_DijetFakeRateAnalysis_80X_v1-merge',
-    'Hpp3l'          : '2016-08-23_Hpp3lAnalysis_80X_v1-merge',
-    'Hpp4l'          : '2016-08-23_Hpp4lAnalysis_80X_v1-merge',
+    'Hpp3l'          : '2016-10-14_Hpp3lAnalysis_80X_v1-merge',
+    'Hpp4l'          : '2016-10-14_Hpp4lAnalysis_80X_v1-merge',
     'Electron'       : '2016-06-25_ElectronAnalysis_80X_v1-merge',
     'Muon'           : '2016-06-25_MuonAnalysis_80X_v1-merge',
     'Tau'            : '2016-07-06_TauAnalysis_80X_v1-merge',
@@ -144,6 +144,12 @@ def getProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
 latestSkims = {}
 latestSkims['80X'] = {}
 latestSkims['80X']['Hpp3l'] = {
+    #''                 : '2016-10-12_Hpp3lSkims_80X_1DOptimization_st_v1',
+    #''                 : '2016-10-12_Hpp3lSkims_80X_1DOptimization_met_v1',
+    #''                 : '2016-10-12_Hpp3lSkims_80X_1DOptimization_dr_v1',
+    #''                 : '2016-10-12_Hpp3lSkims_80X_reoptimizedSt_v1',
+    #''                 : '2016-10-13_Hpp3lSkims_80X_reoptimizedDR_v1',
+    #''                 : '2016-08-28_Hpp3lSkims_80X_v1',
     'ElectronEnUp'     : '2016-08-28_Hpp3lSkims_ElectronEnUp_80X_v1',
     'ElectronEnDown'   : '2016-08-28_Hpp3lSkims_ElectronEnDown_80X_v1',
     'MuonEnUp'         : '2016-08-28_Hpp3lSkims_MuonEnUp_80X_v1',
@@ -166,6 +172,10 @@ latestSkims['80X']['Hpp3l'] = {
     'fakeDown'         : '2016-08-28_Hpp3lSkims_fakeDown_80X_v1',
 }
 latestSkims['80X']['Hpp4l'] = {
+    #''                 : '2016-10-12_Hpp4lSkims_80X_1DOptimization_st_v1',
+    #''                 : '2016-10-13_Hpp4lSkims_80X_reoptimizedSt_v1',
+    #''                 : '2016-10-13_Hpp4lSkims_80X_reoptimizedDR_v1',
+    #''                 : '2016-08-28_Hpp4lSkims_80X_v1',
     'ElectronEnUp'     : '2016-08-28_Hpp4lSkims_ElectronEnUp_80X_v1',
     'ElectronEnDown'   : '2016-08-28_Hpp4lSkims_ElectronEnDown_80X_v1',
     'MuonEnUp'         : '2016-08-28_Hpp4lSkims_MuonEnUp_80X_v1',

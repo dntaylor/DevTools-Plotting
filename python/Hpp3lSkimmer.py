@@ -23,10 +23,15 @@ class Hpp3lSkimmer(NtupleSkimmer):
         super(Hpp3lSkimmer, self).__init__('Hpp3l',sample,**kwargs)
 
         # test if we want to run the optimization routine
-        self.optimize = True
+        self.optimize = False
+        self.var = 'met'
 
-        # setup output files
+        # setup properties
         self.leps = ['hpp1','hpp2','hm1']
+        self.isSignal = 'HPlusPlusHMinus' in self.sample
+        self.masses = [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500]
+        if self.isSignal:
+            self.masses = [mass for mass in self.masses if 'M-{0}'.format(mass) in self.sample]
 
     def getWeight(self,row,doFake=False):
         passMedium = [getattr(row,'{0}_passMedium'.format(lep)) for lep in self.leps]
@@ -52,6 +57,7 @@ class Hpp3lSkimmer(NtupleSkimmer):
             weight = prod([val for val in vals if val==val])
             # scale to lumi/xsec
             weight *= float(self.intLumi)/self.sampleLumi if self.sampleLumi else 0.
+            if hasattr(row,'qqZZkfactor'): weight *= row.qqZZkfactor/1.1 # ZZ variable k factor
         # fake scales
         if doFake:
             sign = -1 if sum(passMedium)%2==0 and not all(passMedium) else 1
@@ -121,35 +127,44 @@ class Hpp3lSkimmer(NtupleSkimmer):
             'met': row.met_pt,
         }
         cutRegions = {}
-        masses = [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500]
-        for mass in masses:
+        for mass in self.masses:
             cutRegions[mass] = {
                 0: {
-                    'st'   : v['st']>0.81*mass+88,
-                    'zveto': v['zdiff']>80,
-                    'dr'   : v['dr']<mass/380.+2.06 if v['hpp']<400 else v['dr']<mass/1200.+2.77,
+                    #'st'   : v['st']>0.81*mass+88,
+                    'st'   : v['st']>0.99*mass-35,
+                    #'zveto': v['zdiff']>80,
+                    'zveto': v['zdiff']>10,
+                    'met'  : True,
+                    #'dr'   : v['dr']<mass/380.+2.06 if v['hpp']<400 else v['dr']<mass/1200.+2.77,
+                    'dr'   : True,
                     'mass' : v['hpp']>0.9*mass and v['hpp']<1.1*mass,
                 },
                 1: {
-                    'st'   : v['st']>0.58*mass+85,
-                    'zveto': v['zdiff']>80,
+                    #'st'   : v['st']>0.58*mass+85,
+                    'st'   : v['st']>1.15*mass+2,
+                    #'zveto': v['zdiff']>80,
+                    'zveto': v['zdiff']>20,
                     'met'  : v['met']>20,
-                    'dr'   : v['dr']<mass/380.+1.96 if v['hpp']<400 else v['dr']<mass/1000.+2.6,
+                    #'dr'   : v['dr']<mass/380.+1.96 if v['hpp']<400 else v['dr']<mass/1000.+2.6,
+                    'dr'   : v['dr']<3.2,
                     'mass' : v['hpp']>0.4*mass and v['hpp']<1.1*mass,
                 },
                 2: {
-                    'st'   : v['st']>0.35*mass+81,
-                    'zveto': v['zdiff']>50,
-                    'met'  : v['met']>20,
+                    #'st'   : v['st']>0.35*mass+81,
+                    'st'   : v['st']>0.98*mass+91,
+                    #'zveto': v['zdiff']>50,
+                    'zveto': v['zdiff']>25,
+                    #'met'  : v['met']>20,
+                    'met'  : v['met']>50,
                     'dr'   : v['dr']<mass/380.+1.86 if v['hpp']<400 else v['dr']<mass/750.+2.37,
                     'mass' : v['hpp']>0.3*mass and v['hpp']<1.1*mass,
                 },
             }
         # optimization ranges
         stRange = [x*20 for x in range(100)]
-        zvetoRange = [x*5 for x in range(40)]
-        drRange = [x*0.1 for x in range(50)]
-        metRange = [x*5 for x in range(20)]
+        zvetoRange = [x*5 for x in range(25)]
+        drRange = [1.5+x*0.1 for x in range(50)]
+        metRange = [x*5 for x in range(40)]
 
         # increment counts
         if default:
@@ -158,7 +173,7 @@ class Hpp3lSkimmer(NtupleSkimmer):
             self.increment(fakeName+'_regular',w,recoChan,genChan)
 
             for nTaus in range(3):
-                for mass in masses:
+                for mass in self.masses:
                     name = '{0}/hpp{1}'.format(mass,nTaus)
                     sides = []
                     windows = []
@@ -172,37 +187,58 @@ class Hpp3lSkimmer(NtupleSkimmer):
                     massWindow = not all(sides) and all(windows)
                     allSideband = all(sides) and not all(windows)
                     allMassWindow = all(sides) and all(windows)
-                    if sideband:
-                        if all(passMedium): self.increment('new/sideband/'+name,w,recoChan,genChan)
-                        if isData or genCut: self.increment(fakeName+'/new/sideband/'+name,wf,recoChan,genChan)
-                    if massWindow:
-                        if all(passMedium): self.increment('new/massWindow/'+name,w,recoChan,genChan)
-                        if isData or genCut: self.increment(fakeName+'/new/massWindow/'+name,wf,recoChan,genChan)
-                    if allSideband:
-                        if all(passMedium): self.increment('new/allSideband/'+name,w,recoChan,genChan)
-                        if isData or genCut: self.increment(fakeName+'/new/allSideband/'+name,wf,recoChan,genChan)
-                    if allMassWindow:
-                        if all(passMedium): self.increment('new/allMassWindow/'+name,w,recoChan,genChan)
-                        if isData or genCut: self.increment(fakeName+'/new/allMassWindow/'+name,wf,recoChan,genChan)
+                    if not self.optimize:
+                        if sideband:
+                            if all(passMedium): self.increment('new/sideband/'+name,w,recoChan,genChan)
+                            if isData or genCut: self.increment(fakeName+'/new/sideband/'+name,wf,recoChan,genChan)
+                        if massWindow:
+                            if all(passMedium): self.increment('new/massWindow/'+name,w,recoChan,genChan)
+                            if isData or genCut: self.increment(fakeName+'/new/massWindow/'+name,wf,recoChan,genChan)
+                        if allSideband:
+                            if all(passMedium): self.increment('new/allSideband/'+name,w,recoChan,genChan)
+                            if isData or genCut: self.increment(fakeName+'/new/allSideband/'+name,wf,recoChan,genChan)
+                        if allMassWindow:
+                            if all(passMedium): self.increment('new/allMassWindow/'+name,w,recoChan,genChan)
+                            if isData or genCut: self.increment(fakeName+'/new/allMassWindow/'+name,wf,recoChan,genChan)
                     # run the grid of values
                     if self.optimize:
                         if not massWindowOnly: continue
-                        for stCutVal in stRange:
-                            if v['st']>stCutVal:
-                                if all(passMedium): self.increment('optimize/st/{0}/{1}'.format(stCutVal,name),w,recoChan,genChan)
-                                if isData or genCut: self.increment(fakeName+'/optimize/st/{0}/{1}'.format(stCutVal,name),wf,recoChan,genChan)
-                        for zvetoCutVal in zvetoRange:
-                            if v['zdiff']>zvetoCutVal:
-                                if all(passMedium): self.increment('optimize/zveto/{0}/{1}'.format(zvetoCutVal,name),w,recoChan,genChan)
-                                if isData or genCut: self.increment(fakeName+'/optimize/zveto/{0}/{1}'.format(zvetoCutVal,name),wf,recoChan,genChan)
-                        for drCutVal in drRange:
-                            if v['dr']<drCutVal:
-                                if all(passMedium): self.increment('optimize/dr/{0}/{1}'.format(drCutVal,name),w,recoChan,genChan)
-                                if isData or genCut: self.increment(fakeName+'/optimize/dr/{0}/{1}'.format(drCutVal,name),wf,recoChan,genChan)
-                        for metCutVal in metRange:
-                            if v['met']>metCutVal:
-                                if all(passMedium): self.increment('optimize/met/{0}/{1}'.format(metCutVal,name),w,recoChan,genChan)
-                                if isData or genCut: self.increment(fakeName+'/optimize/met/{0}/{1}'.format(metCutVal,name),wf,recoChan,genChan)
+                        nMinusOneSt = all([cutRegions[mass][nTaus]['zveto'], cutRegions[mass][nTaus]['dr'], cutRegions[mass][nTaus]['met']])
+                        nMinusOneZveto = all([cutRegions[mass][nTaus]['st'], cutRegions[mass][nTaus]['dr'], cutRegions[mass][nTaus]['met']])
+                        nMinusOneDR = all([cutRegions[mass][nTaus]['zveto'], cutRegions[mass][nTaus]['st'], cutRegions[mass][nTaus]['met']])
+                        nMinusOneMet = all([cutRegions[mass][nTaus]['zveto'], cutRegions[mass][nTaus]['dr'], cutRegions[mass][nTaus]['st']])
+                        # 1D no cuts
+                        if self.var=='st':
+                            for stCutVal in stRange:
+                                if v['st']>stCutVal and nMinusOneSt:
+                                    if all(passMedium): self.increment('optimize/st/{0}/{1}'.format(stCutVal,name),w,recoChan,genChan)
+                                    if isData or genCut: self.increment(fakeName+'/optimize/st/{0}/{1}'.format(stCutVal,name),wf,recoChan,genChan)
+                        if self.var=='zveto':
+                            for zvetoCutVal in zvetoRange:
+                                if v['zdiff']>zvetoCutVal and nMinusOneZveto:
+                                    if all(passMedium): self.increment('optimize/zveto/{0}/{1}'.format(zvetoCutVal,name),w,recoChan,genChan)
+                                    if isData or genCut: self.increment(fakeName+'/optimize/zveto/{0}/{1}'.format(zvetoCutVal,name),wf,recoChan,genChan)
+                        if self.var=='dr':
+                            for drCutVal in drRange:
+                                if v['dr']<drCutVal and nMinusOneDR:
+                                    if all(passMedium): self.increment('optimize/dr/{0}/{1}'.format(drCutVal,name),w,recoChan,genChan)
+                                    if isData or genCut: self.increment(fakeName+'/optimize/dr/{0}/{1}'.format(drCutVal,name),wf,recoChan,genChan)
+                        if self.var=='met':
+                            for metCutVal in metRange:
+                                if v['met']>metCutVal and nMinusOneMet:
+                                    if all(passMedium): self.increment('optimize/met/{0}/{1}'.format(metCutVal,name),w,recoChan,genChan)
+                                    if isData or genCut: self.increment(fakeName+'/optimize/met/{0}/{1}'.format(metCutVal,name),wf,recoChan,genChan)
+                        # nD
+                        #for stCutVal in stRange:
+                        #    if v['st']<stCutVal: continue
+                        #    for zvetoCutVal in zvetoRange:
+                        #        if v['zdiff']<zvetoCutVal: continue
+                        #        for drCutVal in drRange:
+                        #            if v['dr']>drCutVal: continue
+                        #            for metCutVal in metRange:
+                        #                if v['met']<metCutVal: continue
+                        #                if all(passMedium): self.increment('optimize/st{0}/zveto{1}/dr{2}/met{3}/{4}'.format(stCutVal,zvetoCutVal,drCutVal,metCutVal,name),w,recoChan,genChan)
+                        #                if isData or genCut: self.increment(fakeName+'optimize/st{0}/zveto{1}/dr{2}/met{3}/{4}'.format(stCutVal,zvetoCutVal,drCutVal,metCutVal,name),wf,recoChan,genChan)
 
 
         if lowmass:
