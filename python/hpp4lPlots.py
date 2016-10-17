@@ -15,13 +15,13 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 blind = False
 doCat = True
 plotCount = True
-plotMC = False
-plotDatadriven = False
-plotFakeRegions = False
-plotSignal = False
+plotMC = True
+plotDatadriven = True
+plotFakeRegions = True
+plotSignal = True
 plotROC = False
-plotNormalization = False
-plotSOverB = False
+plotNormalization = True
+plotSOverB = True
 plotSignificance = True
 plotAllMasses = False
 
