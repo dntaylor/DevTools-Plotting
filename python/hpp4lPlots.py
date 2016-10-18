@@ -5,12 +5,14 @@ import logging
 from itertools import product, combinations_with_replacement
 
 from DevTools.Plotter.Plotter import Plotter
-from DevTools.Utilities.utilities import ZMASS
+from DevTools.Utilities.utilities import ZMASS, getCMSSWVersion
 from DevTools.Plotter.higgsUtilities import getChannels, getChannelLabels, getCategories, getCategoryLabels, getSubCategories, getSubCategoryLabels, getGenRecoChannelMap, getSigMap
 from copy import deepcopy
 import ROOT
 
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+
+version = getCMSSWVersion()
 
 blind = False
 doCat = True
@@ -41,7 +43,7 @@ genRecoMap = getGenRecoChannelMap('Hpp4l')
 sigMap = getSigMap('Hpp4l')
 sigMapDD = getSigMap('Hpp4l',datadriven=True)
 
-allmasses = [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500]
+allmasses = [200,300,400,500,600,700,800,900,1000] if version=='76X' else [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500]
 masses = [200,400,600,800,1000]
 
 samples = ['TTV','VVV','ZZ']

@@ -1,6 +1,8 @@
 from itertools import product, combinations_with_replacement
 import numpy as np
-from DevTools.Utilities.utilities import ZMASS
+from DevTools.Utilities.utilities import ZMASS, getCMSSWVersion
+
+version = getCMSSWVersion()
 
 ######################
 ### Category names ###
@@ -427,20 +429,20 @@ for sigMap in sigMaps:
                                'SingleElectron',
                                'Tau',
                               ]
-    sigMaps[sigMap]['HppHmm200GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-200_TuneCUETP8M1_13TeV_pythia8']
-    sigMaps[sigMap]['HppHmm300GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-300_TuneCUETP8M1_13TeV_pythia8']
-    sigMaps[sigMap]['HppHmm400GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-400_TuneCUETP8M1_13TeV_pythia8']
-    sigMaps[sigMap]['HppHmm500GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-500_TuneCUETP8M1_13TeV_pythia8']
-    sigMaps[sigMap]['HppHmm600GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-600_TuneCUETP8M1_13TeV_pythia8']
-    sigMaps[sigMap]['HppHmm700GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-700_TuneCUETP8M1_13TeV_pythia8']
-    sigMaps[sigMap]['HppHmm800GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-800_TuneCUETP8M1_13TeV_pythia8']
-    sigMaps[sigMap]['HppHmm900GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-900_TuneCUETP8M1_13TeV_pythia8']
-    sigMaps[sigMap]['HppHmm1000GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1000_TuneCUETP8M1_13TeV_pythia8']
-    sigMaps[sigMap]['HppHmm1100GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1100_TuneCUETP8M1_13TeV_pythia8']
-    sigMaps[sigMap]['HppHmm1200GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1200_TuneCUETP8M1_13TeV_pythia8']
-    sigMaps[sigMap]['HppHmm1300GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1300_TuneCUETP8M1_13TeV_pythia8']
-    sigMaps[sigMap]['HppHmm1400GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1400_TuneCUETP8M1_13TeV_pythia8']
-    sigMaps[sigMap]['HppHmm1500GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1500_TuneCUETP8M1_13TeV_pythia8']
+    sigMaps[sigMap]['HppHmm200GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-200_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else ['HPlusPlusHMinusMinusHTo4L_M-200_13TeV-pythia8']
+    sigMaps[sigMap]['HppHmm300GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-300_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else ['HPlusPlusHMinusMinusHTo4L_M-300_13TeV-pythia8']
+    sigMaps[sigMap]['HppHmm400GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-400_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else ['HPlusPlusHMinusMinusHTo4L_M-400_13TeV-pythia8']
+    sigMaps[sigMap]['HppHmm500GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-500_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else ['HPlusPlusHMinusMinusHTo4L_M-500_13TeV-pythia8']
+    sigMaps[sigMap]['HppHmm600GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-600_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else ['HPlusPlusHMinusMinusHTo4L_M-600_13TeV-pythia8']
+    sigMaps[sigMap]['HppHmm700GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-700_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else ['HPlusPlusHMinusMinusHTo4L_M-700_13TeV-pythia8']
+    sigMaps[sigMap]['HppHmm800GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-800_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else ['HPlusPlusHMinusMinusHTo4L_M-800_13TeV-pythia8']
+    sigMaps[sigMap]['HppHmm900GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-900_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else ['HPlusPlusHMinusMinusHTo4L_M-900_13TeV-pythia8']
+    sigMaps[sigMap]['HppHmm1000GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1000_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else ['HPlusPlusHMinusMinusHTo4L_M-1000_13TeV-pythia8']
+    sigMaps[sigMap]['HppHmm1100GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1100_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else []
+    sigMaps[sigMap]['HppHmm1200GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1200_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else []
+    sigMaps[sigMap]['HppHmm1300GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1300_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else []
+    sigMaps[sigMap]['HppHmm1400GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1400_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else []
+    sigMaps[sigMap]['HppHmm1500GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1500_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else []
 
     sigMaps[sigMap]['HppHm200GeV']   = ['HPlusPlusHMinusHTo3L_M-200_TuneCUETP8M1_13TeV_calchep-pythia8']
     sigMaps[sigMap]['HppHm300GeV']   = ['HPlusPlusHMinusHTo3L_M-300_TuneCUETP8M1_13TeV_calchep-pythia8']
