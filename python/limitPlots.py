@@ -13,6 +13,7 @@ import ROOT
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 blind = False
+smooth = True
 limitMode = 'fullCLs'
 
 limitPlotter = LimitPlotter()
@@ -33,8 +34,8 @@ for analysis,prod in [('Hpp3l','AP'),('Hpp3l','PP'),('Hpp4l',''),('HppAP',''),('
             'xaxis': '#Phi^{++} Mass (GeV)',
             'yaxis': '95% CLs Upper Limit on #sigma/#sigma_{model}',
         }
-        limvals[mode][label] = limitPlotter.plotLimit(masses,filenames[mode][label],'{0}/{1}'.format(label,mode),blind=blind,**kwargs)
-        if limitMode=='fullCLs': temp = limitPlotter.plotLimit(masses,filenames[mode][label],'{0}/{1}_both'.format(label,mode),blind=blind,asymptoticFilenames=filenames_asym[mode][label],**kwargs)
+        limvals[mode][label] = limitPlotter.plotLimit(masses,filenames[mode][label],'{0}/{1}'.format(label,mode),blind=blind,smooth=smooth,**kwargs)
+        if limitMode=='fullCLs': temp = limitPlotter.plotLimit(masses,filenames[mode][label],'{0}/{1}_both'.format(label,mode),blind=blind,smooth=smooth,asymptoticFilenames=filenames_asym[mode][label],**kwargs)
 
 limitPlotter.moneyPlot(limvals,'moneyPlot_prevExclusion',doPreviousExclusion=True,blind=blind)
 limitPlotter.moneyPlot(limvals,'moneyPlot_offAxis',blind=blind,offAxis=True)
@@ -42,7 +43,7 @@ limitPlotter.moneyPlot(limvals,'moneyPlot_prevExclusion',doPreviousExclusion=Tru
 limitPlotter.moneyPlot(limvals,'moneyPlot_prevExclusion_offAxis',doPreviousExclusion=True,blind=blind,offAxis=True)
 
 for mode in modes:
-    limitPlotter.plotCrossSectionLimit(masses,filenames[mode]['HppAP'],filenames[mode]['HppPP'],'HppComb/{0}_crossSection'.format(mode),blind=blind)
+    limitPlotter.plotCrossSectionLimit(masses,filenames[mode]['HppAP'],filenames[mode]['HppPP'],'HppComb/{0}_crossSection'.format(mode),blind=blind,smooth=smooth)
 
 limitPlotter.moneyPlot(limvals,'moneyPlot',blind=blind)
 def dumpResults(results,analysis,name):
