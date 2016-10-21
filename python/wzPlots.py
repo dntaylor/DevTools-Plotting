@@ -143,8 +143,11 @@ plotStyles = {
     'met'                 : {'xaxis': 'E_{T}^{miss}', 'yaxis': 'Events/10 GeV', 'rebin':10, 'rangex':[0,200]},
     'mass'                : {'xaxis': 'm_{3l}', 'yaxis': 'Events/20 GeV', 'rebin':20, 'rangex':[0,500]},
     'nJets'               : {'xaxis': 'Number of Jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'rangex':[0,8]},
-    'nBjets'              : {'xaxis': 'Number of b-tageed Jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'rangex':[0,8]},
+    'nBjets'              : {'xaxis': 'Number of b-tagged Jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'rangex':[0,8]},
 }
+
+chans = ['eee','eem','mme','mmm']
+chanLabels = ['eee','ee#mu','#mu#mu e','#mu#mu#mu']
 
 def getDataDrivenPlot(plot):
     histMap = {}
@@ -154,11 +157,29 @@ def getDataDrivenPlot(plot):
     histMap['datadriven'] = ['/'.join([reg]+plotdirs) for reg in regions]
     return histMap
 
+def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False,postfix=''):
+    # per channel counts
+    countVars = ['/'.join([x for x in [baseDir,'count'] if x])] + ['/'.join([x for x in [baseDir,chan,'count'] if x]) for chan in sorted(chans)]
+    if datadriven:
+        for i in range(len(countVars)):
+            countVars[i] = getDataDrivenPlot(countVars[i])
+    countLabels = ['Total'] + chanLabels
+    savename = '/'.join([x for x in [saveDir,'individualChannels'] if x])
+    if postfix: savename += '_{0}'.format(postfix)
+    plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=0,legendpos=34,labelsOption='v')
+
+
 # n-1 cuts
 nMinusOneCuts = ['zptCut','wptCut','bvetoCut','metCut','zmassCut','3lmassCut']
 
 # controls
 controls = ['dy','tt']
+
+plotCounts(wzPlotter,baseDir='',saveDir='datadriven',datadriven=True)
+for cut in nMinusOneCuts:
+    plotCounts(wzPlotter,baseDir=cut,saveDir='nMinusOne-datadriven/{0}'.format(cut),datadriven=True)
+for control in controls:
+    plotCounts(wzPlotter,baseDir=control,saveDir='{0}-datadriven'.format(control),datadriven=True)
 
 for plot in plotStyles:
     plotvars = getDataDrivenPlot(plot)
@@ -166,11 +187,11 @@ for plot in plotStyles:
     wzPlotter.plot(plotvars,savename,**plotStyles[plot])
     for cut in nMinusOneCuts:
         plotvars = getDataDrivenPlot('{0}/{1}'.format(cut,plot))
-        savename = 'datadriven/nMinusOne/{0}/{1}'.format(cut,plot)
+        savename = 'nMinusOne-datadriven/{0}/{1}'.format(cut,plot)
         wzPlotter.plot(plotvars,savename,**plotStyles[plot])
     for control in controls:
         plotvars = getDataDrivenPlot('{0}/{1}'.format(control,plot))
-        savename = 'datadriven/{0}/{1}'.format(control,plot)
+        savename = '{0}-datadriven/{1}'.format(control,plot)
         wzPlotter.plot(plotvars,savename,**plotStyles[plot])
 
 wzPlotter.clearHistograms()
@@ -181,9 +202,15 @@ for s in allsamples:
 
 wzPlotter.addHistogram('data',sigMap['data'])
 
+plotCounts(wzPlotter,saveDir='mc',baseDir='default')
+for cut in nMinusOneCuts:
+    plotCounts(wzPlotter,baseDir='default/{0}'.format(cut),saveDir='nMinusOne/{0}'.format(cut))
+for control in controls:
+    plotCounts(wzPlotter,saveDir=control,baseDir=control)
+
 for plot in plotStyles:
     plotname = 'default/{0}'.format(plot)
-    savename = plot
+    savename = 'mc/{0}'.format(plot)
     wzPlotter.plot(plotname,savename,**plotStyles[plot])
     for cut in nMinusOneCuts:
         plotname = 'default/{0}/{1}'.format(cut,plot)
