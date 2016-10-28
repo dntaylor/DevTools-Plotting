@@ -72,7 +72,7 @@ latestNtuples['80X'] = {
     'WTauFakeRate'   : '2016-07-24_WTauFakeRateAnalysis_80X_v1-merge',
     'WFakeRate'      : '2016-07-24_WFakeRateAnalysis_80X_v1-merge',
     'ZFakeRate'      : '2016-07-24_ZFakeRateAnalysis_80X_v1-merge',
-    'WZ'             : '2016-09-09_WZAnalysis_80X_v1-merge',
+    'WZ'             : '2016-10-27_WZAnalysis_80X_v1-merge',
     'ZZ'             : '2016-08-08_ZZAnalysis_80X_v1-merge',
 }
 

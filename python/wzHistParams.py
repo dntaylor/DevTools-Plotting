@@ -57,6 +57,7 @@ def buildWZ(selectionParams,sampleSelectionParams,projectionParams,sampleProject
         'bvetoCut' : 'numBjetsTight30==0',
         'metCut'   : 'met_pt>30',
         'zmassCut' : 'fabs(z_mass-{0})<15'.format(ZMASS),
+        'wmllCut'  : 'w1_z1_mass>4 && w1_z2_mass>4',
         '3lmassCut': '3l_mass>100',
     }
     wzBaseCut = ' && '.join([baseCutMap[x] for x in sorted(baseCutMap.keys())])
