@@ -39,8 +39,8 @@ def buildWZ(selectionParams,sampleSelectionParams,projectionParams,sampleProject
         # vbf
         'leadJetPt'                   : {'xVariable': 'leadJet_pt',                     'xBinning': [500, 0, 500],           'selection': 'leadJet_pt>0.',},
         'subleadJetPt'                : {'xVariable': 'subleadJet_pt',                  'xBinning': [500, 0, 500],           'selection': 'subleadJet_pt>0.',},
-        'dijetMass'                   : {'xVariable': 'dijet_mass',                     'xBinning': [500, 0, 500],           'selection': 'dijet_mass>0.',},
-
+        'dijetMass'                   : {'xVariable': 'dijet_mass',                     'xBinning': [2000, 0, 2000],         'selection': 'dijet_mass>0.',},
+        'dijetDEta'                   : {'xVariable': 'dijet_deltaEta',                 'xBinning': [100, 0, 10],            'selection': 'dijet_deltaEta>0.'},
     }
 
     # setup the reco channels
@@ -63,6 +63,13 @@ def buildWZ(selectionParams,sampleSelectionParams,projectionParams,sampleProject
     wzBaseCut = ' && '.join([baseCutMap[x] for x in sorted(baseCutMap.keys())])
     wzBaseScaleFactor = 'genWeight*pileupWeight*triggerEfficiency'
     wzMCCut = ' && '.join([genStatusOneCut.format(l) for l in ['z1','z2','w1']])
+    vbsCutMap = {
+        'twoJets' : 'dijet_mass>0.',
+        'jetPt'   : 'leadJet_pt>50. && subleadJet_pt>50.',
+        'jetDEta' : 'dijet_deltaEta>2.5',
+        'mjj'     : 'dijet_mass>400.',
+    }
+    wzVBSCut = ' && '.join([vbsCutMap[x] for x in sorted(vbsCutMap.keys())])
     
     # definitions for scale/selection in fake regions
     wzTightVar = {
@@ -115,15 +122,24 @@ def buildWZ(selectionParams,sampleSelectionParams,projectionParams,sampleProject
     
     # base selections (no gen matching)
     selectionParams['WZ'] = {
-        'default' : {'args': [wzCutMap['PPP']+' && '+wzBaseCut], 'kwargs': {'mcscalefactor': '*'.join([wzScaleFactorMap['PPP'],wzBaseScaleFactor])}},
-        'dy'      : {'args': [wzCutMap['dy']],                   'kwargs': {'mcscalefactor': '*'.join([wzScaleFactorMap['loose'],wzBaseScaleFactor]),}},
-        'tt'      : {'args': [wzCutMap['tt']],                   'kwargs': {'mcscalefactor': '*'.join([wzScaleFactorMap['loose'],wzBaseScaleFactor]),}},
+        'default' : {'args': [wzCutMap['PPP']+' && '+wzBaseCut],                 'kwargs': {'mcscalefactor': '*'.join([wzScaleFactorMap['PPP'],wzBaseScaleFactor])}},
+        'vbs'     : {'args': [wzCutMap['PPP']+' && '+wzBaseCut+' && '+wzVBSCut], 'kwargs': {'mcscalefactor': '*'.join([wzScaleFactorMap['PPP'],wzBaseScaleFactor])}},
+        'dy'      : {'args': [wzCutMap['dy']],                                   'kwargs': {'mcscalefactor': '*'.join([wzScaleFactorMap['loose'],wzBaseScaleFactor]),}},
+        'tt'      : {'args': [wzCutMap['tt']],                                   'kwargs': {'mcscalefactor': '*'.join([wzScaleFactorMap['loose'],wzBaseScaleFactor]),}},
     }
     
     # fake regions, gen match leptons in MC
     for region in fakeRegions:
         selectionParams['WZ'][region] = {
             'args': [wzBaseCut + ' && ' + wzCutMap[region]],
+            'kwargs': {
+                'mccut': wzMCCut,
+                'mcscalefactor': '*'.join([wzScaleFactorMap[region],wzFakeScaleFactorMap[region],wzBaseScaleFactor,'1' if region=='PPP' else '-1']),
+                'datascalefactor': wzFakeScaleFactorMap[region],
+            }
+        }
+        selectionParams['WZ']['{0}/vbs'.format(region)] = {
+            'args': [wzBaseCut + ' && ' + wzVBSCut + ' && ' + wzCutMap[region]],
             'kwargs': {
                 'mccut': wzMCCut,
                 'mcscalefactor': '*'.join([wzScaleFactorMap[region],wzFakeScaleFactorMap[region],wzBaseScaleFactor,'1' if region=='PPP' else '-1']),
@@ -152,6 +168,23 @@ def buildWZ(selectionParams,sampleSelectionParams,projectionParams,sampleProject
         for region in fakeRegions:
             selectionParams['WZ']['{0}/{1}'.format(region,baseCut)] = {
                 'args': [nMinusOneCut + ' && ' + wzCutMap[region]],
+                'kwargs': {
+                    'mccut': wzMCCut,
+                    'mcscalefactor': '*'.join([wzScaleFactorMap[region],wzFakeScaleFactorMap[region],wzBaseScaleFactor,'1' if region=='PPP' else '-1']),
+                    'datascalefactor': wzFakeScaleFactorMap[region],
+                }
+            }
+    for vbsCut in vbsCutMap:
+        nMinusOneCut = ' && '.join([cut for key,cut in sorted(vbsCutMap.iteritems()) if key!=vbsCut])
+        selectionParams['WZ']['vbs/{0}'.format(vbsCut)] = {
+            'args': [nMinusOneCut + ' && ' + wzBaseCut + ' && ' + wzCutMap['PPP']],
+            'kwargs': {
+                'mcscalefactor': '*'.join([wzScaleFactorMap['PPP'],wzBaseScaleFactor]),
+            }
+        }
+        for region in fakeRegions:
+            selectionParams['WZ']['{0}/vbs/{1}'.format(region,vbsCut)] = {
+                'args': [nMinusOneCut + ' && ' + wzBaseCut + ' && ' + wzCutMap[region]],
                 'kwargs': {
                     'mccut': wzMCCut,
                     'mcscalefactor': '*'.join([wzScaleFactorMap[region],wzFakeScaleFactorMap[region],wzBaseScaleFactor,'1' if region=='PPP' else '-1']),

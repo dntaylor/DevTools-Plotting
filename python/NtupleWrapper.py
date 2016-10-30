@@ -144,11 +144,11 @@ class NtupleWrapper(object):
                 hist.SetDirectory(0)
                 return hist
             # attempt to project
-            hist = self.__projectChannel(variable,temp=True)
-            if hist:
-                hist = hist.Clone('h_{0}_{1}'.format(self.sample,variable.replace('/','_')))
-                hist.SetDirectory(0)
-                return hist
+            #hist = self.__projectChannel(variable,temp=True)
+            #if hist:
+            #    hist = hist.Clone('h_{0}_{1}'.format(self.sample,variable.replace('/','_')))
+            #    hist.SetDirectory(0)
+            #    return hist
         logging.debug('Histogram {0} not found for {1}'.format(variable,self.sample))
         return 0
 

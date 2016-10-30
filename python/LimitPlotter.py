@@ -604,8 +604,10 @@ class LimitPlotter(PlotterBase):
         obsleg.SetFillColorAlpha(ROOT.kBlack,0.35)
 
         expleg = ROOT.TGraph()
-        expleg.SetLineWidth(4)
+        expleg.SetLineWidth(0)
         expleg.SetFillStyle(3004)
+
+        explineargs = [0.8,0.5,0.8,0.6]
 
         curr = {}
         for prod in ['HppAP','HppPP','HppComb']:
@@ -625,10 +627,12 @@ class LimitPlotter(PlotterBase):
 
             if offAxis:
                 legend.AddEntry(obsleg,'Obs. exclusion 95% CL','f')
-                legend.AddEntry(expleg,'Exp. exclusion 95% CL','lf')
+                legend.AddEntry(expleg,'Exp. exclusion 95% CL','f')
+                explineargs = [0.813,0.646,0.813,0.675]
             else:
                 legend.AddEntry(obsleg,'Observed exclusion 95% CL','f')
-                legend.AddEntry(expleg,'Expected exclusion 95% CL','lf')
+                legend.AddEntry(expleg,'Expected exclusion 95% CL','f')
+                explineargs = [0.635,0.446,0.635,0.475]
             legend.Draw()
 
             sublegends = {}
@@ -657,8 +661,17 @@ class LimitPlotter(PlotterBase):
             for prod in ['HppAP','HppPP','HppComb']:
                 legend.AddEntry(curr[prod+'13'],prodLabels[prod],'f')
 
+            if offAxis:
+                explineargs = [0.813,0.527,0.813,0.556]
+            else:
+                explineargs = [0.674,0.326,0.674,0.355]
+
             legend.Draw()
 
+        expline = ROOT.TLine(*explineargs)
+        expline.SetNDC()
+        expline.SetLineWidth(4)
+        expline.Draw()
 
         # cms lumi styling
         if doPreviousExclusion:
