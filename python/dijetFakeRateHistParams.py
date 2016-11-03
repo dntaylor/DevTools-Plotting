@@ -23,10 +23,11 @@ def buildDijetFakeRate(selectionParams,sampleSelectionParams,projectionParams,sa
     frBaseCutLoose = '{0}'.format(frBaseCut)
     frBaseCutMedium = '{0} && l1_passMedium==1'.format(frBaseCut)
     frBaseCutTight = '{0} && l1_passTight==1'.format(frBaseCut)
-    frScaleFactorLoose = 'l1_looseScale*genWeight*pileupWeight*triggerEfficiency'#/triggerPrescale'
-    frScaleFactorMedium = 'l1_mediumScale*genWeight*pileupWeight*triggerEfficiency'#/triggerPrescale'
-    frScaleFactorTight = 'l1_tightScale*genWeight*pileupWeight*triggerEfficiency'#/triggerPrescale'
-    dataScaleFactor = 'triggerPrescale'
+    frScaleFactorLoose = 'l1_looseScale*genWeight*pileupWeight*triggerEfficiency/triggerPrescale'
+    frScaleFactorMedium = 'l1_mediumScale*genWeight*pileupWeight*triggerEfficiency/triggerPrescale'
+    frScaleFactorTight = 'l1_tightScale*genWeight*pileupWeight*triggerEfficiency/triggerPrescale'
+    #dataScaleFactor = 'triggerPrescale'
+    dataScaleFactor = '1'
     selectionParams['DijetFakeRate'] = {
         'loose'      : {'args': [frBaseCutLoose],                   'kwargs': {'mcscalefactor': frScaleFactorLoose,  'datascalefactor': dataScaleFactor}},
         'medium'     : {'args': [frBaseCutMedium],                  'kwargs': {'mcscalefactor': frScaleFactorMedium, 'datascalefactor': dataScaleFactor}},

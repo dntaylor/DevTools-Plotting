@@ -77,9 +77,6 @@ sigMap = {
     'data': [
              'DoubleMuon',
              'DoubleEG',
-             'MuonEG',
-             'SingleMuon',
-             'SingleElectron',
             ],
 }
 
