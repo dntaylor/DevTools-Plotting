@@ -43,9 +43,9 @@ class PlotterBase(object):
         # ----------------
         # | 11 | 21 | 31 |
         # ----------------
-        width = 0.15*numcol+0.1
+        width = 0.17*numcol+0.1
         numentries = len(entryArgs)
-        height = math.ceil(float(numentries)/numcol)*0.06+0.02
+        height = math.ceil(float(numentries)/numcol)*0.07+0.04
         if position % 10 == 1:   # bottom
             ystart = 0.16
             yend = ystart+height

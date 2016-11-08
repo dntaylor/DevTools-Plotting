@@ -276,6 +276,7 @@ class LimitPlotter(PlotterBase):
 
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
         canvas.SetLogy(1)
+        canvas.SetLeftMargin(0.19)
         #canvas.Divide(1,2,0.,0.)
         #canvas.Divide(1,2)
 
@@ -303,19 +304,19 @@ class LimitPlotter(PlotterBase):
             xsecGraph[prod].SetFillStyle(0)
             xsecGraph[prod].SetLineColor(ROOT.kBlue if prod=='AP' else ROOT.kRed)
             xsecGraph[prod].GetXaxis().SetLimits(xvals[0],xvals[-1])
-        xsecGraph['AP'].GetYaxis().SetTitleOffset(0.75)
-        xsecGraph['AP'].GetYaxis().SetTitleSize(0.105)
-        xsecGraph['PP'].GetYaxis().SetTitleOffset(0.85)
-        xsecGraph['PP'].GetYaxis().SetTitleSize(0.095)
+        xsecGraph['AP'].GetYaxis().SetTitleOffset(0.75*1.3)
+        xsecGraph['AP'].GetYaxis().SetTitleSize(0.105*0.8)
+        xsecGraph['PP'].GetYaxis().SetTitleOffset(0.85*1.3)
+        xsecGraph['PP'].GetYaxis().SetTitleSize(0.095*0.8)
         xsecGraph['AP'].GetXaxis().SetTitle('')
         xsecGraph['PP'].GetXaxis().SetTitle('#Phi^{++} Mass (GeV)')
         xsecGraph['PP'].GetXaxis().SetTitleSize(0.110)
         xsecGraph['PP'].GetXaxis().SetLabelSize(0.073)
         xsecGraph['PP'].GetXaxis().SetLabelOffset(0.012)
-        xsecGraph['AP'].GetYaxis().SetTitle('#sigma #upoint BR (pb)')
-        xsecGraph['PP'].GetYaxis().SetTitle('#sigma #upoint BR^{2} (pb)')
-        xsecGraph['AP'].GetYaxis().SetLabelSize(0.095)
-        xsecGraph['PP'].GetYaxis().SetLabelSize(0.08)
+        xsecGraph['AP'].GetYaxis().SetTitle('#splitline{95% CLs Upper Limit}{            on #sigma #upoint BR (pb)}')
+        xsecGraph['PP'].GetYaxis().SetTitle('#splitline{95% CLs Upper Limit}{           on #sigma #upoint BR^{2} (pb)}')
+        xsecGraph['AP'].GetYaxis().SetLabelSize(0.095*0.9)
+        xsecGraph['PP'].GetYaxis().SetLabelSize(0.08*0.9)
 
         # AP/PP limits
         twoSigma = {}
@@ -350,7 +351,8 @@ class LimitPlotter(PlotterBase):
         for p,prod in enumerate(['AP','PP']):
             #pad[prod] = canvas.cd(p+1)
             pad[prod].cd()
-            pad[prod].SetLeftMargin(0.16)
+            #pad[prod].SetLeftMargin(0.16)
+            pad[prod].SetLeftMargin(0.19)
             pad[prod].SetRightMargin(0.02)
             if prod=='AP': 
                 pad[prod].SetTopMargin(0.11)
@@ -461,15 +463,26 @@ class LimitPlotter(PlotterBase):
         #canvas.cd()
         # get the legend
         entries = [
-            #[expected['AP'],'Expected','l'],
-            #[twoSigma['AP'],'Expected 2#sigma','F'],
-            #[oneSigma['AP'],'Expected 1#sigma','F'],
             [xsecGraph['AP'],'#splitline{Assoc. Prod.}{Cross Section}','l'],
             [xsecGraph['PP'],'#splitline{Pair Prod.}{Cross Section}','l'],
         ]
-        #if not blind: entries = [[observed['AP'],'Observed','l']] + entries
-        legend = self._getLegend(entries=entries,numcol=numcol,position=legendpos)
+        legend = self._getLegend(entries=entries,numcol=2,position=legendpos)
         legend.Draw()
+
+        entries = [
+            [expected['AP'],'Expected','l'],
+            [twoSigma['AP'],'Expected 2#sigma','F'],
+            [oneSigma['AP'],'Expected 1#sigma','F'],
+        ]
+        if not blind: entries = [[observed['AP'],'Observed','l']] + entries
+        legend2 = self._getLegend(entries=entries,numcol=4,position=legendpos)
+        # move down
+        y1, y2 = legend2.GetY1(), legend2.GetY2()
+        x1, x2 = legend2.GetX1(), legend2.GetX2()
+        legend2.SetY1(y1-0.4)
+        legend2.SetY2(y2-0.4)
+        legend2.SetX1(x1+0.12)
+        legend2.Draw()
 
         # cms lumi styling
         self._setStyle(canvas,position=lumipos,preliminary=isprelim)

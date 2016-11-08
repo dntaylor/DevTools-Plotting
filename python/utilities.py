@@ -62,10 +62,12 @@ latestNtuples['76X'] = {
 latestNtuples['80X'] = {
     'Charge'         : '2016-07-24_ChargeAnalysis_80X_v1-merge',
     'DY'             : '2016-09-27_DYAnalysis_80X_v1-merge',
-    #'DijetFakeRate'  : '2016-07-26_DijetFakeRateAnalysis_80X_v1-merge', # hpp ids
-    'DijetFakeRate'  : '2016-11-03_DijetFakeRateAnalysis_80X_v2-merge', # pseudo wz 2017 ids
-    'Hpp3l'          : '2016-10-14_Hpp3lAnalysis_80X_v1-merge',
-    'Hpp4l'          : '2016-10-14_Hpp4lAnalysis_80X_v1-merge',
+    'DijetFakeRate'  : '2016-11-03_DijetFakeRateAnalysis_80X_v4-merge', # hpp ids
+    #'DijetFakeRate'  : '2016-11-03_DijetFakeRateAnalysis_80X_v2-merge', # pseudo wz 2017 ids
+    #'Hpp3l'          : '2016-10-14_Hpp3lAnalysis_80X_v1-merge',
+    #'Hpp4l'          : '2016-10-14_Hpp4lAnalysis_80X_v1-merge',
+    'Hpp3l'          : '2016-11-03_Hpp3lAnalysis_80X_v1-merge',
+    'Hpp4l'          : '2016-11-03_Hpp4lAnalysis_80X_v1-merge',
     'Electron'       : '2016-06-25_ElectronAnalysis_80X_v1-merge',
     'Muon'           : '2016-06-25_MuonAnalysis_80X_v1-merge',
     'Tau'            : '2016-07-06_TauAnalysis_80X_v1-merge',
