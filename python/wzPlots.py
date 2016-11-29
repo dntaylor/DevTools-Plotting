@@ -21,10 +21,12 @@ doVBS = True
 
 sigMap = {
     'WZ'  : [
-             'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
+             #'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
+             'WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
             ],
     'WZall'  : [
-             'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
+             #'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
+             'WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
              'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
              'WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8',
              'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8',
@@ -122,18 +124,6 @@ sigMap = {
             ],
 }
 
-samples = ['TTV','VH','ZG','VVV','ZZ','WZ']
-allsamples = ['W','TT','Z','WW','TTV','VH','VVV','ZZall','WZall']
-
-datadrivenSamples = []
-for s in samples + ['data']:
-    datadrivenSamples += sigMap[s]
-wzPlotter.addHistogramToStack('datadriven',datadrivenSamples)
-
-for s in samples:
-    wzPlotter.addHistogramToStack(s,sigMap[s])
-
-wzPlotter.addHistogram('data',sigMap['data'])
 
 plotStyles = {
     # Z
@@ -153,7 +143,7 @@ plotStyles = {
     'nBjets'              : {'xaxis': 'Number of b-tagged Jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'rangex':[0,8]},
     # vbf
     'leadJetPt'           : {'xaxis': 'Lead Jet p_{T}', 'yaxis': 'Events / 20 GeV', 'rebin': 20, 'rangex': [20,400]},
-    'dijetMass'           : {'xaxis': 'm_{jj}', 'yaxis': 'Events / 50 GeV', 'rebin': 50, 'rangex': [0,2000]},
+    'dijetMass'           : {'xaxis': 'm_{jj}', 'yaxis': 'Events / 100 GeV', 'rebin': 100, 'rangex': [0,2000]},
     'dijetDEta'           : {'xaxis': '\Delta\eta(jj)', 'yaxis': 'Events', 'rebin': 10, 'rangex': [0,10]},
 }
 
@@ -179,7 +169,6 @@ def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False,postfix='')
     if postfix: savename += '_{0}'.format(postfix)
     plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=0,legendpos=34,labelsOption='v')
 
-
 # n-1 cuts
 nMinusOneCuts = ['zptCut','wptCut','bvetoCut','metCut','zmassCut','3lmassCut','wmllCut']
 vbsNMinusOneCuts = ['twoJets','jetPt','jetDEta','mjj']
@@ -187,39 +176,13 @@ vbsNMinusOneCuts = ['twoJets','jetPt','jetDEta','mjj']
 # controls
 controls = ['dy','tt']
 
-if doCounts and doDatadriven:
-    plotCounts(wzPlotter,baseDir='',saveDir='datadriven',datadriven=True)
-    if doVBS: plotCounts(wzPlotter,baseDir='vbs',saveDir='vbs-datadriven',datadriven=True)
-    for cut in nMinusOneCuts:
-        if doNMinusOne: plotCounts(wzPlotter,baseDir=cut,saveDir='nMinusOne-datadriven/{0}'.format(cut),datadriven=True)
-    for cut in vbsNMinusOneCuts:
-        if doNMinusOne and doVBS: plotCounts(wzPlotter,baseDir='vbs/{0}'.format(cut),saveDir='vbsNMinusOne-datadriven/{0}'.format(cut),datadriven=True)
-    for control in controls:
-        if doControls: plotCounts(wzPlotter,baseDir=control,saveDir='{0}-datadriven'.format(control),datadriven=True)
 
-if doDatadriven:
-    for plot in plotStyles:
-        plotvars = getDataDrivenPlot(plot)
-        savename = 'datadriven/{0}'.format(plot)
-        wzPlotter.plot(plotvars,savename,**plotStyles[plot])
-        plotVars = getDataDrivenPlot('vbs/{0}'.format(plot))
-        savename = 'vbs-datadriven/{0}'.format(plot)
-        if doVBS: wzPlotter.plot(plotvars,savename,**plotStyles[plot])
-        for cut in nMinusOneCuts:
-            plotvars = getDataDrivenPlot('{0}/{1}'.format(cut,plot))
-            savename = 'nMinusOne-datadriven/{0}/{1}'.format(cut,plot)
-            if doNMinusOne: wzPlotter.plot(plotvars,savename,**plotStyles[plot])
-        for cut in vbsNMinusOneCuts:
-            plotvars = getDataDrivenPlot('vbs/{0}/{1}'.format(cut,plot))
-            savename = 'vbsNMinusOne-datadriven/{0}/{1}'.format(cut,plot)
-            if doNMinusOne and doVBS: wzPlotter.plot(plotvars,savename,**plotStyles[plot])
-        for control in controls:
-            plotvars = getDataDrivenPlot('{0}/{1}'.format(control,plot))
-            savename = '{0}-datadriven/{1}'.format(control,plot)
-            if doControls: wzPlotter.plot(plotvars,savename,**plotStyles[plot])
+samples = ['TTV','VH','ZG','VVV','ZZ','WZ']
+allsamples = ['W','TT','Z','WW','TTV','VH','VVV','ZZall','WZall']
 
-wzPlotter.clearHistograms()
-
+#################
+### MC driven ###
+#################
 for s in allsamples:
     name = s.replace('all','')
     wzPlotter.addHistogramToStack(name,sigMap[s])
@@ -256,4 +219,52 @@ if doMC:
             plotname = '{0}/{1}'.format(control,plot)
             savename = '{0}/{1}'.format(control,plot)
             if doControls: wzPlotter.plot(plotname,savename,**plotStyles[plot])
+
+##################
+### Datadriven ###
+##################
+wzPlotter.clearHistograms()
+datadrivenSamples = []
+for s in samples + ['data']:
+    datadrivenSamples += sigMap[s]
+wzPlotter.addHistogramToStack('datadriven',datadrivenSamples)
+
+for s in samples:
+    wzPlotter.addHistogramToStack(s,sigMap[s])
+
+wzPlotter.addHistogram('data',sigMap['data'])
+
+
+if doCounts and doDatadriven:
+    plotCounts(wzPlotter,baseDir='',saveDir='datadriven',datadriven=True)
+    if doVBS: plotCounts(wzPlotter,baseDir='vbs',saveDir='vbs-datadriven',datadriven=True)
+    for cut in nMinusOneCuts:
+        if doNMinusOne: plotCounts(wzPlotter,baseDir=cut,saveDir='nMinusOne-datadriven/{0}'.format(cut),datadriven=True)
+    for cut in vbsNMinusOneCuts:
+        if doNMinusOne and doVBS: plotCounts(wzPlotter,baseDir='vbs/{0}'.format(cut),saveDir='vbsNMinusOne-datadriven/{0}'.format(cut),datadriven=True)
+    for control in controls:
+        if doControls: plotCounts(wzPlotter,baseDir=control,saveDir='{0}-datadriven'.format(control),datadriven=True)
+
+if doDatadriven:
+    for plot in plotStyles:
+        plotvars = getDataDrivenPlot(plot)
+        savename = 'datadriven/{0}'.format(plot)
+        wzPlotter.plot(plotvars,savename,**plotStyles[plot])
+        plotVars = getDataDrivenPlot('vbs/{0}'.format(plot))
+        savename = 'vbs-datadriven/{0}'.format(plot)
+        if doVBS: wzPlotter.plot(plotvars,savename,**plotStyles[plot])
+        for cut in nMinusOneCuts:
+            plotvars = getDataDrivenPlot('{0}/{1}'.format(cut,plot))
+            savename = 'nMinusOne-datadriven/{0}/{1}'.format(cut,plot)
+            if doNMinusOne: wzPlotter.plot(plotvars,savename,**plotStyles[plot])
+        for cut in vbsNMinusOneCuts:
+            plotvars = getDataDrivenPlot('vbs/{0}/{1}'.format(cut,plot))
+            savename = 'vbsNMinusOne-datadriven/{0}/{1}'.format(cut,plot)
+            if doNMinusOne and doVBS: wzPlotter.plot(plotvars,savename,**plotStyles[plot])
+        for control in controls:
+            plotvars = getDataDrivenPlot('{0}/{1}'.format(control,plot))
+            savename = '{0}-datadriven/{1}'.format(control,plot)
+            if doControls: wzPlotter.plot(plotvars,savename,**plotStyles[plot])
+
+wzPlotter.clearHistograms()
 

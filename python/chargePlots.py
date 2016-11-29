@@ -55,9 +55,10 @@ sigMap = {
     'Z'   : [
              'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
              'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             #'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
     'TT'  : [
-             'TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
              'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
              'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
              'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
@@ -65,13 +66,12 @@ sigMap = {
     'data': [
              'DoubleMuon',
              'DoubleEG',
-             'MuonEG',
              'SingleMuon',
              'SingleElectron',
             ],
 }
 
-samples = ['TT','TTV','Z','WW','WZ','VVV','ZZ']
+samples = ['WW','TT','Z']
 #samples = ['TT','Z']
 
 for s in samples:

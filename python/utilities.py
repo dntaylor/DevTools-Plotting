@@ -60,7 +60,7 @@ latestNtuples['76X'] = {
     'WZ'             : '2016-04-29_WZAnalysis_v1-merge',
 }
 latestNtuples['80X'] = {
-    'Charge'         : '2016-07-24_ChargeAnalysis_80X_v1-merge',
+    'Charge'         : '2016-11-28_ChargeAnalysis_80X_v1-merge',
     'DY'             : '2016-09-27_DYAnalysis_80X_v1-merge',
     'DijetFakeRate'  : '2016-11-03_DijetFakeRateAnalysis_80X_v4-merge', # hpp ids
     #'DijetFakeRate'  : '2016-11-03_DijetFakeRateAnalysis_80X_v2-merge', # pseudo wz 2017 ids
@@ -75,7 +75,7 @@ latestNtuples['80X'] = {
     'WTauFakeRate'   : '2016-07-24_WTauFakeRateAnalysis_80X_v1-merge',
     'WFakeRate'      : '2016-07-24_WFakeRateAnalysis_80X_v1-merge',
     'ZFakeRate'      : '2016-07-24_ZFakeRateAnalysis_80X_v1-merge',
-    'WZ'             : '2016-10-27_WZAnalysis_80X_v1-merge',
+    'WZ'             : '2016-11-27_WZAnalysis_80X_v1-merge',
     'ZZ'             : '2016-08-08_ZZAnalysis_80X_v1-merge',
 }
 

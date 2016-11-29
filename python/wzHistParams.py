@@ -73,14 +73,14 @@ def buildWZ(selectionParams,sampleSelectionParams,projectionParams,sampleProject
     
     # definitions for scale/selection in fake regions
     wzTightVar = {
-        0: 'z1_passMedium',
-        1: 'z2_passMedium',
+        0: 'z1_passTight',
+        1: 'z2_passTight',
         2: 'w1_passTight',
     }
     
     wzTightScale = {
-        0: 'z1_mediumScale',
-        1: 'z2_mediumScale',
+        0: 'z1_tightScale',
+        1: 'z2_tightScale',
         2: 'w1_tightScale',
     }
     
@@ -91,8 +91,8 @@ def buildWZ(selectionParams,sampleSelectionParams,projectionParams,sampleProject
     }
     
     wzFakeRate = {
-        0: 'z1_mediumFakeRate',
-        1: 'z2_mediumFakeRate',
+        0: 'z1_tightFakeRate',
+        1: 'z2_tightFakeRate',
         2: 'w1_tightFakeRate',
     }
     

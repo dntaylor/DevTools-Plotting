@@ -450,6 +450,8 @@ class LimitPlotter(PlotterBase):
             expected[prod].GetXaxis().SetTitle(xaxis)
             expected[prod].GetYaxis().SetTitle(yaxis)
 
+            m = xsecGraph[prod].GetYaxis().GetXmax()
+            xsecGraph[prod].SetMaximum(50.*m)
             xsecGraph[prod].Draw()
             twoSigma[prod].Draw('f')
             oneSigma[prod].Draw('f')
@@ -475,13 +477,13 @@ class LimitPlotter(PlotterBase):
             [oneSigma['AP'],'Expected 1#sigma','F'],
         ]
         if not blind: entries = [[observed['AP'],'Observed','l']] + entries
-        legend2 = self._getLegend(entries=entries,numcol=4,position=legendpos)
+        legend2 = self._getLegend(entries=entries,numcol=2,position=legendpos)
         # move down
         y1, y2 = legend2.GetY1(), legend2.GetY2()
         x1, x2 = legend2.GetX1(), legend2.GetX2()
-        legend2.SetY1(y1-0.4)
+        legend2.SetY1(y1-0.38)
         legend2.SetY2(y2-0.4)
-        legend2.SetX1(x1+0.12)
+        #legend2.SetX1(x1+0.18)
         legend2.Draw()
 
         # cms lumi styling
@@ -528,9 +530,12 @@ class LimitPlotter(PlotterBase):
 
         colors = {
             # mode : { 1: 13TeV Exp, 2: 13TeV Exc, 3: 8TeV Exp, 4: 8TeV Exc},
-            'HppComb': {1: ROOT.TColor.GetColor('#248F24'), 2: ROOT.TColor.GetColor('#2EB82E'), 3: ROOT.TColor.GetColor('#999900'), 4: ROOT.TColor.GetColor('#CCCC00'), },
-            'HppAP'  : {1: ROOT.TColor.GetColor('#0073E6'), 2: ROOT.TColor.GetColor('#1A8CFF'), 3: ROOT.TColor.GetColor('#009999'), 4: ROOT.TColor.GetColor('#00CCCC'), },
-            'HppPP'  : {1: ROOT.TColor.GetColor('#B32400'), 2: ROOT.TColor.GetColor('#E62E00'), 3: ROOT.TColor.GetColor('#990099'), 4: ROOT.TColor.GetColor('#CC00CC'), },
+            #'HppComb': {1: ROOT.TColor.GetColor('#248F24'), 2: ROOT.TColor.GetColor('#2EB82E'), 3: ROOT.TColor.GetColor('#999900'), 4: ROOT.TColor.GetColor('#CCCC00'), },
+            #'HppAP'  : {1: ROOT.TColor.GetColor('#0073E6'), 2: ROOT.TColor.GetColor('#1A8CFF'), 3: ROOT.TColor.GetColor('#009999'), 4: ROOT.TColor.GetColor('#00CCCC'), },
+            #'HppPP'  : {1: ROOT.TColor.GetColor('#B32400'), 2: ROOT.TColor.GetColor('#E62E00'), 3: ROOT.TColor.GetColor('#990099'), 4: ROOT.TColor.GetColor('#CC00CC'), },
+            'HppComb': {1: ROOT.TColor.GetColor('#009933'), 2: ROOT.TColor.GetColor('#00CC44'), 3: ROOT.TColor.GetColor('#808080'), 4: ROOT.TColor.GetColor('#808080'), },
+            'HppAP'  : {1: ROOT.TColor.GetColor('#4D79FF'), 2: ROOT.TColor.GetColor('#809FFF'), 3: ROOT.TColor.GetColor('#808080'), 4: ROOT.TColor.GetColor('#808080'), },
+            'HppPP'  : {1: ROOT.TColor.GetColor('#E60000'), 2: ROOT.TColor.GetColor('#FF1A1A'), 3: ROOT.TColor.GetColor('#808080'), 4: ROOT.TColor.GetColor('#808080'), },
         }
 
         prodLabels = {
@@ -574,6 +579,12 @@ class LimitPlotter(PlotterBase):
                 # get current expected and observed limits, draw as tgraphs
                 l2, l1, exp, h1, h2, obs = limvals[mode][prod]
 
+                observed[mode][prod] = ROOT.TGraph(2,array('d',[exp,exp] if blind else [obs,obs]),array('d',[(cur-sub+0.5)/4,(cur-sub-0.5)/4]))
+                observed[mode][prod].SetFillColorAlpha(colors[prod][2],0.55)
+                observed[mode][prod].SetLineColor(colors[prod][2])
+                observed[mode][prod].SetLineWidth(-9001)
+                multiObserved.Add(observed[mode][prod])
+
                 expected[mode][prod] = ROOT.TGraph(2,array('d',[exp,exp]),array('d',[(cur-sub+0.5)/4,(cur-sub-0.5)/4]))
                 expected[mode][prod].SetFillColor(colors[prod][1])
                 expected[mode][prod].SetLineColor(colors[prod][1])
@@ -581,12 +592,6 @@ class LimitPlotter(PlotterBase):
                 expected[mode][prod].SetFillStyle(3004)
                 expected[mode][prod].SetFillColor(colors[prod][1])
                 multiExpected.Add(expected[mode][prod])
-
-                observed[mode][prod] = ROOT.TGraph(2,array('d',[exp,exp] if blind else [obs,obs]),array('d',[(cur-sub+0.5)/4,(cur-sub-0.5)/4]))
-                observed[mode][prod].SetFillColorAlpha(colors[prod][2],0.35)
-                observed[mode][prod].SetLineColor(colors[prod][2])
-                observed[mode][prod].SetLineWidth(-9001)
-                multiObserved.Add(observed[mode][prod])
 
                 # get previous exclusions, draw as filled tgraph bar chart
                 prevExp = prevExpLimits[mode][prod]
@@ -602,6 +607,7 @@ class LimitPlotter(PlotterBase):
                 prevExclusion[mode][prod].SetFillColorAlpha(colors[prod][4],0.35)
                 prevExclusion[mode][prod].SetLineColor(colors[prod][4])
                 prevExclusion[mode][prod].SetLineWidth(-9001)
+                #prevExclusion[mode][prod].SetFillStyle(3013)
                 multiPrevObserved.Add(prevExclusion[mode][prod])
 
         multiExpected.Draw('L')
@@ -627,9 +633,10 @@ class LimitPlotter(PlotterBase):
             curr[prod+'8'] = ROOT.TGraph()
             curr[prod+'8'].SetLineColor(colors[prod][4])
             curr[prod+'8'].SetFillColorAlpha(colors[prod][4],0.35)
+            #curr[prod+'8'].SetFillStyle(3013)
             curr[prod+'13'] = ROOT.TGraph()
             curr[prod+'13'].SetLineColor(colors[prod][2])
-            curr[prod+'13'].SetFillColorAlpha(colors[prod][2],0.35)
+            curr[prod+'13'].SetFillColorAlpha(colors[prod][2],0.55)
 
         if doPreviousExclusion:
             legend = ROOT.TLegend(0.765 if offAxis else 0.55,0.64 if offAxis else 0.44,0.99 if offAxis else 0.95,0.72 if offAxis else 0.52,'','NDC')
