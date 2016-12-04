@@ -640,6 +640,18 @@ def getChannelLabels(analysis):
 def getGenChannels(analysis):
     return {'PP':genChannelsPP,'AP':genChannelsAP}
 
+goodMap = {
+    'ee': ['ee'],
+    'em': ['em'],
+    'mm': ['mm'],
+    'et': ['ee','em','et'],
+    'mt': ['em','mm','mt'],
+    'tt': ['ee','em','et','mm','mt','tt'],
+    'e': ['e'],
+    'm': ['m'],
+    't': ['e','m','t'],
+}
+
 def getGenRecoChannelMap(analysis):
     '''A map of gen channels and possible reco channels
     A tau (t) can be either an electron (e) or muon (m) at reco.
@@ -658,33 +670,41 @@ def getGenRecoChannelMap(analysis):
         theMap[gen] = []
         if analysis=='Hpp4l':
             for reco in chans4l:
-                good = True
-                for r,lep in enumerate(reco):
-                    if not (lep==gen[r] or gen[r]=='t'):
-                        good = False
-                if good:
+                hpp = reco[:2]
+                hmm = reco[2:]
+                if hpp in goodMap[gen[:2]] and hmm in goodMap[gen[2:]]:
                     theMap[gen] += [reco]
+                #good = True
+                #for r,lep in enumerate(reco):
+                #    if not (lep==gen[r] or gen[r]=='t'):
+                #        good = False
+                #if good:
+                #    theMap[gen] += [reco]
         if analysis=='Hpp3l':
             for reco in chans3l:
-                good = False
-                if ((reco[0]==gen[0] or gen[0]=='t')
-                    and (reco[1]==gen[1] or gen[1]=='t')
-                    and (reco[2] in gen[2:] or 't' in gen[2:])): # matches first
-                        good = True
-                if ((reco[0]==gen[2] or gen[2]=='t')
-                    and (reco[1]==gen[3] or gen[3]=='t')
-                    and (reco[2] in gen[:2] or 't' in gen[:2])): # matches second
-                        good = True
-                if good:
+                hpp = reco[:2]
+                hm = reco[2:]
+                if hpp in goodMap[gen[:2]] and hm in goodMap[gen[2:3]]+goodMap[gen[3:4]]:
                     theMap[gen] += [reco]
+                elif hpp in goodMap[gen[2:]] and hm in goodMap[gen[:1]]+goodMap[gen[1:2]]:
+                    theMap[gen] += [reco]
+                #good = False
+                #if ((reco[0]==gen[0] or gen[0]=='t')
+                #    and (reco[1]==gen[1] or gen[1]=='t')
+                #    and (reco[2] in gen[2:] or 't' in gen[2:])): # matches first
+                #        good = True
+                #if ((reco[0]==gen[2] or gen[2]=='t')
+                #    and (reco[1]==gen[3] or gen[3]=='t')
+                #    and (reco[2] in gen[:2] or 't' in gen[:2])): # matches second
+                #        good = True
+                #if good:
+                #    theMap[gen] += [reco]
     for gen in genChannelsAP:
         theMap[gen] = []
         if analysis=='Hpp3l':
             for reco in chans3l:
-                good = True
-                for r,lep in enumerate(reco):
-                    if not (lep==gen[r] or gen[r]=='t'):
-                        good = False
-                if good:
+                hpp = reco[:2]
+                hm = reco[2:]
+                if hpp in goodMap[gen[:2]] and hm in goodMap[gen[2:3]]:
                     theMap[gen] += [reco]
     return theMap
