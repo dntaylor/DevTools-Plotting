@@ -32,6 +32,7 @@ class Counter(object):
         self.signals = []
         self.scales = {}
         self.j = 0
+        self.poisson = kwargs.pop('poisson',False) # return poisson errors
 
     def _openFile(self,sampleName,**kwargs):
         '''Verify and open a sample'''
@@ -86,6 +87,15 @@ class Counter(object):
         err = hist.GetBinError(1) if hist else 0.
         return val,err
 
+    def _getPoisson(self,count):
+        entries = count[0]
+        if entries<0: entries = 0
+        chisqr = ROOT.TMath.ChisquareQuantile
+        ey_low = entries - 0.5 * chisqr(0.1586555, 2. * entries)
+        ey_high = 0.5 * chisqr(
+            1. - 0.1586555, 2. * (entries + 1)) - entries
+        return (entries, ey_high)
+
     def _getCount(self,processName,directory,**kwargs):
         '''Get count for process'''
         analysis = self.analysisDict[processName]
@@ -131,12 +141,14 @@ class Counter(object):
                         if count: counts += [count]
             if not counts:
                 logging.debug('No entries for {0}'.format(processName))
-                return (0.,0.)
+                return self._getPoisson((0.,0.)) if self.poisson else (0.,0.)
             if len(counts)==1:
+                if self.poisson: counts[0] = self._getPoisson(counts[0])
                 logging.debug('Total: {0} +/- {1}'.format(*counts[0]))
                 return counts[0]
             else:
                 total = sumWithError(*counts)
+                if self.poisson: total = self._getPoisson(total)
                 logging.debug('Total: {0} +/- {1}'.format(*total))
                 return total
         else:
