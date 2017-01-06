@@ -17,6 +17,7 @@ from wzHistParams import buildWZ
 from zzHistParams import buildZZ
 from hpp4lHistParams import buildHpp4l
 from hpp3lHistParams import buildHpp3l
+from threeLeptonHistParams import buildThreeLepton
 
 cachedParams = {}
 
@@ -65,6 +66,7 @@ def buildHistParams(analysis,**kwargs):
     if analysis=='ZZ':            buildZZ(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='Hpp4l':         buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams,**kwargs)
     if analysis=='Hpp3l':         buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams,**kwargs)
+    if analysis=='ThreeLepton':   buildThreeLepton(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams,**kwargs)
 
     cachedParams[key] = (selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     return cachedParams[key]

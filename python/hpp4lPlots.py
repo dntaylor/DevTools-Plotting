@@ -19,12 +19,12 @@ doCat = True
 plotCount = True
 plotMC = True
 plotDatadriven = True
-plotFakeRegions = True
-plotSignal = True
+plotFakeRegions = False
+plotSignal = False
 plotROC = False
-plotNormalization = True
-plotSOverB = True
-plotSignificance = True
+plotNormalization = False
+plotSOverB = False
+plotSignificance = False
 plotAllMasses = False
 
 hpp4lPlotter = Plotter('Hpp4l')
@@ -147,8 +147,23 @@ variable_binning = {
         'V'  : [0,50,100,200,400,2000],
         'VI' : [0,200,2000],
     },
+    'hppLeadingLeptonPt': {
+        'I'  : [30,50,100,150,200,250,300,400,500],
+        'II' : [30,50,100,150,200,300,400,500],
+        'III': [30,200,500],
+        'IV' : [30,50,100,200,300,400,500],
+        'V'  : [30,50,100,200,500],
+        'VI' : [30,200,500],
+    },
 }
 variable_binning['hmmMass'] = variable_binning['hppMass']
+
+ymax = {
+    'hppLeadingLeptonPt': {
+        'III': 0.05,
+        'VI' : 0.02,
+    },
+}
 
 def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postfix='',perCatBins=False,**kwargs):
     plotname = '/'.join([x for x in [baseDir,plot] if x])
@@ -166,6 +181,7 @@ def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postf
         if plot in variable_binning:
             kwargs['rebin'] = variable_binning[plot][cat]
             kwargs['yaxis'] = 'Events / 1 GeV'
+        if perCatBins and plot in ymax: kwargs['ymax'] = ymax[plot].get(cat,None)
         if doCat: plotter.plot(plotvars,savename,**kwargs)
 
 
@@ -178,18 +194,18 @@ plots = {
     'hppMt'                 : {'xaxis': 'm_{T}^{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': False},
     'hppPt'                 : {'xaxis': 'p_{T}^{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
     'hppDeltaR'             : {'xaxis': '#DeltaR(l^{+}l^{+})', 'yaxis': 'Events', 'rebin': 5},
-    'hppLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{++}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
+    'hppLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{++}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2, 'numcol': 3, 'legendpos':34,},
     'hppLeadingLeptonEta'   : {'xaxis': '#eta^{#Phi_{lead}^{++}}', 'yaxis': 'Events', 'rebin': 5},
-    'hppSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{++}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
+    'hppSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{++}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2, 'numcol': 3, 'legendpos':34,},
     'hppSubLeadingLeptonEta': {'xaxis': '#eta^{#Phi_{sublead}^{++}}', 'yaxis': 'Events', 'rebin': 5},
     # hmm
     'hmmMass'               : {'xaxis': 'm_{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': False},
     'hmmMt'                 : {'xaxis': 'm_{T}^{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': False},
     'hmmPt'                 : {'xaxis': 'p_{T}^{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
     'hmmDeltaR'             : {'xaxis': '#DeltaR(l^{-}l^{-})', 'yaxis': 'Events', 'rebin': 5},
-    'hmmLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{--}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
+    'hmmLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{--}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2, 'numcol': 3, 'legendpos':34,},
     'hmmLeadingLeptonEta'   : {'xaxis': '#eta^{#Phi_{lead}^{--}}', 'yaxis': 'Events', 'rebin': 5},
-    'hmmSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{--}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2},
+    'hmmSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{--}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': 2, 'numcol': 3, 'legendpos':34,},
     'hmmSubLeadingLeptonEta': {'xaxis': '#eta^{#Phi_{sublead}^{--}}', 'yaxis': 'Events', 'rebin': 5},
     # z cand
     'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': 1},

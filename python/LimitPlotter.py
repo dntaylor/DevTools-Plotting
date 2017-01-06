@@ -626,6 +626,14 @@ class LimitPlotter(PlotterBase):
         expleg.SetLineWidth(0)
         expleg.SetFillStyle(3004)
 
+        expSub = {}
+        for prod in ['HppAP','HppPP','HppComb']:
+            expSub[prod+'13'] = ROOT.TGraph()
+            expSub[prod+'13'].SetLineWidth(0)
+            expSub[prod+'13'].SetFillStyle(3004)
+            expSub[prod+'13'].SetFillColor(colors[prod][1])
+            expSub[prod+'13'].SetLineColor(colors[prod][1])
+
         explineargs = [0.8,0.5,0.8,0.6]
 
         curr = {}
@@ -670,28 +678,60 @@ class LimitPlotter(PlotterBase):
                 sublegends[prod].AddEntry(curr[prod+'8'],'19.7 fb^{-1} (8 TeV)','f')
                 sublegends[prod].AddEntry(curr[prod+'13'],'12.9 fb^{-1} (13 TeV)','f')
                 sublegends[prod].Draw()
+
+            expline = ROOT.TLine(*explineargs)
+            expline.SetNDC()
+            expline.SetLineWidth(4)
+            expline.Draw()
         else:
-            legend = ROOT.TLegend(0.765 if offAxis else 0.60,0.4 if offAxis else 0.2,0.99 if offAxis else 0.95,0.6 if offAxis else 0.4,'','NDC')
-            legend.SetTextFont(42)
-            legend.SetBorderSize(0)
-            legend.SetFillColor(0)
+            #legend = ROOT.TLegend(0.765 if offAxis else 0.60,0.4 if offAxis else 0.2,0.99 if offAxis else 0.95,0.6 if offAxis else 0.4,'','NDC')
+            #legend.SetTextFont(42)
+            #legend.SetBorderSize(0)
+            #legend.SetFillColor(0)
 
-            legend.AddEntry(obsleg,'Observed exclusion 95% CL','f')
-            legend.AddEntry(expleg,'Expected exclusion 95% CL','lf')
-            for prod in ['HppAP','HppPP','HppComb']:
-                legend.AddEntry(curr[prod+'13'],prodLabels[prod],'f')
+            #legend.AddEntry(obsleg,'Observed exclusion 95% CL','f')
+            #legend.AddEntry(expleg,'Expected exclusion 95% CL','lf')
+            #for prod in ['HppAP','HppPP','HppComb']:
+            #    legend.AddEntry(curr[prod+'13'],prodLabels[prod],'f')
 
-            if offAxis:
-                explineargs = [0.813,0.527,0.813,0.556]
-            else:
-                explineargs = [0.674,0.326,0.674,0.355]
+            #if offAxis:
+            #    explineargs = [0.813,0.527,0.813,0.556]
+            #else:
+            #    explineargs = [0.674,0.326,0.674,0.355]
 
-            legend.Draw()
+            #legend.Draw()
 
-        expline = ROOT.TLine(*explineargs)
-        expline.SetNDC()
-        expline.SetLineWidth(4)
-        expline.Draw()
+            #expline = ROOT.TLine(*explineargs)
+            #expline.SetNDC()
+            #expline.SetLineWidth(4)
+            #expline.Draw()
+
+            # sridhara version
+            sublegends = {}
+            explines = {}
+            for i,prod in enumerate(['HppAP','HppPP','HppComb']):
+                if offAxis:
+                    sublegends[prod] = ROOT.TLegend(0.765,0.64-0.04*3*(i+1),0.99,0.64-0.04*3*i,'','NDC')
+                    explineargs = [0.813,0.525-0.04*3*i,0.813,0.556-0.04*3*i]
+                else:
+                    sublegends[prod] = ROOT.TLegend(0.558,0.44-0.04*2*(i+1),0.95,0.44-0.04*2*i,'','NDC')
+                    explineargs = [0.674,0.326-0.04*2*i,0.674,0.355-0.04*2*i]
+                sublegends[prod].SetTextFont(42)
+                sublegends[prod].SetTextSize(0.025)
+                sublegends[prod].SetBorderSize(0)
+                sublegends[prod].SetFillColor(0)
+                sublegends[prod].SetHeader(prodLabels[prod])
+                sublegends[prod].SetNColumns(1 if offAxis else 2)
+                sublegends[prod].AddEntry(curr[prod+'13'],'Observed','f')
+                sublegends[prod].AddEntry(expSub[prod+'13'],'Expected','f')
+                sublegends[prod].Draw()
+
+                explines[prod] = ROOT.TLine(*explineargs)
+                explines[prod].SetNDC()
+                explines[prod].SetLineWidth(4)
+                explines[prod].SetLineColor(colors[prod][1])
+                explines[prod].Draw()
+
 
         # cms lumi styling
         if doPreviousExclusion:

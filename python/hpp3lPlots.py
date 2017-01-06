@@ -17,12 +17,12 @@ plotCount = True
 doCat = True
 plotMC = True
 plotDatadriven = True
-plotFakeRegions = True
-plotSignal = True
+plotFakeRegions = False
+plotSignal = False
 plotROC = False
-plotNormalization = True
-plotSOverB = True
-plotSignificance = True
+plotNormalization = False
+plotSOverB = False
+plotSignificance = False
 plotAllMasses = False
 
 hpp3lPlotter = Plotter('Hpp3l')
@@ -146,6 +146,14 @@ variable_binning = {
         'V'  : [60,70,80,90,100,120,140,160,180,200,250,300,350,400,500,600,2000],
         'VI' : [100,125,150,200,300,2000],
     },
+    'hppLeadingLeptonPt': {
+        'I'  : [30+x*20 for x in range(10)]+[250+x*50 for x in range(5)]+[500],
+        'II' : [30,50,70,100,150,200,300,500,1000],
+        'III': [30+x*10 for x in range(17)]+[200+x*20 for x in range(15)]+[500],
+        'IV' : [30,40,60,80,100,140,180,220,260,300,400,500],
+        'V'  : [30,40,60,80,100,150,200,300,400,500],
+        'VI' : [30,60,80,100,140,180,220,260,300,350,400,500],
+    },
 }
 
 ymin = {
@@ -203,9 +211,9 @@ plots = {
     #'hppMt'                 : {'xaxis': 'm_{T}^{l^{#pm}l^{#pm}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': True},
     'hppPt'                 : {'xaxis': 'p_{T}^{l^{#pm}l^{#pm}} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': 10},
     'hppDeltaR'             : {'xaxis': '#DeltaR(l^{#pm}l^{#pm})', 'yaxis': 'Events', 'rebin': 25},
-    'hppLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{#pm#pm}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
+    'hppLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{#pm#pm}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5, 'numcol': 3, 'legendpos':34, },
     'hppLeadingLeptonEta'   : {'xaxis': '#eta^{#Phi_{lead}^{#pm#pm}}', 'yaxis': 'Events', 'rebin': 20},
-    'hppSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{#pm#pm}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
+    'hppSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{#pm#pm}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5, 'numcol': 3, 'legendpos':34,},
     'hppSubLeadingLeptonEta': {'xaxis': '#eta^{#Phi_{sublead}^{#pm#pm}}', 'yaxis': 'Events', 'rebin': 20},
     # hm
     'hmMass'                : {'xaxis': 'm_{T}(l^{#mp},E_{T}^{miss}) (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 10, 'logy': True},

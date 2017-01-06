@@ -79,6 +79,7 @@ latestNtuples['80X'] = {
     'ZFakeRate'      : '2016-07-24_ZFakeRateAnalysis_80X_v1-merge',
     'WZ'             : '2016-11-27_WZAnalysis_80X_v1-merge',
     'ZZ'             : '2016-08-08_ZZAnalysis_80X_v1-merge',
+    'ThreeLepton'    : '2017-01-05_ThreeLeptonAnalysis_80X_v1-merge',
 }
 
 latestShifts = {}
@@ -255,6 +256,7 @@ treeMap = {
     'ZFakeRate'      : 'ZFakeRateTree',
     'WZ'             : 'WZTree',
     'ZZ'             : 'ZZTree',
+    'ThreeLepton'    : 'ThreeLeptonTree',
 }
 
 def getTreeName(analysis):

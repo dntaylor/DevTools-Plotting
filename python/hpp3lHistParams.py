@@ -77,10 +77,10 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
     
     leps = ['hpp1','hpp2','hm1']
     hpp3lBaseScaleFactor = '*'.join(['genWeight','pileupWeight','triggerEfficiency'])
-    if shift=='trigUp': hpp4lBaseScaleFactor = '*'.join(['genWeight','pileupWeight','triggerEfficiencyUp'])
-    if shift=='trigDown': hpp4lBaseScaleFactor = '*'.join(['genWeight','pileupWeight','triggerEfficiencyDown'])
-    if shift=='puUp': hpp4lBaseScaleFactor = '*'.join(['genWeight','pileupWeightUp','triggerEfficiency'])
-    if shift=='puDown': hpp4lBaseScaleFactor = '*'.join(['genWeight','pileupWeightDown','triggerEfficiency'])
+    if shift=='trigUp': hpp3lBaseScaleFactor = '*'.join(['genWeight','pileupWeight','triggerEfficiencyUp'])
+    if shift=='trigDown': hpp3lBaseScaleFactor = '*'.join(['genWeight','pileupWeight','triggerEfficiencyDown'])
+    if shift=='puUp': hpp3lBaseScaleFactor = '*'.join(['genWeight','pileupWeightUp','triggerEfficiency'])
+    if shift=='puDown': hpp3lBaseScaleFactor = '*'.join(['genWeight','pileupWeightDown','triggerEfficiency'])
 
     # setup base selections
     hpp3lBaseCut = '1'

@@ -37,6 +37,8 @@ def skim(analysis,sample,**kwargs):
     skimMap = {
         'Hpp3l': Hpp3lSkimmer,
         'Hpp4l': Hpp4lSkimmer,
+        'DijetFakeRate': DijetFakeRateSkimmer,
+        'WTauFakeRate': WTauFakeRateSkimmer,
     }
     if analysis not in skimMap:
         logging.warning('No skimmer found for analysis {0}'.format(analysis))
