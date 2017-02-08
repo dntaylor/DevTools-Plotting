@@ -39,7 +39,8 @@ def getLumi(version=getCMSSWVersion()):
         return 2318 # moriond golden json
     else:
         #return 4336.100 # previous "frozen"
-        return 12892.762 # ichep dataset golden json
+        #return 12892.762 # ichep dataset golden json
+        return 36814.581 # full 2016
 
 
 latestNtuples = {}
@@ -63,11 +64,6 @@ latestNtuples['80X'] = {
     'Charge'         : '2016-11-28_ChargeAnalysis_80X_v1-merge',
     'DY'             : '2016-09-27_DYAnalysis_80X_v1-merge',
     'DijetFakeRate'  : '2016-11-03_DijetFakeRateAnalysis_80X_v4-merge', # hpp ids
-    #'DijetFakeRate'  : '2016-11-03_DijetFakeRateAnalysis_80X_v2-merge', # pseudo wz 2017 ids
-    #'Hpp3l'          : '2016-10-14_Hpp3lAnalysis_80X_v1-merge',
-    #'Hpp4l'          : '2016-10-14_Hpp4lAnalysis_80X_v1-merge',
-    #'Hpp3l'          : '2016-11-03_Hpp3lAnalysis_80X_v1-merge',
-    #'Hpp4l'          : '2016-11-03_Hpp4lAnalysis_80X_v1-merge',
     'Hpp3l'          : '2016-12-19_Hpp3lAnalysis_80X_v1-merge',
     'Hpp4l'          : '2016-12-19_Hpp4lAnalysis_80X_v1-merge',
     'Electron'       : '2016-06-25_ElectronAnalysis_80X_v1-merge',
@@ -85,18 +81,6 @@ latestNtuples['80X'] = {
 latestShifts = {}
 latestShifts['80X'] = {}
 latestShifts['80X']['Hpp3l'] = {
-    #'ElectronEnUp'     : '2016-08-24_Hpp3lAnalysis_ElectronEnUp_80X_v1-merge',
-    #'ElectronEnDown'   : '2016-08-24_Hpp3lAnalysis_ElectronEnDown_80X_v1-merge',
-    #'MuonEnUp'         : '2016-08-24_Hpp3lAnalysis_MuonEnUp_80X_v1-merge',
-    #'MuonEnDown'       : '2016-08-24_Hpp3lAnalysis_MuonEnDown_80X_v1-merge',
-    #'TauEnUp'          : '2016-08-24_Hpp3lAnalysis_TauEnUp_80X_v1-merge',
-    #'TauEnDown'        : '2016-08-24_Hpp3lAnalysis_TauEnDown_80X_v1-merge',
-    #'JetEnUp'          : '2016-08-24_Hpp3lAnalysis_JetEnUp_80X_v1-merge',
-    #'JetEnDown'        : '2016-08-24_Hpp3lAnalysis_JetEnDown_80X_v1-merge',
-    #'JetResUp'         : '2016-08-24_Hpp3lAnalysis_JetResUp_80X_v1-merge',
-    #'JetResDown'       : '2016-08-24_Hpp3lAnalysis_JetResDown_80X_v1-merge',
-    #'UnclusteredEnUp'  : '2016-08-24_Hpp3lAnalysis_UnclusteredEnUp_80X_v1-merge',
-    #'UnclusteredEnDown': '2016-08-24_Hpp3lAnalysis_UnclusteredEnDown_80X_v1-merge',
     'ElectronEnUp'     : '2016-12-19_Hpp3lAnalysis_ElectronEnUp_80X_v1-merge',
     'ElectronEnDown'   : '2016-12-19_Hpp3lAnalysis_ElectronEnDown_80X_v1-merge',
     'MuonEnUp'         : '2016-12-19_Hpp3lAnalysis_MuonEnUp_80X_v1-merge',
@@ -111,18 +95,6 @@ latestShifts['80X']['Hpp3l'] = {
     'UnclusteredEnDown': '2016-12-19_Hpp3lAnalysis_UnclusteredEnDown_80X_v1-merge',
 }
 latestShifts['80X']['Hpp4l'] = {
-    #'ElectronEnUp'     : '2016-08-24_Hpp4lAnalysis_ElectronEnUp_80X_v1-merge',
-    #'ElectronEnDown'   : '2016-08-24_Hpp4lAnalysis_ElectronEnDown_80X_v1-merge',
-    #'MuonEnUp'         : '2016-08-24_Hpp4lAnalysis_MuonEnUp_80X_v1-merge',
-    #'MuonEnDown'       : '2016-08-24_Hpp4lAnalysis_MuonEnDown_80X_v1-merge',
-    #'TauEnUp'          : '2016-08-24_Hpp4lAnalysis_TauEnUp_80X_v1-merge',
-    #'TauEnDown'        : '2016-08-24_Hpp4lAnalysis_TauEnDown_80X_v1-merge',
-    #'JetEnUp'          : '2016-08-24_Hpp4lAnalysis_JetEnUp_80X_v1-merge',
-    #'JetEnDown'        : '2016-08-24_Hpp4lAnalysis_JetEnDown_80X_v1-merge',
-    #'JetResUp'         : '2016-08-24_Hpp4lAnalysis_JetResUp_80X_v1-merge',
-    #'JetResDown'       : '2016-08-24_Hpp4lAnalysis_JetResDown_80X_v1-merge',
-    #'UnclusteredEnUp'  : '2016-08-24_Hpp4lAnalysis_UnclusteredEnUp_80X_v1-merge',
-    #'UnclusteredEnDown': '2016-08-24_Hpp4lAnalysis_UnclusteredEnDown_80X_v1-merge',
     'ElectronEnUp'     : '2016-12-19_Hpp4lAnalysis_ElectronEnUp_80X_v1-merge',
     'ElectronEnDown'   : '2016-12-19_Hpp4lAnalysis_ElectronEnDown_80X_v1-merge',
     'MuonEnUp'         : '2016-12-19_Hpp4lAnalysis_MuonEnUp_80X_v1-merge',
