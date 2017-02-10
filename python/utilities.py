@@ -40,7 +40,7 @@ def getLumi(version=getCMSSWVersion()):
     else:
         #return 4336.100 # previous "frozen"
         #return 12892.762 # ichep dataset golden json
-        return 36814.581 # full 2016
+        return 35867.060 # full 2016 for moriond
 
 
 latestNtuples = {}
