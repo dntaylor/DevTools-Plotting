@@ -61,21 +61,24 @@ latestNtuples['76X'] = {
     'WZ'             : '2016-04-29_WZAnalysis_v1-merge',
 }
 latestNtuples['80X'] = {
-    'Charge'         : '2016-11-28_ChargeAnalysis_80X_v1-merge',
-    'DY'             : '2016-09-27_DYAnalysis_80X_v1-merge',
-    'DijetFakeRate'  : '2016-11-03_DijetFakeRateAnalysis_80X_v4-merge', # hpp ids
-    'Hpp3l'          : '2016-12-19_Hpp3lAnalysis_80X_v1-merge',
-    'Hpp4l'          : '2016-12-19_Hpp4lAnalysis_80X_v1-merge',
-    'Electron'       : '2016-06-25_ElectronAnalysis_80X_v1-merge',
-    'Muon'           : '2016-06-25_MuonAnalysis_80X_v1-merge',
-    'Tau'            : '2016-07-06_TauAnalysis_80X_v1-merge',
-    'TauCharge'      : '2016-07-24_TauChargeAnalysis_80X_v1-merge',
-    'WTauFakeRate'   : '2016-07-24_WTauFakeRateAnalysis_80X_v1-merge',
-    'WFakeRate'      : '2016-07-24_WFakeRateAnalysis_80X_v1-merge',
-    'ZFakeRate'      : '2016-07-24_ZFakeRateAnalysis_80X_v1-merge',
-    'WZ'             : '2016-11-27_WZAnalysis_80X_v1-merge',
-    'ZZ'             : '2016-08-08_ZZAnalysis_80X_v1-merge',
-    'ThreeLepton'    : '2017-01-05_ThreeLeptonAnalysis_80X_v1-merge',
+# ICHEP 2016
+#    'Charge'         : '2016-11-28_ChargeAnalysis_80X_v1-merge',
+#    'DY'             : '2016-09-27_DYAnalysis_80X_v1-merge',
+#    'DijetFakeRate'  : '2016-11-03_DijetFakeRateAnalysis_80X_v4-merge', # hpp ids
+#    'Hpp3l'          : '2016-12-19_Hpp3lAnalysis_80X_v1-merge',
+#    'Hpp4l'          : '2016-12-19_Hpp4lAnalysis_80X_v1-merge',
+#    'Electron'       : '2016-06-25_ElectronAnalysis_80X_v1-merge',
+#    'Muon'           : '2016-06-25_MuonAnalysis_80X_v1-merge',
+#    'Tau'            : '2016-07-06_TauAnalysis_80X_v1-merge',
+#    'TauCharge'      : '2016-07-24_TauChargeAnalysis_80X_v1-merge',
+#    'WTauFakeRate'   : '2016-07-24_WTauFakeRateAnalysis_80X_v1-merge',
+#    'WFakeRate'      : '2016-07-24_WFakeRateAnalysis_80X_v1-merge',
+#    'ZFakeRate'      : '2016-07-24_ZFakeRateAnalysis_80X_v1-merge',
+#    'WZ'             : '2016-11-27_WZAnalysis_80X_v1-merge',
+#    'ZZ'             : '2016-08-08_ZZAnalysis_80X_v1-merge',
+#    'ThreeLepton'    : '2017-01-05_ThreeLeptonAnalysis_80X_v1-merge',
+# Moriond 2017
+    'DY'             : '2017-02-27_DYAnalysis_80X_Moriond_v1-merge',
 }
 
 latestShifts = {}
