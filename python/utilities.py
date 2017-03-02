@@ -78,7 +78,7 @@ latestNtuples['80X'] = {
 #    'ZZ'             : '2016-08-08_ZZAnalysis_80X_v1-merge',
 #    'ThreeLepton'    : '2017-01-05_ThreeLeptonAnalysis_80X_v1-merge',
 # Moriond 2017
-    'DY'             : '2017-02-27_DYAnalysis_80X_Moriond_v1-merge',
+    'DY'             : '2017-03-01_DYAnalysis_80X_Moriond_v2-merge',
 }
 
 latestShifts = {}
