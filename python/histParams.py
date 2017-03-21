@@ -9,6 +9,7 @@ from muonHistParams import buildMuon
 from tauHistParams import buildTau
 from wTauFakeRateHistParams import buildWTauFakeRate
 from wFakeRateHistParams import buildWFakeRate
+from zFakeRateHistParams import buildZFakeRate
 from dijetFakeRateHistParams import buildDijetFakeRate
 from tauChargeHistParams import buildTauCharge
 from chargeHistParams import buildCharge
@@ -18,6 +19,7 @@ from zzHistParams import buildZZ
 from hpp4lHistParams import buildHpp4l
 from hpp3lHistParams import buildHpp3l
 from threeLeptonHistParams import buildThreeLepton
+from triggerCountHistParams import buildTriggerCount
 
 cachedParams = {}
 
@@ -58,6 +60,7 @@ def buildHistParams(analysis,**kwargs):
     if analysis=='Tau':           buildTau(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='WTauFakeRate':  buildWTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='WFakeRate':     buildWFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='ZFakeRate':     buildZFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='DijetFakeRate': buildDijetFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='TauCharge':     buildTauCharge(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='Charge':        buildCharge(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
@@ -67,6 +70,7 @@ def buildHistParams(analysis,**kwargs):
     if analysis=='Hpp4l':         buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams,**kwargs)
     if analysis=='Hpp3l':         buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams,**kwargs)
     if analysis=='ThreeLepton':   buildThreeLepton(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams,**kwargs)
+    if analysis=='TriggerCount':  buildTriggerCount(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
 
     cachedParams[key] = (selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     return cachedParams[key]

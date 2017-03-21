@@ -209,9 +209,12 @@ class NtupleWrapper(object):
         datacut = kwargs.pop('datacut','')
         if datacut and isData(self.sample): selection += ' && {0}'.format(datacut)
         if mccut and not isData(self.sample): selection += ' && {0}'.format(mccut)
+        if 'datacut' in params and isData(self.sample): selection += ' && {0}'.format(params['datacut'])
+        if 'mccut' in params and not isData(self.sample): selection += ' && {0}'.format(params['mccut'])
         if 'selection' in params: selection += ' && {0}'.format(params['selection'])
+        #print selection
         # scalefactor
-        scalefactor = kwargs.pop('scalefactor','1' if isData(self.sample) else 'genWeight')
+        scalefactor = kwargs.pop('scalefactor','1')
         mcscalefactor = kwargs.pop('mcscalefactor','')
         datascalefactor = kwargs.pop('datascalefactor','')
         if datascalefactor and isData(self.sample): scalefactor = datascalefactor

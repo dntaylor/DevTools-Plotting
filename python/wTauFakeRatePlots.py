@@ -17,53 +17,31 @@ fakeratePlotter = Plotter('WTauFakeRate')
 #########################
 
 sigMap = {
-    'WZ'  : [
-             'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
-             'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-             'WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8',
-             'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-            ],
-    'ZZ'  : [
-             'ZZTo4L_13TeV_powheg_pythia8',
-             'GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo2mu2tau_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8',
-             'ZZTo2L2Nu_13TeV_powheg_pythia8',
-             'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-            ],
-    'VVV' : [
-             'WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
-             'WWG_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
-            ],
-    'VH'  : [
-             'WH_HToBB_WToLNu_M125_13TeV_amcatnloFXFX_madspin_pythia8',
-             'ZH_HToBB_ZToLL_M125_13TeV_amcatnloFXFX_madspin_pythia8',
-             'ZH_HToBB_ZToNuNu_M125_13TeV_amcatnloFXFX_madspin_pythia8',
-             'ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8',
-             'ZH_HToGG_ZToAll_M125_13TeV_powheg_pythia8',
-             'ZH_HToZG_ZToAll_M-125_13TeV_powheg_pythia8',
-             'ZH_HToZZ_4LFilter_M125_13TeV_powheg2-minlo-HZJ_JHUgenV6_pythia8',
-            ],
-    'TTV' : [
-             'ttWJets_13TeV_madgraphMLM',
-             'ttZJets_13TeV_madgraphMLM',
-             'ttH_M125_13TeV_powheg_pythia8',
-             'tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
-             'tZq_nunu_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
-            ],
     'WW'  : [
              'WWTo2L2Nu_13TeV-powheg',
              'WWToLNuQQ_13TeV-powheg',
             ],
     'W'   : [
-             #'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-             'WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             #'WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'W1JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
     'Z'   : [
-             'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
              'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY3JetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY4JetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+             #'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
             ],
     'TT'  : [
              'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
@@ -72,9 +50,10 @@ sigMap = {
             ],
     'T'   : [
              'ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
-             #'ST_t-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
-             'ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
-             'ST_t-channel_top_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
+             'ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1',
+             #'ST_t-channel_antitop_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin',
+             'ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1',
+             #'ST_t-channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin',
              'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
              'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
             ],
@@ -98,25 +77,11 @@ sigMap = {
              'QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8',
             ],
     'data': [
-             #'DoubleMuon',
-             #'DoubleEG',
-             #'MuonEG',
              'SingleMuon',
-             #'SingleElectron',
-             #'Tau',
             ],
-    'HppHmm200GeV' : ['HPlusPlusHMinusMinusHTo4L_M-200_13TeV-pythia8'],
-    'HppHmm300GeV' : ['HPlusPlusHMinusMinusHTo4L_M-300_13TeV-pythia8'],
-    'HppHmm400GeV' : ['HPlusPlusHMinusMinusHTo4L_M-400_13TeV-pythia8'],
-    'HppHmm500GeV' : ['HPlusPlusHMinusMinusHTo4L_M-500_13TeV-pythia8'],
-    'HppHmm600GeV' : ['HPlusPlusHMinusMinusHTo4L_M-600_13TeV-pythia8'],
-    'HppHmm700GeV' : ['HPlusPlusHMinusMinusHTo4L_M-700_13TeV-pythia8'],
-    'HppHmm800GeV' : ['HPlusPlusHMinusMinusHTo4L_M-800_13TeV-pythia8'],
-    'HppHmm900GeV' : ['HPlusPlusHMinusMinusHTo4L_M-900_13TeV-pythia8'],
-    'HppHmm1000GeV': ['HPlusPlusHMinusMinusHTo4L_M-1000_13TeV-pythia8'],
 }
 
-samples = ['W','T','TT','TTV','Z','WW','VH','WZ','VVV','ZZ']
+samples = ['W','T','TT','Z','WW']
 
 for s in samples:
     fakeratePlotter.addHistogramToStack(s,sigMap[s])
@@ -137,6 +102,16 @@ plots = {
     # event
     'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
+    'numTightMuons'         : {'xaxis': 'Number of tight muons', 'yaxis': 'Events',},
+    'numLooseMuons'         : {'xaxis': 'Number of loose muons', 'yaxis': 'Events',},
+    # runs
+    'wmMt_Run2016B'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
+    'wmMt_Run2016C'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
+    'wmMt_Run2016D'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
+    'wmMt_Run2016E'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
+    'wmMt_Run2016F'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
+    'wmMt_Run2016G'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
+    'wmMt_Run2016H'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
 }
 
 for plot in plots:
@@ -185,10 +160,10 @@ for plot in ['tPt','tEta']:
         }
         customOrder = ['data_uncorrected','data','W']
         fakeratePlotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,legendpos=34,numcol=2,subtractMap=subtractMap,**kwargs)
-        for etabin in range(3):
-            if plot=='tEta': continue
-            numname = '{0}/all/etaBin{1}/{2}'.format(num,etabin,plot)
-            denomname = '{0}/all/etaBin{1}/{2}'.format(denom,etabin,plot)
-            savename = 'ratio/{0}_{1}/{2}_etabin{3}'.format(num,denom,plot,etabin)
-            fakeratePlotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,legendpos=34,numcol=2,subtractMap=subtractMap,**kwargs)
+        #for etabin in range(3):
+        #    if plot=='tEta': continue
+        #    numname = '{0}/all/etaBin{1}/{2}'.format(num,etabin,plot)
+        #    denomname = '{0}/all/etaBin{1}/{2}'.format(denom,etabin,plot)
+        #    savename = 'ratio/{0}_{1}/{2}_etabin{3}'.format(num,denom,plot,etabin)
+        #    fakeratePlotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,legendpos=34,numcol=2,subtractMap=subtractMap,**kwargs)
 

@@ -1,20 +1,19 @@
 from copy import deepcopy
 from itertools import product, combinations_with_replacement
 
-from DevTools.Plotter.utilities import ZMASS, addChannels
+from DevTools.Plotter.utilities import ZMASS, addChannels, getLumi, getRunRange
 
 from DevTools.Utilities.utilities import getCMSSWVersion
 
 version = getCMSSWVersion()
-
-genCut = '{0}_genMatch==1 && {0}_genDeltaR<0.1'
 
 def buildWTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams):
 
     histParams['WTauFakeRate'] = {
         'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
         'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
-        'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
+        'numLooseMuons'               : {'xVariable': 'numLooseMuons',                  'xBinning': [4,0,4],                 },
+        'numTightMuons'               : {'xVariable': 'numTightMuons',                  'xBinning': [4,0,4],                 },
         'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
         'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
         # z
@@ -33,6 +32,15 @@ def buildWTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sam
         'mPt'                         : {'xVariable': 'm_pt',                           'xBinning': [500, 0, 500],           },
         'mEta'                        : {'xVariable': 'm_eta',                          'xBinning': [500, -2.5, 2.5],        },
     }
+
+    intLumi = getLumi()
+    for r in ['B','C','D','E','F','G','H']:
+        run = 'Run2016{0}'.format(r)
+        runLumi = getLumi(run=run)
+        mcscale = '{0}/{1}'.format(runLumi,intLumi)
+        runRange = getRunRange(run=run)
+        datacut = 'run>={0} && run<={1}'.format(*runRange)
+        histParams['WTauFakeRate']['wmMt_{0}'.format(run)] = {'xVariable': 'wm_mt', 'xBinning': [500,0,500], 'datacut': datacut, 'mcscale': mcscale}
 
     frBaseCut = 'z_deltaR>0.02 && m_pt>25.'
     frBaseCutLoose = '{0}'.format(frBaseCut)
@@ -61,13 +69,13 @@ def buildWTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sam
             args = selectionParams['WTauFakeRate'][name]['args']
             selectionParams['WTauFakeRate'][name]['args'][0] = ' && '.join([args[0],subsels[sub]])
     
-    etaBins = [0.,0.8,1.479,2.3]
-    
-    sels = selectionParams['WTauFakeRate'].keys()
-    for sel in sels:
-        for eb in range(len(etaBins)-1):
-            name = '{0}/etaBin{1}'.format(sel,eb)
-            selectionParams['WTauFakeRate'][name] = deepcopy(selectionParams['WTauFakeRate'][sel])
-            args = selectionParams['WTauFakeRate'][name]['args']
-            selectionParams['WTauFakeRate'][name]['args'][0] = ' && '.join([args[0],'fabs(t_eta)>={0} && fabs(t_eta)<{1}'.format(etaBins[eb],etaBins[eb+1])])
+    #etaBins = [0.,0.8,1.479,2.3]
+    #
+    #sels = selectionParams['WTauFakeRate'].keys()
+    #for sel in sels:
+    #    for eb in range(len(etaBins)-1):
+    #        name = '{0}/etaBin{1}'.format(sel,eb)
+    #        selectionParams['WTauFakeRate'][name] = deepcopy(selectionParams['WTauFakeRate'][sel])
+    #        args = selectionParams['WTauFakeRate'][name]['args']
+    #        selectionParams['WTauFakeRate'][name]['args'][0] = ' && '.join([args[0],'fabs(t_eta)>={0} && fabs(t_eta)<{1}'.format(etaBins[eb],etaBins[eb+1])])
 

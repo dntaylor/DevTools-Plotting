@@ -408,6 +408,7 @@ class Plotter(PlotterBase):
         hists = OrderedDict()
         for histName in self.histOrder:
             hist = self._getHistogram(histName,variable,nofill=True,**kwargs)
+            if not hist: logging.error('Failed to find hist {0} {1}'.format(histName,variable))
             if histName=='data':
                 hist.SetMarkerStyle(20)
                 hist.SetMarkerSize(1.)

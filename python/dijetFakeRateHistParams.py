@@ -26,6 +26,9 @@ def buildDijetFakeRate(selectionParams,sampleSelectionParams,projectionParams,sa
     frScaleFactorLoose = 'l1_looseScale*genWeight*pileupWeight*triggerEfficiency/triggerPrescale'
     frScaleFactorMedium = 'l1_mediumScale*genWeight*pileupWeight*triggerEfficiency/triggerPrescale'
     frScaleFactorTight = 'l1_tightScale*genWeight*pileupWeight*triggerEfficiency/triggerPrescale'
+    #frScaleFactorLoose = 'l1_looseScale*genWeight*pileupWeight/triggerPrescale'
+    #frScaleFactorMedium = 'l1_mediumScale*genWeight*pileupWeight/triggerPrescale'
+    #frScaleFactorTight = 'l1_tightScale*genWeight*pileupWeight/triggerPrescale'
     #dataScaleFactor = 'triggerPrescale'
     dataScaleFactor = '1'
     selectionParams['DijetFakeRate'] = {

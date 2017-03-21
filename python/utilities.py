@@ -32,8 +32,30 @@ def isData(sample):
     dataSamples = ['DoubleMuon','DoubleEG','MuonEG','SingleMuon','SingleElectron','Tau']
     return sample in dataSamples
 
-def getLumi(version=getCMSSWVersion()):
+runMap = {
+    'Run2016B': 5788.,
+    'Run2016C': 2573.,
+    'Run2016D': 4248.,
+    'Run2016E': 4009.,
+    'Run2016F': 3102.,
+    'Run2016G': 7540.,
+    'Run2016H': 8606.,
+}
+
+runRange = {
+    'Run2016B': [272760,275344],
+    'Run2016C': [275656,276283],
+    'Run2016D': [276315,276811],
+    'Run2016E': [276831,277420],
+    'Run2016F': [277932,278808],
+    'Run2016G': [278820,280385],
+    'Run2016H': [281613,284044],
+}
+
+def getLumi(version=getCMSSWVersion(),run=''):
     '''Get the integrated luminosity to scale monte carlo'''
+    if run in runMap:
+        return runMap[run]
     if version=='76X':
         #return 2263 # december jamboree golden json
         return 2318 # moriond golden json
@@ -42,6 +64,10 @@ def getLumi(version=getCMSSWVersion()):
         #return 12892.762 # ichep dataset golden json
         return 35867.060 # full 2016 for moriond
 
+def getRunRange(version=getCMSSWVersion(),run=''):
+    if run in runRange:
+        return runRange[run]
+    return [0,999999]
 
 latestNtuples = {}
 latestNtuples['76X'] = {
@@ -79,6 +105,14 @@ latestNtuples['80X'] = {
 #    'ThreeLepton'    : '2017-01-05_ThreeLeptonAnalysis_80X_v1-merge',
 # Moriond 2017
     'DY'             : '2017-03-01_DYAnalysis_80X_Moriond_v2-merge',
+    'DijetFakeRate'  : '2017-03-16_DijetFakeRateAnalysis_80X_Moriond_v1-merge',
+    'ZFakeRate'      : '2017-03-17_ZFakeRateAnalysis_80X_Moriond_v1-merge',
+    #'WFakeRate'      : '2017-03-16_WFakeRateAnalysis_80X_Moriond_v1-merge',
+    #'WTauFakeRate'   : '2017-03-19_WTauFakeRateAnalysis_80X_Moriond_v2-merge',
+    # tighter loose tau
+    'WFakeRate'      : '2017-03-20_WFakeRateAnalysis_80X_Moriond_v2-merge',
+    'WTauFakeRate'   : '2017-03-20_WTauFakeRateAnalysis_80X_Moriond_v1-merge',
+    'TriggerCount'   : '2017-03-20_TriggerCountAnalysis_80X_Moriond_v1-merge',
 }
 
 latestShifts = {}
