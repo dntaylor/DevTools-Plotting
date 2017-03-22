@@ -34,14 +34,14 @@ def buildWFakeRate(selectionParams,sampleSelectionParams,projectionParams,sample
         'mEta'                        : {'xVariable': 'm_eta',                          'xBinning': [500, -2.5, 2.5],        },
     }
 
-    intLumi = getLumi()
-    for r in ['B','C','D','E','F','G','H']:
-        run = 'Run2016{0}'.format(r)
-        runLumi = getLumi(run=run)
-        mcscale = '{0}/{1}'.format(runLumi,intLumi)
-        runRange = getRunRange(run=run)
-        datacut = 'run>={0} && run<={1}'.format(*runRange)
-        histParams['WFakeRate']['wmMt_{0}'.format(run)] = {'xVariable': 'wm_mt', 'xBinning': [500,0,500], 'datacut': datacut, 'mcscale': mcscale}
+    #intLumi = getLumi()
+    #for r in ['B','C','D','E','F','G','H']:
+    #    run = 'Run2016{0}'.format(r)
+    #    runLumi = getLumi(run=run)
+    #    mcscale = '{0}/{1}'.format(runLumi,intLumi)
+    #    runRange = getRunRange(run=run)
+    #    datacut = 'run>={0} && run<={1}'.format(*runRange)
+    #    histParams['WFakeRate']['wmMt_{0}'.format(run)] = {'xVariable': 'wm_mt', 'xBinning': [500,0,500], 'datacut': datacut, 'mcscale': mcscale}
 
     # setup the reco channels
     #channels = ['me','mm']

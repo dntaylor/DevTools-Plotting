@@ -105,14 +105,10 @@ latestNtuples['80X'] = {
 #    'ThreeLepton'    : '2017-01-05_ThreeLeptonAnalysis_80X_v1-merge',
 # Moriond 2017
     'DY'             : '2017-03-01_DYAnalysis_80X_Moriond_v2-merge',
-    'DijetFakeRate'  : '2017-03-16_DijetFakeRateAnalysis_80X_Moriond_v1-merge',
-    'ZFakeRate'      : '2017-03-17_ZFakeRateAnalysis_80X_Moriond_v1-merge',
-    #'WFakeRate'      : '2017-03-16_WFakeRateAnalysis_80X_Moriond_v1-merge',
+    'DijetFakeRate'  : '2017-03-21_DijetFakeRateAnalysis_80X_Moriond_v1-merge',
+    'ZFakeRate'      : '2017-03-21_ZFakeRateAnalysis_80X_Moriond_v1-merge',
+    'WFakeRate'      : '2017-03-21_WFakeRateAnalysis_80X_Moriond_v1-merge',
     #'WTauFakeRate'   : '2017-03-19_WTauFakeRateAnalysis_80X_Moriond_v2-merge',
-    # tighter loose tau
-    'WFakeRate'      : '2017-03-20_WFakeRateAnalysis_80X_Moriond_v2-merge',
-    'WTauFakeRate'   : '2017-03-20_WTauFakeRateAnalysis_80X_Moriond_v1-merge',
-    'TriggerCount'   : '2017-03-20_TriggerCountAnalysis_80X_Moriond_v1-merge',
 }
 
 latestShifts = {}
