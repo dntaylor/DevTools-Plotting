@@ -26,10 +26,12 @@ class NtupleWrapper(object):
         self.analysis = analysis
         self.sample = sample
         self.shift = kwargs.pop('shift','')
+        self.useProof = kwargs.pop('useProof',False)
         logging.debug('Initializing {0} {1} {2}'.format(self.analysis,self.sample,self.shift))
         # backup passing custom parameters
         #self.ntuple = kwargs.pop('ntuple','{0}/src/ntuples/{1}/{2}.root'.format(CMSSW_BASE,self.analysis,self.sample))
         self.ntupleDirectory = kwargs.pop('ntupleDirectory','{0}/{1}'.format(getNtupleDirectory(self.analysis,shift=self.shift),self.sample))
+        if self.useProof: self.ntupleDirectory.replace('-merge','')
         self.inputFileList = kwargs.pop('inputFileList','')
         self.treeName = kwargs.pop('treeName',getTreeName(self.analysis))
         #self.flat = kwargs.pop('flat','flat/{0}/{1}.root'.format(self.analysis,self.sample))
@@ -45,10 +47,11 @@ class NtupleWrapper(object):
         self.infile = 0
         self.outfile = 0
         self.infile = 0
-        self.tchain = 0
         self.j = 0
         self.initialized = False
         self.temp = True
+        if self.useProof:
+            self.proof = ROOT.TProof.Open('')
         # verify output file directory exists
         os.system('mkdir -p {0}'.format(os.path.dirname(self.flat)))
         os.system('mkdir -p {0}'.format(os.path.dirname(self.proj)))
@@ -96,6 +99,7 @@ class NtupleWrapper(object):
         self.files = allFiles
         self.initialized = True
         if not self.temp: self.fileHash = hashFile(*self.files)
+        if self.useProof: self.sampleTree.SetProof()
         logging.debug('Initialized {0}: summedWeights = {1}; xsec = {2}; sampleLumi = {3}; intLumi = {4}'.format(self.sample,summedWeights,self.xsec,self.sampleLumi,self.intLumi))
 
     def getTree(self):
@@ -280,6 +284,9 @@ class NtupleWrapper(object):
         #tree.SetEntryList(self.entryListMap['1'])
         if ROOT.gDirectory.Get(histName):
             hist = ROOT.gDirectory.Get(histName)
+        elif self.useProof:
+            out = self.proof.GetOutputList()
+            hist = out.FindObject(histName)
         else:
             hist = ROOT.TH1F(histName,histName,*binning)
         return hist
@@ -316,6 +323,9 @@ class NtupleWrapper(object):
         #tree.SetEntryList(self.entryListMap['1'])
         if ROOT.gDirectory.Get(histName):
             hist = ROOT.gDirectory.Get(histName)
+        elif self.useProof:
+            out = self.proof.GetOutputList()
+            hist = out.FindObject(histName)
         else:
             hist = ROOT.TH2F(histName,histName,*binning)
         return hist
@@ -352,6 +362,9 @@ class NtupleWrapper(object):
         #tree.SetEntryList(self.entryListMap['1'])
         if ROOT.gDirectory.Get(histName):
             hist = ROOT.gDirectory.Get(histName)
+        elif self.useProof:
+            out = self.proof.GetOutputList()
+            hist = out.FindObject(histName)
         else:
             hist = ROOT.TH3F(histName,histName,*binning)
         return hist

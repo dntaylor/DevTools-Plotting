@@ -21,12 +21,12 @@ doVBS = True
 
 sigMap = {
     'WZ'  : [
-             #'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
-             'WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
+             #'WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
             ],
     'WZall'  : [
-             #'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
-             'WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+             'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
+             #'WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
              'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
              'WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8',
              'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8',
@@ -50,24 +50,17 @@ sigMap = {
              'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
             ],
     'VVV' : [
+             'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
+             'WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
+             'WZG_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
              'WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
-             'WWG_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
-            ],
-    'VH'  : [
-             'WH_HToBB_WToLNu_M125_13TeV_amcatnloFXFX_madspin_pythia8',
-             'ZH_HToBB_ZToLL_M125_13TeV_amcatnloFXFX_madspin_pythia8',
-             'ZH_HToBB_ZToNuNu_M125_13TeV_amcatnloFXFX_madspin_pythia8',
-             'ZH_HToBB_ZToQQ_M125_13TeV_powheg_pythia8',
-             'ZH_HToGG_ZToAll_M125_13TeV_powheg_pythia8',
-             'ZH_HToZG_ZToAll_M-125_13TeV_powheg_pythia8',
-             'ZH_HToZZ_4LFilter_M125_13TeV_powheg2-minlo-HZJ_JHUgenV6_pythia8',
+             'ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
             ],
     'TTV' : [
-             'ttWJets_13TeV_madgraphMLM',
+             #'ttWJets_13TeV_madgraphMLM',
              'ttZJets_13TeV_madgraphMLM',
-             'ttH_M125_13TeV_powheg_pythia8',
-             'tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
-             'tZq_nunu_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
+             'tZq_ll_4f_13TeV-amcatnlo-pythia8',
+             'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
             ],
     'WW'  : [
              'WWTo2L2Nu_13TeV-powheg',
@@ -128,7 +121,7 @@ sigMap = {
 plotStyles = {
     # Z
     'zMass'               : {'xaxis': 'm_{l^{+}l^{-}}', 'yaxis': 'Events / 1 GeV', 'rangex':[60,120]},
-    'mllMinusMZ'          : {'xaxis': '|m_{l^{+}l^{-}}-m_{Z}|', 'yaxis': 'Events / 1 GeV', 'rangex':[0,60]},
+    #'mllMinusMZ'          : {'xaxis': '|m_{l^{+}l^{-}}-m_{Z}|', 'yaxis': 'Events / 1 GeV', 'rangex':[0,60]},
     'zPt'                 : {'xaxis': 'p_{T}^{Z}', 'yaxis': 'Events / 10 GeV', 'rebin':10, 'rangex':[0,200]},
     'zLeadingLeptonPt'    : {'xaxis': 'p_{T}^{Z lead}', 'yaxis': 'Events / 10 GeV', 'rebin':10, 'rangex':[0,200]},
     'zSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{Z sublead}', 'yaxis': 'Events / 10 GeV', 'rebin':10, 'rangex':[0,200]},
@@ -177,8 +170,8 @@ vbsNMinusOneCuts = ['twoJets','jetPt','jetDEta','mjj']
 controls = ['dy','tt']
 
 
-samples = ['TTV','VH','ZG','VVV','ZZ','WZ']
-allsamples = ['W','TT','Z','WW','TTV','VH','VVV','ZZall','WZall']
+samples = ['TTV','ZG','VVV','ZZ','WZ']
+allsamples = ['W','TT','Z','WW','TTV','VVV','ZZall','WZall']
 
 #################
 ### MC driven ###
@@ -250,7 +243,7 @@ if doDatadriven:
         plotvars = getDataDrivenPlot(plot)
         savename = 'datadriven/{0}'.format(plot)
         wzPlotter.plot(plotvars,savename,**plotStyles[plot])
-        plotVars = getDataDrivenPlot('vbs/{0}'.format(plot))
+        plotvars = getDataDrivenPlot('vbs/{0}'.format(plot))
         savename = 'vbs-datadriven/{0}'.format(plot)
         if doVBS: wzPlotter.plot(plotvars,savename,**plotStyles[plot])
         for cut in nMinusOneCuts:

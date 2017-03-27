@@ -16,7 +16,7 @@ def parse_command_line(argv):
 
     parser.add_argument('input',type=str,help='Input top-level directory to copy, each subdirectory must have two files, the flat and projection.')
     parser.add_argument('flat',type=str,help='Destination directory to copy flat files into.')
-    parser.add_argument('projection',type=str,help='Destination directory to copy projection files into.')
+    parser.add_argument('projection',type=str,default='',nargs='?',help='Destination directory to copy projection files into.')
 
     args = parser.parse_args(argv)
 

@@ -105,10 +105,13 @@ latestNtuples['80X'] = {
 #    'ThreeLepton'    : '2017-01-05_ThreeLeptonAnalysis_80X_v1-merge',
 # Moriond 2017
     'DY'             : '2017-03-01_DYAnalysis_80X_Moriond_v2-merge',
-    'DijetFakeRate'  : '2017-03-21_DijetFakeRateAnalysis_80X_Moriond_v1-merge',
+    'DijetFakeRate'  : '2017-03-22_DijetFakeRateAnalysis_80X_Moriond_v1-merge',
     'ZFakeRate'      : '2017-03-21_ZFakeRateAnalysis_80X_Moriond_v1-merge',
-    'WFakeRate'      : '2017-03-21_WFakeRateAnalysis_80X_Moriond_v1-merge',
-    #'WTauFakeRate'   : '2017-03-19_WTauFakeRateAnalysis_80X_Moriond_v2-merge',
+    'WFakeRate'      : '2017-03-24_WFakeRateAnalysis_80X_Moriond_v1-merge',
+    'WTauFakeRate'   : '2017-03-22_WTauFakeRateAnalysis_80X_Moriond_v2-merge',
+    'WZ'             : '2017-03-24_WZAnalysis_80X_Moriond_v1-merge',
+    'Hpp3l'          : '2017-03-26_Hpp3lAnalysis_80X_Moriond_v1-merge',
+    'Hpp4l'          : '2017-03-26_Hpp4lAnalysis_80X_Moriond_v1-merge',
 }
 
 latestShifts = {}
@@ -158,6 +161,10 @@ def getNtupleDirectory(analysis,local=False,version=getCMSSWVersion(),shift=''):
 
 latestHistograms = {}
 
+def getNewFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
+    flat = 'newflat/{0}/{1}.root'.format(analysis,sample)
+    return flat
+        
 def getFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
     flat = 'flat/{0}/{1}.root'.format(analysis,sample)
     if shift in latestHistograms.get(version,{}).get(analysis,{}):

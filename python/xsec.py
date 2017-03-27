@@ -99,6 +99,7 @@ xsecs = {
     'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8'     :      0.2043   * PB,
     'TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8'      :      0.4062   * PB,
     'ttZJets_13TeV_madgraphMLM'                                        :      0.259    * PB,
+    'ttZJets_13TeV_madgraphMLM-pythia8'                                :      0.259    * PB,
     'ttWJets_13TeV_madgraphMLM'                                        :      0.243    * PB,
     'ttH_M125_13TeV_powheg_pythia8'                                    :      0.5085   * PB,
 

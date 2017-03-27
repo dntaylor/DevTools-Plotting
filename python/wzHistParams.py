@@ -15,14 +15,13 @@ def buildWZ(selectionParams,sampleSelectionParams,projectionParams,sampleProject
     histParams['WZ'] = {
         'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
         'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
-        'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
         'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
         'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
         # z
         'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [500, 0, 500],           },
-        'mllMinusMZ'                  : {'xVariable': 'fabs(z_mass-{0})'.format(ZMASS), 'xBinning': [200, 0, 200],           },
+        #'mllMinusMZ'                  : {'xVariable': 'fabs(z_mass-{0})'.format(ZMASS), 'xBinning': [200, 0, 200],           },
         'zPt'                         : {'xVariable': 'z_pt',                           'xBinning': [500, 0, 500],           },
-        'zDeltaR'                     : {'xVariable': 'z_deltaR',                       'xBinning': [500, 0, 5],             },
+        #'zDeltaR'                     : {'xVariable': 'z_deltaR',                       'xBinning': [500, 0, 5],             },
         'zLeadingLeptonPt'            : {'xVariable': 'z1_pt',                          'xBinning': [500, 0, 500],           },
         'zLeadingLeptonEta'           : {'xVariable': 'z1_eta',                         'xBinning': [500, -2.5, 2.5],        },
         'zSubLeadingLeptonPt'         : {'xVariable': 'z2_pt',                          'xBinning': [500, 0, 500],           },
@@ -196,9 +195,6 @@ def buildWZ(selectionParams,sampleSelectionParams,projectionParams,sampleProject
     # DY-10 0, 1, 2 bins (0 includes 3+)
     # DY-50 0, 1, 2, 3, 4 bins (0 includes 5+)
     sampleCuts = {
-        #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8' : '(numGenJets==0 || numGenJets>2)',
-        #'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': 'numGenJets==1',
-        #'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': 'numGenJets==2',
         'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'      : '(numGenJets==0 || numGenJets>4)',
         'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==1',
         'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'     : 'numGenJets==2',

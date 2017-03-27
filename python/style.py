@@ -67,7 +67,7 @@ labelMap = {
     'WWZ'       : 'WWZ',
     'WZZ'       : 'WZZ',
     'ZZZ'       : 'ZZZ',
-    'TTV'       : 't#bar{t}V',
+    'TTV'       : 't#bar{t}V+tZ',
     'TTZ'       : 't#bar{t}Z',
     'TTW'       : 't#bar{t}W',
     'Z'         : 'Drell-Yan',

@@ -199,7 +199,9 @@ class Plotter(PlotterBase):
 
         # remove bins < 0
         for b in range(hist.GetNbinsX()):
-            if hist.GetBinContent(b+1)<0.: hist.SetBinContent(b+1,0.)
+            if hist.GetBinContent(b+1)<0.:
+                logging.warning('{0}: Zeroing negative bin {1}: {2}'.format(histName, b,hist.GetBinContent(b+1)))
+                hist.SetBinContent(b+1,0.)
 
         return hist
 

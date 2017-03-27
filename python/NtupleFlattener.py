@@ -14,8 +14,7 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 
 from DevTools.Plotter.xsec import getXsec
-from DevTools.Plotter.utilities import getLumi, isData, hashFile, hashString, python_mkdir, getTreeName, getNtupleDirectory, getProjectionHistograms
-from DevTools.Plotter.histParams import getHistParams, getHistSelections, getProjectionParams
+from DevTools.Plotter.utilities import getLumi, isData, hashFile, hashString, python_mkdir, getTreeName, getNtupleDirectory, getNewFlatHistograms
 
 try:
     from progressbar import ProgressBar, ETA, Percentage, Bar, SimpleProgress
@@ -38,10 +37,11 @@ class NtupleFlattener(object):
         # backup passing custom parameters
         self.ntupleDirectory = kwargs.pop('ntupleDirectory','{0}/{1}'.format(getNtupleDirectory(self.analysis,shift=self.shift),self.sample))
         self.inputFileList = kwargs.pop('inputFileList','')
-        self.outputFile = kwargs.pop('outputFile',getProjectionHistograms(self.analysis,self.sample,shift=self.shift))
+        self.outputFile = kwargs.pop('outputFile',getNewFlatHistograms(self.analysis,self.sample,shift=self.shift))
+        if os.path.dirname(self.outputFile): python_mkdir(os.path.dirname(self.outputFile))
         self.treeName = kwargs.pop('treeName',getTreeName(self.analysis))
         if hasProgress:
-            self.pbar = kwargs.pop('progressbar',ProgressBar(widgets=['{0}: '.format(sample),' ',SimpleProgress(),' events ',Percentage(),' ',Bar(),' ',ETA()]))
+            self.pbar = kwargs.pop('progressbar',ProgressBar(widgets=['{0}: '.format(sample),' ',SimpleProgress(),' ',Percentage(),' ',Bar(),' ',ETA()]))
         else:
             self.pbar = None
         # get stuff needed to flatten
@@ -49,7 +49,6 @@ class NtupleFlattener(object):
         self.tchain = 0
         self.initialized = False
         self.hists = {}
-        self.__initializeHistograms()
 
     def __initializeNtuple(self):
         tchain = ROOT.TChain(self.treeName)
@@ -86,11 +85,12 @@ class NtupleFlattener(object):
             for hist in self.histParams:
                 for chan in chans:
                     for genChan in genChans:
-                        histName = '{0}/{1}/{2}/gen_{3}'.format(selection,hist,chan,genChan)
-                        if genChan=='all': histName = '{0}/{1}/{2}'.format(selection,hist,chan)
-                        if chan=='all': histName = '{0}/{1}'.format(selection,hist)
+                        histName = '{0}/{1}/gen_{2}/{3}'.format(selection,chan,genChan,hist)
+                        if genChan=='all': histName = '{0}/{1}/{2}'.format(selection,chan,hist)
+                        #if chan=='all': histName = '{0}/{1}'.format(selection,hist)
                         xbins = self.histParams[hist]['xBinning']
-                        self.hists[histName] = ROOT.TH1F(histName,histName,xbins[0],xbins[1],xbins[2])
+                        self.hists[histName] = ROOT.TH1D(histName,histName,xbins[0],xbins[1],xbins[2])
+                        self.hists[histName].Sumw2()
 
     def getTree(self):
         if not self.initialized: self.__initializeNtuple()
@@ -114,6 +114,7 @@ class NtupleFlattener(object):
         '''
         self.__initializeNtuple()
         self.totalEntries = self.sampleTree.GetEntries()
+        self.__initializeHistograms()
         total = 0
         start = time.time()
         new = start
@@ -125,7 +126,7 @@ class NtupleFlattener(object):
                 total += 1
                 self.pbar.update(total)
                 self.perRowAction(row)
-            print ''
+            self.pbar.finish()
         else:
             logging.info('Flattening {0} {1}'.format(self.analysis,self.sample))
             for row in self.sampleTree:
@@ -137,9 +138,42 @@ class NtupleFlattener(object):
                     remaining = float(elapsed)/total * float(self.totalEntries) - float(elapsed)
                     mins, secs = divmod(int(remaining),60)
                     hours, mins = divmod(mins,60)
-                    logging.info('{0}: Processing event {1}/{2} - {3}:{4:02d}:{5:02d} remaining'.format(self.analysis,total,self.totalEntries,hours,mins,secs))
+                    logging.info('{0}: Processing {1} event {2}/{3} - {4}:{5:02d}:{6:02d} remaining'.format(self.analysis,self.sample,total,self.totalEntries,hours,mins,secs))
                     self.flush()
                 self.perRowAction(row)
+        self.write()
+
+    def write(self):
+        '''
+        Write histograms to files
+        '''
+        total = 0
+        totalHists = len(self.hists)
+        if hasProgress and self.pbar:
+            self.pbar.maxval = totalHists
+            self.pbar.start()
+        else:
+            logging.info('Writing histograms')
+        self.outfile = ROOT.TFile(self.outputFile,'update')
+        for h in sorted(self.hists):
+            total += 1
+            if hasProgress and self.pbar:
+                self.pbar.update(total)
+            else:
+                logging.info('{0}: Writing {1} histogram {2}/{3} {4}'.format(self.analysis,self.sample,total,totalHists,h))
+            components = h.split('/')
+            directory = '/'.join(components[:-1])
+            histName = components[-1]
+            hist = self.hists[h]
+            hist.SetName(histName)
+            hist.SetTitle(histName)
+            if not self.outfile.GetDirectory(directory): self.outfile.mkdir(directory)
+            self.outfile.cd('{0}:/{1}'.format(self.outputFile,directory))
+            hist.Write('',ROOT.TObject.kOverwrite)
+        if hasProgress and self.pbar:
+            self.pbar.finish()
+        self.outfile.Close()
+
 
     def perRowAction(self,row):
         '''
@@ -152,13 +186,15 @@ class NtupleFlattener(object):
         if weight!=weight:
             logging.warning('{0} {1} {2} attempted to add NaN weight'.format(histName,chan,genChan))
         for hist in self.histParams:
+            if 'selection' in self.histParams:
+                if not self.hstParams[hist]['selection'](row): continue
             val = self.histParams[hist]['x'](row)
             w = weight*self.histParams[hist]['mcscale'](row) if 'mcscale' in self.histParams[hist] and self.isData else weight
-            histName = '{0}/{1}'.format(selection,hist)
+            histName = '{0}/all/{1}'.format(selection,hist)
             self.hists[histName].Fill(val,w)
-            histName = '{0}/{1}/{2}'.format(selection,hist,chan)
+            histName = '{0}/{1}/{2}'.format(selection,chan,hist)
             self.hists[histName].Fill(val,w)
             if genChan!='all':
-                histName = '{0}/{1}/{2}/gen_{3}'.format(selection,hist,chan,genChan)
+                histName = '{0}/{1}/gen_{2}/{3}'.format(selection,chan,genChan,hist)
                 self.hists[histName].Fill(val,w)
 

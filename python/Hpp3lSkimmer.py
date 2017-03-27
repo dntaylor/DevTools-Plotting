@@ -60,7 +60,8 @@ class Hpp3lSkimmer(NtupleSkimmer):
             if hasattr(row,'qqZZkfactor'): weight *= row.qqZZkfactor/1.1 # ZZ variable k factor
         # fake scales
         if doFake:
-            sign = -1 if sum(passMedium)%2==0 and not all(passMedium) else 1
+            region = ''.join(['P' if x else 'F' for x in passMedium])
+            sign = -1 if region.count('F')%2==0 and region.count('F')>0 else 1
             weight *= sign
             if not row.isData and not all(passMedium): weight *= -1 # subtract off MC in control
             fake = '{0}_mediumFakeRate'

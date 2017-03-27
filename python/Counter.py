@@ -184,7 +184,7 @@ class Counter(object):
         vals = [x[0] for x in counts]
         errs = [x[1] for x in counts]
         nsig = len(self.signals)
-        vals += [sum(vals[:-1*nsig])]
-        errs += [sum([x**2 for x in errs[:-1*nsig]])**0.5]
+        vals += [sum(vals[:-1*(nsig+1)])]
+        errs += [sum([x**2 for x in errs[:-1*(nsig+1)]])**0.5]
         print '{0:20} | {1} |'.format(label,' | '.join(['{0:>10.4f}'.format(v) for v in vals]))
         if doError: print '{0:20} | {1} |'.format('',' | '.join(['{0:>10.4f}'.format(e) for e in errs]))

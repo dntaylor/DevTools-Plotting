@@ -34,6 +34,7 @@ def flatten(analysis,sample,**kwargs):
     njobs = kwargs.pop('njobs',1)
     job = kwargs.pop('job',0)
     multi = kwargs.pop('multi',False)
+    useProof = kwargs.pop('useProof',False)
     if hasProgress and multi:
         pbar = kwargs.pop('progressbar',ProgressBar(widgets=['{0}: '.format(sample),' ',SimpleProgress(),' histograms ',Percentage(),' ',Bar(),' ',ETA()]))
     else:
@@ -42,9 +43,9 @@ def flatten(analysis,sample,**kwargs):
     if outputFile:
         flat = outputFile
         proj = outputFile.replace('.root','_projection.root')
-        flattener = FlattenTree(analysis,sample,inputFileList=inputFileList,flat=flat,proj=proj,shift=shift,countOnly=countOnly)
+        flattener = FlattenTree(analysis,sample,inputFileList=inputFileList,flat=flat,proj=proj,shift=shift,countOnly=countOnly,useProof=useProof)
     else:
-        flattener = FlattenTree(analysis,sample,inputFileList=inputFileList,shift=shift,countOnly=countOnly)
+        flattener = FlattenTree(analysis,sample,inputFileList=inputFileList,shift=shift,countOnly=countOnly,useProof=useProof)
 
     for histName, params in histParams.iteritems():
         flattener.addHistogram(histName,**params)
@@ -99,6 +100,7 @@ def parse_command_line(argv):
     parser.add_argument('--selections', nargs='+', type=str, default=['all'], help='Selections to flatten.')
     parser.add_argument('--channels', nargs='+', type=str, default=['all'], help='Channels to project.')
     parser.add_argument('--skipProjection', action='store_true', help='Skip projecting')
+    #parser.add_argument('--useProof', action='store_true', help='Use PROOF')
     parser.add_argument('-j',type=int,default=1,help='Number of cores to use')
 
     return parser.parse_args(argv)
@@ -169,6 +171,7 @@ def main(argv=None):
                     shift=args.shift,
                     countOnly=args.countOnly,
                     multi=False,
+                    #useProof=args.useProof,
                     )
 
     logging.info('Finished')

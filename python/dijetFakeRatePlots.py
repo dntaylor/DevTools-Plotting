@@ -98,7 +98,7 @@ dijetFakeRatePlotter.addHistogram('data',sigMap['data'])
 plots = {
     'pt'      : {'xaxis': 'p_{T} (GeV)', 'yaxis': 'Events/0.5 GeV', 'rebin': 5, 'rangex': [0,150]},
     'eta'     : {'xaxis': '#eta', 'yaxis': 'Events', 'rebin': 5, 'rangex': [-2.5,2.5]},
-    'met'     : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events/0.2 GeV', 'rebin': 2, 'rangex': [0,200]},
+    #'met'     : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events/0.2 GeV', 'rebin': 2, 'rangex': [0,200]},
     'wMass'   : {'xaxis': 'm_{T}^{l^{+},MET} (GeV)', 'yaxis': 'Events/0.5 GeV', 'rebin': 5, 'rangex': [0,200]},
 }
 
@@ -201,6 +201,8 @@ tight_cust = {
     'eta'    : {'yaxis': 'N_{Tight}/N_{Loose}', 'rebin': etabins},
 }
 
+jetPtBins = [10,15,20,25,30,35,40,45,50]
+
 for plot in ['pt','eta']:
     for lepton in ['medium','tight']:
         kwargs = deepcopy(plots[plot])
@@ -217,12 +219,17 @@ for plot in ['pt','eta']:
             }
             customOrder = ['data_uncorrected','data']
             dijetFakeRatePlotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,legendpos=34,numcol=2,subtractMap=subtractMap,**kwargs)
-            for etabin in range(5):
-                if plot=='eta': continue
-                if chan=='m' and etabin>1: continue
-                numname = '{0}/{1}/etaBin{2}/{3}'.format(lepton,chan,etabin,plot)
-                denomname = 'loose/{0}/etaBin{1}/{2}'.format(chan,etabin,plot)
-                savename = 'ratio/{0}/{1}/{2}_etabin{3}'.format(lepton,chan,plot,etabin)
+            #for etabin in range(5):
+            #    if plot=='eta': continue
+            #    if chan=='m' and etabin>1: continue
+            #    numname = '{0}/{1}/etaBin{2}/{3}'.format(lepton,chan,etabin,plot)
+            #    denomname = 'loose/{0}/etaBin{1}/{2}'.format(chan,etabin,plot)
+            #    savename = 'ratio/{0}/{1}/{2}_etabin{3}'.format(lepton,chan,plot,etabin)
+            #    dijetFakeRatePlotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,legendpos=34,numcol=2,subtractMap=subtractMap,**kwargs)
+            for jetPt in jetPtBins:
+                numname = '{0}/{1}/jetPt{2}/{3}'.format(lepton,chan,jetPt,plot)
+                denomname = 'loose/{0}/jetPt{1}/{2}'.format(chan,jetPt,plot)
+                savename = 'ratio/{0}/{1}/{2}_jetPt{3}'.format(lepton,chan,plot,jetPt)
                 dijetFakeRatePlotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,legendpos=34,numcol=2,subtractMap=subtractMap,**kwargs)
 
 

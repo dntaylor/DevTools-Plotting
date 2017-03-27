@@ -12,9 +12,7 @@ import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 from DevTools.Plotter.utilities import getNtupleDirectory, getTreeName
-from DevTools.Plotter.Hpp3lSkimmer import Hpp3lSkimmer
-from DevTools.Plotter.Hpp4lSkimmer import Hpp4lSkimmer
-from DevTools.Plotter.WZSkimmer import WZSkimmer
+from DevTools.Plotter.WZFlattener import WZFlattener
 
 try:
     from DevTools.Utilities.MultiProgress import MultiProgress
@@ -25,31 +23,28 @@ except:
 
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-def skim(analysis,sample,**kwargs):
+flatteners = {
+    'WZ': WZFlattener,
+}
+
+def flatten(analysis,sample,**kwargs):
     inputFileList = kwargs.pop('inputFileList','')
     outputFile = kwargs.pop('outputFile','')
     shift = kwargs.pop('shift','')
+    njobs = kwargs.pop('njobs',1)
+    job = kwargs.pop('job',0)
     multi = kwargs.pop('multi',False)
-    if hasProgress and multi:
-        pbar = kwargs.pop('progressbar',ProgressBar(widgets=['{0}: '.format(sample),' ',SimpleProgress(),' events ',Percentage(),' ',Bar(),' ',ETA()]))
+    if hasProgress:
+        pbar = kwargs.pop('progressbar',ProgressBar(widgets=['{0}: '.format(sample),' ',SimpleProgress(),' histograms ',Percentage(),' ',Bar(),' ',ETA()]))
     else:
         pbar = None
 
-    skimMap = {
-        'Hpp3l': Hpp3lSkimmer,
-        'Hpp4l': Hpp4lSkimmer,
-        'WZ': WZSkimmer,
-    }
-    if analysis not in skimMap:
-        logging.warning('No skimmer found for analysis {0}'.format(analysis))
-        return
-
     if outputFile:
-        skimmer = skimMap[analysis](sample,inputFileList=inputFileList,outputFile=outputFile,shift=shift,progressbar=pbar)
+        flattener = flatteners[analysis](sample,inputFileList=inputFileList,outputFile=outputFile,shift=shift,progressbar=pbar)
     else:
-        skimmer = skimMap[analysis](sample,inputFileList=inputFileList,shift=shift,progressbar=pbar)
+        flattener = flatteners[analysis](sample,inputFileList=inputFileList,shift=shift,progressbar=pbar)
 
-    skimmer.skim()
+    flattener.flatten()
 
 def getSampleDirectories(analysis,sampleList):
     source = getNtupleDirectory(analysis)
@@ -62,7 +57,7 @@ def getSampleDirectories(analysis,sampleList):
 def parse_command_line(argv):
     parser = argparse.ArgumentParser(description='Flatten Tree')
 
-    parser.add_argument('analysis', type=str, choices=['WZ','ZZ','DY','Charge','TauCharge','Hpp3l','Hpp4l','Electron','Muon','Tau','DijetFakeRate','WTauFakeRate','WFakeRate'], help='Analysis to process')
+    parser.add_argument('analysis', type=str, choices=['WZ','ZZ','DY','Charge','TauCharge','Hpp3l','Hpp4l','Electron','Muon','Tau','DijetFakeRate','WTauFakeRate','WFakeRate','ZFakeRate','ThreeLepton','TriggerCount'], help='Analysis to process')
     parser.add_argument('shift', type=str, default='', nargs='?', help='Shift to apply to scale factors')
     parser.add_argument('--samples', nargs='+', type=str, default=['*'], help='Samples to flatten. Supports unix style wildcards.')
     parser.add_argument('-j',type=int,default=1,help='Number of cores to use')
@@ -93,27 +88,28 @@ def main(argv=None):
         logging.info('Will flatten {0} samples'.format(len(directories)))
 
     if grid:
-        skim(args.analysis,
-             sample,
-             outputFile=outputFile,
-             shift=args.shift,
-             )
+        flatten(args.analysis,
+                sample,
+                #inputFileList=inputFileList,
+                outputFile=outputFile,
+                shift=args.shift,
+                )
     elif args.j>1 and hasProgress:
         multi = MultiProgress(args.j)
         for directory in directories:
             sample = directory.split('/')[-1]
             if sample.endswith('.root'): sample = sample[:-5]
-            multi.addJob(sample,skim,args=(args.analysis,sample,),kwargs={'shift':args.shift,'multi':True,})
+            multi.addJob(sample,flatten,args=(args.analysis,sample,),kwargs={'shift':args.shift,'multi':True,})
         multi.retrieve()
     else:
         for directory in directories:
             sample = directory.split('/')[-1]
             if sample.endswith('.root'): sample = sample[:-5]
-            skim(args.analysis,
-                 sample,
-                 shift=args.shift,
-                 multi=False,
-                 )
+            flatten(args.analysis,
+                    sample,
+                    shift=args.shift,
+                    multi=False,
+                    )
 
     logging.info('Finished')
 
