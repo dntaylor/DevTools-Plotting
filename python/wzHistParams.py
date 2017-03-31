@@ -14,7 +14,7 @@ def buildWZ(selectionParams,sampleSelectionParams,projectionParams,sampleProject
 
     histParams['WZ'] = {
         'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
-        'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
+        'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [60,0,60],               },
         'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
         'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
         # z

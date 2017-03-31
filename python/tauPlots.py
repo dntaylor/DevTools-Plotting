@@ -89,21 +89,26 @@ sigcolors = [
 
 
 #tPlotter.addHistogram('signew',sigMap['HppHmm1000GeV'],style={'name': 'New DMs (match tau gen jet)','linecolor':ROOT.kRed})
-tPlotter.addHistogram('sigold',sigMap['HppHmm1000GeV'],style={'name': 'Old DMs (match tau gen jet)','linecolor':ROOT.kBlue})
+#tPlotter.addHistogram('sigold',sigMap['HppHmm1000GeV'],style={'name': 'Old DMs (match tau gen jet)','linecolor':ROOT.kBlue})
+tPlotter.addHistogram('sigold',sigMap['Z'],style={'name': 'Old DMs (match tau gen jet)','linecolor':ROOT.kBlue})
 #tPlotter.addHistogram('fakenew',sigMap['QCD'],style={'name':'New DMs (fake)','linecolor':ROOT.kRed,'linestyle':2})
-tPlotter.addHistogram('fakeold',sigMap['QCD'],style={'name':'Old DMs (fake)','linecolor':ROOT.kRed,'linestyle':2})
+#tPlotter.addHistogram('fakeold',sigMap['QCD'],style={'name':'Old DMs (fake)','linecolor':ROOT.kRed,'linestyle':2})
+tPlotter.addHistogram('fakeold',sigMap['TT'],style={'name':'Old DMs (fake)','linecolor':ROOT.kRed,'linestyle':2})
 
 idNames = [
-    '{0}_vlooseElectron_looseMuon_noIsolation',
-    '{0}_vlooseElectron_looseMuon_vvlooseIsolation',
+    #'{0}_vlooseElectron_looseMuon_vvlooseIsolation',
+    '{0}_vlooseElectron_looseMuon_neg0p8Isolation',
+    '{0}_vlooseElectron_looseMuon_neg0p6Isolation',
+    '{0}_vlooseElectron_looseMuon_neg0p4Isolation',
+    '{0}_vlooseElectron_looseMuon_neg0p2Isolation',
+    '{0}_vlooseElectron_looseMuon_neg0p0Isolation',
     '{0}_vlooseElectron_looseMuon_looseIsolation',
     '{0}_vlooseElectron_looseMuon_tightIsolation',
     '{0}_vlooseElectron_looseMuon_vtightIsolation',
-    '{0}_tightElectron_tightMuon_noIsolation',
-    '{0}_tightElectron_tightMuon_vvlooseIsolation',
-    '{0}_tightElectron_tightMuon_looseIsolation',
-    '{0}_tightElectron_tightMuon_tightIsolation',
-    '{0}_tightElectron_tightMuon_vtightIsolation',
+    #'{0}_tightElectron_tightMuon_vvlooseIsolation',
+    #'{0}_tightElectron_tightMuon_looseIsolation',
+    #'{0}_tightElectron_tightMuon_tightIsolation',
+    #'{0}_tightElectron_tightMuon_vtightIsolation',
 ]
 
 binning = [0,20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,350,400,450,500,550,600,650,700,800,900,1000]
@@ -123,11 +128,11 @@ for idName in idNames:
     }
     savename = idName.format('tau')
     tPlotter.plotRatio(num,denom,savename,rebin=binning,xaxis='p_{T} (GeV)',numcol=2,ymax=1.2)
-    if 'noIsolation' in idName:
-        var = {
-            #'signew': 'default/prompt/{0}/isoMVAold'.format(idName.format('new')),
-            'sigold': 'default/prompt/{0}/isoMVAold'.format(idName.format('old')),
-            #'fakenew': 'default/fake/{0}/isoMVAold'.format(idName.format('new')),
-            'fakeold': 'default/fake/{0}/isoMVAold'.format(idName.format('old')),
-        }
-        tPlotter.plotNormalized(var,savename+'_isoMVAold',xaxis='Isolation MVA',numcol=2)
+    #if 'noIsolation' in idName:
+    #    var = {
+    #        #'signew': 'default/prompt/{0}/isoMVAold'.format(idName.format('new')),
+    #        'sigold': 'default/prompt/{0}/isoMVAold'.format(idName.format('old')),
+    #        #'fakenew': 'default/fake/{0}/isoMVAold'.format(idName.format('new')),
+    #        'fakeold': 'default/fake/{0}/isoMVAold'.format(idName.format('old')),
+    #    }
+    #    tPlotter.plotNormalized(var,savename+'_isoMVAold',xaxis='Isolation MVA',numcol=2)

@@ -104,8 +104,10 @@ latestNtuples['80X'] = {
 #    'ZZ'             : '2016-08-08_ZZAnalysis_80X_v1-merge',
 #    'ThreeLepton'    : '2017-01-05_ThreeLeptonAnalysis_80X_v1-merge',
 # Moriond 2017
+    'Tau'            : '2017-03-30_TauAnalysis_80X_Moriond_v1-merge',
     'DY'             : '2017-03-01_DYAnalysis_80X_Moriond_v2-merge',
-    'DijetFakeRate'  : '2017-03-22_DijetFakeRateAnalysis_80X_Moriond_v1-merge',
+    #'DijetFakeRate'  : '2017-03-22_DijetFakeRateAnalysis_80X_Moriond_v1-merge', # previous
+    'DijetFakeRate'  : '2017-03-30_DijetFakeRateAnalysis_80X_Moriond_v1-merge', # with modified endcap electron id
     'ZFakeRate'      : '2017-03-21_ZFakeRateAnalysis_80X_Moriond_v1-merge',
     'WFakeRate'      : '2017-03-24_WFakeRateAnalysis_80X_Moriond_v1-merge',
     'WTauFakeRate'   : '2017-03-22_WTauFakeRateAnalysis_80X_Moriond_v2-merge',
@@ -162,6 +164,10 @@ def getNtupleDirectory(analysis,local=False,version=getCMSSWVersion(),shift=''):
 latestHistograms = {}
 
 def getNewFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
+    flat = 'newflat/{0}/{1}.root'.format(analysis,sample)
+    return flat
+
+def getNewProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
     flat = 'newflat/{0}/{1}.root'.format(analysis,sample)
     return flat
         

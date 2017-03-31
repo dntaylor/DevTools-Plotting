@@ -35,7 +35,7 @@ class WZSkimmer(NtupleSkimmer):
             '3lmassCut': lambda row: getattr(row,'3l_mass')>100,
         }
         self.selections = {
-            'wz': lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap]),
+            'default': lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap]),
             'dy': lambda row: row.z1_pt>25 and row.z2_pt>15 and row.w1_pt>20 and abs(row.z_mass-ZMASS)<15 and getattr(row,'3l_mass')>100 and row.met_pt<25 and row.w_mt<25,
             'tt': lambda row: row.z1_pt>25 and row.z2_pt>15 and row.w1_pt>20 and abs(row.z_mass-ZMASS)>5  and getattr(row,'3l_mass')>100 and row.numBjetsTight30>0,
         }

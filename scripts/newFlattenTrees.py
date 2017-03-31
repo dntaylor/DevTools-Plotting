@@ -13,6 +13,8 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 from DevTools.Plotter.utilities import getNtupleDirectory, getTreeName
 from DevTools.Plotter.WZFlattener import WZFlattener
+from DevTools.Plotter.Hpp3lFlattener import Hpp3lFlattener
+from DevTools.Plotter.Hpp4lFlattener import Hpp4lFlattener
 
 try:
     from DevTools.Utilities.MultiProgress import MultiProgress
@@ -25,6 +27,8 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 
 flatteners = {
     'WZ': WZFlattener,
+    'Hpp3l': Hpp3lFlattener,
+    'Hpp4l': Hpp4lFlattener,
 }
 
 def flatten(analysis,sample,**kwargs):

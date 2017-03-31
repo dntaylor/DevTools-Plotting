@@ -40,6 +40,7 @@ class Plotter(PlotterBase):
     def __init__(self,analysis,**kwargs):
         '''Initialize the plotter'''
         super(Plotter, self).__init__(analysis,**kwargs)
+        self.new = kwargs.pop('new',False)
 
         # empty initialization
         self.histDict = {}
@@ -69,7 +70,7 @@ class Plotter(PlotterBase):
         analysis = kwargs.pop('analysis',self.analysis)
         if analysis not in self.sampleFiles: self.sampleFiles[analysis] = {}
         if sampleName not in self.sampleFiles[analysis]:
-            self.sampleFiles[analysis][sampleName] = NtupleWrapper(analysis,sampleName,**kwargs)
+            self.sampleFiles[analysis][sampleName] = NtupleWrapper(analysis,sampleName,new=self.new,**kwargs)
             ROOT.gROOT.cd()
 
     def setSelectionMap(self,selMap):
@@ -88,6 +89,10 @@ class Plotter(PlotterBase):
         self.stackOrder += [histName]
         self.styles[histName] = getStyle(histName)
         self.styles[histName].update(style)
+
+    def setStyle(self,histName,style):
+        '''Manually add a style'''
+        self.styles[histName] = style
 
     def addHistogram(self,histName,histConstituents,style={},signal=False,scale=1,noplot=False,**kwargs):
         '''
@@ -149,6 +154,9 @@ class Plotter(PlotterBase):
         datascalefactor = kwargs.pop('datascalefactor','1')
         selection = kwargs.pop('selection','')
         binning = kwargs.pop('binning',[])
+        overflow = kwargs.pop('overflow',False)
+        underflow = kwargs.pop('underflow',False)
+        scalewidth = kwargs.pop('scalewidth',False)
         # check if it is a variable map, variable list, or single variable
         if isinstance(variable,dict):       # its a map
             variable = variable[histName]
@@ -178,14 +186,35 @@ class Plotter(PlotterBase):
 
         logging.debug('{0} - Integral: {1}'.format(histName, hist.Integral()))
 
-        # style it
         if rebin:
             if type(rebin) in [list,tuple]:
                 hist = hist.Rebin(len(rebin)-1,'',array('d',rebin))
                 # normalize to the bin width
-                hist.Scale(1,'width')
+                if scalewidth: hist.Scale(1,'width')
             else:
                 hist = hist.Rebin(rebin)
+
+        # put overflow on plot
+        if overflow or underflow:
+            nx = hist.GetNbinsX()
+            if underflow: nx += 1
+            if overflow: nx += 1
+            xbins = [0]*(nx+1)
+            for i in range(nx):
+                xbins[i]=hist.GetBinLowEdge(i+1)
+            xbins[nx]=xbins[nx-1]+hist.GetBinWidth(nx)
+            tempName = hist.GetName()+'OU'
+            htmp = ROOT.TH1D(tempName, hist.GetTitle(), nx, array('d',xbins))
+            htmp.Sumw2()
+            for i in range(nx):
+                htmp.SetBinContent(i+1, hist.GetBinContent(i+1))
+                htmp.SetBinError(i+1, hist.GetBinError(i+1))
+            htmp.SetBinContent(0, hist.GetBinContent(0))
+            htmp.SetBinError(0, hist.GetBinError(0))
+            htmp.SetEntries(hist.GetEntries())
+            hist = htmp
+
+        # style it
         style = self.styles[histName]
         hist.SetTitle(style['name'])
         if 'linecolor' in style:
@@ -200,7 +229,7 @@ class Plotter(PlotterBase):
         # remove bins < 0
         for b in range(hist.GetNbinsX()):
             if hist.GetBinContent(b+1)<0.:
-                logging.warning('{0}: Zeroing negative bin {1}: {2}'.format(histName, b,hist.GetBinContent(b+1)))
+                logging.debug('{0}: Zeroing negative bin {1}: {2}'.format(histName, b,hist.GetBinContent(b+1)))
                 hist.SetBinContent(b+1,0.)
 
         return hist
@@ -212,7 +241,7 @@ class Plotter(PlotterBase):
         analysis = self.analysisDict[histName]
         numBins = len(variables)
         histTitle = 'h_{0}_{1}'.format(savename.replace('/','_'),histName)
-        hist = ROOT.TH1F(histTitle,histTitle,numBins,0,numBins)
+        hist = ROOT.TH1D(histTitle,histTitle,numBins,0,numBins)
         for b,variable in enumerate(variables):
             varHist = self._getHistogram(histName,variable,analysis=analysis)
             if not varHist:
@@ -363,6 +392,7 @@ class Plotter(PlotterBase):
         plotratio = kwargs.pop('plotratio',True)
         blinder = kwargs.pop('blinder',[])
         rangex = kwargs.pop('rangex',[])
+        binlabels = kwargs.pop('binlabels',[])
         save = kwargs.pop('save',True)
 
         logging.info('Plotting {0}'.format(savename))
@@ -399,12 +429,19 @@ class Plotter(PlotterBase):
 
 
         highestMax = -9999999.
+        lowestMin = 9999999.
 
         # stack
         stack = 0
         if self.stackOrder:
             stack = self._getStack(variable,**kwargs)
             highestMax = max(highestMax,stack.GetMaximum())
+            #bins={}
+            #for hist in stack.GetHists():
+            #    for x in range(hist.GetNbinsX()):
+            #        if x not in bins: bins[x] = 0.
+            #        bins[x] += hist.GetBinContent(x+1)
+            #lowestMin = min([lowestMin]+[bins[x] for x in bins if bins[x]>0])
 
         # overlay histograms
         hists = OrderedDict()
@@ -430,6 +467,7 @@ class Plotter(PlotterBase):
                 name += ' (x{0})'.format(self.histScales[histName])
                 hist.SetTitle(name)
             highestMax = max(highestMax,hist.GetMaximum())
+            if histName=='data': lowestMin = min([lowestMin]+[hist.GetBinContent(x) for x in range(hist.GetNbinsX()) if hist.GetBinContent(x)>0])
             hists[histName] = hist
 
         # now draw them
@@ -441,8 +479,14 @@ class Plotter(PlotterBase):
             stack.SetMaximum(yscale*highestMax)
             stack.GetYaxis().SetLabelSize(0.05)
             if len(rangex)==2: stack.GetXaxis().SetRangeUser(*rangex)
+            if binlabels:
+                for b,label in enumerate(binlabels):
+                    stack.GetXaxis().SetBinLabel(b+1,label)
             if ymax!=None: stack.SetMaximum(ymax)
-            if ymin!=None: stack.SetMinimum(ymin)
+            if ymin!=None:
+                stack.SetMinimum(ymin)
+            elif logy and lowestMin<highestMax:
+                stack.SetMinimum(lowestMin)
             if plotratio: stack.GetHistogram().GetXaxis().SetLabelOffset(999)
             self.j += 1
             staterr = self._get_stat_err(stack.GetStack().Last().Clone('h_stack_{0}'.format(self.j)))
@@ -522,6 +566,9 @@ class Plotter(PlotterBase):
             #ratiopad.cd()
             ratiostaterr.Draw("e2")
             if len(rangex)==2: ratiostaterr.GetXaxis().SetRangeUser(*rangex)
+            if binlabels:
+                for b,label in enumerate(binlabels):
+                    ratiostaterr.GetXaxis().SetBinLabel(b+1,label)
             ratiounity.Draw('same')
             for histName, hist in ratios.iteritems():
                 if histName=='data':
@@ -803,7 +850,7 @@ class Plotter(PlotterBase):
             numBins = sig.GetNbinsX()
             self.j += 1
             name = 'h_sOverB_{0}'.format(self.j)
-            sOverB = ROOT.TH1F(name,name,numBins,sig.GetXaxis().GetXmin(),sig.GetXaxis().GetXmax())
+            sOverB = ROOT.TH1D(name,name,numBins,sig.GetXaxis().GetXmin(),sig.GetXaxis().GetXmax())
             thisMin = 999999.
             for b in range(numBins):
                 blow = 1 if invert else b+1
@@ -890,7 +937,7 @@ class Plotter(PlotterBase):
             numBins = sig.GetNbinsX()
             self.j += 1
             name = 'h_sOverB_{0}'.format(self.j)
-            significance = ROOT.TH1F(name,name,numBins,sig.GetXaxis().GetXmin(),sig.GetXaxis().GetXmax())
+            significance = ROOT.TH1D(name,name,numBins,sig.GetXaxis().GetXmin(),sig.GetXaxis().GetXmax())
             thisMin = 999999.
             for b in range(numBins):
                 blow = 1 if invert else b+1
@@ -1284,5 +1331,118 @@ class Plotter(PlotterBase):
         # save
         if save:
             self._save(canvas,savename)
+        else:
+            return self._saveTemp(canvas)
+
+
+    def plotMCDataRatio(self,stackVariableMap,dataVariable,savename,**kwargs):
+        '''Plot a ratio of MC stack to Data'''
+        xaxis = kwargs.pop('xaxis', 'Variable')
+        yaxis = kwargs.pop('yaxis', 'Events')
+        logy = kwargs.pop('logy',False)
+        logx = kwargs.pop('logx',False)
+        ymin = kwargs.pop('ymin',None)
+        ymax = kwargs.pop('ymax',None)
+        yscale = kwargs.pop('yscale',5 if logy else 1.2)
+        numcol = kwargs.pop('numcol',1)
+        legendpos = kwargs.pop('legendpos',33)
+        lumipos = kwargs.pop('lumipos',11)
+        isprelim = kwargs.pop('preliminary',True)
+        blinder = kwargs.pop('blinder',[])
+        rangex = kwargs.pop('rangex',[])
+        binlabels = kwargs.pop('binlabels',[])
+        save = kwargs.pop('save',True)
+
+        logging.info('Plotting {0}'.format(savename))
+
+        ROOT.gDirectory.Delete('h_*')
+        ROOT.gStyle.SetOptFit(ROOT.kFALSE)
+
+        canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
+        #ROOT.SetOwnership(canvas,False)
+
+        canvas.SetLogy(logy)
+        canvas.SetLogx(logx)
+
+        # histogram (denominator)
+        data = self._getHistogram('data',dataVariable,nofill=True,**kwargs)
+        data.SetMarkerStyle(20)
+        data.SetMarkerSize(1.)
+        data.SetLineColor(ROOT.kBlack)
+        data.SetBinErrorOption(ROOT.TH1.kPoisson)
+
+        # get ratios
+        # stacks (numerators)
+        stacks = OrderedDict()
+        hists = OrderedDict()
+        i = 0
+        fitResults = {}
+        for name,variable in stackVariableMap.iteritems():
+            stacks[name] = self._getStack(variable,**kwargs)
+            num = stacks[name].GetStack().Last()
+            denom = data
+            num.Sumw2()
+            denom.Sumw2()
+            num.Divide(denom)
+            #num.SetLineWidth(3)
+            style = self.styles[name]
+            num.SetTitle(style['name'])
+            if 'linecolor' in style:
+                num.SetLineColor(style['linecolor'])
+                num.SetMarkerColor(style['linecolor'])
+            if 'linestyle' in style:
+                num.SetLineStyle(style['linestyle'])
+            if 'fillstyle' in style: num.SetFillStyle(style['fillstyle'])
+            if 'fillcolor' in style: num.SetFillColor(style['fillcolor'])
+            if i==0:
+                num.Draw('e1 l')
+                num.GetXaxis().SetTitle(xaxis)
+                num.GetYaxis().SetTitle(yaxis)
+                num.GetYaxis().SetTitleOffset(1.5)
+                num.SetMinimum(0.)
+                if ymax!=None: num.SetMaximum(ymax)
+                if ymin!=None: num.SetMinimum(ymin)
+            else:
+                num.Draw('e1 l same')
+            hists[name] = num
+            i += 1
+
+            fit = ROOT.TF1('line','pol0',10,100)
+            num.Fit(fit,'0Q')
+            fitResults[name] = fit.GetParameter(0)
+
+        unityargs = [data.GetXaxis().GetXmin(),1,data.GetXaxis().GetXmax(),1]
+        ratiounity = ROOT.TLine(*unityargs)
+        ratiounity.SetLineStyle(2)
+        ratiounity.Draw('same')
+
+        #for i in range(data.GetNbinsX()+2):
+        #    if data.GetBinContent(i)>1e-6:  # not empty
+        #        bincontent = 1.
+        #        binerror = data.GetBinError(i) / data.GetBinContent(i)
+        #    else:
+        #        bincontent = 0.
+        #        binerror = 0.
+        #    data.SetBinContent(i, bincontent)
+        #    data.SetBinError(i, binerror)
+        #data.Draw('e0 same')
+
+        #hists['data'] = data
+
+        # get the legend
+        logging.debug('Legend')
+        legend = self._getLegend(hists=hists,numcol=numcol,position=legendpos)
+        legend.Draw()
+
+        # cms lumi styling
+        logging.debug('CMSLumi')
+        self._setStyle(canvas,position=lumipos,preliminary=isprelim)
+
+
+        # save
+        if save:
+            self._save(canvas,savename)
+            logging.debug('Done')
+            return fitResults
         else:
             return self._saveTemp(canvas)

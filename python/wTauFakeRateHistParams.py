@@ -56,7 +56,7 @@ def buildWTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sam
     }
     
     subsels = {
-        'SS'     : 't_charge==m_charge',
+        #'SS'     : 't_charge==m_charge', # included
         'ZVeto'  : '(z_mass<40 || z_mass>100)',
         'WMt'    : 'wm_mt>60.',
         'all'    : '(z_mass<40 || z_mass>100) && wm_mt>60. && t_charge==m_charge',
@@ -69,13 +69,13 @@ def buildWTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sam
             args = selectionParams['WTauFakeRate'][name]['args']
             selectionParams['WTauFakeRate'][name]['args'][0] = ' && '.join([args[0],subsels[sub]])
     
-    #etaBins = [0.,0.8,1.479,2.3]
-    #
-    #sels = selectionParams['WTauFakeRate'].keys()
-    #for sel in sels:
-    #    for eb in range(len(etaBins)-1):
-    #        name = '{0}/etaBin{1}'.format(sel,eb)
-    #        selectionParams['WTauFakeRate'][name] = deepcopy(selectionParams['WTauFakeRate'][sel])
-    #        args = selectionParams['WTauFakeRate'][name]['args']
-    #        selectionParams['WTauFakeRate'][name]['args'][0] = ' && '.join([args[0],'fabs(t_eta)>={0} && fabs(t_eta)<{1}'.format(etaBins[eb],etaBins[eb+1])])
+    etaBins = [0.,1.479,2.3]
+    
+    sels = selectionParams['WTauFakeRate'].keys()
+    for sel in sels:
+        for eb in range(len(etaBins)-1):
+            name = '{0}/etaBin{1}'.format(sel,eb)
+            selectionParams['WTauFakeRate'][name] = deepcopy(selectionParams['WTauFakeRate'][sel])
+            args = selectionParams['WTauFakeRate'][name]['args']
+            selectionParams['WTauFakeRate'][name]['args'][0] = ' && '.join([args[0],'fabs(t_eta)>={0} && fabs(t_eta)<{1}'.format(etaBins[eb],etaBins[eb+1])])
 

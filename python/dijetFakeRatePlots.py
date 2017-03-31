@@ -192,28 +192,24 @@ dijetFakeRatePlotter.addHistogram('data_uncorrected',sigMap['data'],style={'line
 ptbins = [0,10,15,20,25,30,50,100]#,200,1000]
 etabins = [-2.5,-2.0,-1.479,-1.0,-0.5,0.,0.5,1.0,1.479,2.0,2.5]
 
-medium_cust = {
-    'pt'     : {'yaxis': 'N_{Medium}/N_{Loose}', 'rebin': ptbins, 'xrange': [0,100]},
-    'eta'    : {'yaxis': 'N_{Medium}/N_{Loose}', 'rebin': etabins},
-}
-tight_cust = {
-    'pt'     : {'yaxis': 'N_{Tight}/N_{Loose}', 'rebin': ptbins, 'xrange': [0,100]},
-    'eta'    : {'yaxis': 'N_{Tight}/N_{Loose}', 'rebin': etabins},
+cust = {
+    'pt'     : {'yaxis': 'N_{num}/N_{denom}', 'rebin': ptbins, 'xrange': [0,100]},
+    'eta'    : {'yaxis': 'N_{num}/N_{denom}', 'rebin': etabins},
 }
 
-jetPtBins = [10,15,20,25,30,35,40,45,50]
+jetPtBins = [20,25,30,35,40,45,50]
 
 for plot in ['pt','eta']:
-    for lepton in ['medium','tight']:
+    for num,denom in [('medium','loose'),('tight','loose'),('tight','medium')]:
         kwargs = deepcopy(plots[plot])
-        if lepton=='medium':
-            if plot in medium_cust: kwargs.update(medium_cust[plot])
-        if lepton=='tight':
-            if plot in tight_cust: kwargs.update(tight_cust[plot])
+        if plot in cust:
+            update = deepcopy(cust[plot])
+            update['yaxis'] = update['yaxis'].format(num=num,denom=denom)
+            kwargs.update(update)
         for chan in chans:
-            numname = '{0}/{1}/{2}'.format(lepton,chan,plot)
-            denomname = 'loose/{0}/{1}'.format(chan,plot)
-            savename = 'ratio/{0}/{1}/{2}'.format(lepton,chan,plot)
+            numname = '{0}/{1}/{2}'.format(num,chan,plot)
+            denomname = '{0}/{1}/{2}'.format(denom,chan,plot)
+            savename = 'ratio/{0}_{1}/{2}/{3}'.format(num,denom,chan,plot)
             subtractMap = {
                 'data': ['MC'],
             }
@@ -227,9 +223,9 @@ for plot in ['pt','eta']:
             #    savename = 'ratio/{0}/{1}/{2}_etabin{3}'.format(lepton,chan,plot,etabin)
             #    dijetFakeRatePlotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,legendpos=34,numcol=2,subtractMap=subtractMap,**kwargs)
             for jetPt in jetPtBins:
-                numname = '{0}/{1}/jetPt{2}/{3}'.format(lepton,chan,jetPt,plot)
-                denomname = 'loose/{0}/jetPt{1}/{2}'.format(chan,jetPt,plot)
-                savename = 'ratio/{0}/{1}/{2}_jetPt{3}'.format(lepton,chan,plot,jetPt)
+                numname = '{0}/{1}/jetPt{2}/{3}'.format(num,chan,jetPt,plot)
+                denomname = '{0}/{1}/jetPt{2}/{3}'.format(denom,chan,jetPt,plot)
+                savename = 'ratio/{0}_{1}/{2}/{3}_jetPt{4}'.format(num,denom,chan,plot,jetPt)
                 dijetFakeRatePlotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,legendpos=34,numcol=2,subtractMap=subtractMap,**kwargs)
 
 

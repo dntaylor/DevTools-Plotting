@@ -2,6 +2,9 @@ import logging
 from xsec_Hpp4l import xsecs as xsecs_4l
 from xsec_Hpp4l import xsecs_NLO as xsecs_4l_NLO
 from xsec_Hpp4l import xsecs_kfactor as xsecs_4l_kfactor
+from xsec_Hpp4l import xsecs_right as xsecs_r4l
+from xsec_Hpp4l import xsecs_right_NLO as xsecs_r4l_NLO
+from xsec_Hpp4l import xsecs_right_kfactor as xsecs_r4l_kfactor
 
 PB = 1.
 pb = PB
@@ -276,6 +279,8 @@ xsecs = {
 for mass in xsecs_4l_NLO:
     xsecs['HPlusPlusHMinusMinusHTo4L_M-{0}_TuneCUETP8M1_13TeV_pythia8'.format(mass)] = xsecs_4l_NLO[mass]
     xsecs['HPlusPlusHMinusMinusHTo4L_M-{0}_13TeV-pythia8'.format(mass)] = xsecs_4l_NLO[mass]
+    xsecs['HPlusPlusHMinusMinusHRTo4L_M-{0}_TuneCUETP8M1_13TeV_pythia8'.format(mass)] = xsecs_r4l_NLO[mass]
+    xsecs['HPlusPlusHMinusMinusHRTo4L_M-{0}_13TeV-pythia8'.format(mass)] = xsecs_r4l_NLO[mass]
 
 
 def getXsec(sample):

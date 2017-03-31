@@ -16,7 +16,7 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
 
     histParams['Hpp3l'] = {
         'count'                       : {'xVariable': '1',                              'xBinning': [1,0,2],                 }, # just a count of events passing selection
-        'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               },
+        'numVertices'                 : {'xVariable': 'numVertices',                    'xBinning': [60,0,60],               },
         #'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],               'mcscale': '1./pileupWeight'},
         #'pileupWeight'                : {'xVariable': 'pileupWeight',                   'xBinning': [30,0,3],                'mcscale': '1./pileupWeight'},
         'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
@@ -83,7 +83,7 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
     if shift=='puDown': hpp3lBaseScaleFactor = '*'.join(['genWeight','pileupWeightDown','triggerEfficiency'])
 
     # setup base selections
-    hpp3lBaseCut = '1'
+    hpp3lBaseCut = '3l_mass>100'
     hpp3lLowMassControl = '{0} && hpp_mass<100'.format(hpp3lBaseCut)
     hpp3lScaleFactor = '*'.join(['{0}_mediumScale'.format(lep) for lep in leps]+[hpp3lBaseScaleFactor])
     if shift=='lepUp': hpp3lScaleFactor = '*'.join(['{0}_mediumScaleUp'.format(lep) for lep in leps]+[hpp3lBaseScaleFactor])
@@ -91,18 +91,18 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
     
     # setup fakerate selections
     scaleMap = {
-        'P' : '{0}_looseScale',
-        'F' : '{0}_mediumScale',
+        'F' : '{0}_looseScale',
+        'P' : '{0}_mediumScale',
     }
     if shift=='lepUp':
         scaleMap = {
-            'P' : '{0}_looseScaleUp',
-            'F' : '{0}_mediumScaleUp',
+            'F' : '{0}_looseScaleUp',
+            'P' : '{0}_mediumScaleUp',
         }
     if shift=='lepDown':
         scaleMap = {
-            'P' : '{0}_looseScaleDown',
-            'F' : '{0}_mediumScaleDown',
+            'F' : '{0}_looseScaleDown',
+            'P' : '{0}_mediumScaleDown',
         }
 
     fakeVal = '{0}_mediumFakeRate'

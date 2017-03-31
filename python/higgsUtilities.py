@@ -256,6 +256,10 @@ sigMaps = {
     'Hpp4l': {
         'Z'   : [
                  #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+                 #'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+                 #'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+                 #'DY3JetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+                 #'DY4JetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
                  #'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
                  #'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
                  #'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
@@ -273,24 +277,27 @@ sigMaps = {
                  #'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
                  'WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8', # more stats but neg weights
                  'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
+                 'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8',
                 ],
         'ZZ' : [
                  'ZZTo4L_13TeV_powheg_pythia8',
+                 'ZZTo2L2Nu_13TeV_powheg_pythia8',
+                 'ZZTo2L2Q_13TeV_powheg_pythia8',
                  'GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8',
                  'GluGluToContinToZZTo2mu2tau_13TeV_MCFM701_pythia8',
                  'GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8',
                  'GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8',
                  'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8',
-                 'ZZTo2L2Nu_13TeV_powheg_pythia8',
-                 'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
+                 #'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
                 ],
         'TTV' : [
-                 'ttWJets_13TeV_madgraphMLM',
+                 #'ttWJets_13TeV_madgraphMLM',
+                 'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
                  'ttZJets_13TeV_madgraphMLM',
-                 #'ttH_M125_13TeV_powheg_pythia8',
                  'tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
                 ],
         'VVV' : [
+                 'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
                  'WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
                  'WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
                  'ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
@@ -308,7 +315,6 @@ sigMaps = {
                 ],
         'TTV' : [
                  'ttZJets_13TeV_madgraphMLM',
-                 #'ttH_M125_13TeV_powheg_pythia8',
                 ],
         'VVV' : [
                  'WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
@@ -319,14 +325,12 @@ sigMaps = {
     },
     'Hpp3l' : {
         'T'   : [
-                 #'ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
+                 'ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
                  #'ST_t-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
                  'ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
                  'ST_t-channel_top_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
-                 #'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
-                 #'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
-                 'ST_tW_top_5f_NoFullyHadronicDecays_13TeV-powheg_TuneCUETP8M1',
-                 'ST_tW_antitop_5f_NoFullyHadronicDecays_13TeV-powheg_TuneCUETP8M1',
+                 'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
+                 'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
                 ],
         'W'   : [
                  'WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
@@ -337,20 +341,22 @@ sigMaps = {
                 ],
         'Z'   : [
                  #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+                 #'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+                 #'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+                 #'DY3JetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+                 #'DY4JetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
                  #'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
                  #'DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
                  #'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
                  #'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
                  #'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
                  'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-                 #'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-                 'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
-                 'DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+                 'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
                 ],
         'WW'  : [
                  'WWTo2L2Nu_13TeV-powheg',
                  'WWToLNuQQ_13TeV-powheg',
-                 'GluGluWWTo2L2Nu_MCFM_13TeV',
+                 #'GluGluWWTo2L2Nu_MCFM_13TeV',
                 ],
         'TT'  : [
                  'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
@@ -365,22 +371,22 @@ sigMaps = {
                 ],
         'ZZ' : [
                  'ZZTo4L_13TeV_powheg_pythia8',
+                 'ZZTo2L2Nu_13TeV_powheg_pythia8',
+                 'ZZTo2L2Q_13TeV_powheg_pythia8',
                  'GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8',
                  'GluGluToContinToZZTo2mu2tau_13TeV_MCFM701_pythia8',
                  'GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8',
                  'GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8',
                  'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8',
-                 'ZZTo2L2Nu_13TeV_powheg_pythia8',
-                 'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
+                 #'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
                 ],
         'TTV' : [
-                 'ttWJets_13TeV_madgraphMLM',
+                 'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
+                 #'ttWJets_13TeV_madgraphMLM',
                  'ttZJets_13TeV_madgraphMLM',
-                 #'ttH_M125_13TeV_powheg_pythia8',
                  'tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
                 ],
         'VVV' : [
-                 'WWG_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
                  'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
                  'WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
                  'WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
@@ -402,9 +408,9 @@ sigMaps = {
                  'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8',
                 ],
         'TTV' : [
-                 'ttWJets_13TeV_madgraphMLM',
+                 'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
+                 #'ttWJets_13TeV_madgraphMLM',
                  'ttZJets_13TeV_madgraphMLM',
-                 #'ttH_M125_13TeV_powheg_pythia8',
                  'tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
                 ],
         'VVV' : [
@@ -442,20 +448,20 @@ for sigMap in sigMaps:
     sigMaps[sigMap]['HppHmm1400GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1400_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else []
     sigMaps[sigMap]['HppHmm1500GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1500_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else []
 
-    sigMaps[sigMap]['HppHm200GeV']   = ['HPlusPlusHMinusHTo3L_M-200_TuneCUETP8M1_13TeV_calchep-pythia8']
-    sigMaps[sigMap]['HppHm300GeV']   = ['HPlusPlusHMinusHTo3L_M-300_TuneCUETP8M1_13TeV_calchep-pythia8']
-    sigMaps[sigMap]['HppHm400GeV']   = ['HPlusPlusHMinusHTo3L_M-400_TuneCUETP8M1_13TeV_calchep-pythia8']
-    sigMaps[sigMap]['HppHm500GeV']   = ['HPlusPlusHMinusHTo3L_M-500_TuneCUETP8M1_13TeV_calchep-pythia8']
-    sigMaps[sigMap]['HppHm600GeV']   = ['HPlusPlusHMinusHTo3L_M-600_TuneCUETP8M1_13TeV_calchep-pythia8']
-    sigMaps[sigMap]['HppHm700GeV']   = ['HPlusPlusHMinusHTo3L_M-700_TuneCUETP8M1_13TeV_calchep-pythia8']
-    sigMaps[sigMap]['HppHm800GeV']   = ['HPlusPlusHMinusHTo3L_M-800_TuneCUETP8M1_13TeV_calchep-pythia8']
-    sigMaps[sigMap]['HppHm900GeV']   = ['HPlusPlusHMinusHTo3L_M-900_TuneCUETP8M1_13TeV_calchep-pythia8']
-    sigMaps[sigMap]['HppHm1000GeV']  = ['HPlusPlusHMinusHTo3L_M-1000_TuneCUETP8M1_13TeV_calchep-pythia8']
-    sigMaps[sigMap]['HppHm1100GeV']  = ['HPlusPlusHMinusHTo3L_M-1100_TuneCUETP8M1_13TeV_calchep-pythia8']
-    sigMaps[sigMap]['HppHm1200GeV']  = ['HPlusPlusHMinusHTo3L_M-1200_TuneCUETP8M1_13TeV_calchep-pythia8']
-    sigMaps[sigMap]['HppHm1300GeV']  = ['HPlusPlusHMinusHTo3L_M-1300_TuneCUETP8M1_13TeV_calchep-pythia8']
-    sigMaps[sigMap]['HppHm1400GeV']  = ['HPlusPlusHMinusHTo3L_M-1400_TuneCUETP8M1_13TeV_calchep-pythia8']
-    sigMaps[sigMap]['HppHm1500GeV']  = ['HPlusPlusHMinusHTo3L_M-1500_TuneCUETP8M1_13TeV_calchep-pythia8']
+    sigMaps[sigMap]['HppHm200GeV']   = ['HPlusPlusHMinusHTo3L_M-200_TuneCUETP8M1_13TeV_calchep-pythia8' ] if version=='76X' else ['HPlusPlusHMinusHTo3L_M-200_13TeV-calchep-pythia8']
+    sigMaps[sigMap]['HppHm300GeV']   = ['HPlusPlusHMinusHTo3L_M-300_TuneCUETP8M1_13TeV_calchep-pythia8' ] if version=='76X' else ['HPlusPlusHMinusHTo3L_M-300_13TeV-calchep-pythia8']
+    sigMaps[sigMap]['HppHm400GeV']   = ['HPlusPlusHMinusHTo3L_M-400_TuneCUETP8M1_13TeV_calchep-pythia8' ] if version=='76X' else ['HPlusPlusHMinusHTo3L_M-400_13TeV-calchep-pythia8']
+    sigMaps[sigMap]['HppHm500GeV']   = ['HPlusPlusHMinusHTo3L_M-500_TuneCUETP8M1_13TeV_calchep-pythia8' ] if version=='76X' else ['HPlusPlusHMinusHTo3L_M-500_13TeV-calchep-pythia8']
+    sigMaps[sigMap]['HppHm600GeV']   = ['HPlusPlusHMinusHTo3L_M-600_TuneCUETP8M1_13TeV_calchep-pythia8' ] if version=='76X' else ['HPlusPlusHMinusHTo3L_M-600_13TeV-calchep-pythia8']
+    sigMaps[sigMap]['HppHm700GeV']   = ['HPlusPlusHMinusHTo3L_M-700_TuneCUETP8M1_13TeV_calchep-pythia8' ] if version=='76X' else ['HPlusPlusHMinusHTo3L_M-700_13TeV-calchep-pythia8']
+    sigMaps[sigMap]['HppHm800GeV']   = ['HPlusPlusHMinusHTo3L_M-800_TuneCUETP8M1_13TeV_calchep-pythia8' ] if version=='76X' else ['HPlusPlusHMinusHTo3L_M-800_13TeV-calchep-pythia8']
+    sigMaps[sigMap]['HppHm900GeV']   = ['HPlusPlusHMinusHTo3L_M-900_TuneCUETP8M1_13TeV_calchep-pythia8' ] if version=='76X' else ['HPlusPlusHMinusHTo3L_M-900_13TeV-calchep-pythia8']
+    sigMaps[sigMap]['HppHm1000GeV']  = ['HPlusPlusHMinusHTo3L_M-1000_TuneCUETP8M1_13TeV_calchep-pythia8'] if version=='76X' else ['HPlusPlusHMinusHTo3L_M-1000_13TeV-calchep-pythia8']
+    sigMaps[sigMap]['HppHm1100GeV']  = ['HPlusPlusHMinusHTo3L_M-1100_TuneCUETP8M1_13TeV_calchep-pythia8'] if version=='76X' else ['HPlusPlusHMinusHTo3L_M-1100_13TeV-calchep-pythia8']
+    sigMaps[sigMap]['HppHm1200GeV']  = ['HPlusPlusHMinusHTo3L_M-1200_TuneCUETP8M1_13TeV_calchep-pythia8'] if version=='76X' else ['HPlusPlusHMinusHTo3L_M-1200_13TeV-calchep-pythia8']
+    sigMaps[sigMap]['HppHm1300GeV']  = ['HPlusPlusHMinusHTo3L_M-1300_TuneCUETP8M1_13TeV_calchep-pythia8'] if version=='76X' else ['HPlusPlusHMinusHTo3L_M-1300_13TeV-calchep-pythia8']
+    sigMaps[sigMap]['HppHm1400GeV']  = ['HPlusPlusHMinusHTo3L_M-1400_TuneCUETP8M1_13TeV_calchep-pythia8'] if version=='76X' else ['HPlusPlusHMinusHTo3L_M-1400_13TeV-calchep-pythia8']
+    sigMaps[sigMap]['HppHm1500GeV']  = ['HPlusPlusHMinusHTo3L_M-1500_TuneCUETP8M1_13TeV_calchep-pythia8'] if version=='76X' else ['HPlusPlusHMinusHTo3L_M-1500_13TeV-calchep-pythia8']
 
 ##################
 ### Selections ###

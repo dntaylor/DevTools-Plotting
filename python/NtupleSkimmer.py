@@ -128,7 +128,7 @@ class NtupleSkimmer(object):
                 total += 1
                 self.pbar.update(total)
                 self.perRowAction(row)
-            print ''
+            self.pbar.finish()
         else:
             logging.info('Skimming {0} {1}'.format(self.analysis,self.sample))
             for row in self.sampleTree:

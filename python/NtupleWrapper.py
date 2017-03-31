@@ -13,7 +13,7 @@ ROOT.gROOT.SetBatch(ROOT.kTRUE)
 ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 
 from DevTools.Plotter.xsec import getXsec
-from DevTools.Plotter.utilities import getLumi, isData, hashFile, hashString, python_mkdir, getTreeName, getNtupleDirectory, getFlatHistograms, getProjectionHistograms, getSkimJson, getSkimPickle
+from DevTools.Plotter.utilities import *
 from DevTools.Plotter.histParams import getHistParams, getHistSelections, getProjectionParams
 
 CMSSW_BASE = os.environ['CMSSW_BASE']
@@ -23,6 +23,7 @@ class NtupleWrapper(object):
 
     def __init__(self,analysis,sample,**kwargs):
         # default to access via sample/analysis
+        self.new = kwargs.pop('new',False)
         self.analysis = analysis
         self.sample = sample
         self.shift = kwargs.pop('shift','')
@@ -35,8 +36,10 @@ class NtupleWrapper(object):
         self.inputFileList = kwargs.pop('inputFileList','')
         self.treeName = kwargs.pop('treeName',getTreeName(self.analysis))
         #self.flat = kwargs.pop('flat','flat/{0}/{1}.root'.format(self.analysis,self.sample))
-        self.flat = kwargs.pop('flat',getFlatHistograms(self.analysis,self.sample,shift=self.shift))
-        self.proj = kwargs.pop('proj',getProjectionHistograms(self.analysis,self.sample,shift=self.shift))
+        flat = getNewFlatHistograms if self.new else getFlatHistograms
+        proj = getNewProjectionHistograms if self.new else getProjectionHistograms
+        self.flat = kwargs.pop('flat',flat(self.analysis,self.sample,shift=self.shift))
+        self.proj = kwargs.pop('proj',proj(self.analysis,self.sample,shift=self.shift))
         self.json = kwargs.pop('json',getSkimJson(self.analysis,self.sample,shift=self.shift))
         self.pickle = kwargs.pop('pickle',getSkimPickle(self.analysis,self.sample,shift=self.shift))
         self.skimInitialized = False
@@ -258,11 +261,11 @@ class NtupleWrapper(object):
         binning = xBinning
         tree = self.sampleTree
         if not tree: 
-            hist = ROOT.TH1F(histName,histName,*binning)
+            hist = ROOT.TH1D(histName,histName,*binning)
             return hist
         # TODO, make sure this is worth it
         #if self.entryListMap['1'].GetN()<1:
-        #    hist = ROOT.TH1F(histName,histName,*binning)
+        #    hist = ROOT.TH1D(histName,histName,*binning)
         #    return hist
         #tree.SetEntryList(self.entryListMap['1'])
         #if selection not in self.entryListMap:
@@ -273,7 +276,7 @@ class NtupleWrapper(object):
         #    self.entryListMap[selection] = skim
         #skim = self.entryListMap[selection]
         #if not skim or skim.GetN()==0:
-        #    return ROOT.TH1F(histName,histName,*binning)
+        #    return ROOT.TH1D(histName,histName,*binning)
         #tree.SetEntryList(skim)
         drawString = '{0}>>{1}({2})'.format(xVariable,histName,', '.join([str(x) for x in binning]))
         selectionString = '{0}*({1})'.format(scalefactor,selection)
@@ -288,7 +291,7 @@ class NtupleWrapper(object):
             out = self.proof.GetOutputList()
             hist = out.FindObject(histName)
         else:
-            hist = ROOT.TH1F(histName,histName,*binning)
+            hist = ROOT.TH1D(histName,histName,*binning)
         return hist
 
     def __getHist2D(self,histName,selection,scalefactor,xVariable,yVariable,xBinning,yBinning):
@@ -297,11 +300,11 @@ class NtupleWrapper(object):
         binning = xBinning+yBinning
         tree = self.sampleTree
         if not tree:
-            hist = ROOT.TH2F(histName,histName,*binning)
+            hist = ROOT.TH2D(histName,histName,*binning)
             return hist
         # TODO, make sure this is worth it
         #if self.entryListMap['1'].GetN()<1:
-        #    hist = ROOT.TH2F(histName,histName,*binning)
+        #    hist = ROOT.TH2D(histName,histName,*binning)
         #    return hist
         #tree.SetEntryList(self.entryListMap['1'])
         #if selection not in self.entryListMap:
@@ -312,7 +315,7 @@ class NtupleWrapper(object):
         #    self.entryListMap[selection] = skim
         #skim = self.entryListMap[selection]
         #if not skim or skim.GetN()==0:
-        #    return ROOT.TH2F(histName,histName,*binning)
+        #    return ROOT.TH2D(histName,histName,*binning)
         #tree.SetEntryList(skim)
         drawString = '{0}:{1}>>{2}({3})'.format(yVariable,xVariable,histName,', '.join([str(x) for x in binning]))
         selectionString = '{0}*({1})'.format(scalefactor,selection)
@@ -327,7 +330,7 @@ class NtupleWrapper(object):
             out = self.proof.GetOutputList()
             hist = out.FindObject(histName)
         else:
-            hist = ROOT.TH2F(histName,histName,*binning)
+            hist = ROOT.TH2D(histName,histName,*binning)
         return hist
 
     def __getHist3D(self,histName,selection,scalefactor,xVariable,yVariable,zVariable,xBinning,yBinning,zBinning):
@@ -336,11 +339,11 @@ class NtupleWrapper(object):
         binning = xBinning+yBinning+zBinning
         tree = self.sampleTree
         if not tree:
-            hist = ROOT.TH3F(histName,histName,*binning)
+            hist = ROOT.TH3D(histName,histName,*binning)
             return hist
         # TODO, make sure this is worth it
         #if self.entryListMap['1'].GetN()<1:
-        #    hist = ROOT.TH3F(histName,histName,*binning)
+        #    hist = ROOT.TH3D(histName,histName,*binning)
         #    return hist
         #tree.SetEntryList(self.entryListMap['1'])
         #if selection not in self.entryListMap:
@@ -351,7 +354,7 @@ class NtupleWrapper(object):
         #    self.entryListMap[selection] = skim
         #skim = self.entryListMap[selection]
         #if not skim or skim.GetN()==0:
-        #    return ROOT.TH3F(histName,histName,*binning)
+        #    return ROOT.TH3D(histName,histName,*binning)
         #tree.SetEntryList(skim)
         drawString = '{0}:{1}:{2}>>{3}({4})'.format(zVariable,yVariable,xVariable,histName,', '.join([str(x) for x in binning]))
         selectionString = '{0}*({1})'.format(scalefactor,selection)
@@ -366,7 +369,7 @@ class NtupleWrapper(object):
             out = self.proof.GetOutputList()
             hist = out.FindObject(histName)
         else:
-            hist = ROOT.TH3F(histName,histName,*binning)
+            hist = ROOT.TH3D(histName,histName,*binning)
         return hist
 
     def __project(self,histName,directory,hist2d,direction,binLabels=[],binRange=[0,-1],temp=False):
@@ -408,7 +411,7 @@ class NtupleWrapper(object):
                 hist = ROOT.gDirectory.Get(name)
                 hists.Add(hist)
         if hists.IsEmpty():
-            hist = ROOT.TH1F(histName,histName,*binning)
+            hist = ROOT.TH1D(histName,histName,*binning)
         else:
             self.j += 1
             hist = hists[0].Clone('h_temp_{0}_{1}'.format(histName,self.j))
@@ -505,7 +508,7 @@ class NtupleWrapper(object):
                 hist = ROOT.gDirectory.Get(name)
                 hists.Add(hist)
         if hists.IsEmpty():
-            hist = ROOT.TH1F(histName,histName,*binning)
+            hist = ROOT.TH1D(histName,histName,*binning)
         else:
             self.j += 1
             hist = hists[0].Clone('h_temp_{0}_{1}'.format(histName,self.j))
