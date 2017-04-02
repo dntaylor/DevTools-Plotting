@@ -110,10 +110,11 @@ latestNtuples['80X'] = {
     'DijetFakeRate'  : '2017-03-30_DijetFakeRateAnalysis_80X_Moriond_v1-merge', # with modified endcap electron id
     'ZFakeRate'      : '2017-03-21_ZFakeRateAnalysis_80X_Moriond_v1-merge',
     'WFakeRate'      : '2017-03-24_WFakeRateAnalysis_80X_Moriond_v1-merge',
-    'WTauFakeRate'   : '2017-03-22_WTauFakeRateAnalysis_80X_Moriond_v2-merge',
+    #'WTauFakeRate'   : '2017-03-22_WTauFakeRateAnalysis_80X_Moriond_v2-merge', # prev, loose -0.8
+    'WTauFakeRate'   : '2017-03-31_WTauFakeRateAnalysis_80X_Moriond_v1-merge', # loose -0.2
     'WZ'             : '2017-03-24_WZAnalysis_80X_Moriond_v1-merge',
-    'Hpp3l'          : '2017-03-26_Hpp3lAnalysis_80X_Moriond_v1-merge',
-    'Hpp4l'          : '2017-03-26_Hpp4lAnalysis_80X_Moriond_v1-merge',
+    'Hpp3l'          : '2017-03-31_Hpp3lAnalysis_80X_Moriond_v2-merge',
+    'Hpp4l'          : '2017-03-31_Hpp4lAnalysis_80X_Moriond_v2-merge',
 }
 
 latestShifts = {}

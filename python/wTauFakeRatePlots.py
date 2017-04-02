@@ -105,13 +105,13 @@ plots = {
     'numTightMuons'         : {'xaxis': 'Number of tight muons', 'yaxis': 'Events',},
     'numLooseMuons'         : {'xaxis': 'Number of loose muons', 'yaxis': 'Events',},
     # runs
-    'wmMt_Run2016B'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
-    'wmMt_Run2016C'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
-    'wmMt_Run2016D'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
-    'wmMt_Run2016E'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
-    'wmMt_Run2016F'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
-    'wmMt_Run2016G'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
-    'wmMt_Run2016H'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
+    #'wmMt_Run2016B'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
+    #'wmMt_Run2016C'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
+    #'wmMt_Run2016D'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
+    #'wmMt_Run2016E'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
+    #'wmMt_Run2016F'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
+    #'wmMt_Run2016G'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
+    #'wmMt_Run2016H'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
 }
 
 for plot in plots:
@@ -119,7 +119,7 @@ for plot in plots:
         plotname = '{0}/{1}'.format(region,plot)
         savename = '{0}/{1}'.format(region,plot)
         fakeratePlotter.plot(plotname,savename,**plots[plot])
-        for sel in ['SS','ZVeto','WMt','all']:
+        for sel in ['ZVeto','WMt','all']:
             plotname = '{0}/{1}/{2}'.format(region,sel,plot)
             savename = '{0}/{1}/{2}'.format(region,sel,plot)
             fakeratePlotter.plot(plotname,savename,**plots[plot])

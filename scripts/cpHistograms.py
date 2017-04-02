@@ -30,7 +30,7 @@ def main(argv=None):
     args = parse_command_line(argv)
 
     os.system('mkdir -p {0}'.format(args.flat))
-    os.system('mkdir -p {0}'.format(args.projection))
+    if args.projection: os.system('mkdir -p {0}'.format(args.projection))
 
     alldirs = sorted(glob.glob('{0}/*'.format(args.input)))
 

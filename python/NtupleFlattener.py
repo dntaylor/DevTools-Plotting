@@ -87,7 +87,7 @@ class NtupleFlattener(object):
                     for genChan in genChans:
                         histName = '{0}/{1}/gen_{2}/{3}'.format(selection,chan,genChan,hist)
                         if genChan=='all': histName = '{0}/{1}/{2}'.format(selection,chan,hist)
-                        #if chan=='all': histName = '{0}/{1}'.format(selection,hist)
+                        if chan=='all': histName = '{0}/{1}'.format(selection,hist)
                         xbins = self.histParams[hist]['xBinning']
                         self.hists[histName] = ROOT.TH1D(histName,histName,xbins[0],xbins[1],xbins[2])
                         self.hists[histName].Sumw2()
@@ -190,7 +190,7 @@ class NtupleFlattener(object):
                 if not self.hstParams[hist]['selection'](row): continue
             val = self.histParams[hist]['x'](row)
             w = weight*self.histParams[hist]['mcscale'](row) if 'mcscale' in self.histParams[hist] and self.isData else weight
-            histName = '{0}/all/{1}'.format(selection,hist)
+            histName = '{0}/{1}'.format(selection,hist)
             self.hists[histName].Fill(val,w)
             histName = '{0}/{1}/{2}'.format(selection,chan,hist)
             self.hists[histName].Fill(val,w)

@@ -26,8 +26,9 @@ plotNormalization = False
 plotSOverB = False
 plotSignificance = False
 plotAllMasses = False
+plotSig500 = False
 
-hpp4lPlotter = Plotter('Hpp4l')
+hpp4lPlotter = Plotter('Hpp4l',new=True)
 
 #########################
 ### Define categories ###
@@ -165,7 +166,7 @@ ymax = {
     #},
 }
 
-def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postfix='',perCatBins=False,**kwargs):
+def plotWithCategories(plotter,plot,baseDir='default',saveDir='',datadriven=False,postfix='',perCatBins=False,**kwargs):
     plotname = '/'.join([x for x in [baseDir,plot] if x])
     plotvars = getDataDrivenPlot(plotname) if datadriven else plotname
     savename = '/'.join([x for x in [saveDir,plot] if x])
@@ -357,11 +358,12 @@ if plotMC:
         plotWithCategories(hpp4lPlotter,plot,baseDir='default',saveDir='mc',perCatBins=True,**kwargs)
     
     # selection assuming 500
-    if plotCount: plotCounts(hpp4lPlotter,baseDir='nMinusOne/massWindow/500/hpp2hmm2',saveDir='sig500')
-    
-    for plot in plots:
-        kwargs = deepcopy(plots[plot])
-        plotWithCategories(hpp4lPlotter,plot,baseDir='nMinusOne/massWindow/500/hpp2hmm2',saveDir='sig500',perCatBins=True,**kwargs)
+    if plotSig500:
+        if plotCount: plotCounts(hpp4lPlotter,baseDir='nMinusOne/massWindow/500/hpp2hmm2',saveDir='sig500')
+        
+        for plot in plots:
+            kwargs = deepcopy(plots[plot])
+            plotWithCategories(hpp4lPlotter,plot,baseDir='nMinusOne/massWindow/500/hpp2hmm2',saveDir='sig500',perCatBins=True,**kwargs)
     
     # partially blinded plots
     if blind:
@@ -453,18 +455,19 @@ if plotDatadriven:
 
     if not blind: hpp4lPlotter.addHistogram('data',sigMapDD['data'])
     
-    if plotCount: plotCounts(hpp4lPlotter,baseDir='',saveDir='datadriven',datadriven=True)
+    if plotCount: plotCounts(hpp4lPlotter,baseDir='default',saveDir='datadriven',datadriven=True)
     
     for plot in plots:
         kwargs = deepcopy(plots[plot])
-        plotWithCategories(hpp4lPlotter,plot,baseDir='',saveDir='datadriven',datadriven=True,perCatBins=True,**kwargs)
+        plotWithCategories(hpp4lPlotter,plot,baseDir='default',saveDir='datadriven',datadriven=True,perCatBins=True,**kwargs)
     
     # selection assuming 500
-    if plotCount: plotCounts(hpp4lPlotter,baseDir='nMinusOne/massWindow/500/hpp2hmm2',saveDir='sig500-datadriven',datadriven=True)
-    
-    for plot in plots:
-        kwargs = deepcopy(plots[plot])
-        plotWithCategories(hpp4lPlotter,plot,baseDir='nMinusOne/massWindow/500/hpp2hmm2',saveDir='sig500-datadriven',datadriven=True,perCatBins=True,**kwargs)
+    if plotSig500:
+        if plotCount: plotCounts(hpp4lPlotter,baseDir='nMinusOne/massWindow/500/hpp2hmm2',saveDir='sig500-datadriven',datadriven=True)
+        
+        for plot in plots:
+            kwargs = deepcopy(plots[plot])
+            plotWithCategories(hpp4lPlotter,plot,baseDir='nMinusOne/massWindow/500/hpp2hmm2',saveDir='sig500-datadriven',datadriven=True,perCatBins=True,**kwargs)
     
     # partially blinded plots
     if blind:
@@ -473,7 +476,7 @@ if plotDatadriven:
         for plot in blind_cust:
             kwargs = deepcopy(plots[plot])
             kwargs.update(blind_cust[plot])
-            plotWithCategories(hpp4lPlotter,plot,baseDir='',saveDir='datadriven',postfix='blinder',datadriven=True,perCatBins=True,**kwargs)
+            plotWithCategories(hpp4lPlotter,plot,baseDir='default',saveDir='datadriven',postfix='blinder',datadriven=True,perCatBins=True,**kwargs)
 
 ####################
 ### Fake Regions ###

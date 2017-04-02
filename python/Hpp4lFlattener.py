@@ -95,12 +95,21 @@ class Hpp4lFlattener(NtupleFlattener):
         # alternative fakerates
         self.fakekey = '{num}_{denom}'
         self.fakehists = {'electrons': {}, 'muons': {}, 'taus': {},}
+
         fake_path = '{0}/src/DevTools/Analyzer/data/fakerates_dijet_hpp_13TeV_Run2016BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
         self.fake_hpp_rootfile = ROOT.TFile(fake_path)
-        self.fakehists['electrons'][self.fakekey.format(num='HppMedium',denom='HppLoose')] = self.fake_hpp_rootfile.Get('e/medium/fakeratePtEta')
-        self.fakehists['electrons'][self.fakekey.format(num='HppTight',denom='HppLoose')] = self.fake_hpp_rootfile.Get('e/tight/fakeratePtEta')
-        self.fakehists['muons'][self.fakekey.format(num='HppMedium',denom='HppLoose')] = self.fake_hpp_rootfile.Get('m/medium/fakeratePtEta')
-        self.fakehists['muons'][self.fakekey.format(num='HppTight',denom='HppLoose')] = self.fake_hpp_rootfile.Get('m/tight/fakeratePtEta')
+        self.fakehists['electrons'][self.fakekey.format(num='HppMedium',denom='HppLoose')] = self.fake_hpp_rootfile.Get('e/medium_loose/fakeratePtEta')
+        self.fakehists['electrons'][self.fakekey.format(num='HppTight',denom='HppLoose')] = self.fake_hpp_rootfile.Get('e/tight_loose/fakeratePtEta')
+        self.fakehists['electrons'][self.fakekey.format(num='HppTight',denom='HppMedium')] = self.fake_hpp_rootfile.Get('e/tight_medium/fakeratePtEta')
+        self.fakehists['muons'][self.fakekey.format(num='HppMedium',denom='HppLoose')] = self.fake_hpp_rootfile.Get('m/medium_loose/fakeratePtEta')
+        self.fakehists['muons'][self.fakekey.format(num='HppTight',denom='HppLoose')] = self.fake_hpp_rootfile.Get('m/tight_loose/fakeratePtEta')
+        self.fakehists['muons'][self.fakekey.format(num='HppTight',denom='HppMedium')] = self.fake_hpp_rootfile.Get('m/tight_medium/fakeratePtEta')
+
+        fake_path = '{0}/src/DevTools/Analyzer/data/fakerates_w_tau_13TeV_Run2016BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
+        self.fake_hpp_rootfile_tau = ROOT.TFile(fake_path)
+        self.fakehists['taus'][self.fakekey.format(num='HppMedium',denom='HppLoose')] = self.fake_hpp_rootfile.Get('m/medium_loose/fakeratePtEta')
+        self.fakehists['taus'][self.fakekey.format(num='HppTight',denom='HppLoose')] = self.fake_hpp_rootfile.Get('m/tight_loose/fakeratePtEta')
+        self.fakehists['taus'][self.fakekey.format(num='HppTight',denom='HppMedium')] = self.fake_hpp_rootfile.Get('m/tight_medium/fakeratePtEta')
 
         self.scaleMap = {
             'F' : '{0}_looseScale',
@@ -155,12 +164,14 @@ class Hpp4lFlattener(NtupleFlattener):
             for l,lep in enumerate(self.leps):
                 if not passID[l]:
                     # recalculate
-                    #fakeEff = self.getFakeRate(chanMap[chan[l]], pts[l], etas[l], 'HppMedium','HppLoose')[0]
+                    fakeEff = self.getFakeRate(chanMap[chan[l]], pts[l], etas[l], 'HppMedium','HppLoose')[0]
+
                     # read from tree
-                    fake = self.fakeVal.format(lep)
-                    if self.shift=='fakeUp': fake += 'Up'
-                    if self.shift=='fakeDown': fake += 'Down'
-                    fakeEff = getattr(row,fake)
+                    #fake = self.fakeVal.format(lep)
+                    #if self.shift=='fakeUp': fake += 'Up'
+                    #if self.shift=='fakeDown': fake += 'Down'
+                    #fakeEff = getattr(row,fake)
+
                     weight *= fakeEff/(1-fakeEff)
 
         return weight

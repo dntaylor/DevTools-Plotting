@@ -24,8 +24,9 @@ plotNormalization = False
 plotSOverB = False
 plotSignificance = False
 plotAllMasses = False
+plotSig500 = False
 
-hpp3lPlotter = Plotter('Hpp3l')
+hpp3lPlotter = Plotter('Hpp3l',new=True)
 
 #########################
 ### Define categories ###
@@ -175,7 +176,7 @@ ymin = {
     },
 }
 
-def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postfix='',perCatBins=False,**kwargs):
+def plotWithCategories(plotter,plot,baseDir='default',saveDir='',datadriven=False,postfix='',perCatBins=False,**kwargs):
     plotname = '/'.join([x for x in [baseDir,plot] if x])
     plotvars = getDataDrivenPlot(plotname) if datadriven else plotname
     savename = '/'.join([x for x in [saveDir,plot] if x])
@@ -195,7 +196,7 @@ def plotWithCategories(plotter,plot,baseDir='',saveDir='',datadriven=False,postf
         if perCatBins and plot in ymin and kwargs.get('logy',False): kwargs['ymin'] = ymin[plot][cat]
         if doCat: plotter.plot(plotvars,savename,**kwargs)
 
-def plotChannels(plotter,plot,baseDir='',saveDir='',datadriven=False,postfix='',**kwargs):
+def plotChannels(plotter,plot,baseDir='default',saveDir='',datadriven=False,postfix='',**kwargs):
     for chan in chans:
         plotname = '/'.join([x for x in [baseDir,chan,plot] if x])
         plotvars = getDataDrivenPlot(plotname) if datadriven else plotname
@@ -357,12 +358,13 @@ if plotMC:
         if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='mc',baseDir='default',**kwargs)
 
     # selection assuming mass 500
-    if plotCount: plotCounts(hpp3lPlotter,saveDir='sig500',baseDir='nMinusOne/massWindow/500/hpp2')
+    if plotSig500:
+        if plotCount: plotCounts(hpp3lPlotter,saveDir='sig500',baseDir='nMinusOne/massWindow/500/hpp2')
 
-    for plot in plots:
-        kwargs = deepcopy(plots[plot])
-        plotWithCategories(hpp3lPlotter,plot,saveDir='sig500',baseDir='nMinusOne/massWindow/500/hpp2',perCatBins=True,**kwargs)
-        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='sig500',baseDir='nMinusOne/massWindow/500/hpp2',**kwargs)
+        for plot in plots:
+            kwargs = deepcopy(plots[plot])
+            plotWithCategories(hpp3lPlotter,plot,saveDir='sig500',baseDir='nMinusOne/massWindow/500/hpp2',perCatBins=True,**kwargs)
+            if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='sig500',baseDir='nMinusOne/massWindow/500/hpp2',**kwargs)
 
     # partially blinded plots
     if blind:
@@ -390,20 +392,21 @@ if plotDatadriven:
 
     if not blind: hpp3lPlotter.addHistogram('data',sigMapDD['data'])
 
-    if plotCount: plotCounts(hpp3lPlotter,baseDir='',saveDir='datadriven',datadriven=True)
+    if plotCount: plotCounts(hpp3lPlotter,baseDir='default',saveDir='datadriven',datadriven=True)
 
     for plot in plots:
         kwargs = deepcopy(plots[plot])
-        plotWithCategories(hpp3lPlotter,plot,baseDir='',saveDir='datadriven',datadriven=True,perCatBins=True,**kwargs)
+        plotWithCategories(hpp3lPlotter,plot,baseDir='default',saveDir='datadriven',datadriven=True,perCatBins=True,**kwargs)
         if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='datadriven',baseDir='',datadriven=True,**kwargs)
 
     # selection assuming mass 500
-    if plotCount: plotCounts(hpp3lPlotter,baseDir='nMinusOne/massWindow/500/hpp2',saveDir='sig500-datadriven',datadriven=True)
+    if plotSig500:
+        if plotCount: plotCounts(hpp3lPlotter,baseDir='nMinusOne/massWindow/500/hpp2',saveDir='sig500-datadriven',datadriven=True)
 
-    for plot in plots:
-        kwargs = deepcopy(plots[plot])
-        plotWithCategories(hpp3lPlotter,plot,baseDir='nMinusOne/massWindow/500/hpp2',saveDir='sig500-datadriven',datadriven=True,perCatBins=True,**kwargs)
-        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='sig500-datadriven',baseDir='nMinusOne/massWindow/500/hpp2',datadriven=True,**kwargs)
+        for plot in plots:
+            kwargs = deepcopy(plots[plot])
+            plotWithCategories(hpp3lPlotter,plot,baseDir='nMinusOne/massWindow/500/hpp2',saveDir='sig500-datadriven',datadriven=True,perCatBins=True,**kwargs)
+            if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='sig500-datadriven',baseDir='nMinusOne/massWindow/500/hpp2',datadriven=True,**kwargs)
 
     # partially blinded plots
     if blind:

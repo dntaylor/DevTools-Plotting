@@ -99,7 +99,7 @@ ptBins = {
 
 jetPtBins = [20,25,30,35,40,45,50]
 
-for lepton in ['medium','tight']:
+for num,denom in [('medium','loose'),('tight','loose'),('tight','medium')]:
     for chan in channels:
         xBinning = ptBins[chan]
         xaxis = 'p_{{T}}^{{{0}}}'.format(labelMap[chan])
@@ -110,8 +110,8 @@ for lepton in ['medium','tight']:
         # get the values
         for e in range(len(yBinning)-1):
             # get the histogram
-            numname = '{0}/{1}/etaBin{2}/pt'.format(lepton,chan,e)
-            denomname = 'loose/{0}/etaBin{1}/pt'.format(chan,e)
+            numname = '{0}/{1}/etaBin{2}/pt'.format(num,chan,e)
+            denomname = '{0}/{1}/etaBin{2}/pt'.format(denom,chan,e)
             savename = 'filler'
             subtractMap = {
                 'data': ['MC'],
@@ -127,7 +127,7 @@ for lepton in ['medium','tight']:
                 errors[key] = hists['data'].GetBinError(p+1)
         # save the values
         savename = 'fakeratePtEta'
-        savedir = '{0}/{1}'.format(chan,lepton)
+        savedir = '{0}/{1}_{2}'.format(chan,num,denom)
         dijetFakeRateMaker.make2D(savename,values,errors,xBinning,yBinning,savedir=savedir,xaxis=xaxis,yaxis=yaxis)
         # jet Pt change
         for jetPt in jetPtBins:
@@ -136,8 +136,8 @@ for lepton in ['medium','tight']:
             # get the values
             for e in range(len(yBinning)-1):
                 # get the histogram
-                numname = '{0}/{1}/jetPt{2}/etaBin{3}/pt'.format(lepton,chan,jetPt,e)
-                denomname = 'loose/{0}/jetPt{1}/etaBin{2}/pt'.format(chan,jetPt,e)
+                numname = '{0}/{1}/jetPt{2}/etaBin{3}/pt'.format(num,chan,jetPt,e)
+                denomname = '{0}/{1}/jetPt{2}/etaBin{3}/pt'.format(denom,chan,jetPt,e)
                 savename = 'filler{0}'.format(jetPt)
                 subtractMap = {
                     'data': ['MC'],
@@ -153,5 +153,5 @@ for lepton in ['medium','tight']:
                     errors[key] = hists['data'].GetBinError(p+1)
             # save the values
             savename = 'fakeratePtEta_jetPt{0}'.format(jetPt)
-            savedir = '{0}/{1}'.format(chan,lepton)
+            savedir = '{0}/{1}_{2}'.format(chan,num,denom)
             dijetFakeRateMaker.make2D(savename,values,errors,xBinning,yBinning,savedir=savedir,xaxis=xaxis,yaxis=yaxis)

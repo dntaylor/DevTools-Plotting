@@ -39,7 +39,7 @@ def flatten(analysis,sample,**kwargs):
     job = kwargs.pop('job',0)
     multi = kwargs.pop('multi',False)
     if hasProgress:
-        pbar = kwargs.pop('progressbar',ProgressBar(widgets=['{0}: '.format(sample),' ',SimpleProgress(),' histograms ',Percentage(),' ',Bar(),' ',ETA()]))
+        pbar = kwargs.pop('progressbar',ProgressBar(widgets=['{0}: '.format(sample),' ',SimpleProgress(),' ',Percentage(),' ',Bar(),' ',ETA()]))
     else:
         pbar = None
 
@@ -61,7 +61,7 @@ def getSampleDirectories(analysis,sampleList):
 def parse_command_line(argv):
     parser = argparse.ArgumentParser(description='Flatten Tree')
 
-    parser.add_argument('analysis', type=str, choices=['WZ','ZZ','DY','Charge','TauCharge','Hpp3l','Hpp4l','Electron','Muon','Tau','DijetFakeRate','WTauFakeRate','WFakeRate','ZFakeRate','ThreeLepton','TriggerCount'], help='Analysis to process')
+    parser.add_argument('analysis', type=str, choices=['WZ','Hpp3l','Hpp4l',], help='Analysis to process')
     parser.add_argument('shift', type=str, default='', nargs='?', help='Shift to apply to scale factors')
     parser.add_argument('--samples', nargs='+', type=str, default=['*'], help='Samples to flatten. Supports unix style wildcards.')
     parser.add_argument('-j',type=int,default=1,help='Number of cores to use')
