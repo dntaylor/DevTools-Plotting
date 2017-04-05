@@ -11,7 +11,7 @@ import ROOT
 
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-wzPlotter = Plotter('WZ')
+wzPlotter = Plotter('WZ',new=True)
 
 doCounts = True
 doDatadriven = True
@@ -22,24 +22,23 @@ doVBS = True
 
 plotStyles = {
     # Z
-    'zMass'               : {'xaxis': 'm_{l^{+}l^{-}}', 'yaxis': 'Events / 1 GeV', 'rangex':[60,120]},
-    #'mllMinusMZ'          : {'xaxis': '|m_{l^{+}l^{-}}-m_{Z}|', 'yaxis': 'Events / 1 GeV', 'rangex':[0,60]},
-    'zPt'                 : {'xaxis': 'p_{T}^{Z}', 'yaxis': 'Events / 10 GeV', 'rebin':10, 'rangex':[0,200]},
-    'zLeadingLeptonPt'    : {'xaxis': 'p_{T}^{Z lead}', 'yaxis': 'Events / 10 GeV', 'rebin':10, 'rangex':[0,200]},
-    'zSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{Z sublead}', 'yaxis': 'Events / 10 GeV', 'rebin':10, 'rangex':[0,200]},
+    'zMass'               : {'xaxis': 'm_{l^{+}l^{-}}', 'yaxis': 'Events / 1 GeV', 'rebin':range(60,121,1)},
+    'zPt'                 : {'xaxis': 'p_{T}^{Z}', 'yaxis': 'Events / 5 GeV', 'rebin':range(0,205,5), 'overflow': True,},
+    'zLeadingLeptonPt'    : {'xaxis': 'p_{T}^{Z lead}', 'yaxis': 'Events / 5 GeV', 'rebin':range(0,205,5), 'overflow': True,},
+    'zSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{Z sublead}', 'yaxis': 'Events / 5 GeV', 'rebin':range(0,205,5), 'overflow': True,},
     # W
-    'wMass'               : {'xaxis': 'm_{T}^{W}', 'yaxis': 'Events / 10 GeV', 'rebin':10, 'rangex':[0,200]},
-    'wPt'                 : {'xaxis': 'p_{T}^{W}', 'yaxis': 'Events / 10 GeV', 'rebin':10, 'rangex':[0,200]},
-    'wLeptonPt'           : {'xaxis': 'p_{T}^{W lepton}', 'yaxis': 'Events / 10 GeV', 'rebin':10, 'rangex':[0,200]},
+    'wMass'               : {'xaxis': 'm_{T}^{W}', 'yaxis': 'Events / 5 GeV', 'rebin':range(0,205,5), 'overflow': True,},
+    'wPt'                 : {'xaxis': 'p_{T}^{W}', 'yaxis': 'Events / 5 GeV', 'rebin':range(0,205,5), 'overflow': True,},
+    'wLeptonPt'           : {'xaxis': 'p_{T}^{W lepton}', 'yaxis': 'Events / 5 GeV', 'rebin':range(0,205,5), 'overflow': True,},
     # event
-    'met'                 : {'xaxis': 'E_{T}^{miss}', 'yaxis': 'Events / 10 GeV', 'rebin':10, 'rangex':[0,200]},
-    'mass'                : {'xaxis': 'm_{3l}', 'yaxis': 'Events / 20 GeV', 'rebin':20, 'rangex':[0,500]},
-    'nJets'               : {'xaxis': 'Number of Jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'rangex':[0,8]},
-    'nBjets'              : {'xaxis': 'Number of b-tagged Jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'rangex':[0,8]},
+    'met'                 : {'xaxis': 'E_{T}^{miss}', 'yaxis': 'Events / 5 GeV', 'rebin':range(0,205,5), 'overflow': True,},
+    'mass'                : {'xaxis': 'm_{3l}', 'yaxis': 'Events / 10 GeV', 'rebin':range(0,510,10), 'overflow': True,},
+    'nJets'               : {'xaxis': 'Number of Jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'rebin': [-0.5,0.5,1.5,2.5,3.5,4.5], 'overflow': True, 'binlabels': ['0','1','2','3','4','#geq5']},
+    'nBjets'              : {'xaxis': 'Number of b-tagged Jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'rebin': [-0.5,0.5,1.5,2.5,3.5,4.5], 'overflow': True, 'binlabels': ['0','1','2','3','4','#geq5']},
     # vbf
-    'leadJetPt'           : {'xaxis': 'Lead Jet p_{T}', 'yaxis': 'Events / 20 GeV', 'rebin': 20, 'rangex': [20,400]},
-    'dijetMass'           : {'xaxis': 'm_{jj}', 'yaxis': 'Events / 100 GeV', 'rebin': 100, 'rangex': [0,2000]},
-    'dijetDEta'           : {'xaxis': '\Delta\eta(jj)', 'yaxis': 'Events', 'rebin': 10, 'rangex': [0,10]},
+    'leadJetPt'           : {'xaxis': 'Lead Jet p_{T}', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,420,20), 'overflow': True,},
+    'dijetMass'           : {'xaxis': 'm_{jj}', 'yaxis': 'Events / 100 GeV', 'rebin': range(0,2100,100), 'overflow': True,},
+    'dijetDEta'           : {'xaxis': '\Delta\eta(jj)', 'yaxis': 'Events','rebin': range(0,11,1), 'overflow': True,},
 }
 
 chans = ['eee','eem','mme','mmm']
@@ -75,6 +74,10 @@ controls = ['dy','tt']
 samples = ['TTV','ZG','VVV','ZZ','WZ']
 allsamples = ['W','TT','Z','WW','TTV','VVV','ZZall','WZall']
 
+def addUncertainties(plotter,datadriven=False):
+    if datadriven:
+        plotter.addUncertainty('datadriven',nonprompt=0.3)
+
 #################
 ### MC driven ###
 #################
@@ -83,6 +86,8 @@ for s in allsamples:
     wzPlotter.addHistogramToStack(name,sigMap[s])
 
 wzPlotter.addHistogram('data',sigMap['data'])
+
+addUncertainties(wzPlotter)
 
 if doCounts and doMC:
     plotCounts(wzPlotter,saveDir='mc',baseDir='default')
@@ -129,12 +134,13 @@ for s in samples:
 
 wzPlotter.addHistogram('data',sigMap['data'])
 
+addUncertainties(wzPlotter,datadriven=True)
 
 if doCounts and doDatadriven:
-    plotCounts(wzPlotter,baseDir='',saveDir='datadriven',datadriven=True)
+    plotCounts(wzPlotter,baseDir='default',saveDir='datadriven',datadriven=True)
     if doVBS: plotCounts(wzPlotter,baseDir='vbs',saveDir='vbs-datadriven',datadriven=True)
     for cut in nMinusOneCuts:
-        if doNMinusOne: plotCounts(wzPlotter,baseDir=cut,saveDir='nMinusOne-datadriven/{0}'.format(cut),datadriven=True)
+        if doNMinusOne: plotCounts(wzPlotter,baseDir='default/{0}'.fromat(cut),saveDir='nMinusOne-datadriven/{0}'.format(cut),datadriven=True)
     for cut in vbsNMinusOneCuts:
         if doNMinusOne and doVBS: plotCounts(wzPlotter,baseDir='vbs/{0}'.format(cut),saveDir='vbsNMinusOne-datadriven/{0}'.format(cut),datadriven=True)
     for control in controls:
@@ -142,14 +148,14 @@ if doCounts and doDatadriven:
 
 if doDatadriven:
     for plot in plotStyles:
-        plotvars = getDataDrivenPlot(plot)
+        plotvars = getDataDrivenPlot('default/{0}'.format(plot))
         savename = 'datadriven/{0}'.format(plot)
         wzPlotter.plot(plotvars,savename,**plotStyles[plot])
         plotvars = getDataDrivenPlot('vbs/{0}'.format(plot))
         savename = 'vbs-datadriven/{0}'.format(plot)
         if doVBS: wzPlotter.plot(plotvars,savename,**plotStyles[plot])
         for cut in nMinusOneCuts:
-            plotvars = getDataDrivenPlot('{0}/{1}'.format(cut,plot))
+            plotvars = getDataDrivenPlot('default/{0}/{1}'.format(cut,plot))
             savename = 'nMinusOne-datadriven/{0}/{1}'.format(cut,plot)
             if doNMinusOne: wzPlotter.plot(plotvars,savename,**plotStyles[plot])
         for cut in vbsNMinusOneCuts:

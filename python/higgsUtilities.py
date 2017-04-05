@@ -293,8 +293,8 @@ sigMaps = {
         'TTV' : [
                  #'ttWJets_13TeV_madgraphMLM',
                  'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
-                 'ttZJets_13TeV_madgraphMLM',
-                 'tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
+                 'ttZJets_13TeV_madgraphMLM-pythia8',
+                 'tZq_ll_4f_13TeV-amcatnlo-pythia8',
                 ],
         'VVV' : [
                  'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
@@ -314,7 +314,7 @@ sigMaps = {
                  'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8',
                 ],
         'TTV' : [
-                 'ttZJets_13TeV_madgraphMLM',
+                 'ttZJets_13TeV_madgraphMLM-pythia8',
                 ],
         'VVV' : [
                  'WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
@@ -383,8 +383,8 @@ sigMaps = {
         'TTV' : [
                  'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
                  #'ttWJets_13TeV_madgraphMLM',
-                 'ttZJets_13TeV_madgraphMLM',
-                 'tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
+                 'ttZJets_13TeV_madgraphMLM-pythia8',
+                 'tZq_ll_4f_13TeV-amcatnlo-pythia8',
                 ],
         'VVV' : [
                  'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
@@ -410,8 +410,8 @@ sigMaps = {
         'TTV' : [
                  'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
                  #'ttWJets_13TeV_madgraphMLM',
-                 'ttZJets_13TeV_madgraphMLM',
-                 'tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1',
+                 'ttZJets_13TeV_madgraphMLM-pythia8',
+                 'tZq_ll_4f_13TeV-amcatnlo-pythia8',
                 ],
         'VVV' : [
                  'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8',

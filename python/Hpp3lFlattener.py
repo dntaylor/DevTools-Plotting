@@ -108,9 +108,9 @@ class Hpp3lFlattener(NtupleFlattener):
 
         fake_path = '{0}/src/DevTools/Analyzer/data/fakerates_w_tau_13TeV_Run2016BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
         self.fake_hpp_rootfile_tau = ROOT.TFile(fake_path)
-        self.fakehists['taus'][self.fakekey.format(num='HppMedium',denom='HppLoose')] = self.fake_hpp_rootfile.Get('m/medium_loose/fakeratePtEta')
-        self.fakehists['taus'][self.fakekey.format(num='HppTight',denom='HppLoose')] = self.fake_hpp_rootfile.Get('m/tight_loose/fakeratePtEta')
-        self.fakehists['taus'][self.fakekey.format(num='HppTight',denom='HppMedium')] = self.fake_hpp_rootfile.Get('m/tight_medium/fakeratePtEta')
+        self.fakehists['taus'][self.fakekey.format(num='HppMedium',denom='HppLoose')] = self.fake_hpp_rootfile_tau.Get('medium_loose/fakeratePtEta')
+        self.fakehists['taus'][self.fakekey.format(num='HppTight',denom='HppLoose')] = self.fake_hpp_rootfile_tau.Get('tight_loose/fakeratePtEta')
+        self.fakehists['taus'][self.fakekey.format(num='HppTight',denom='HppMedium')] = self.fake_hpp_rootfile_tau.Get('tight_medium/fakeratePtEta')
 
         self.scaleMap = {
             'F' : '{0}_looseScale',

@@ -193,7 +193,7 @@ def getProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
 latestSkims = {}
 latestSkims['80X'] = {}
 latestSkims['80X']['Hpp3l'] = {
-    ''                 : '2016-12-21_Hpp3lSkims_80X_v1',
+    #''                 : '2016-12-21_Hpp3lSkims_80X_v1',
     'ElectronEnUp'     : '2016-12-21_Hpp3lSkims_ElectronEnUp_80X_v1',
     'ElectronEnDown'   : '2016-12-21_Hpp3lSkims_ElectronEnDown_80X_v1',
     'MuonEnUp'         : '2016-12-21_Hpp3lSkims_MuonEnUp_80X_v1',
@@ -216,7 +216,7 @@ latestSkims['80X']['Hpp3l'] = {
     'fakeDown'         : '2016-12-21_Hpp3lSkims_fakeDown_80X_v1',
 }
 latestSkims['80X']['Hpp4l'] = {
-    ''                 : '2016-12-21_Hpp4lSkims_80X_v1',
+    #''                 : '2016-12-21_Hpp4lSkims_80X_v1',
     'ElectronEnUp'     : '2016-12-21_Hpp4lSkims_ElectronEnUp_80X_v1',
     'ElectronEnDown'   : '2016-12-21_Hpp4lSkims_ElectronEnDown_80X_v1',
     'MuonEnUp'         : '2016-12-21_Hpp4lSkims_MuonEnUp_80X_v1',

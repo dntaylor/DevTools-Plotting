@@ -19,7 +19,7 @@ doCat = True
 plotCount = True
 plotMC = True
 plotDatadriven = True
-plotFakeRegions = False
+plotFakeRegions = True
 plotSignal = False
 plotROC = False
 plotNormalization = False
@@ -492,11 +492,11 @@ if plotFakeRegions:
     hpp4lPlotter.addHistogram('data',sigMap['data'])
     
     for fr in ['3P1F','2P2F','1P3F','0P4F']:
-        if plotCount: plotCounts(hpp4lPlotter,baseDir='{0}_regular'.format(fr),saveDir='mc/{0}'.format(fr))
+        if plotCount: plotCounts(hpp4lPlotter,baseDir='{0}_regular/default'.format(fr),saveDir='mc/{0}'.format(fr))
         
         for plot in plots:
             kwargs = deepcopy(plots[plot])
-            plotWithCategories(hpp4lPlotter,plot,baseDir='{0}_regular'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
+            plotWithCategories(hpp4lPlotter,plot,baseDir='{0}_regular/default'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
 
 ########################
 ### low mass control ###

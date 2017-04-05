@@ -91,7 +91,8 @@ def getStyle(sample):
     style = {}
     if 'data'==sample:
         style['legendstyle'] = 'ep'
-        style['drawstyle'] = 'ex0'
+        style['drawstyle'] = 'ex0' # TH1
+        #style['drawstyle'] = 'p0' # TGraph
         style['name'] = 'Observed'
     else:
         style['legendstyle'] = 'f'

@@ -52,6 +52,7 @@ class Plotter(PlotterBase):
         self.signals = []
         self.histScales = {}
         self.sampleSelection = {}
+        self.uncertainties = {}
         self.j = 0
 
     #def __exit__(self, type, value, traceback):
@@ -110,6 +111,13 @@ class Plotter(PlotterBase):
         if signal: self.signals += [histName]
         if scale!=1: self.histScales[histName] = scale
 
+    def addUncertainty(self,*histNames,**uncertainties):
+        '''Add an uncertainty to a histogram'''
+        for histName in histNames:
+            if histName not in self.uncertainties: self.uncertainties[histName] = {}
+            for uncName, val in uncertainties.iteritems():
+                self.uncertainties[histName][uncName] = val
+
     def clearHistograms(self):
         self.sampleFiles = {}
         self.analysisDict = {}
@@ -120,6 +128,7 @@ class Plotter(PlotterBase):
         self.signals = []
         self.histScales = {}
         self.sampleSelection = {}
+        self.uncertainties = {}
 
     def _readSampleVariable(self,sampleName,variable,**kwargs):
         '''Read the histogram from file'''
@@ -213,6 +222,18 @@ class Plotter(PlotterBase):
             htmp.SetBinError(0, hist.GetBinError(0))
             htmp.SetEntries(hist.GetEntries())
             hist = htmp
+
+        # add uncertainties
+        if histName in self.uncertainties:
+            unc2 = 0.
+            for uncName,val in self.uncertainties[histName].iteritems():
+                unc2 += val**2
+            unc = unc2**0.5
+            for b in range(hist.GetNbinsX()):
+                bVal = hist.GetBinContent(b+1)
+                bErr = hist.GetBinError(b+1)
+                newErr = ((bVal*unc)**2 + bErr**2)**0.5
+                hist.SetBinError(b+1,newErr)
 
         # style it
         style = self.styles[histName]
@@ -360,6 +381,76 @@ class Plotter(PlotterBase):
 
         return ratiostaterr
 
+    def _get_ratio_err(self,num,denom,data=False):
+        '''Return the ratio of two histograms, taking errors from numerator only'''
+        if data:
+            # get ratio between two hists with poisson errors
+            graph = ROOT.TGraphAsymmErrors(num.GetNbinsX())
+            chisqr = ROOT.TMath.ChisquareQuantile
+            npoints = 0
+            for bin in range(num.GetNbinsX()):
+                entries = num.GetBinContent(bin+1)
+                denomentries = denom.GetBinContent(bin+1)
+                if entries <= 0:
+                    entries = 0
+                ey_low = entries - 0.5 * chisqr(0.1586555, 2. * entries)
+                ey_high = 0.5 * chisqr(
+                    1. - 0.1586555, 2. * (entries + 1)) - entries
+                ex = num.GetBinWidth(bin+1) / 2.
+                if denomentries > 0:
+                    graph.SetPoint(npoints, num.GetBinCenter(bin+1), num.GetBinContent(bin+1)/denomentries)
+                    graph.SetPointEXlow(npoints, 0)
+                    graph.SetPointEXhigh(npoints, 0)
+                    graph.SetPointEYlow(npoints, ey_low/denomentries)
+                    graph.SetPointEYhigh(npoints, ey_high/denomentries)
+                else:
+                    graph.SetPoint(npoints, num.GetBinCenter(bin+1), 0)
+                    graph.SetPointEXlow(npoints, 0)
+                    graph.SetPointEXhigh(npoints, 0)
+                    graph.SetPointEYlow(npoints, 0)
+                    graph.SetPointEYhigh(npoints, 0)
+                npoints += 1
+            graph.Set(npoints)
+            return graph
+        else:
+            self.j += 1
+            newnum = num.Clone('ratio_{0}'.format(self.j))
+            for b in range(num.GetNbinsX()):
+                nVal = num.GetBinContent(b+1)
+                nErr = num.GetBinError(b+1)
+                dVal = denom.GetBinContent(b+1)
+                if dVal>1e-6:
+                    val = nVal/dVal
+                    err = nErr/dVal
+                else:
+                    val = 0
+                    err = 0
+                newnum.SetBinContent(val)
+                newnum.SetBinError(err)
+            return newnum
+
+    def _get_poisson_err(self,hist):
+        # adapted from rootpy to get asymmetric poisson errors
+        graph = ROOT.TGraphAsymmErrors(hist.GetNbinsX())
+        chisqr = ROOT.TMath.ChisquareQuantile
+        npoints = 0
+        for bin in range(hist.GetNbinsX()):
+            entries = hist.GetBinContent(bin+1)
+            if entries <= 0:
+                #continue
+                entries = 0
+            ey_low = entries - 0.5 * chisqr(0.1586555, 2. * entries)
+            ey_high = 0.5 * chisqr(
+                1. - 0.1586555, 2. * (entries + 1)) - entries
+            ex = hist.GetBinWidth(bin+1) / 2.
+            graph.SetPoint(npoints, hist.GetBinCenter(bin+1), hist.GetBinContent(bin+1))
+            graph.SetPointEXlow(npoints, 0)
+            graph.SetPointEXhigh(npoints, 0)
+            graph.SetPointEYlow(npoints, ey_low)
+            graph.SetPointEYhigh(npoints, ey_high)
+            npoints += 1
+        graph.Set(npoints)
+        return graph
 
     def _getLegend(self,**kwargs):
         '''Get the legend'''
@@ -394,6 +485,7 @@ class Plotter(PlotterBase):
         rangex = kwargs.pop('rangex',[])
         binlabels = kwargs.pop('binlabels',[])
         save = kwargs.pop('save',True)
+        getHists = kwargs.pop('getHists',False)
 
         logging.info('Plotting {0}'.format(savename))
 
@@ -469,6 +561,9 @@ class Plotter(PlotterBase):
             highestMax = max(highestMax,hist.GetMaximum())
             if histName=='data': lowestMin = min([lowestMin]+[hist.GetBinContent(x) for x in range(hist.GetNbinsX()) if hist.GetBinContent(x)>0])
             hists[histName] = hist
+
+        if getHists:
+            return stack, hists
 
         # now draw them
         logging.debug('Drawing')
@@ -550,16 +645,8 @@ class Plotter(PlotterBase):
                     num.Merge(sighists)
                 else:
                     num = hist.Clone(numname)
-                if histName=='data':
-                    num.SetBinErrorOption(ROOT.TH1.kPoisson)
-                    num.Divide(denom)
-                    #nbins = num.GetNbinsX()
-                    #errs = ROOT.TGraphAsymmErrors(nbins)
-                    #errs.Divide(num,denom,'pois')
-                    #num = errs
-                else:
-                    num.Divide(denom)
-                ratios[histName] = num
+                numratio = self._get_ratio_err(num,denom,data=histName=='data')
+                ratios[histName] = numratio
 
             # and draw
             if ratiopad != ROOT.TVirtualPad.Pad(): ratiopad.cd()
@@ -572,8 +659,8 @@ class Plotter(PlotterBase):
             ratiounity.Draw('same')
             for histName, hist in ratios.iteritems():
                 if histName=='data':
-                    hist.Draw('e0 same')
-                    #hist.Draw('0P same')
+                    #hist.Draw('e0 same')
+                    hist.Draw('0P same')
                 else:
                     hist.SetLineWidth(3)
                     hist.Draw('hist same')
@@ -672,6 +759,9 @@ class Plotter(PlotterBase):
             if ymin!=None: stack.SetMinimum(ymin)
             if labelsOption: stack.GetHistogram().GetXaxis().LabelsOption(labelsOption)
             if plotratio: stack.GetHistogram().GetXaxis().SetLabelOffset(999)
+            self.j += 1
+            staterr = self._get_stat_err(stack.GetStack().Last().Clone('h_stack_{0}'.format(self.j)))
+            staterr.Draw('e2 same')
         for histName,hist in hists.iteritems():
             style = self.styles[histName]
             hist.Draw(style['drawstyle']+' same')
@@ -712,16 +802,8 @@ class Plotter(PlotterBase):
                     num.Merge(sighists)
                 else:
                     num = hist.Clone('h_{0}_{1}_ratio'.format(histName,savename.replace('/','_')))
-                if histName=='data':
-                    num.SetBinErrorOption(ROOT.TH1.kPoisson)
-                    num.Divide(denom)
-                    #nbins = num.GetNbinsX()
-                    #errs = ROOT.TGraphAsymmErrors(nbins)
-                    #errs.Divide(num,denom,'pois')
-                    #num = errs
-                else:
-                    num.Divide(denom)
-                ratios[histName] = num
+                numratio = self._get_ratio_err(num,denom,data=histName=='data')
+                ratios[histName] = numratio
 
             # and draw
             if ratiopad != ROOT.TVirtualPad.Pad(): ratiopad.cd()
@@ -730,8 +812,8 @@ class Plotter(PlotterBase):
             ratiounity.Draw('same')
             for histName, hist in ratios.iteritems():
                 if histName=='data':
-                    hist.Draw('e0 same')
-                    #hist.Draw('0P same')
+                    #hist.Draw('e0 same')
+                    hist.Draw('0P same')
                 else:
                     hist.SetLineWidth(3)
                     hist.Draw('hist same')

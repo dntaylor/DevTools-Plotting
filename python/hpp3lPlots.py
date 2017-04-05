@@ -212,15 +212,15 @@ plots = {
     'hppMass'               : {'xaxis': 'm_{l^{#pm}l^{#pm}} (GeV)', 'yaxis': 'Events / 25 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,625,25), 'logy': True, 'overflow': True,},
     #'hppMt'                 : {'xaxis': 'm_{T}^{l^{#pm}l^{#pm}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': True},
     'hppPt'                 : {'xaxis': 'p_{T}^{l^{#pm}l^{#pm}} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': range(0,410,10), 'numcol': 3, 'legendpos':34, 'overflow': True},
-    'hppDeltaR'             : {'xaxis': '#DeltaR(l^{#pm}l^{#pm})', 'yaxis': 'Events', 'rebin': 25, 'numcol': 3, 'legendpos':34, 'yscale': 1.8,},
+    'hppDeltaR'             : {'xaxis': '#DeltaR(l^{#pm}l^{#pm})', 'yaxis': 'Events', 'rebin': 5, 'numcol': 3, 'legendpos':34, 'yscale': 1.8,},
     'hppLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{#pm#pm}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(10,205,5), 'numcol': 2, 'overflow': True},
-    'hppLeadingLeptonEta'   : {'xaxis': '#eta^{#Phi_{lead}^{#pm#pm}}', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, 'rebin': 20, 'yscale': 1.8,},
+    'hppLeadingLeptonEta'   : {'xaxis': '#eta^{#Phi_{lead}^{#pm#pm}}', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, 'rebin': 2, 'yscale': 1.8,},
     'hppSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{#pm#pm}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(10,205,5), 'numcol': 2, 'overflow': True},
-    'hppSubLeadingLeptonEta': {'xaxis': '#eta^{#Phi_{sublead}^{#pm#pm}}', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, 'rebin': 20, 'yscale': 1.8,},
+    'hppSubLeadingLeptonEta': {'xaxis': '#eta^{#Phi_{sublead}^{#pm#pm}}', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, 'rebin': 2, 'yscale': 1.8,},
     # hm
     'hmMass'                : {'xaxis': 'm_{T}(l^{#mp},E_{T}^{miss}) (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,610,10), 'logy': True, 'overflow': True},
     'hmLeptonPt'            : {'xaxis': 'p_{T}^{#Phi_{lepton}^{#mp}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(10,205,5), 'numcol': 2, 'overflow': True},
-    'hmLeptonEta'           : {'xaxis': '#eta^{#Phi_{lepton}^{#mp}}', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, 'rebin': 20, 'yscale': 1.8,},
+    'hmLeptonEta'           : {'xaxis': '#eta^{#Phi_{lepton}^{#mp}}', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, 'rebin': 2, 'yscale': 1.8,},
     # z cand
     'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(11,241,5), 'numcol': 2, 'legendpos':34, 'yscale': 50, 'logy': True, 'overflow': True,},
     'zPt'                   : {'xaxis': 'p_{T}^{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,320,20), 'numcol': 2, 'overflow': True},
@@ -397,7 +397,7 @@ if plotDatadriven:
     for plot in plots:
         kwargs = deepcopy(plots[plot])
         plotWithCategories(hpp3lPlotter,plot,baseDir='default',saveDir='datadriven',datadriven=True,perCatBins=True,**kwargs)
-        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='datadriven',baseDir='',datadriven=True,**kwargs)
+        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,baseDir='default',saveDir='datadriven',datadriven=True,**kwargs)
 
     # selection assuming mass 500
     if plotSig500:
@@ -471,13 +471,13 @@ if plotFakeRegions:
     hpp3lPlotter.addHistogram('data',sigMap['data'])
 
     for fr in ['2P1F','1P2F','0P3F']:
-        if plotCount: plotCounts(hpp3lPlotter,baseDir='{0}_regular'.format(fr),saveDir='mc/{0}'.format(fr))
+        if plotCount: plotCounts(hpp3lPlotter,baseDir='{0}_regular/default'.format(fr),saveDir='mc/{0}'.format(fr))
 
         for plot in plots:
             kwargs = deepcopy(plots[plot])
-            plotWithCategories(hpp3lPlotter,plot,baseDir='{0}_regular'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
-            #if plot=='hppMass': plotChannels(hpp3lPlotter,plot,baseDir='{0}_regular'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
-            plotChannels(hpp3lPlotter,plot,baseDir='{0}_regular'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
+            plotWithCategories(hpp3lPlotter,plot,baseDir='{0}_regular/default'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
+            #if plot=='hppMass': plotChannels(hpp3lPlotter,plot,baseDir='{0}_regular/default'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
+            plotChannels(hpp3lPlotter,plot,baseDir='{0}_regular/default'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
 
 ############################
 ### Fake Regions lowmass ###
