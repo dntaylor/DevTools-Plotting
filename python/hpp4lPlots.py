@@ -17,10 +17,11 @@ version = getCMSSWVersion()
 blind = False
 doCat = True
 plotCount = True
-plotMC = True
-plotDatadriven = True
-plotFakeRegions = True
-plotSignal = False
+plotMC = False
+plotDatadriven = False
+plotLowmass = False
+plotFakeRegions = False
+plotSignal = True
 plotROC = False
 plotNormalization = False
 plotSOverB = False
@@ -45,7 +46,8 @@ sigMap = getSigMap('Hpp4l')
 sigMapDD = getSigMap('Hpp4l',datadriven=True)
 
 allmasses = [200,300,400,500,600,700,800,900,1000] if version=='76X' else [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500]
-masses = [200,400,600,800,1000]
+#masses = [200,400,600,800,1000]
+masses = [200,400,600,1000] # TODO go back
 
 samples = ['TTV','VVV','ZZ']
 allsamples = ['TT','TTV','Z','WZ','VVV','ZZ']
@@ -238,7 +240,7 @@ lowmass_cust = {
     'hppSubLeadingLeptonPt': {'rangex': [0,300]},
     # hmm
     'hmmMass'              : {'rangex': [0,300], 'logy': False},
-    'hmmMt'                : {'rangex': [0,300], 'logy': False},
+    #'hmmMt'                : {'rangex': [0,300], 'logy': False},
     'hmmPt'                : {'rangex': [0,300]},
     'hmmLeadingLeptonPt'   : {'rangex': [0,300]},
     'hmmSubLeadingLeptonPt': {'rangex': [0,300]},
@@ -261,7 +263,7 @@ norm_cust = {
     'hppSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 1},
     # hmm
     'hmmMass'               : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
-    'hmmMt'                 : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
+    #'hmmMt'                 : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
     'hmmPt'                 : {'yaxis': 'Unit normalized', 'rebin': 1, 'numcol': 2},
     'hmmDeltaR'             : {'yaxis': 'Unit normalized', 'rebin': 1},
     'hmmLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 1},
@@ -501,7 +503,7 @@ if plotFakeRegions:
 ########################
 ### low mass control ###
 ########################
-if plotMC:
+if plotMC and plotLowmass:
     hpp4lPlotter.clearHistograms()
     
     for s in allsamples:
@@ -518,7 +520,7 @@ if plotMC:
 ######################################
 ### lowmass datadriven backgrounds ###
 ######################################
-if plotDatadriven:
+if plotDatadriven and plotLowmass:
     hpp4lPlotter.clearHistograms()
     
     hpp4lPlotter.addHistogramToStack('datadriven',datadrivenSamples)
@@ -688,69 +690,71 @@ if plotAllMasses:
 
 
 if plotSignal:
-    hpp4lPlotter.clearHistograms()
-    
-    for mass in masses:
-        hpp4lPlotter.addHistogram('HppHmm{0}GeV'.format(mass),sigMap['HppHmm{0}GeV'.format(mass)],signal=True,style={'linecolor': sigColors[mass]})
-    
-    catRebin = {
-        'I'  : 1,
-        'II' : 5,
-        'III': 10,
-        'IV' : 10,
-        'V'  : 20,
-        'VI' : 50,
-    }
-    
-    genRebin = {
-        'ee' : 1,
-        'em' : 1,
-        'et' : 5,
-        'mm' : 1,
-        'mt' : 5,
-        'tt' : 10,
-    }
-    
-    for plot in norm_cust:
-        plotname = 'default/{0}'.format(plot)
-        savename = 'signal/{0}'.format(plot)
-        kwargs = deepcopy(plots[plot])
-        if plot in norm_cust: kwargs.update(norm_cust[plot])
-        hpp4lPlotter.plotNormalized(plotname,savename,**kwargs)
-        for cat in cats:
-            plotnames = []
-            for subcat in subCatChannels[cat]:
-                plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
-            savename = 'signal/{0}/{1}'.format(cat,plot)
-            catkwargs = deepcopy(kwargs)
-            if cat in catRebin and 'rebin' in catkwargs and plot in ['hppMass','hmmMass']: catkwargs['rebin'] = catkwargs['rebin'] * catRebin[cat]
-            if doCat: hpp4lPlotter.plotNormalized(plotnames,savename,**catkwargs)
-    for plot in eff_cust:
-        kwargs = deepcopy(plots[plot])
-        if plot in norm_cust: kwargs.update(norm_cust[plot])
-        for higgsChan in ['ee','em','et','mm','mt','tt']:
-            # reco
-            plotnames = ['default/{0}/{1}'.format(chan,plot) for chan in chans if chan[:2]==higgsChan]
-            if 'hpp' in plot: plotnames += ['default/{0}/{1}'.format(chan,plot.replace('hpp','hmm')) for chan in chans if chan[2:]==higgsChan]
-            savename = 'signal/{0}/{1}'.format(higgsChan,plot)
-            genkwargs = deepcopy(kwargs)
-            effkwargs = deepcopy(plots[plot])
-            if plot in eff_cust: effkwargs.update(eff_cust[plot])
-            #if higgsChan in genRebin and 'rebin' in genkwargs and plot in ['hppMass','hmmMass']: genkwargs['rebin'] = genkwargs['rebin'] * genRebin[higgsChan]
-            hpp4lPlotter.plotNormalized(plotnames,savename,**genkwargs)
-            # and the gen truth
-            plotnames = []
-            for gen in genRecoMap:
-                for reco in genRecoMap[gen]:
-                    if gen[:2]==higgsChan:
-                        plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot)] 
-                    if gen[2:]==higgsChan and 'hpp' in plot:
-                        plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot.replace('hpp','hmm'))] 
-            if plotnames:
-                savename = 'signal/{0}/{1}_genMatched'.format(higgsChan,plot)
-                hpp4lPlotter.plotNormalized(plotnames,savename,**genkwargs)
-                savename = 'signal/{0}/{1}_genMatched_efficiency'.format(higgsChan,plot)
-                hpp4lPlotter.plotEfficiency(plotnames,savename,**effkwargs)
+    for righthanded in [True,False]:
+        hpp4lPlotter.clearHistograms()
+        
+        for mass in masses:
+            label = 'HppHmm{0}{1}GeV'.format('R' if righthanded else '',mass)
+            hpp4lPlotter.addHistogram(label,sigMap[label],signal=True,style={'linecolor': sigColors[mass]})
+        
+        catRebin = {
+            'I'  : 1,
+            'II' : 5,
+            'III': 10,
+            'IV' : 10,
+            'V'  : 20,
+            'VI' : 50,
+        }
+        
+        genRebin = {
+            'ee' : 1,
+            'em' : 1,
+            'et' : 5,
+            'mm' : 1,
+            'mt' : 5,
+            'tt' : 10,
+        }
+        
+        for plot in plots:
+            plotname = 'default/{0}'.format(plot)
+            savename = 'signal{0}/{1}'.format('-righthanded' if righthanded else '',plot)
+            kwargs = deepcopy(plots[plot])
+            if plot in norm_cust: kwargs.update(norm_cust[plot])
+            hpp4lPlotter.plotNormalized(plotname,savename,**kwargs)
+            for cat in cats:
+                plotnames = []
+                for subcat in subCatChannels[cat]:
+                    plotnames += ['default/{0}/{1}'.format(chan,plot) for chan in subCatChannels[cat][subcat]]
+                savename = 'signal{0}/{1}/{2}'.format('-righthanded' if righthanded else '',cat,plot)
+                catkwargs = deepcopy(kwargs)
+                if cat in catRebin and 'rebin' in catkwargs and plot in ['hppMass','hmmMass']: catkwargs['rebin'] = catkwargs['rebin'] * catRebin[cat]
+                if doCat: hpp4lPlotter.plotNormalized(plotnames,savename,**catkwargs)
+        #for plot in eff_cust:
+        #    kwargs = deepcopy(plots[plot])
+        #    if plot in norm_cust: kwargs.update(norm_cust[plot])
+        #    for higgsChan in ['ee','em','et','mm','mt','tt']:
+        #        # reco
+        #        plotnames = ['default/{0}/{1}'.format(chan,plot) for chan in chans if chan[:2]==higgsChan]
+        #        if 'hpp' in plot: plotnames += ['default/{0}/{1}'.format(chan,plot.replace('hpp','hmm')) for chan in chans if chan[2:]==higgsChan]
+        #        savename = 'signal/{0}/{1}'.format(higgsChan,plot)
+        #        genkwargs = deepcopy(kwargs)
+        #        effkwargs = deepcopy(plots[plot])
+        #        if plot in eff_cust: effkwargs.update(eff_cust[plot])
+        #        #if higgsChan in genRebin and 'rebin' in genkwargs and plot in ['hppMass','hmmMass']: genkwargs['rebin'] = genkwargs['rebin'] * genRebin[higgsChan]
+        #        hpp4lPlotter.plotNormalized(plotnames,savename,**genkwargs)
+        #        # and the gen truth
+        #        plotnames = []
+        #        for gen in genRecoMap:
+        #            for reco in genRecoMap[gen]:
+        #                if gen[:2]==higgsChan:
+        #                    plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot)] 
+        #                if gen[2:]==higgsChan and 'hpp' in plot:
+        #                    plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot.replace('hpp','hmm'))] 
+        #        if plotnames:
+        #            savename = 'signal/{0}/{1}_genMatched'.format(higgsChan,plot)
+        #            hpp4lPlotter.plotNormalized(plotnames,savename,**genkwargs)
+        #            savename = 'signal/{0}/{1}_genMatched_efficiency'.format(higgsChan,plot)
+        #            hpp4lPlotter.plotEfficiency(plotnames,savename,**effkwargs)
 
 # ROCs
 if plotROC:

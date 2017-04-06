@@ -425,8 +425,8 @@ class Plotter(PlotterBase):
                 else:
                     val = 0
                     err = 0
-                newnum.SetBinContent(val)
-                newnum.SetBinError(err)
+                newnum.SetBinContent(b+1,val)
+                newnum.SetBinError(b+1,err)
             return newnum
 
     def _get_poisson_err(self,hist):

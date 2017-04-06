@@ -433,6 +433,7 @@ for sigMap in sigMaps:
                                'SingleElectron',
                                'Tau',
                               ]
+
     sigMaps[sigMap]['HppHmm200GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-200_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else ['HPlusPlusHMinusMinusHTo4L_M-200_13TeV-pythia8']
     sigMaps[sigMap]['HppHmm300GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-300_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else ['HPlusPlusHMinusMinusHTo4L_M-300_13TeV-pythia8']
     sigMaps[sigMap]['HppHmm400GeV']  = ['HPlusPlusHMinusMinusHTo4L_M-400_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else ['HPlusPlusHMinusMinusHTo4L_M-400_13TeV-pythia8']
@@ -447,6 +448,21 @@ for sigMap in sigMaps:
     sigMaps[sigMap]['HppHmm1300GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1300_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else []
     sigMaps[sigMap]['HppHmm1400GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1400_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else []
     sigMaps[sigMap]['HppHmm1500GeV'] = ['HPlusPlusHMinusMinusHTo4L_M-1500_TuneCUETP8M1_13TeV_pythia8'] if version=='80X' else []
+
+    sigMaps[sigMap]['HppHmmR200GeV']  = ['HPlusPlusHMinusMinusHRTo4L_M-200_TuneCUETP8M1_13TeV_pythia8']
+    sigMaps[sigMap]['HppHmmR300GeV']  = ['HPlusPlusHMinusMinusHRTo4L_M-300_TuneCUETP8M1_13TeV_pythia8']
+    sigMaps[sigMap]['HppHmmR400GeV']  = ['HPlusPlusHMinusMinusHRTo4L_M-400_TuneCUETP8M1_13TeV_pythia8']
+    sigMaps[sigMap]['HppHmmR500GeV']  = ['HPlusPlusHMinusMinusHRTo4L_M-500_TuneCUETP8M1_13TeV_pythia8']
+    sigMaps[sigMap]['HppHmmR600GeV']  = ['HPlusPlusHMinusMinusHRTo4L_M-600_TuneCUETP8M1_13TeV_pythia8']
+    sigMaps[sigMap]['HppHmmR700GeV']  = ['HPlusPlusHMinusMinusHRTo4L_M-700_TuneCUETP8M1_13TeV_pythia8']
+    sigMaps[sigMap]['HppHmmR800GeV']  = ['HPlusPlusHMinusMinusHRTo4L_M-800_TuneCUETP8M1_13TeV_pythia8']
+    sigMaps[sigMap]['HppHmmR900GeV']  = ['HPlusPlusHMinusMinusHRTo4L_M-900_TuneCUETP8M1_13TeV_pythia8']
+    sigMaps[sigMap]['HppHmmR1000GeV'] = ['HPlusPlusHMinusMinusHRTo4L_M-1000_TuneCUETP8M1_13TeV_pythia8']
+    sigMaps[sigMap]['HppHmmR1100GeV'] = ['HPlusPlusHMinusMinusHRTo4L_M-1100_TuneCUETP8M1_13TeV_pythia8']
+    sigMaps[sigMap]['HppHmmR1200GeV'] = ['HPlusPlusHMinusMinusHRTo4L_M-1200_TuneCUETP8M1_13TeV_pythia8']
+    sigMaps[sigMap]['HppHmmR1300GeV'] = ['HPlusPlusHMinusMinusHRTo4L_M-1300_TuneCUETP8M1_13TeV_pythia8']
+    sigMaps[sigMap]['HppHmmR1400GeV'] = ['HPlusPlusHMinusMinusHRTo4L_M-1400_TuneCUETP8M1_13TeV_pythia8']
+    sigMaps[sigMap]['HppHmmR1500GeV'] = ['HPlusPlusHMinusMinusHRTo4L_M-1500_TuneCUETP8M1_13TeV_pythia8']
 
     sigMaps[sigMap]['HppHm200GeV']   = ['HPlusPlusHMinusHTo3L_M-200_TuneCUETP8M1_13TeV_calchep-pythia8' ] if version=='76X' else ['HPlusPlusHMinusHTo3L_M-200_13TeV-calchep-pythia8']
     sigMaps[sigMap]['HppHm300GeV']   = ['HPlusPlusHMinusHTo3L_M-300_TuneCUETP8M1_13TeV_calchep-pythia8' ] if version=='76X' else ['HPlusPlusHMinusHTo3L_M-300_13TeV-calchep-pythia8']

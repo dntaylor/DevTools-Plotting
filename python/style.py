@@ -48,6 +48,7 @@ colorMap = {
     'TT'        : 'Green',
     'T'         : 'LightGreen',
     'HppHmm'    : 'Orange',
+    'HppHmmR'   : 'Orange',
     'HppHm'     : 'Orange',
 }
 
@@ -76,10 +77,11 @@ labelMap = {
     'TT'        : 't#bar{t}',
     'T'         : 'Single Top',
     'HppHmm'    : '#Phi^{++}#Phi^{#font[122]{\55}#font[122]{\55}}',
+    'HppHmmR'   : '#Phi_{R}^{++}#Phi_{R}^{#font[122]{\55}#font[122]{\55}}',
     'HppHm'     : '#Phi^{#pm#pm}#Phi^{#mp}',
 }
 
-for sig in ['HppHmm','HppHm']:
+for sig in ['HppHmm','HppHm','HppHmmR']:
     for mass in [200,250,300,350,400,450,500,600,700,800,900,1000,1100,1200,1300,1400,1500]:
         key = '{0}{1}GeV'.format(sig,mass)
         colorMap[key] = colorMap[sig]

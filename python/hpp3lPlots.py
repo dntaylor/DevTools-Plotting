@@ -17,8 +17,9 @@ plotCount = True
 doCat = True
 plotMC = True
 plotDatadriven = True
-plotFakeRegions = True
-plotSignal = False
+plotLowmass = False
+plotFakeRegions = False
+plotSignal = True
 plotROC = False
 plotNormalization = False
 plotSOverB = False
@@ -252,7 +253,7 @@ lowmass_cust = {
     # z
     'zMass'                : {'rangex': [60,120]},
     'zPt'                  : {'rangex': [0,300]},
-    'mllMinusMZ'           : {'rangex': [0,60]},
+    #'mllMinusMZ'           : {'rangex': [0,60]},
     # event
     'met'                  : {'rangex': [0,200]},
     'mass'                 : {'rangex': [0,600]},
@@ -269,7 +270,7 @@ norm_cust = {
     'hppSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 1},
     # z
     'zMass'                 : {'yaxis': 'Unit normalized', 'rebin': 1, 'numcol': 2},
-    'mllMinusMZ'            : {'yaxis': 'Unit normalized', 'rebin': 1},
+    #'mllMinusMZ'            : {'yaxis': 'Unit normalized', 'rebin': 1},
     # event
     'met'                   : {'yaxis': 'Unit normalized', 'rebin': 1},
     'numVertices'           : {'yaxis': 'Unit normalized'},
@@ -286,7 +287,7 @@ eff_cust = {
     'hppLeadingLeptonPt'    : {'yaxis': 'Efficiency', 'rebin': 1},
     'hppSubLeadingLeptonPt' : {'yaxis': 'Efficiency', 'rebin': 1},
     'st'                    : {'yaxis': 'Efficiency', 'rebin': 1},
-    'mllMinusMZ'            : {'yaxis': 'Efficiency', 'rebin': 1},
+    #'mllMinusMZ'            : {'yaxis': 'Efficiency', 'rebin': 1},
     'met'                   : {'yaxis': 'Efficiency', 'rebin': 1},
 }
 
@@ -299,7 +300,7 @@ sOverB_cust = {
     'hppLeadingLeptonPt'    : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     'hppSubLeadingLeptonPt' : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     'st'                    : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
-    'mllMinusMZ'            : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
+    #'mllMinusMZ'            : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     'met'                   : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
 }
 
@@ -312,7 +313,7 @@ significance_cust = {
     'hppLeadingLeptonPt'    : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     'hppSubLeadingLeptonPt' : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     'st'                    : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
-    'mllMinusMZ'            : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
+    #'mllMinusMZ'            : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
     'met'                   : {'yaxis': 'Signal over background', 'logy': 0, 'rebin': 1},
 }
 
@@ -325,7 +326,7 @@ roc_cust = {
     'hppLeadingLeptonPt'    : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
     'hppSubLeadingLeptonPt' : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
     'st'                    : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
-    'mllMinusMZ'            : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
+    #'mllMinusMZ'            : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
     'met'                   : {'yaxis': 'Background Rejection', 'xaxis': 'Signal Efficiency', 'legendpos':34, 'numcol': 3, 'ymax': 1.3, 'rebin': 1},
 }
 
@@ -335,7 +336,7 @@ envelope_cust = {
     'st'                    : {'yaxis': '#Sigma p_{T}^{l} (GeV)',       'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
     'hppDeltaR'             : {'yaxis': '#DeltaR(l^{+}l^{+})',          'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
     'met'                   : {'yaxis': 'E_{T}^{miss} (GeV)',           'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
-    'mllMinusZ'             : {'yaxis': '|m_{l^{+}l^{-}}-m_{Z}| (GeV)', 'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
+    #'mllMinusZ'             : {'yaxis': '|m_{l^{+}l^{-}}-m_{Z}| (GeV)', 'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
 }
 
 ############################
@@ -421,7 +422,7 @@ if plotDatadriven:
 ########################
 ### low mass control ###
 ########################
-if plotMC:
+if plotMC and plotLowmass:
     hpp3lPlotter.clearHistograms()
 
     for s in allsamples:
@@ -439,7 +440,7 @@ if plotMC:
 ######################################
 ### lowmass datadriven backgrounds ###
 ######################################
-if plotDatadriven:
+if plotDatadriven and plotLowmass:
     hpp3lPlotter.clearHistograms()
 
     hpp3lPlotter.addHistogramToStack('datadriven',datadrivenSamples)
@@ -662,7 +663,7 @@ if plotSignal:
         'tt' : 10,
     }
 
-    for plot in norm_cust:
+    for plot in plots:
         plotname = 'default/{0}'.format(plot)
         savename = 'signal/{0}'.format(plot)
         kwargs = deepcopy(plots[plot])
@@ -677,30 +678,30 @@ if plotSignal:
             if cat in catRebin and 'rebin' in catkwargs and plot in ['hppMass']: catkwargs['rebin'] = catkwargs['rebin'] * catRebin[cat]
             if doCat: hpp3lPlotter.plotNormalized(plotnames,savename,**catkwargs)
 
-    for plot in eff_cust:
-        kwargs = deepcopy(plots[plot])
-        if plot in norm_cust: kwargs.update(norm_cust[plot])
-        for higgsChan in ['ee','em','et','mm','mt','tt']:
-            # reco
-            plotnames = ['default/{0}/{1}'.format(chan,plot) for chan in chans if chan[:2]==higgsChan]
-            savename = 'signal/{0}/{1}'.format(higgsChan,plot)
-            genkwargs = deepcopy(kwargs)
-            effkwargs = deepcopy(plots[plot])
-            if plot in eff_cust: effkwargs.update(eff_cust[plot])
-            #if higgsChan in genRebin and 'rebin' in genkwargs and plot in ['hppMass','hmmMass']: genkwargs['rebin'] = genkwargs['rebin'] * genRebin[higgsChan]
-            hpp3lPlotter.plotNormalized(plotnames,savename,**genkwargs)
-            # and the gen truth
-            plotnames = []
-            for gen in genRecoMap:
-                if len(gen)==4: continue
-                for reco in genRecoMap[gen]:
-                    if gen[:2]==higgsChan:
-                        plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot)]
-            if plotnames:
-                savename = 'signal/{0}/{1}_genMatched'.format(higgsChan,plot)
-                hpp3lPlotter.plotNormalized(plotnames,savename,**genkwargs)
-                savename = 'signal/{0}/{1}_genMatched_efficiency'.format(higgsChan,plot)
-                hpp3lPlotter.plotEfficiency(plotnames,savename,**effkwargs)
+    #for plot in eff_cust:
+    #    kwargs = deepcopy(plots[plot])
+    #    if plot in norm_cust: kwargs.update(norm_cust[plot])
+    #    for higgsChan in ['ee','em','et','mm','mt','tt']:
+    #        # reco
+    #        plotnames = ['default/{0}/{1}'.format(chan,plot) for chan in chans if chan[:2]==higgsChan]
+    #        savename = 'signal/{0}/{1}'.format(higgsChan,plot)
+    #        genkwargs = deepcopy(kwargs)
+    #        effkwargs = deepcopy(plots[plot])
+    #        if plot in eff_cust: effkwargs.update(eff_cust[plot])
+    #        #if higgsChan in genRebin and 'rebin' in genkwargs and plot in ['hppMass','hmmMass']: genkwargs['rebin'] = genkwargs['rebin'] * genRebin[higgsChan]
+    #        hpp3lPlotter.plotNormalized(plotnames,savename,**genkwargs)
+    #        # and the gen truth
+    #        plotnames = []
+    #        for gen in genRecoMap:
+    #            if len(gen)==4: continue
+    #            for reco in genRecoMap[gen]:
+    #                if gen[:2]==higgsChan:
+    #                    plotnames += ['default/{0}/gen_{1}/{2}'.format(reco,gen,plot)]
+    #        if plotnames:
+    #            savename = 'signal/{0}/{1}_genMatched'.format(higgsChan,plot)
+    #            hpp3lPlotter.plotNormalized(plotnames,savename,**genkwargs)
+    #            savename = 'signal/{0}/{1}_genMatched_efficiency'.format(higgsChan,plot)
+    #            hpp3lPlotter.plotEfficiency(plotnames,savename,**effkwargs)
 
 # ROCs
 if plotROC:
