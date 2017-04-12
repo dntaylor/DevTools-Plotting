@@ -105,16 +105,15 @@ latestNtuples['80X'] = {
 #    'ThreeLepton'    : '2017-01-05_ThreeLeptonAnalysis_80X_v1-merge',
 # Moriond 2017
     'Tau'            : '2017-03-30_TauAnalysis_80X_Moriond_v1-merge',
+    'Charge'         : '2017-04-06_ChargeAnalysis_80X_Moriond_v1-merge',
     'DY'             : '2017-03-01_DYAnalysis_80X_Moriond_v2-merge',
-    #'DijetFakeRate'  : '2017-03-22_DijetFakeRateAnalysis_80X_Moriond_v1-merge', # previous
     'DijetFakeRate'  : '2017-03-30_DijetFakeRateAnalysis_80X_Moriond_v1-merge', # with modified endcap electron id
     'ZFakeRate'      : '2017-03-21_ZFakeRateAnalysis_80X_Moriond_v1-merge',
     'WFakeRate'      : '2017-03-24_WFakeRateAnalysis_80X_Moriond_v1-merge',
-    #'WTauFakeRate'   : '2017-03-22_WTauFakeRateAnalysis_80X_Moriond_v2-merge', # prev, loose -0.8
     'WTauFakeRate'   : '2017-03-31_WTauFakeRateAnalysis_80X_Moriond_v1-merge', # loose -0.2
     'WZ'             : '2017-03-24_WZAnalysis_80X_Moriond_v1-merge',
-    'Hpp3l'          : '2017-03-31_Hpp3lAnalysis_80X_Moriond_v2-merge',
-    'Hpp4l'          : '2017-03-31_Hpp4lAnalysis_80X_Moriond_v2-merge',
+    'Hpp3l'          : '2017-04-07_Hpp3lAnalysis_80X_Moriond_v1-merge',
+    'Hpp4l'          : '2017-04-07_Hpp4lAnalysis_80X_Moriond_v1-merge',
 }
 
 latestShifts = {}

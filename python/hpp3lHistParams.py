@@ -2,7 +2,7 @@ from copy import deepcopy
 from itertools import product, combinations_with_replacement
 
 from DevTools.Plotter.utilities import ZMASS, addChannels
-from DevTools.Plotter.higgsUtilities import getChannels, getGenChannels, getSelections
+from DevTools.Plotter.higgsUtilities import getChannels, getGenChannels
 
 from DevTools.Utilities.utilities import getCMSSWVersion
 
@@ -140,6 +140,7 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
     #for mass in masses:
     for mass in [500]:
         for hppTaus in range(3):
+            pass
             # old
             #sideband = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=[],invcuts=['mass'],mode='old')
             #massWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['mass'],mode='old')
@@ -159,8 +160,8 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
             #selectionParams['Hpp3l']['new/allSideband/{0}/hpp{1}'.format(mass,hppTaus,)] =   {'args': [hpp3lCutMap['PPP'] + ' && ' + allSideband],   'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
             #selectionParams['Hpp3l']['new/allMassWindow/{0}/hpp{1}'.format(mass,hppTaus,)] = {'args': [hpp3lCutMap['PPP'] + ' && ' + allMassWindow], 'kwargs': {'mcscalefactor': hpp3lScaleFactor, 'countOnly': True}}
             # n-1 mass window
-            nMinusOneMassWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr'],mode='new')
-            selectionParams['Hpp3l']['nMinusOne/massWindow/{0}/hpp{1}'.format(mass,hppTaus,)] = {'args': [hpp3lCutMap['PPP'] + ' && ' + nMinusOneMassWindow], 'kwargs': {'mcscalefactor': hpp3lScaleFactor,}}
+            #nMinusOneMassWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr'],mode='new')
+            #selectionParams['Hpp3l']['nMinusOne/massWindow/{0}/hpp{1}'.format(mass,hppTaus,)] = {'args': [hpp3lCutMap['PPP'] + ' && ' + nMinusOneMassWindow], 'kwargs': {'mcscalefactor': hpp3lScaleFactor,}}
 
     # fake regions
     #for reg in hpp3lFakeRegions:
@@ -253,16 +254,17 @@ def buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
         #for mass in masses:
         for mass in [500]:
             for hppTaus in range(3):
+                pass
                 # n-1
-                nMinusOneMassWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr'],mode='new')
-                selectionParams['Hpp3l']['{2}/nMinusOne/massWindow/{0}/hpp{1}'.format(mass,hppTaus,name)] = {
-                    'args': [hpp3lBaseCut + ' && ' + regionCut + ' && ' + nMinusOneMassWindow], 
-                    'kwargs': {
-                        'mccut': hpp3lMCCut,
-                        'mcscalefactor': regionMCScaleFactor,
-                        'datascalefactor': regionDataScaleFactor,
-                    },
-                }
+                #nMinusOneMassWindow = getSelections('Hpp3l',mass,nTaus=[hppTaus,0],cuts=['st','zveto','met','dr'],mode='new')
+                #selectionParams['Hpp3l']['{2}/nMinusOne/massWindow/{0}/hpp{1}'.format(mass,hppTaus,name)] = {
+                #    'args': [hpp3lBaseCut + ' && ' + regionCut + ' && ' + nMinusOneMassWindow], 
+                #    'kwargs': {
+                #        'mccut': hpp3lMCCut,
+                #        'mcscalefactor': regionMCScaleFactor,
+                #        'datascalefactor': regionDataScaleFactor,
+                #    },
+                #}
 
     # setup gen channel selections
     genChans = getGenChannels('Hpp3l')

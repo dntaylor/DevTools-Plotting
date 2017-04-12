@@ -17,17 +17,17 @@ version = getCMSSWVersion()
 blind = False
 doCat = True
 plotCount = True
-plotMC = False
-plotDatadriven = False
+plotMC = True
+plotDatadriven = True
 plotLowmass = False
 plotFakeRegions = False
-plotSignal = True
+plotSignal = False
 plotROC = False
 plotNormalization = False
 plotSOverB = False
 plotSignificance = False
 plotAllMasses = False
-plotSig500 = False
+plotSig500 = True
 
 hpp4lPlotter = Plotter('Hpp4l',new=True)
 

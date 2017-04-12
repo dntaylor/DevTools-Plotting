@@ -842,13 +842,37 @@ class Plotter(PlotterBase):
         subtractMap = kwargs.pop('subtractMap',{})
         getHists = kwargs.pop('getHists', False)
         save = kwargs.pop('save',True)
+        plotratio = kwargs.pop('plotratio',False)
 
         logging.info('Plotting {0}'.format(savename))
 
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
         #ROOT.SetOwnership(canvas,False)
-        canvas.SetLogy(logy)
-        canvas.SetLogx(logx)
+
+        # ratio plot
+        if plotratio:
+            plotpad = ROOT.TPad("plotpad", "top pad", 0.0, 0.21, 1.0, 1.0)
+            #ROOT.SetOwnership(plotpad,False)
+            plotpad.SetBottomMargin(0.04)
+            plotpad.SetRightMargin(0.03)
+            plotpad.Draw()
+            plotpad.SetLogy(logy)
+            plotpad.SetLogx(logx)
+            ratiopad = ROOT.TPad("ratiopad", "bottom pad", 0.0, 0.0, 1.0, 0.21)
+            #ROOT.SetOwnership(ratiopad,False)
+            ratiopad.SetTopMargin(0.06)
+            ratiopad.SetRightMargin(0.03)
+            ratiopad.SetBottomMargin(0.5)
+            ratiopad.SetLeftMargin(0.16)
+            ratiopad.SetTickx(1)
+            ratiopad.SetTicky(1)
+            ratiopad.Draw()
+            ratiopad.SetLogx(logx)
+            if plotpad != ROOT.TVirtualPad.Pad(): plotpad.cd()
+            #plotpad.cd()
+        else:
+            canvas.SetLogy(logy)
+            canvas.SetLogx(logx)
 
         highestMax = 0.
 
@@ -875,6 +899,7 @@ class Plotter(PlotterBase):
                 num.GetYaxis().SetTitle(yaxis)
                 num.GetYaxis().SetTitleOffset(1.5)
                 num.SetMinimum(0.)
+                if plotratio: num.GetXaxis().SetLabelOffset(999)
                 if ymax!=None: num.SetMaximum(ymax)
                 if ymin!=None: num.SetMinimum(ymin)
             else:
@@ -889,6 +914,40 @@ class Plotter(PlotterBase):
         legend.Draw()
 
         self._setStyle(canvas)
+
+        # the ratio portion
+        if plotratio:
+            logging.debug('Making Ratio')
+            self.j += 1
+            denomname = 'h_{0}_ratio'.format(self.j)
+            denom = hists.items()[0][1].Clone(denomname)
+            ratiostaterr = self._get_ratio_stat_err(denom,**kwargs)
+            ratiostaterr.SetXTitle(xaxis)
+            unityargs = [denom.GetXaxis().GetXmin(),1,denom.GetXaxis().GetXmax(),1]
+            ratiounity = ROOT.TLine(*unityargs)
+            ratiounity.SetLineStyle(2)
+            ratios = OrderedDict()
+            for histName, hist in hists.items()[1:]:
+                self.j += 1
+                numname = 'h_{0}_{1}_ratio'.format(histName,self.j)
+                num = hist.Clone(numname)
+                numratio = self._get_ratio_err(num,denom)
+                ratios[histName] = numratio
+
+            # and draw
+            if ratiopad != ROOT.TVirtualPad.Pad(): ratiopad.cd()
+            #ratiopad.cd()
+            ratiostaterr.Draw("e2")
+            ratiounity.Draw('same')
+            for histName, hist in ratios.iteritems():
+                if histName=='data':
+                    hist.Draw('e0 same')
+                    #hist.Draw('0P same')
+                else:
+                    hist.SetLineWidth(3)
+                    hist.Draw('hist same')
+            #if canvas != ROOT.TVirtualPad.Pad(): canvas.cd()
+            ##canvas.cd()
 
         # save
         if save:

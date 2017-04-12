@@ -19,13 +19,13 @@ plotMC = True
 plotDatadriven = True
 plotLowmass = False
 plotFakeRegions = False
-plotSignal = True
+plotSignal = False
 plotROC = False
 plotNormalization = False
 plotSOverB = False
 plotSignificance = False
 plotAllMasses = False
-plotSig500 = False
+plotSig500 = True
 
 hpp3lPlotter = Plotter('Hpp3l',new=True)
 
@@ -262,20 +262,20 @@ lowmass_cust = {
 
 norm_cust = {
     # hpp
-    'hppMass'               : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
-    #'hppMt'                 : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
-    'hppPt'                 : {'yaxis': 'Unit normalized', 'rebin': 1, 'numcol': 2},
-    'hppDeltaR'             : {'yaxis': 'Unit normalized', 'rebin': 1},
-    'hppLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 1},
-    'hppSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 1},
+    'hppMass'               : {'yaxis': 'Unit normalized', 'logy':0,},
+    #'hppMt'                 : {'yaxis': 'Unit normalized', 'logy':0,},
+    'hppPt'                 : {'yaxis': 'Unit normalized', 'numcol': 2},
+    'hppDeltaR'             : {'yaxis': 'Unit normalized',},
+    'hppLeadingLeptonPt'    : {'yaxis': 'Unit normalized',},
+    'hppSubLeadingLeptonPt' : {'yaxis': 'Unit normalized',},
     # z
-    'zMass'                 : {'yaxis': 'Unit normalized', 'rebin': 1, 'numcol': 2},
-    #'mllMinusMZ'            : {'yaxis': 'Unit normalized', 'rebin': 1},
+    'zMass'                 : {'yaxis': 'Unit normalized','numcol': 2},
+    #'mllMinusMZ'            : {'yaxis': 'Unit normalized',},
     # event
-    'met'                   : {'yaxis': 'Unit normalized', 'rebin': 1},
+    'met'                   : {'yaxis': 'Unit normalized', },
     'numVertices'           : {'yaxis': 'Unit normalized'},
-    'mass'                  : {'yaxis': 'Unit normalized', 'rebin': 1},
-    'st'                    : {'yaxis': 'Unit normalized', 'rebin': 1},
+    'mass'                  : {'yaxis': 'Unit normalized', },
+    'st'                    : {'yaxis': 'Unit normalized', },
 }
 
 eff_cust = {

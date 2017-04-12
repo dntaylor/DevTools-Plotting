@@ -2,7 +2,7 @@ from copy import deepcopy
 from itertools import product, combinations_with_replacement
 
 from DevTools.Plotter.utilities import ZMASS, addChannels
-from DevTools.Plotter.higgsUtilities import getChannels, getGenChannels, getSelections
+from DevTools.Plotter.higgsUtilities import getChannels, getGenChannels
 
 from DevTools.Utilities.utilities import getCMSSWVersion
 
@@ -150,6 +150,7 @@ def buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
     for mass in [500]:
         for hppTaus in range(3):
             for hmmTaus in range(3):
+                pass
                 # old
                 #sideband = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=[],invcuts=['mass'],mode='old')
                 #massWindow = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['mass'],mode='old')
@@ -169,8 +170,8 @@ def buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
                 #selectionParams['Hpp4l']['new/allSideband/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] =   {'args': [hpp4lCutMap['PPPP'] + ' && ' + allSideband],   'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
                 #selectionParams['Hpp4l']['new/allMassWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] = {'args': [hpp4lCutMap['PPPP'] + ' && ' + allMassWindow], 'kwargs': {'mcscalefactor': hpp4lScaleFactor, 'countOnly': True}}
                 # n-1
-                nMinusOneMassWindow = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['st','zveto','met','dr'],invcuts=[],mode='new')
-                selectionParams['Hpp4l']['nMinusOne/massWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] = {'args': [hpp4lCutMap['PPPP'] + ' && ' + nMinusOneMassWindow], 'kwargs': {'mcscalefactor': hpp4lScaleFactor,}}
+                #nMinusOneMassWindow = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['st','zveto','met','dr'],invcuts=[],mode='new')
+                #selectionParams['Hpp4l']['nMinusOne/massWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus)] = {'args': [hpp4lCutMap['PPPP'] + ' && ' + nMinusOneMassWindow], 'kwargs': {'mcscalefactor': hpp4lScaleFactor,}}
     
     # fake regions via modes
     #for nf in range(3): # limit to speed up
@@ -222,6 +223,7 @@ def buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
         for mass in [500]:
             for hppTaus in range(3):
                 for hmmTaus in range(3):
+                    pass
                     # old
                     #sideband = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=[],invcuts=['mass'],mode='old')
                     #massWindow = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['mass'],mode='old')
@@ -273,15 +275,15 @@ def buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProj
                     #    },
                     #}
                     # n-1
-                    nMinusOneMassWindow = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['st','zveto','met','dr'],invcuts=[],mode='new')
-                    selectionParams['Hpp4l']['{3}/nMinusOne/massWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus,name)] = {
-                        'args': [hpp4lBaseCut + ' && ' + regionCut + ' && ' + nMinusOneMassWindow], 
-                        'kwargs': {
-                            'mccut': hpp4lMCCut,
-                            'mcscalefactor': regionMCScaleFactor,
-                            'datascalefactor': regionDataScaleFactor,
-                        },
-                    }
+                    #nMinusOneMassWindow = getSelections('Hpp4l',mass,nTaus=[hppTaus,hmmTaus],cuts=['st','zveto','met','dr'],invcuts=[],mode='new')
+                    #selectionParams['Hpp4l']['{3}/nMinusOne/massWindow/{0}/hpp{1}hmm{2}'.format(mass,hppTaus,hmmTaus,name)] = {
+                    #    'args': [hpp4lBaseCut + ' && ' + regionCut + ' && ' + nMinusOneMassWindow], 
+                    #    'kwargs': {
+                    #        'mccut': hpp4lMCCut,
+                    #        'mcscalefactor': regionMCScaleFactor,
+                    #        'datascalefactor': regionDataScaleFactor,
+                    #    },
+                    #}
     
     # setup gen channel selections
     genChans = getGenChannels('Hpp4l')

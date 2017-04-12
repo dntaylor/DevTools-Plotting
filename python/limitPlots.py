@@ -14,18 +14,20 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 
 blind = False
 smooth = True
-limitMode = 'fullCLs'
+#limitMode = 'fullCLs'
+limitMode = 'asymptotic'
 
 limitPlotter = LimitPlotter()
 
-masses = [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500]
+#masses = [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500]
+masses = [300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500]
 modes = ['ee100','em100','et100','mm100','mt100','tt100','BP1','BP2','BP3','BP4']
 
 limvals = {mode: {} for mode in modes}
 filenames = {mode: {} for mode in modes}
 filenames_asym = {mode: {} for mode in modes}
 
-for analysis,prod in [('Hpp3l','AP'),('Hpp3l','PP'),('Hpp4l',''),('HppAP',''),('HppPP',''),('HppComb','')]:
+for analysis,prod in [('Hpp3l','AP'),('Hpp3l','PP'),('Hpp3lR',''),('Hpp4l',''),('Hpp4lR',''),('HppAP',''),('HppPP',''),('HppPPR',''),('HppComb','')]:
     for mode in modes:
         label = analysis+prod
         filenames[mode][label] = ['{0}/{1}/{2}/{3}/limits{4}.txt'.format(limitMode,analysis,mode,mass,prod) for mass in masses]
@@ -37,10 +39,10 @@ for analysis,prod in [('Hpp3l','AP'),('Hpp3l','PP'),('Hpp4l',''),('HppAP',''),('
         limvals[mode][label] = limitPlotter.plotLimit(masses,filenames[mode][label],'{0}/{1}'.format(label,mode),blind=blind,smooth=smooth,**kwargs)
         if limitMode=='fullCLs': temp = limitPlotter.plotLimit(masses,filenames[mode][label],'{0}/{1}_both'.format(label,mode),blind=blind,smooth=smooth,asymptoticFilenames=filenames_asym[mode][label],**kwargs)
 
-limitPlotter.moneyPlot(limvals,'moneyPlot_prevExclusion',doPreviousExclusion=True,blind=blind)
-limitPlotter.moneyPlot(limvals,'moneyPlot_offAxis',blind=blind,offAxis=True)
-limitPlotter.moneyPlot(limvals,'moneyPlot_prevExclusion',doPreviousExclusion=True,blind=blind)
-limitPlotter.moneyPlot(limvals,'moneyPlot_prevExclusion_offAxis',doPreviousExclusion=True,blind=blind,offAxis=True)
+limitPlotter.moneyPlot(limvals,'moneyPlot/prevExclusion',doPreviousExclusion=True,blind=blind)
+limitPlotter.moneyPlot(limvals,'moneyPlot/offAxis',blind=blind,offAxis=True)
+limitPlotter.moneyPlot(limvals,'moneyPlot/prevExclusion',doPreviousExclusion=True,blind=blind)
+limitPlotter.moneyPlot(limvals,'moneyPlot/prevExclusion_offAxis',doPreviousExclusion=True,blind=blind,offAxis=True)
 
 for mode in modes:
     limitPlotter.plotCrossSectionLimit(masses,filenames[mode]['HppAP'],filenames[mode]['HppPP'],'HppComb/{0}_crossSection'.format(mode),blind=blind,smooth=smooth)

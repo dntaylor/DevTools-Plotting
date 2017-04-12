@@ -27,6 +27,8 @@ class Hpp4lFlattener(NtupleFlattener):
         self.datadrivenRegular = True
         self.lowmass = True
         self.doGen = False
+        self.mass = 500
+
         # setup properties
         self.leps = ['hpp1','hpp2','hmm1','hmm2']
         self.channels = getChannels('Hpp4l')
@@ -45,6 +47,21 @@ class Hpp4lFlattener(NtupleFlattener):
         self.selectionMap = {}
         self.selectionMap['default'] = lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
         if self.lowmass: self.selectionMap['lowmass'] = lambda row: all([self.lowmassCutMap[cut](row) for cut in self.lowmassCutMap])
+
+        # sample signal plot
+        self.cutRegions = {}
+        self.cutRegions[self.mass] = getSelectionMap('Hpp4l',self.mass)
+        self.selectionMap['nMinusOne/massWindow/{0}/hpp0hmm0'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][0][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][0][v](row) for v in ['st','zveto','drmm']])
+        #self.selectionMap['nMinusOne/massWindow/{0}/hpp0hmm1'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][0][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][1][v](row) for v in ['st','zveto','drmm']])
+        #self.selectionMap['nMinusOne/massWindow/{0}/hpp0hmm2'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][0][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][2][v](row) for v in ['st','zveto','drmm']])
+        #self.selectionMap['nMinusOne/massWindow/{0}/hpp1hmm0'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][1][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][0][v](row) for v in ['st','zveto','drmm']])
+        self.selectionMap['nMinusOne/massWindow/{0}/hpp1hmm1'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][1][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][1][v](row) for v in ['st','zveto','drmm']])
+        #self.selectionMap['nMinusOne/massWindow/{0}/hpp1hmm2'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][1][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][2][v](row) for v in ['st','zveto','drmm']])
+        #self.selectionMap['nMinusOne/massWindow/{0}/hpp2hmm0'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][2][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][0][v](row) for v in ['st','zveto','drmm']])
+        #self.selectionMap['nMinusOne/massWindow/{0}/hpp2hmm1'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][2][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][1][v](row) for v in ['st','zveto','drmm']])
+        self.selectionMap['nMinusOne/massWindow/{0}/hpp2hmm2'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][2][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][2][v](row) for v in ['st','zveto','drmm']])
+
+
 
         self.selections = []
         for sel in self.selectionMap:

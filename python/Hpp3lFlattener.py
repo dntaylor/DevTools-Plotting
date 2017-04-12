@@ -27,6 +27,8 @@ class Hpp3lFlattener(NtupleFlattener):
         self.datadrivenRegular = True
         self.lowmass = True
         self.doGen = False
+        self.mass = 500
+
         # setup properties
         self.leps = ['hpp1','hpp2','hm1']
         self.channels = getChannels('Hpp3l')
@@ -46,6 +48,14 @@ class Hpp3lFlattener(NtupleFlattener):
         self.selectionMap = {}
         self.selectionMap['default'] = lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
         if self.lowmass: self.selectionMap['lowmass'] = lambda row: all([self.lowmassCutMap[cut](row) for cut in self.lowmassCutMap])
+
+        # sample signal plot
+        self.cutRegions = {}
+        self.cutRegions[self.mass] = getSelectionMap('Hpp3l',self.mass)
+        self.selectionMap['nMinusOne/massWindow/{0}/hpp0'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][0][v](row) for v in ['st','zveto','met','dr']])
+        self.selectionMap['nMinusOne/massWindow/{0}/hpp1'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][1][v](row) for v in ['st','zveto','met','dr']])
+        self.selectionMap['nMinusOne/massWindow/{0}/hpp2'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][2][v](row) for v in ['st','zveto','met','dr']])
+        
 
         self.selections = []
         for sel in self.selectionMap:

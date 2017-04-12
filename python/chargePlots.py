@@ -22,32 +22,6 @@ chanLabels = [''.join([labelMap[c] for c in chan]) for chan in chans]
 #chanLabels[-1] = '#tau_{#mu}#tau_{h}'
 
 sigMap = {
-    'WZ'  : [
-             'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
-             'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-             #'WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8',
-             #'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-            ],
-    'ZZ'  : [
-             'ZZTo4L_13TeV_powheg_pythia8',
-             'GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo2mu2tau_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8',
-             'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8',
-             'ZZTo2L2Nu_13TeV_powheg_pythia8',
-             'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-            ],
-    'VVV' : [
-             'WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
-             'WWG_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
-            ],
-    'TTV' : [
-             #'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
-             #'TTZToLLNuNu_M-10_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
-             'ttWJets_13TeV_madgraphMLM',
-             'ttZJets_13TeV_madgraphMLM',
-            ],
     'WW'  : [
              'WWTo2L2Nu_13TeV-powheg',
              #'WWToLNuQQ_13TeV-powheg',
@@ -71,8 +45,8 @@ sigMap = {
             ],
 }
 
-samples = ['WW','TT','Z']
-#samples = ['TT','Z']
+#samples = ['WW','TT','Z']
+samples = ['TT','Z']
 
 for s in samples:
     chargePlotter.addHistogramToStack(s,sigMap[s])
@@ -82,11 +56,11 @@ chargePlotter.addHistogram('data',sigMap['data'])
 # plot definitions
 plots = {
     # z cand
-    'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events/0.5 GeV', 'rebin': 5, 'rangex': [81,101]},
-    'zLeadingLeptonPt'      : {'xaxis': 'p_{T}^{Z_{lead}} (GeV)', 'yaxis': 'Events/0.5 GeV', 'rebin': 5, 'rangex': [0,150]},
-    'zLeadingLeptonEta'     : {'xaxis': '|#eta^{Z_{lead}}|', 'yaxis': 'Events', 'rebin': 5, 'rangex': [-2.5,2.5]},
-    'zSubLeadingLeptonPt'   : {'xaxis': 'p_{T}^{Z_{sublead}} (GeV)', 'yaxis': 'Events/0.5 GeV', 'rebin': 5, 'rangex': [0,150]},
-    'zSubLeadingLeptonEta'  : {'xaxis': '|#eta^{Z_{sublead}}|', 'yaxis': 'Events', 'rebin': 5, 'rangex': [-2.5,2.5]},
+    'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 1 GeV', 'rebin': range(81,101,1)},
+    'zLeadingLeptonPt'      : {'xaxis': 'p_{T}^{Z_{lead}} (GeV)', 'yaxis': 'Events / 1 GeV', 'rebin': range(0,150,1)},
+    'zLeadingLeptonEta'     : {'xaxis': '|#eta^{Z_{lead}}|', 'yaxis': 'Events',},
+    'zSubLeadingLeptonPt'   : {'xaxis': 'p_{T}^{Z_{sublead}} (GeV)', 'yaxis': 'Events / 1 GeV', 'rebin': range(0,150,1)},
+    'zSubLeadingLeptonEta'  : {'xaxis': '|#eta^{Z_{sublead}}|', 'yaxis': 'Events',},
 }
 
 # signal region
@@ -126,6 +100,6 @@ for plot in ['Pt','Eta']:
             numname = 'SS/{0}/{1}{2}'.format(chan,lepton,plot)
             denomname = 'OS/{0}/{1}{2}'.format(chan,lepton,plot)
             savename = 'ratio/{0}/{1}{2}'.format(chan,lepton,plot)
-            chargePlotter.plotRatio(numname,denomname,savename,ymax=0.07,**kwargs)
+            chargePlotter.plotRatio(numname,denomname,savename,ymax=0.07,plotratio=True,ratiomin=0.9,ratiomax=1.2,**kwargs)
 
 

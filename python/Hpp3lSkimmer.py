@@ -8,6 +8,7 @@ import operator
 
 from NtupleSkimmer import NtupleSkimmer
 from DevTools.Utilities.utilities import prod, ZMASS
+from DevTools.Plotter.higgsUtilities import *
 
 import ROOT
 
@@ -23,8 +24,8 @@ class Hpp3lSkimmer(NtupleSkimmer):
         super(Hpp3lSkimmer, self).__init__('Hpp3l',sample,**kwargs)
 
         # test if we want to run the optimization routine
-        self.optimize = True
-        self.var = 'met'
+        self.optimize = False
+        self.var = 'st'
 
         # setup properties
         self.leps = ['hpp1','hpp2','hm1']
@@ -177,50 +178,9 @@ class Hpp3lSkimmer(NtupleSkimmer):
             'met': row.met_pt,
         }
         cutRegions = {}
-        # comments are: 8 TeV, ICHEP, current
         for mass in self.masses:
-            cutRegions[mass] = {
-                0: {
-                    #'st'   : v['st']>0.81*mass+88,
-                    #'st'   : v['st']>0.99*mass-35,
-                    'st'   : v['st']>1.44*mass-4 or v['st']>1600,
-                    #'zveto': v['zdiff']>80,
-                    'zveto': v['zdiff']>10,
-                    'met'  : True,
-                    #'dr'   : v['dr']<mass/380.+2.06 if v['hpp']<400 else v['dr']<mass/1200.+2.77,
-                    #'dr'   : True,
-                    'dr'   : v['dr']<2.9,
-                    'mass' : v['hpp']>0.9*mass and v['hpp']<1.1*mass,
-                },
-                1: {
-                    #'st'   : v['st']>0.58*mass+85,
-                    #'st'   : v['st']>1.15*mass+2,
-                    'st'   : v['st']>1.17*mass+120 or v['st']>1600,
-                    #'zveto': v['zdiff']>80,
-                    #'zveto': v['zdiff']>20,
-                    'zveto': v['zdiff']>10,
-                    #'met'  : v['met']>20,
-                    'met'  : v['met']>80,
-                    #'dr'   : v['dr']<mass/380.+1.96 if v['hpp']<400 else v['dr']<mass/1000.+2.6,
-                    #'dr'   : v['dr']<3.2,
-                    'dr'   : v['dr']<2.9,
-                    'mass' : v['hpp']>0.4*mass and v['hpp']<1.1*mass,
-                },
-                2: {
-                    #'st'   : v['st']>0.35*mass+81,
-                    #'st'   : v['st']>0.98*mass+91,
-                    'st'   : v['st']>1.12*mass+168 or v['st']>1600,
-                    #'zveto': v['zdiff']>50,
-                    #'zveto': v['zdiff']>25,
-                    'zveto': v['zdiff']>10,
-                    #'met'  : v['met']>20,
-                    #'met'  : v['met']>50,
-                    'met'  : v['met']>80,
-                    #'dr'   : v['dr']<mass/380.+1.86 if v['hpp']<400 else v['dr']<mass/750.+2.37,
-                    'dr'   : v['dr']<2.5,
-                    'mass' : v['hpp']>0.3*mass and v['hpp']<1.1*mass,
-                },
-            }
+            cutRegions[mass] = getSelectionMap('Hpp3l',mass)
+
         # optimization ranges
         stRange = [x*20 for x in range(100)]
         zvetoRange = [x*5 for x in range(25)]
@@ -238,11 +198,11 @@ class Hpp3lSkimmer(NtupleSkimmer):
                     name = '{0}/hpp{1}'.format(mass,nTaus)
                     sides = []
                     windows = []
-                    sides += [cutRegions[mass][nTaus]['st']]
-                    sides += [cutRegions[mass][nTaus]['zveto']]
-                    if nTaus>0: sides += [cutRegions[mass][nTaus]['met']]
-                    sides += [cutRegions[mass][nTaus]['dr']]
-                    windows += [cutRegions[mass][nTaus]['mass']]
+                    sides += [cutRegions[mass][nTaus]['st'](row)]
+                    sides += [cutRegions[mass][nTaus]['zveto'](row)]
+                    if nTaus>0: sides += [cutRegions[mass][nTaus]['met'](row)]
+                    sides += [cutRegions[mass][nTaus]['dr'](row)]
+                    windows += [cutRegions[mass][nTaus]['mass'](row)]
                     massWindowOnly = all(windows)
                     sideband = not all(sides) and not all(windows)
                     massWindow = not all(sides) and all(windows)
@@ -264,10 +224,10 @@ class Hpp3lSkimmer(NtupleSkimmer):
                     # run the grid of values
                     if self.optimize:
                         if not massWindowOnly: continue
-                        nMinusOneSt = all([cutRegions[mass][nTaus]['zveto'], cutRegions[mass][nTaus]['dr'], cutRegions[mass][nTaus]['met']])
-                        nMinusOneZveto = all([cutRegions[mass][nTaus]['st'], cutRegions[mass][nTaus]['dr'], cutRegions[mass][nTaus]['met']])
-                        nMinusOneDR = all([cutRegions[mass][nTaus]['zveto'], cutRegions[mass][nTaus]['st'], cutRegions[mass][nTaus]['met']])
-                        nMinusOneMet = all([cutRegions[mass][nTaus]['zveto'], cutRegions[mass][nTaus]['dr'], cutRegions[mass][nTaus]['st']])
+                        nMinusOneSt = all([cutRegions[mass][nTaus]['zveto'](row), cutRegions[mass][nTaus]['dr'](row), cutRegions[mass][nTaus]['met'](row), cutRegions[mass][nTaus]['mass'](row)])
+                        nMinusOneZveto = all([cutRegions[mass][nTaus]['st'](row), cutRegions[mass][nTaus]['dr'](row), cutRegions[mass][nTaus]['met'](row), cutRegions[mass][nTaus]['mass'](row)])
+                        nMinusOneDR = all([cutRegions[mass][nTaus]['zveto'](row), cutRegions[mass][nTaus]['st'](row), cutRegions[mass][nTaus]['met'](row), cutRegions[mass][nTaus]['mass'](row)])
+                        nMinusOneMet = all([cutRegions[mass][nTaus]['zveto'](row), cutRegions[mass][nTaus]['dr'](row), cutRegions[mass][nTaus]['st'](row), cutRegions[mass][nTaus]['mass'](row)])
                         # 1D no cuts
                         if self.var=='st':
                             for stCutVal in stRange:

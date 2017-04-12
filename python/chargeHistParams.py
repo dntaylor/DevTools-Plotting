@@ -17,18 +17,18 @@ def buildCharge(selectionParams,sampleSelectionParams,projectionParams,samplePro
         #'numVertices_noreweight'      : {'xVariable': 'numVertices',                    'xBinning': [40,0,40],                'mcscale': '1./pileupWeight'},
         #'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
         #'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
-        'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [5000, 0, 500],          },
+        'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [500, 0, 500],          },
         #'mllMinusMZ'                  : {'xVariable': 'fabs(z_mass-{0})'.format(ZMASS), 'xBinning': [2000, 0, 200],          },
         #'zPt'                         : {'xVariable': 'z_pt',                           'xBinning': [5000, 0, 500],          },
         #'zEta'                        : {'xVariable': 'z_eta',                          'xBinning': [1000, -5, 5],           },
         #'zDeltaR'                     : {'xVariable': 'z_deltaR',                       'xBinning': [500, 0, 5],             },
-        'zLeadingLeptonPt'            : {'xVariable': 'z1_pt',                          'xBinning': [10000, 0, 1000],        },
-        'zLeadingLeptonEta'           : {'xVariable': 'z1_eta',                         'xBinning': [500, -2.5, 2.5],        },
-        'zSubLeadingLeptonPt'         : {'xVariable': 'z2_pt',                          'xBinning': [10000, 0, 1000],        },
-        'zSubLeadingLeptonEta'        : {'xVariable': 'z2_eta',                         'xBinning': [500, -2.5, 2.5],        },
+        'zLeadingLeptonPt'            : {'xVariable': 'z1_pt',                          'xBinning': [1000, 0, 1000],        },
+        'zLeadingLeptonEta'           : {'xVariable': 'z1_eta',                         'xBinning': [50, -2.5, 2.5],        },
+        'zSubLeadingLeptonPt'         : {'xVariable': 'z2_pt',                          'xBinning': [1000, 0, 1000],        },
+        'zSubLeadingLeptonEta'        : {'xVariable': 'z2_eta',                         'xBinning': [50, -2.5, 2.5],        },
     }
 
-    chargeBaseCut = 'z1_passMedium==1 && z2_passMedium==1 && z_deltaR>0.02 && z1_pt>25. && z2_pt>10.'
+    chargeBaseCut = 'z1_passMedium==1 && z2_passMedium==1 && z_deltaR>0.02 && z1_pt>30. && z2_pt>15.'
     emZMassCut = 'fabs(z_mass-{0})<10.'.format(ZMASS)
     OS = 'z1_charge!=z2_charge'
     SS = 'z1_charge==z2_charge'
