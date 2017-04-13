@@ -290,19 +290,23 @@ class LimitPlotter(PlotterBase):
 
         # get cross sections
         n = len(xvals)
-        xsecMap = {'AP':{},'PP':{}}
-        xsecGraph = {'AP':ROOT.TGraph(n),'PP':ROOT.TGraph(n)}
+        xsecMap = {'AP':{},'PP':{},'PPR':{},}
+        xsecGraph = {'AP':ROOT.TGraph(n),'PP':ROOT.TGraph(n),'PPR':ROOT.TGraph(n),}
         for i,mass in enumerate(xvals):
             sample_4l = 'HPlusPlusHMinusMinusHTo4L_M-{0}_TuneCUETP8M1_13TeV_pythia8'
+            sample_4lR = 'HPlusPlusHMinusMinusHRTo4L_M-{0}_TuneCUETP8M1_13TeV_pythia8'
             sample_3l = 'HPlusPlusHMinusHTo3L_M-{0}_TuneCUETP8M1_13TeV_calchep-pythia8'
             xsecMap['PP'][mass] = xsecs[sample_4l.format(mass)]
+            xsecMap['PPR'][mass] = xsecs[sample_4lR.format(mass)]
             xsecMap['AP'][mass] = xsecs[sample_3l.format(mass)]
             xsecGraph['AP'].SetPoint(i,mass,xsecMap['AP'][mass])
             xsecGraph['PP'].SetPoint(i,mass,xsecMap['PP'][mass])
-        for prod in ['AP','PP']:
+            xsecGraph['PPR'].SetPoint(i,mass,xsecMap['PPR'][mass])
+        for prod in ['AP','PP','PPR']:
             xsecGraph[prod].SetMarkerStyle(0)
             xsecGraph[prod].SetFillStyle(0)
             xsecGraph[prod].SetLineColor(ROOT.kBlue if prod=='AP' else ROOT.kRed)
+            if prod=='PPR': xsecGraph[prod].SetLineStyle(2)
             xsecGraph[prod].GetXaxis().SetLimits(xvals[0],xvals[-1])
         xsecGraph['AP'].GetYaxis().SetTitleOffset(0.75*1.3)
         xsecGraph['AP'].GetYaxis().SetTitleSize(0.105*0.8)
@@ -457,6 +461,7 @@ class LimitPlotter(PlotterBase):
             oneSigma[prod].Draw('f')
             expected[prod].Draw('same')
             xsecGraph[prod].Draw('same')
+            if prod=='PP': xsecGraph['PPR'].Draw('same')
             ROOT.gPad.RedrawAxis()
             if not blind: observed[prod].Draw('same')
 
@@ -467,6 +472,7 @@ class LimitPlotter(PlotterBase):
         entries = [
             [xsecGraph['AP'],'#splitline{Assoc. Prod.}{Cross Section}','l'],
             [xsecGraph['PP'],'#splitline{Pair Prod.}{Cross Section}','l'],
+            [xsecGraph['PPR'],'#splitline{Pair Prod. (RH)}{Cross Section}','l'],
         ]
         legend = self._getLegend(entries=entries,numcol=2,position=legendpos)
         legend.Draw()

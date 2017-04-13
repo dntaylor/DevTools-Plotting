@@ -19,7 +19,8 @@ def buildDijetFakeRate(selectionParams,sampleSelectionParams,projectionParams,sa
         'wMass'                       : {'xVariable': 'w_mt',                           'xBinning': [500, 0, 500],           },
     }
 
-    frBaseCut = 'w_mt<25 && met_pt<25'
+    #frBaseCut = 'w_mt<25 && met_pt<25 && lj_deltaR>1.'
+    frBaseCut = 'w_mt<25 && met_pt<25 && lj_deltaR>0.4'
     frBaseCutLoose = '{0}'.format(frBaseCut)
     frBaseCutMedium = '{0} && l1_passMedium==1'.format(frBaseCut)
     frBaseCutTight = '{0} && l1_passTight==1'.format(frBaseCut)
@@ -45,6 +46,7 @@ def buildDijetFakeRate(selectionParams,sampleSelectionParams,projectionParams,sa
     }
     
     jetPtBins = [20,25,30,35,40,45,50]
+    dRBins = [0.5,0.75,1.0,1.25,1.5]
     
     for sel in ['loose','medium','tight']:
         for chan in channels:
@@ -52,22 +54,32 @@ def buildDijetFakeRate(selectionParams,sampleSelectionParams,projectionParams,sa
             selectionParams['DijetFakeRate'][name] = deepcopy(selectionParams['DijetFakeRate'][sel])
             args = selectionParams['DijetFakeRate'][name]['args']
             selectionParams['DijetFakeRate'][name]['args'][0] = args[0] + '&& channel=="{0}"'.format(chan)
-            for jetPt in jetPtBins:
-                name = '{0}/{1}/jetPt{2}'.format(sel,chan,jetPt)
+            #for jetPt in jetPtBins:
+            #    name = '{0}/{1}/jetPt{2}'.format(sel,chan,jetPt)
+            #    selectionParams['DijetFakeRate'][name] = deepcopy(selectionParams['DijetFakeRate'][sel])
+            #    args = selectionParams['DijetFakeRate'][name]['args']
+            #    selectionParams['DijetFakeRate'][name]['args'][0] = args[0] + '&& channel=="{0}" && leadJet_pt>{1}'.format(chan,jetPt)
+            for dR in dRBins:
+                name = '{0}/{1}/dR{2}'.format(sel,chan,dR)
                 selectionParams['DijetFakeRate'][name] = deepcopy(selectionParams['DijetFakeRate'][sel])
                 args = selectionParams['DijetFakeRate'][name]['args']
-                selectionParams['DijetFakeRate'][name]['args'][0] = args[0] + '&& channel=="{0}" && leadJet_pt>{1}'.format(chan,jetPt)
+                selectionParams['DijetFakeRate'][name]['args'][0] = args[0] + '&& channel=="{0}" && lj_deltaR>{1}'.format(chan,dR)
             for eb in range(len(etaBins[chan])-1):
                 directory = '{0}/{1}/etaBin{2}'.format('/'.join(sel.split('_')),chan,eb)
                 name = '{0}/{1}/etaBin{2}'.format(sel,chan,eb)
                 selectionParams['DijetFakeRate'][name] = deepcopy(selectionParams['DijetFakeRate'][sel])
                 args = selectionParams['DijetFakeRate'][name]['args']
                 selectionParams['DijetFakeRate'][name]['args'][0] = args[0] + '&& channel=="{0}" && fabs(l1_eta)>={1} && fabs(l1_eta)<{2}'.format(chan,etaBins[chan][eb],etaBins[chan][eb+1])
-                for jetPt in jetPtBins:
-                    name = '{0}/{1}/jetPt{2}/etaBin{3}'.format(sel,chan,jetPt,eb)
+                #for jetPt in jetPtBins:
+                #    name = '{0}/{1}/jetPt{2}/etaBin{3}'.format(sel,chan,jetPt,eb)
+                #    selectionParams['DijetFakeRate'][name] = deepcopy(selectionParams['DijetFakeRate'][sel])
+                #    args = selectionParams['DijetFakeRate'][name]['args']
+                #    selectionParams['DijetFakeRate'][name]['args'][0] = args[0] + '&& channel=="{0}" && leadJet_pt>{1} && fabs(l1_eta)>={2} && fabs(l1_eta)<{3}'.format(chan,jetPt,etaBins[chan][eb],etaBins[chan][eb+1])
+                for dR in dRBins:
+                    name = '{0}/{1}/dR{2}/etaBin{3}'.format(sel,chan,dR,eb)
                     selectionParams['DijetFakeRate'][name] = deepcopy(selectionParams['DijetFakeRate'][sel])
                     args = selectionParams['DijetFakeRate'][name]['args']
-                    selectionParams['DijetFakeRate'][name]['args'][0] = args[0] + '&& channel=="{0}" && leadJet_pt>{1} && fabs(l1_eta)>={2} && fabs(l1_eta)<{3}'.format(chan,jetPt,etaBins[chan][eb],etaBins[chan][eb+1])
+                    selectionParams['DijetFakeRate'][name]['args'][0] = args[0] + '&& channel=="{0}" && lj_deltaR>{1} && fabs(l1_eta)>={2} && fabs(l1_eta)<{3}'.format(chan,dR,etaBins[chan][eb],etaBins[chan][eb+1])
 
 
     # special selections for samples

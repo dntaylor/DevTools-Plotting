@@ -113,8 +113,9 @@ for plot in plots:
 
 # plots of multiple ptcuts on same plot
 dijetFakeRatePlotter.clearHistograms()
-jetPts = [10,15,20,25,30,35,40,45,50]
-jetPts = [10,20,30,40,50]
+jetPts = [20,25,30,35,40,45,50]
+jetPts = [20,30,40,50]
+dRs = [0.5,0.75,1.,1.25,1.5]
 jetPtColors = {
     10 : ROOT.TColor.GetColor('#000000'),
     15 : ROOT.TColor.GetColor('#330000'),
@@ -198,6 +199,7 @@ cust = {
 }
 
 jetPtBins = [20,25,30,35,40,45,50]
+dRBins = [0.5,0.75,1.,1.25,1.5]
 
 for plot in ['pt','eta']:
     for num,denom in [('medium','loose'),('tight','loose'),('tight','medium')]:
@@ -222,10 +224,15 @@ for plot in ['pt','eta']:
             #    denomname = 'loose/{0}/etaBin{1}/{2}'.format(chan,etabin,plot)
             #    savename = 'ratio/{0}/{1}/{2}_etabin{3}'.format(lepton,chan,plot,etabin)
             #    dijetFakeRatePlotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,legendpos=34,numcol=2,subtractMap=subtractMap,**kwargs)
-            for jetPt in jetPtBins:
-                numname = '{0}/{1}/jetPt{2}/{3}'.format(num,chan,jetPt,plot)
-                denomname = '{0}/{1}/jetPt{2}/{3}'.format(denom,chan,jetPt,plot)
-                savename = 'ratio/{0}_{1}/{2}/{3}_jetPt{4}'.format(num,denom,chan,plot,jetPt)
+            #for jetPt in jetPtBins:
+            #    numname = '{0}/{1}/jetPt{2}/{3}'.format(num,chan,jetPt,plot)
+            #    denomname = '{0}/{1}/jetPt{2}/{3}'.format(denom,chan,jetPt,plot)
+            #    savename = 'ratio/{0}_{1}/{2}/{3}_jetPt{4}'.format(num,denom,chan,plot,jetPt)
+            #    dijetFakeRatePlotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,legendpos=34,numcol=2,subtractMap=subtractMap,**kwargs)
+            for dR in dRBins:
+                numname = '{0}/{1}/dR{2}/{3}'.format(num,chan,dR,plot)
+                denomname = '{0}/{1}/dR{2}/{3}'.format(denom,chan,dR,plot)
+                savename = 'ratio/{0}_{1}/{2}/{3}_dR{4}'.format(num,denom,chan,plot,dR)
                 dijetFakeRatePlotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,legendpos=34,numcol=2,subtractMap=subtractMap,**kwargs)
 
 
