@@ -32,12 +32,22 @@ def buildCharge(selectionParams,sampleSelectionParams,projectionParams,samplePro
     emZMassCut = 'fabs(z_mass-{0})<10.'.format(ZMASS)
     OS = 'z1_charge!=z2_charge'
     SS = 'z1_charge==z2_charge'
+    genDiff1 = 'z1_charge!=z1_genCharge'
+    genDiff2 = 'z2_charge!=z2_genCharge'
     chargeOS = '{0} && {1} && {2}'.format(chargeBaseCut,emZMassCut,OS)
     chargeSS = '{0} && {1} && {2}'.format(chargeBaseCut,emZMassCut,SS)
+    bb = 'fabs(z1_eta)<1.479 && fabs(z2_eta)<1.479'
+    ee = 'fabs(z1_eta)>1.479 && fabs(z2_eta)>1.479'
     chargeScaleFactor = 'z1_mediumScale*z2_mediumScale*genWeight*pileupWeight*triggerEfficiency'
     selectionParams['Charge'] = {
         'OS' : {'args': [chargeOS],        'kwargs': {'mcscalefactor': chargeScaleFactor}},
         'SS' : {'args': [chargeSS],        'kwargs': {'mcscalefactor': chargeScaleFactor}},
+        'OSBB' : {'args': [chargeOS + ' && ' + bb],        'kwargs': {'mcscalefactor': chargeScaleFactor}},
+        'SSBB' : {'args': [chargeSS + ' && ' + bb],        'kwargs': {'mcscalefactor': chargeScaleFactor}},
+        'OSEE' : {'args': [chargeOS + ' && ' + ee],        'kwargs': {'mcscalefactor': chargeScaleFactor}},
+        'SSEE' : {'args': [chargeSS + ' && ' + ee],        'kwargs': {'mcscalefactor': chargeScaleFactor}},
+        'SS1': {'args': [chargeSS],        'kwargs': {'mcscalefactor': chargeScaleFactor, 'mccut': genDiff1}},
+        'SS2': {'args': [chargeSS],        'kwargs': {'mcscalefactor': chargeScaleFactor, 'mccut': genDiff2}},
     }
     
     channelMap = {

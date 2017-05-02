@@ -140,14 +140,16 @@ class NtupleWrapper(object):
             infile = ROOT.TFile(self.proj,'read')
             hist = infile.Get(variable)
             if hist:
-                hist = hist.Clone('h_{0}_{1}'.format(self.sample,variable.replace('/','_')))
+                self.j += 1
+                hist = hist.Clone('h_{0}_{1}_{2}'.format(self.sample,variable.replace('/','_'),self.j))
                 hist.SetDirectory(0)
                 return hist
         if os.path.isfile(self.flat):
             infile = ROOT.TFile(self.flat,'read')
             hist = infile.Get(variable)
             if hist:
-                hist = hist.Clone('h_{0}_{1}'.format(self.sample,variable.replace('/','_')))
+                self.j += 1
+                hist = hist.Clone('h_{0}_{1}_{2}'.format(self.sample,variable.replace('/','_'),self.j))
                 hist.SetDirectory(0)
                 return hist
             # attempt to project

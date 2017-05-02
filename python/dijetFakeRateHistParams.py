@@ -59,11 +59,11 @@ def buildDijetFakeRate(selectionParams,sampleSelectionParams,projectionParams,sa
             #    selectionParams['DijetFakeRate'][name] = deepcopy(selectionParams['DijetFakeRate'][sel])
             #    args = selectionParams['DijetFakeRate'][name]['args']
             #    selectionParams['DijetFakeRate'][name]['args'][0] = args[0] + '&& channel=="{0}" && leadJet_pt>{1}'.format(chan,jetPt)
-            for dR in dRBins:
-                name = '{0}/{1}/dR{2}'.format(sel,chan,dR)
-                selectionParams['DijetFakeRate'][name] = deepcopy(selectionParams['DijetFakeRate'][sel])
-                args = selectionParams['DijetFakeRate'][name]['args']
-                selectionParams['DijetFakeRate'][name]['args'][0] = args[0] + '&& channel=="{0}" && lj_deltaR>{1}'.format(chan,dR)
+            #for dR in dRBins:
+            #    name = '{0}/{1}/dR{2}'.format(sel,chan,dR)
+            #    selectionParams['DijetFakeRate'][name] = deepcopy(selectionParams['DijetFakeRate'][sel])
+            #    args = selectionParams['DijetFakeRate'][name]['args']
+            #    selectionParams['DijetFakeRate'][name]['args'][0] = args[0] + '&& channel=="{0}" && lj_deltaR>{1}'.format(chan,dR)
             for eb in range(len(etaBins[chan])-1):
                 directory = '{0}/{1}/etaBin{2}'.format('/'.join(sel.split('_')),chan,eb)
                 name = '{0}/{1}/etaBin{2}'.format(sel,chan,eb)
@@ -75,11 +75,11 @@ def buildDijetFakeRate(selectionParams,sampleSelectionParams,projectionParams,sa
                 #    selectionParams['DijetFakeRate'][name] = deepcopy(selectionParams['DijetFakeRate'][sel])
                 #    args = selectionParams['DijetFakeRate'][name]['args']
                 #    selectionParams['DijetFakeRate'][name]['args'][0] = args[0] + '&& channel=="{0}" && leadJet_pt>{1} && fabs(l1_eta)>={2} && fabs(l1_eta)<{3}'.format(chan,jetPt,etaBins[chan][eb],etaBins[chan][eb+1])
-                for dR in dRBins:
-                    name = '{0}/{1}/dR{2}/etaBin{3}'.format(sel,chan,dR,eb)
-                    selectionParams['DijetFakeRate'][name] = deepcopy(selectionParams['DijetFakeRate'][sel])
-                    args = selectionParams['DijetFakeRate'][name]['args']
-                    selectionParams['DijetFakeRate'][name]['args'][0] = args[0] + '&& channel=="{0}" && lj_deltaR>{1} && fabs(l1_eta)>={2} && fabs(l1_eta)<{3}'.format(chan,dR,etaBins[chan][eb],etaBins[chan][eb+1])
+                #for dR in dRBins:
+                #    name = '{0}/{1}/dR{2}/etaBin{3}'.format(sel,chan,dR,eb)
+                #    selectionParams['DijetFakeRate'][name] = deepcopy(selectionParams['DijetFakeRate'][sel])
+                #    args = selectionParams['DijetFakeRate'][name]['args']
+                #    selectionParams['DijetFakeRate'][name]['args'][0] = args[0] + '&& channel=="{0}" && lj_deltaR>{1} && fabs(l1_eta)>={2} && fabs(l1_eta)<{3}'.format(chan,dR,etaBins[chan][eb],etaBins[chan][eb+1])
 
 
     # special selections for samples

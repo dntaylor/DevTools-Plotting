@@ -5,6 +5,7 @@ import os
 import sys
 import itertools
 import operator
+from copy import deepcopy
 
 import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -43,12 +44,6 @@ class WZFlattener(NtupleFlattener):
                 'wmllCut'  : lambda row: row.w1_z1_mass>4 and row.w1_z2_mass>4,
                 '3lmassCut': lambda row: getattr(row,'3l_mass')>100,
             },
-            'vbs': {
-                'twoJets' : lambda row: row.dijet_mass>0.,
-                'jetPt'   : lambda row: row.leadJet_pt>50. and row.subleadJet_pt>50.,
-                'jetDEta' : lambda row: row.dijet_deltaEta>2.5,
-                'mjj'     : lambda row: row.dijet_mass>400.,
-            },
             'dy': {
                 'zptCut'   : lambda row: row.z1_pt>25 and row.z2_pt>15,
                 'wptCut'   : lambda row: row.w1_pt>20,
@@ -66,15 +61,30 @@ class WZFlattener(NtupleFlattener):
             },
         }
 
+        self.vbsMap = {
+            'jetPt'   : lambda row: row.leadJet_pt>50. and row.subleadJet_pt>50.,
+            'jetDEta' : lambda row: row.dijet_deltaEta>2.5,
+            'mjj'     : lambda row: row.dijet_mass>400.,
+        }
+
+        for mode in ['default','tt','dy']:
+            self.cutMap['{0}-vbs'.format(mode)] = deepcopy(self.cutMap[mode])
+            for cut in self.vbsMap:
+                self.cutMap['{0}-vbs'.format(mode)][cut] = self.vbsMap[cut]
+
+
         self.toProcess = ['default']
         if self.dy: self.toProcess += ['dy']
         if self.tt: self.toProcess += ['tt']
-        if self.vbs: self.toProcess += ['vbs']
+        if self.vbs: self.toProcess += ['default-vbs']
+        if self.vbs and self.dy: self.toProcess += ['dy-vbs']
+        if self.vbs and self.tt: self.toProcess += ['tt-vbs']
         if self.nMinusOne:
             for sel in self.cutMap['default']:
                 self.toProcess += ['default/{0}'.format(sel)]
-            for sel in self.cutMap['vbs']:
-                if self.vbs: self.toProcess += ['vbs/{0}'.format(sel)]
+            if self.vbs:
+                for sel in self.vbsMap:
+                    if self.vbs: self.toProcess += ['default-vbs/{0}'.format(sel)]
 
         self.jetPts = [20,25,30,35,40,45,50]
 
@@ -85,10 +95,10 @@ class WZFlattener(NtupleFlattener):
             for fakeChan in ['PPP','PPF','PFP','FPP','PFF','FPF','FFP','FFF']:
                 self.selections += ['{0}/{1}'.format(fakeChan,sel)]
                 if self.datadrivenRegular: self.selections += ['{0}_regular/{1}'.format(fakeChan,sel)]
-                if sel not in ['default','dy','tt']: continue
-                for jetPt in self.jetPts:
-                    jetName = 'jetPt{0}'.format(jetPt)
-                    if self.jetPt: self.selections += ['{0}/{1}/{2}'.format(fakeChan,sel,jetName)]
+                #if sel not in ['default','dy','tt']: continue
+                #for jetPt in self.jetPts:
+                #    jetName = 'jetPt{0}'.format(jetPt)
+                #    if self.jetPt: self.selections += ['{0}/{1}/{2}'.format(fakeChan,sel,jetName)]
 
 
         # setup histogram parameters
@@ -257,8 +267,8 @@ class WZFlattener(NtupleFlattener):
         w = self.getWeight(row)
         wf = self.getWeight(row,doFake=True)
         wfMap = {}
-        for jetPt in self.jetPts:
-            wfMap[jetPt] = self.getWeight(row,doFake=True,jetPt=jetPt)
+        #for jetPt in self.jetPts:
+        #    wfMap[jetPt] = self.getWeight(row,doFake=True,jetPt=jetPt)
 
         # setup channels
         passID = [getattr(row,self.wzTightVar[l]) for l in range(3)]
@@ -274,22 +284,24 @@ class WZFlattener(NtupleFlattener):
             if not self.datadriven: return
             if isData or genCut: self.fill(row,fakeChan+'/'+sel,wf,recoChan)
             if self.datadrivenRegular: self.fill(row,fakeChan+'_regular/'+sel,w,recoChan)
-            if sel not in ['default','dy','tt']: return
-            for jetPt in self.jetPts:
-                if (isData or genCut) and self.jetPt: self.fill(row,fakeChan+'/'+sel+'/jetPt{0}'.format(jetPt),wfMap[jetPt],recoChan)
+            #if sel not in ['default','dy','tt']: return
+            #for jetPt in self.jetPts:
+            #    if (isData or genCut) and self.jetPt: self.fill(row,fakeChan+'/'+sel+'/jetPt{0}'.format(jetPt),wfMap[jetPt],recoChan)
 
         #print ''
         #print 'Processing'
         for baseSel in self.cutMap:
             result = all([self.cutMap[baseSel][cut](row) for cut in self.cutMap[baseSel]])
-            if baseSel=='vbs': result = result and all([self.cutMap['default'][cut](row) for cut in self.cutMap['default']])
+            #if baseSel=='vbs': result = result and all([self.cutMap['default'][cut](row) for cut in self.cutMap['default']])
             #print baseSel, result
             if result: fill(row,baseSel)
-            if self.nMinusOne and baseSel in ['default','vbs']:
+            if self.nMinusOne and baseSel in ['default']:
                 for sel in self.cutMap[baseSel]:
                      result = all([self.cutMap[baseSel][cut](row) for cut in self.cutMap[baseSel] if cut!=sel])
-                     if baseSel=='vbs': result = result and all([self.cutMap['default'][cut](row) for cut in self.cutMap['default']])
-                     #print baseSel, sel, result
+                     if result: fill(row,'{0}/{1}'.format(baseSel,sel))
+            if self.nMinusOne and baseSel in ['default-vbs']:
+                for sel in self.vbsMap:
+                     result = all([self.cutMap[baseSel][cut](row) for cut in self.cutMap[baseSel] if cut!=sel])
                      if result: fill(row,'{0}/{1}'.format(baseSel,sel))
 
 

@@ -191,6 +191,9 @@ class Hpp3lFlattener(NtupleFlattener):
     def perRowAction(self,row):
         isData = row.isData
 
+        passPt = [getattr(row,'{0}_pt'.format(l))>20 for l in self.leps]
+        if not all(passPt): return # all leptons pt>20
+
         # per sample cuts
         keep = True
         if self.sample=='DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'  : keep = row.numGenJets==0 or row.numGenJets>4

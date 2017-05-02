@@ -845,6 +845,7 @@ class Plotter(PlotterBase):
         plotratio = kwargs.pop('plotratio',False)
 
         logging.info('Plotting {0}'.format(savename))
+        ROOT.gDirectory.Delete('h_*')
 
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
         #ROOT.SetOwnership(canvas,False)

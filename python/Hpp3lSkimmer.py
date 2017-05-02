@@ -120,6 +120,8 @@ class Hpp3lSkimmer(NtupleSkimmer):
     def perRowAction(self,row):
         isData = row.isData
 
+        passPt = [getattr(row,'{0}_pt'.format(l))>20 for l in self.leps]
+        if not all(passPt): return # all leptons pt>20
 
         # per sample cuts
         keep = True

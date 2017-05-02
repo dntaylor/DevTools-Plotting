@@ -604,7 +604,7 @@ def getSelectionMap(analysis,mass):
     elif analysis=='Hpp4l':
         cutRegions = {
             0: {
-                'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hmm1_pt+row.hmm2_pt)>1.63*mass-270,
+                'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hmm1_pt+row.hmm2_pt)>1.23*mass+54,
                 'zveto': lambda row: abs(row.z_mass-ZMASS)>10,
                 'drpp' : lambda row: True,
                 'drmm' : lambda row: True,

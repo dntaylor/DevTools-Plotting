@@ -31,7 +31,6 @@ sigMap = {
     'VVV' : [
              'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
              'WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
-             'WZG_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
              'WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
              'ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
             ],

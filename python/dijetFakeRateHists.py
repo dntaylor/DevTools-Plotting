@@ -130,28 +130,28 @@ for num,denom in [('medium','loose'),('tight','loose'),('tight','medium')]:
         savedir = '{0}/{1}_{2}'.format(chan,num,denom)
         dijetFakeRateMaker.make2D(savename,values,errors,xBinning,yBinning,savedir=savedir,xaxis=xaxis,yaxis=yaxis)
         # jet Pt change
-        for jetPt in jetPtBins:
-            values = {}
-            errors = {}
-            # get the values
-            for e in range(len(yBinning)-1):
-                # get the histogram
-                numname = '{0}/{1}/jetPt{2}/etaBin{3}/pt'.format(num,chan,jetPt,e)
-                denomname = '{0}/{1}/jetPt{2}/etaBin{3}/pt'.format(denom,chan,jetPt,e)
-                savename = 'filler{0}'.format(jetPt)
-                subtractMap = {
-                    'data': ['MC'],
-                }
-                customOrder = ['data']
-                hists = dijetFakeRatePlotter.plotRatio(numname,denomname,savename,customOrder=customOrder,subtractMap=subtractMap,rebin=xBinning,getHists=True)
-                # get the pt bins
-                for p in range(len(xBinning)-1):
-                    pt = float(xBinning[p]+xBinning[p+1])/2.
-                    eta = float(yBinning[e]+yBinning[e+1])/2.
-                    key = (pt,eta)
-                    values[key] = hists['data'].GetBinContent(p+1)
-                    errors[key] = hists['data'].GetBinError(p+1)
-            # save the values
-            savename = 'fakeratePtEta_jetPt{0}'.format(jetPt)
-            savedir = '{0}/{1}_{2}'.format(chan,num,denom)
-            dijetFakeRateMaker.make2D(savename,values,errors,xBinning,yBinning,savedir=savedir,xaxis=xaxis,yaxis=yaxis)
+        #for jetPt in jetPtBins:
+        #    values = {}
+        #    errors = {}
+        #    # get the values
+        #    for e in range(len(yBinning)-1):
+        #        # get the histogram
+        #        numname = '{0}/{1}/jetPt{2}/etaBin{3}/pt'.format(num,chan,jetPt,e)
+        #        denomname = '{0}/{1}/jetPt{2}/etaBin{3}/pt'.format(denom,chan,jetPt,e)
+        #        savename = 'filler{0}'.format(jetPt)
+        #        subtractMap = {
+        #            'data': ['MC'],
+        #        }
+        #        customOrder = ['data']
+        #        hists = dijetFakeRatePlotter.plotRatio(numname,denomname,savename,customOrder=customOrder,subtractMap=subtractMap,rebin=xBinning,getHists=True)
+        #        # get the pt bins
+        #        for p in range(len(xBinning)-1):
+        #            pt = float(xBinning[p]+xBinning[p+1])/2.
+        #            eta = float(yBinning[e]+yBinning[e+1])/2.
+        #            key = (pt,eta)
+        #            values[key] = hists['data'].GetBinContent(p+1)
+        #            errors[key] = hists['data'].GetBinError(p+1)
+        #    # save the values
+        #    savename = 'fakeratePtEta_jetPt{0}'.format(jetPt)
+        #    savedir = '{0}/{1}_{2}'.format(chan,num,denom)
+        #    dijetFakeRateMaker.make2D(savename,values,errors,xBinning,yBinning,savedir=savedir,xaxis=xaxis,yaxis=yaxis)

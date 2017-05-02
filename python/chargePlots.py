@@ -65,11 +65,22 @@ plots = {
 
 # signal region
 for plot in plots:
-    for sign in ['SS','OS']:
+    for sign in ['SS','OS','SS1','SS2','SSEE','SSBB','OSEE','OSBB']:
         for chan in chans:
             plotname = '{0}/{1}/{2}'.format(sign,chan,plot)
             savename = '{0}/{1}/{2}'.format(sign,chan,plot)
             chargePlotter.plot(plotname,savename,**plots[plot])
+
+# sum gen matched
+for plot in plots:
+    for chan in chans:
+        plotnames = {}
+        for sample in samples:
+            plotnames[sample] = ['{0}/{1}/{2}'.format('SS1',chan,plot), '{0}/{1}/{2}'.format('SS2',chan,plot)]
+        plotnames['data'] = ['{0}/{1}/{2}'.format('SS',chan,plot)]
+        savename = '{0}/{1}/{2}'.format('SS12',chan,plot)
+        chargePlotter.plot(plotnames,savename,**plots[plot])
+
 
 # ratios of SS/OS as func of pt/eta
 chargePlotter.clearHistograms()
@@ -86,20 +97,51 @@ ptbins = [10,20,30,40,50,60,80,100,200,1000]
 etabins = [-2.5,-2.0,-1.479,-1.0,-0.5,0.,0.5,1.0,1.479,2.0,2.5]
 
 ratio_cust = {
-    'zLeadingLeptonPt'     : {'yaxis': 'N_{SS}/N_{OS}', 'rebin': ptbins},
-    'zLeadingLeptonEta'    : {'yaxis': 'N_{SS}/N_{OS}', 'rebin': etabins},
-    'zSubLeadingLeptonPt'  : {'yaxis': 'N_{SS}/N_{OS}', 'rebin': ptbins},
-    'zSubLeadingLeptonEta' : {'yaxis': 'N_{SS}/N_{OS}', 'rebin': etabins},
+    'zLeadingLeptonPt'     : {'yaxis': 'N_{SS}/N', 'rebin': ptbins},
+    'zLeadingLeptonEta'    : {'yaxis': 'N_{SS}/N', 'rebin': etabins},
+    'zSubLeadingLeptonPt'  : {'yaxis': 'N_{SS}/N', 'rebin': ptbins},
+    'zSubLeadingLeptonEta' : {'yaxis': 'N_{SS}/N', 'rebin': etabins},
 }
 
 for plot in ['Pt','Eta']:
-    for lepton in ['zLeadingLepton','zSubLeadingLepton']:
+    #for lepton in ['zLeadingLepton','zSubLeadingLepton']:
+    for lepton in ['zLeadingLepton']:
         kwargs = deepcopy(plots[lepton+plot])
+        kwargsOS = deepcopy(plots[lepton+plot])
         if lepton+plot in ratio_cust: kwargs.update(ratio_cust[lepton+plot])
+        if lepton+plot in ratio_cust: kwargsOS.update(ratio_cust[lepton+plot])
+        kwargsOS['yaxis'] = 'N_{OS}/N'
         for chan in chans:
-            numname = 'SS/{0}/{1}{2}'.format(chan,lepton,plot)
-            denomname = 'OS/{0}/{1}{2}'.format(chan,lepton,plot)
-            savename = 'ratio/{0}/{1}{2}'.format(chan,lepton,plot)
-            chargePlotter.plotRatio(numname,denomname,savename,ymax=0.07,plotratio=True,ratiomin=0.9,ratiomax=1.2,**kwargs)
+            for region in ['','EE','BB']:
+                subdirs = '{0}/{1}{2}'.format(chan,lepton,plot)
+                numname = 'SS{0}/{1}'.format(region,subdirs)
+                denomname = ['OS{0}/{1}'.format(region,subdirs),  'SS{0}/{1}'.format(region,subdirs)]
+                savename = 'ratio/{0}/{1}{2}'.format(chan,lepton,plot)
+                if region: savename += '_'+region
+                chargePlotter.plotRatio(numname,denomname,savename,ymax=0.07,plotratio=True,ratiomin=0.9,ratiomax=1.2,**kwargs)
+                ## sum gen matched
+                #numname = {}
+                #denomname = {}
+                #numname['MC'] = ['{0}/{1}/{2}{3}'.format('SS1',chan,lepton,plot), '{0}/{1}/{2}{3}'.format('SS2',chan,lepton,plot)]
+                #denomname['MC'] = ['{0}/{1}/{2}{3}'.format('SS1',chan,lepton,plot), '{0}/{1}/{2}{3}'.format('SS2',chan,lepton,plot), '{0}/{1}/{2}{3}'.format('OS',chan,lepton,plot)]
+                #numname['data'] = ['{0}/{1}/{2}{3}'.format('SS',chan,lepton,plot)]
+                #denomname['data'] = ['{0}/{1}/{2}{3}'.format('SS',chan,lepton,plot), '{0}/{1}/{2}{3}'.format('OS',chan,lepton,plot)]
+                #savename = 'ratio/{0}/{1}{2}_genMatched'.format(chan,lepton,plot)
+                #chargePlotter.plotRatio(numname,denomname,savename,ymax=0.07,plotratio=True,ratiomin=0.9,ratiomax=1.2,**kwargs)
+                # OS
+                numname = 'OS{0}/{1}'.format(region,subdirs)
+                denomname = ['OS{0}/{1}'.format(region,subdirs),  'SS{0}/{1}'.format(region,subdirs)]
+                savename = 'ratio/{0}/{1}{2}_OS'.format(chan,lepton,plot)
+                if region: savename += '_'+region
+                chargePlotter.plotRatio(numname,denomname,savename,ymin=0.8,ymax=1.2,plotratio=True,ratiomin=0.95,ratiomax=1.05,**kwargsOS)
+                ## sum gen matched
+                #numname = {}
+                #denomname = {}
+                #numname['MC'] = ['{0}/{1}/{2}{3}'.format('OS',chan,lepton,plot),]
+                #denomname['MC'] = ['{0}/{1}/{2}{3}'.format('SS1',chan,lepton,plot), '{0}/{1}/{2}{3}'.format('SS2',chan,lepton,plot), '{0}/{1}/{2}{3}'.format('OS',chan,lepton,plot)]
+                #numname['data'] = ['{0}/{1}/{2}{3}'.format('OS',chan,lepton,plot)]
+                #denomname['data'] = ['{0}/{1}/{2}{3}'.format('SS',chan,lepton,plot), '{0}/{1}/{2}{3}'.format('OS',chan,lepton,plot)]
+                #savename = 'ratio/{0}/{1}{2}_genMatched_OS'.format(chan,lepton,plot)
+                #chargePlotter.plotRatio(numname,denomname,savename,ymin=0.8,ymax=1.2,plotratio=True,ratiomin=0.95,ratiomax=1.05,**kwargsOS)
 
 

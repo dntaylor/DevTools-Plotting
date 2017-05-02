@@ -180,7 +180,6 @@ class Hpp4lSkimmer(NtupleSkimmer):
             'hmm': row.hmm_mass,
         }
         cutRegions = {}
-        # comments are: 8TeV, ICHEP, current
         for mass in self.masses:
             cutRegions[mass] = getSelectionMap('Hpp4l',mass)
 
