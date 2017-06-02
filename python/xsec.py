@@ -90,7 +90,7 @@ xsecs = {
     'TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                   :    831.76     * PB,
     'TTTo2L2Nu_13TeV-powheg'                                           :     87.31     * PB,
     'TT_TuneCUETP8M1_13TeV-powheg-pythia8'                             :    831.76     * PB,
-    'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'             :     57.35     * PB,
+    'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'             :     87.31     * PB,
     'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :    114.5      * PB,
     'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8' :    114.6      * PB,
     'TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'                    :    502.2      * PB,
