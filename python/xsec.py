@@ -18,10 +18,18 @@ xsecs = {
     'MuonEG'                                                           : 1.,
     'SingleMuon'                                                       : 1.,
     'SingleElectron'                                                   : 1.,
+    'SinglePhoton'                                                     : 1.,
     'Tau'                                                              : 1.,
 
     'QCD_Pt-15to3000_TuneCUETP8M1_Flat_13TeV_pythia8'                  : 1.,
     'QCD_Pt-20toInf_MuEnrichedPt15_TuneCUETP8M1_13TeV_pythia8'         : 720648000 * PB,
+
+    'GJet_Pt-20toInf_DoubleEMEnriched_MGG-40to80_TuneCUETP8M1_13TeV_Pythia8'  :   3216.0 * PB,
+    'GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8'  :    220.0 * PB,
+    'GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8' :    850.8 * PB
+    'QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCUETP8M1_13TeV_Pythia8'   : 260500.0 * PB,
+    'QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8'   :  22110.0 * PB,
+    'QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8'  : 113400.0 * PB,
 
     # QCD pt binned
     'QCD_Pt_5to10_TuneCUETP8M1_13TeV_pythia8'                          : 61018300000           * PB,
@@ -68,6 +76,10 @@ xsecs = {
     'DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'   :      0.3921   * PB,
     'DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'   :      0.03636  * PB,
 
+    # GG
+    'DiPhotonJetsBox_M40_80-Sherpa'                                    :    303.2      * PB,
+    'DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa'                         :     84.4      * PB,
+
     # single top
     'ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1'                    :   3.36 * PB,
     'ST_t-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1'                    :  70.69 * PB,
@@ -83,8 +95,6 @@ xsecs = {
     'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1'                  :  35.85 * PB,
     'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4'                :  35.85 * PB,
     'ST_tW_antitop_5f_NoFullyHadronicDecays_13TeV-powheg_TuneCUETP8M1'                    :  38.09 * PB, # ??
-
-    'TGJets_leptonDecays_13TeV_amcatnlo_madspin_pythia8'               :      0.959    * PB,
 
     # TTbar
     'TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                   :    831.76     * PB,
@@ -105,6 +115,11 @@ xsecs = {
     'ttZJets_13TeV_madgraphMLM-pythia8'                                :      0.259    * PB,
     'ttWJets_13TeV_madgraphMLM'                                        :      0.243    * PB,
     'ttH_M125_13TeV_powheg_pythia8'                                    :      0.5085   * PB,
+
+    # T+G
+    'TGJets_TuneCUETP8M1_13TeV_amcatnlo_madspin_pythia8'               :      2.967    * PB,
+    'TTGG_0Jets_TuneCUETP8M1_13TeV_amcatnlo_madspin_pythia8'           :      0.01731  * PB,
+    'TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8'          :      3.819    * PB,
 
     # TZ
     'tZq_ll_4f_13TeV-amcatnlo-pythia8'                                 :      0.0758   * PB,
@@ -242,6 +257,11 @@ xsecs = {
     'WZG_TuneCUETP8M1_13TeV-amcatnlo-pythia8'                          :      0.04123  * PB,
     'WGGJets_TuneCUETP8M1_13TeV_madgraphMLM_pythia8'                   :      1.       * PB, # ??
     'WGG_5f_TuneCUETP8M1_13TeV-amcatnlo-pythia8'                       :      1.869    * PB,
+    'ZGGJetsToLLGG_5f_LO_amcatnloMLM_pythia8'                          :      1.       * PB, # ??
+    'ZGGJets_ZToHadOrNu_5f_LO_madgraph_pythia8'                        :      1.       * PB, # ??
+    'ZGGToLLGG_5f_TuneCUETP8M1_13TeV-amcatnlo-pythia8'                 :      0.6257   * PB,
+    'ZGGToNuNuGG_5f_TuneCUETP8M1_13TeV-amcatnlo-pythia8'               :      0.07477  * PB,
+
 
     # H++
     'HPlusPlusHMinusHTo3L_M-200_TuneCUETP8M1_13TeV_calchep-pythia8'    :      0.12572    * PB * xsecs_4l_kfactor[200], # LO from calchep * kfactor from PP

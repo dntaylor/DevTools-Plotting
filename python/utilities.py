@@ -115,6 +115,8 @@ latestNtuples['80X'] = {
     'WZ'             : '2017-04-19_WZAnalysis_80X_Moriond_v1-merge',
     'Hpp3l'          : '2017-04-26_Hpp3lAnalysis_80X_Moriond_v1-merge',
     'Hpp4l'          : '2017-04-26_Hpp4lAnalysis_80X_Moriond_v1-merge',
+# Photon
+    'ThreePhoton'    : '2017-06-07_ThreePhotonAnalysis_80X_Photon_v1-merge',
 }
 
 latestShifts = {}
@@ -299,8 +301,8 @@ def getSkimJson(analysis,sample,version=getCMSSWVersion(),shift=''):
             raise Exception('No such path {0}'.format(jpath))
         for fname in fnames:
             if 'json' in fname: jfile = fname
-    else:
-        raise Exception('Unrecognized {0}'.format(':'.join([analysis,sample,version,shift])))
+    #else:
+    #    raise Exception('Unrecognized {0}'.format(':'.join([analysis,sample,version,shift])))
     return jfile
 
 def getSkimPickle(analysis,sample,version=getCMSSWVersion(),shift=''):
@@ -313,8 +315,8 @@ def getSkimPickle(analysis,sample,version=getCMSSWVersion(),shift=''):
             raise Exception('No such path {0}'.format(ppath))
         for fname in fnames:
             if 'pkl' in fname: pfile = fname
-    else:
-        raise Exception('Unrecognized {0}'.format(':'.join([analysis,sample,version,shift])))
+    #else:
+    #    raise Exception('Unrecognized {0}'.format(':'.join([analysis,sample,version,shift])))
     return pfile
 
 treeMap = {
@@ -336,6 +338,7 @@ treeMap = {
     'WZ'             : 'WZTree',
     'ZZ'             : 'ZZTree',
     'ThreeLepton'    : 'ThreeLeptonTree',
+    'ThreePhoton'    : 'ThreePhotonTree',
 }
 
 def getTreeName(analysis):

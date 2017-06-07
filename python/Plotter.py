@@ -153,6 +153,19 @@ class Plotter(PlotterBase):
             logging.debug(' - Failed')
         return hist
 
+    def _getTempHistogram2D(self,sampleName,histName,selection,scalefactor,xVariable,yVariable,xBinning,yBinning,**kwargs):
+        '''Read the histogram from file'''
+        analysis = kwargs.pop('analysis',self.analysis)
+        hist = self.sampleFiles[analysis][sampleName].getTempHist2D(histName,selection,scalefactor,xVariable,yVariable,xBinning,yBinning)
+        logging.debug('Create temp {0} {1} {2}: {3}'.format(analysis, sampleName, histName, hist))
+        if hist:
+            self.j += 1
+            hist = hist.Clone('h_temp_{0}'.format(self.j))
+            logging.debug(' - Integral: {0}; Entries: {1};'.format(hist.Integral(),hist.GetEntries()))
+        else:
+            logging.debug(' - Failed')
+        return hist
+
     def _getHistogram(self,histName,variable,**kwargs):
         '''Get a styled histogram'''
         rebin = kwargs.pop('rebin',0)
@@ -175,6 +188,7 @@ class Plotter(PlotterBase):
         if histName not in self.histDict:
             logging.error('{0} not defined.'.format(histName))
             return 0
+
 
         # get histogram
         hists = ROOT.TList()
@@ -288,30 +302,36 @@ class Plotter(PlotterBase):
         return hist
 
 
-    def _get2DHistogram(self,histName,variable,**kwargs):
+    def _get2DHistogram(self,histName,xVariable,yVariable=None,**kwargs):
         '''Get a styled histogram'''
+        scalefactor = kwargs.pop('scalefactor','1')
+        mcscalefactor = kwargs.pop('mcscalefactor','1')
+        datascalefactor = kwargs.pop('datascalefactor','1')
+        xBinning = kwargs.pop('xBinning',[])
+        yBinning = kwargs.pop('yBinning',[])
+        selection = kwargs.pop('selection','')
         rebinx = kwargs.pop('rebinx',0)
         rebiny = kwargs.pop('rebiny',0)
         analysis = self.analysisDict[histName]
-        # check if it is a variable map
-        varName = variable if isinstance(variable,basestring) else variable[histName]
-        if histName in self.histDict:
-            hists = ROOT.TList()
-            for sampleName in self.histDict[histName]:
-                hist = self._readSampleVariable(sampleName,varName,analysis=analysis)
-                if hist: hists.Add(hist)
-            if hists.IsEmpty(): return 0
-            hist = hists[0].Clone('h_{0}_{1}'.format(histName,varName.replace('/','_')))
-            hist.Reset()
-            hist.Merge(hists)
-            if rebinx: hist = hist.RebinX(rebinx)
-            if rebiny: hist = hist.RebinY(rebiny)
-            style = self.styles[histName]
-            hist.SetTitle(style['name'])
-            return hist
-        else:
-            logging.error('{0} not defined.'.format(histName))
-            return 0
+
+        hists = ROOT.TList()
+        for sampleName in self.histDict[histName]:
+            if selection and xBinning and yBinning: # get temp hist
+                sf = '*'.join([scalefactor,datascalefactor if isData(sampleName) else mcscalefactor])
+                thissel = '{0} && {1}'.format(selection, self.sampleSelection[sampleName]) if sampleName in self.sampleSelection else selection
+                hist = self._getTempHistogram2D(sampleName,histName,thissel,sf,xVariable,yVariable,xBinning,yBinning,analysis=analysis)
+            else:
+                hist = self._readSampleVariable(sampleName,xVariable,analysis=analysis)
+            if hist: hists.Add(hist)
+        if hists.IsEmpty(): return 0
+        hist = hists[0].Clone('h_{0}_{1}'.format(histName,xVariable.replace('/','_')))
+        hist.Reset()
+        hist.Merge(hists)
+        if rebinx: hist = hist.RebinX(rebinx)
+        if rebiny: hist = hist.RebinY(rebiny)
+        style = self.styles[histName]
+        hist.SetTitle(style['name'])
+        return hist
 
     def _getStack(self,variable,**kwargs):
         '''Get a stack of histograms'''
@@ -1339,7 +1359,7 @@ class Plotter(PlotterBase):
         else:
             return self._saveTemp(canvas)
 
-    def plot2D(self,variable,savename,**kwargs):
+    def plot2D(self,xVariable,yVariable,savename,**kwargs):
         '''Plot a variable and save'''
         xaxis = kwargs.pop('xaxis', 'Variable')
         yaxis = kwargs.pop('yaxis', 'Events')
@@ -1365,7 +1385,7 @@ class Plotter(PlotterBase):
 
         hists = OrderedDict()
         for i,histName in enumerate(self.histOrder):
-            hist = self._get2DHistogram(histName,variable,**kwargs)
+            hist = self._get2DHistogram(histName,xVariable,yVariable,**kwargs)
             hist.Draw('colz')
             if i==0:
                 hist.GetXaxis().SetTitle(xaxis)
