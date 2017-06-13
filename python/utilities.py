@@ -116,7 +116,10 @@ latestNtuples['80X'] = {
     'Hpp3l'          : '2017-04-26_Hpp3lAnalysis_80X_Moriond_v1-merge',
     'Hpp4l'          : '2017-04-26_Hpp4lAnalysis_80X_Moriond_v1-merge',
 # Photon
-    'ThreePhoton'    : '2017-06-07_ThreePhotonAnalysis_80X_Photon_v1-merge',
+    'ThreePhoton'    : '2017-06-07_ThreePhotonAnalysis_80X_Photon_v2-merge',
+    'TwoPhoton'      : '2017-06-08_TwoPhotonAnalysis_80X_Photon_v1-merge',
+    'EG'             : '2017-06-09_EGAnalysis_80X_Photon_v1-merge',
+    'MMG'            : '2017-06-12_MMGAnalysis_80X_Photon_v1-merge',
 }
 
 latestShifts = {}
