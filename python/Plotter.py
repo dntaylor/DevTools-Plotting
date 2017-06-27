@@ -1309,13 +1309,37 @@ class Plotter(PlotterBase):
         rangex = kwargs.pop('rangex',[])
         customOrder = kwargs.pop('customOrder',[])
         subtractMap = kwargs.pop('subtractMap',{})
+        plotratio = kwargs.pop('plotratio',True)
+        lumipos = kwargs.pop('lumipos',11)
+        isprelim = kwargs.pop('preliminary',True)
         save = kwargs.pop('save',True)
 
         logging.info('Plotting {0}'.format(savename))
+        # ratio plot
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
-        #ROOT.SetOwnership(canvas,False)
-        canvas.SetLogy(logy)
-        canvas.SetLogx(logx)
+        if plotratio:
+            plotpad = ROOT.TPad("plotpad", "top pad", 0.0, 0.21, 1.0, 1.0)
+            #ROOT.SetOwnership(plotpad,False)
+            plotpad.SetBottomMargin(0.04)
+            plotpad.SetRightMargin(0.03)
+            plotpad.Draw()
+            plotpad.SetLogy(logy)
+            plotpad.SetLogx(logx)
+            ratiopad = ROOT.TPad("ratiopad", "bottom pad", 0.0, 0.0, 1.0, 0.21)
+            #ROOT.SetOwnership(ratiopad,False)
+            ratiopad.SetTopMargin(0.06)
+            ratiopad.SetRightMargin(0.03)
+            ratiopad.SetBottomMargin(0.5)
+            ratiopad.SetLeftMargin(0.16)
+            ratiopad.SetTickx(1)
+            ratiopad.SetTicky(1)
+            ratiopad.Draw()
+            ratiopad.SetLogx(logx)
+            if plotpad != ROOT.TVirtualPad.Pad(): plotpad.cd()
+            #plotpad.cd()
+        else:
+            canvas.SetLogy(logy)
+            canvas.SetLogx(logx)
 
         highestMax = 0.
 
@@ -1345,13 +1369,61 @@ class Plotter(PlotterBase):
                 if ymax!=None: hist.SetMaximum(ymax)
                 if ymin!=None: hist.SetMinimum(ymin)
                 if ymax==None: hist.SetMaximum(1.2*highestMax)
+                if plotratio: hist.GetXaxis().SetLabelOffset(999)
             else:
                 hist.Draw(style['drawstyle']+' same')
 
         legend = self._getLegend(hists=hists,numcol=numcol,position=legendpos)
         legend.Draw()
 
-        self._setStyle(canvas)
+        # cms lumi styling
+        logging.debug('CMSLumi')
+        pad = plotpad if plotratio else canvas
+        if pad != ROOT.TVirtualPad.Pad(): pad.cd()
+        self._setStyle(pad,position=lumipos,preliminary=isprelim)
+
+        # the ratio portion
+        if plotratio:
+            logging.debug('Making Ratio')
+            self.j += 1
+            stackname = 'h_stack_{0}_ratio'.format(self.j)
+            denom = hists.items()[0][1].Clone(stackname)
+            ratiostaterr = self._get_ratio_stat_err(denom)
+            ratiostaterr.SetXTitle(xaxis)
+            unityargs = [rangex[0],1,rangex[1],1] if len(rangex)==2 else [denom.GetXaxis().GetXmin(),1,denom.GetXaxis().GetXmax(),1]
+            ratiounity = ROOT.TLine(*unityargs)
+            ratiounity.SetLineStyle(2)
+            ratios = OrderedDict()
+            for histName, hist in hists.iteritems():
+                self.j += 1
+                numname = 'h_{0}_{1}_ratio'.format(histName,self.j)
+                if histName in self.signals:
+                    sighists = ROOT.TList()
+                    sighists.Add(hist)
+                    sighists.Add(denom)
+                    num = sighists[0].Clone(numname)
+                    num.Reset()
+                    num.Merge(sighists)
+                else:
+                    num = hist.Clone(numname)
+                numratio = self._get_ratio_err(num,denom,data=histName=='data')
+                ratios[histName] = numratio
+
+            # and draw
+            if ratiopad != ROOT.TVirtualPad.Pad(): ratiopad.cd()
+            #ratiopad.cd()
+            ratiostaterr.Draw("e2")
+            if len(rangex)==2: ratiostaterr.GetXaxis().SetRangeUser(*rangex)
+            ratiounity.Draw('same')
+            for histName, hist in ratios.iteritems():
+                if histName=='data':
+                    #hist.Draw('e0 same')
+                    hist.Draw('0P same')
+                else:
+                    hist.SetLineWidth(3)
+                    hist.Draw('hist same')
+            #if canvas != ROOT.TVirtualPad.Pad(): canvas.cd()
+            ##canvas.cd()
 
         # save
         if save:

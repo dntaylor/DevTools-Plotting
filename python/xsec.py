@@ -79,6 +79,7 @@ xsecs = {
     # GG
     'DiPhotonJetsBox_M40_80-Sherpa'                                    :    303.2      * PB,
     'DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa'                         :     84.4      * PB,
+    'DiPhotonJets_MGG-80toInf_13TeV_amcatnloFXFX_pythia8'              :    135.1      * PB,
 
     # single top
     'ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1'                    :   3.36 * PB,

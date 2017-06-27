@@ -54,6 +54,10 @@ colorMap = {
     'HppHmm'    : 'Orange',
     'HppHmmR'   : 'Orange',
     'HppHm'     : 'Orange',
+    'POWHEG'    : 'LightBlue',
+    'AMCATNLO'  : 'Red',
+    'SHERPA'    : 'Green',
+    'PYTHIA'    : 'Purple',
 }
 
 labelMap = {
@@ -87,6 +91,10 @@ labelMap = {
     'HppHmm'    : '#Phi^{++}#Phi^{#font[122]{\55}#font[122]{\55}}',
     'HppHmmR'   : '#Phi_{R}^{++}#Phi_{R}^{#font[122]{\55}#font[122]{\55}}',
     'HppHm'     : '#Phi^{#pm#pm}#Phi^{#mp}',
+    'AMCATNLO'  : 'amc@NLO',
+    'SHERPA'    : 'Sherpa',
+    'PYTHIA'    : 'Pythia',
+    'POWHEG'    : 'POWHEG',
 }
 
 for sig in ['HppHmm','HppHm','HppHmmR']:
