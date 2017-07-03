@@ -112,9 +112,9 @@ latestNtuples['80X'] = {
     'ZFakeRate'      : '2017-03-21_ZFakeRateAnalysis_80X_Moriond_v1-merge',
     'WFakeRate'      : '2017-03-24_WFakeRateAnalysis_80X_Moriond_v1-merge',
     'WTauFakeRate'   : '2017-03-31_WTauFakeRateAnalysis_80X_Moriond_v1-merge', # loose -0.2
-    'WZ'             : '2017-04-19_WZAnalysis_80X_Moriond_v1-merge',
-    'Hpp3l'          : '2017-04-26_Hpp3lAnalysis_80X_Moriond_v1-merge',
-    'Hpp4l'          : '2017-04-26_Hpp4lAnalysis_80X_Moriond_v1-merge',
+    'WZ'             : '2017-06-29_WZAnalysis_80X_Moriond_v1-merge',
+    'Hpp3l'          : '2017-06-29_Hpp3lAnalysis_80X_Moriond_v1-merge',
+    'Hpp4l'          : '2017-06-29_Hpp4lAnalysis_80X_Moriond_v1-merge',
 # Photon
     'FourPhoton'     : '2017-06-20_FourPhotonAnalysis_80X_Photon_v2-merge',
     'ThreePhoton'    : '2017-06-20_ThreePhotonAnalysis_80X_Photon_v2-merge',
