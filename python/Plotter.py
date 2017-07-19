@@ -405,24 +405,20 @@ class Plotter(PlotterBase):
         '''Return the ratio of two histograms, taking errors from numerator only'''
         if data:
             # get ratio between two hists with poisson errors
+            num_graph = self._get_poisson_err(num)
             graph = ROOT.TGraphAsymmErrors(num.GetNbinsX())
-            chisqr = ROOT.TMath.ChisquareQuantile
             npoints = 0
             for bin in range(num.GetNbinsX()):
-                entries = num.GetBinContent(bin+1)
-                denomentries = denom.GetBinContent(bin+1)
-                if entries <= 0:
-                    entries = 0
-                ey_low = entries - 0.5 * chisqr(0.1586555, 2. * entries)
-                ey_high = 0.5 * chisqr(
-                    1. - 0.1586555, 2. * (entries + 1)) - entries
-                ex = num.GetBinWidth(bin+1) / 2.
-                if denomentries > 0:
-                    graph.SetPoint(npoints, num.GetBinCenter(bin+1), num.GetBinContent(bin+1)/denomentries)
+                nval = num.GetBinContent(bin+1)
+                dval = denom.GetBinContent(bin+1)
+                ey_low = num_graph.GetErrorYlow(bin)
+                ey_high = num_graph.GetErrorYhigh(bin)
+                if dval > 0:
+                    graph.SetPoint(npoints, num.GetBinCenter(bin+1), nval/dval)
                     graph.SetPointEXlow(npoints, 0)
                     graph.SetPointEXhigh(npoints, 0)
-                    graph.SetPointEYlow(npoints, ey_low/denomentries)
-                    graph.SetPointEYhigh(npoints, ey_high/denomentries)
+                    graph.SetPointEYlow(npoints, ey_low/dval)
+                    graph.SetPointEYhigh(npoints, ey_high/dval)
                 else:
                     graph.SetPoint(npoints, num.GetBinCenter(bin+1), 0)
                     graph.SetPointEXlow(npoints, 0)
@@ -455,15 +451,23 @@ class Plotter(PlotterBase):
         chisqr = ROOT.TMath.ChisquareQuantile
         npoints = 0
         for bin in range(hist.GetNbinsX()):
-            entries = hist.GetBinContent(bin+1)
+            val = hist.GetBinContent(bin+1)
+            err2 = hist.GetBinError(bin+1)**2
+            width = hist.GetBinWidth(bin+1)
+            varbin = val-err2>0.001
+            entries = val*width if varbin else val
             if entries <= 0:
                 #continue
                 entries = 0
             ey_low = entries - 0.5 * chisqr(0.1586555, 2. * entries)
-            ey_high = 0.5 * chisqr(
-                1. - 0.1586555, 2. * (entries + 1)) - entries
-            ex = hist.GetBinWidth(bin+1) / 2.
-            graph.SetPoint(npoints, hist.GetBinCenter(bin+1), hist.GetBinContent(bin+1))
+            ey_high = 0.5 * chisqr(1. - 0.1586555, 2. * (entries + 1)) - entries
+
+            if varbin:
+                ey_low = val - (entries-ey_low) / width
+                ey_high = (entries+ey_high) / width - val
+
+            ex = width / 2.
+            graph.SetPoint(npoints, hist.GetBinCenter(bin+1), val)
             graph.SetPointEXlow(npoints, 0)
             graph.SetPointEXhigh(npoints, 0)
             graph.SetPointEYlow(npoints, ey_low)
