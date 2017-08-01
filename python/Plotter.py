@@ -617,6 +617,8 @@ class Plotter(PlotterBase):
             first = True
             for histName,hist in hists.iteritems():
                 style = self.styles[histName]
+                #if histName=='data':
+                #    hist = self._get_poisson_err(hist)
                 if first:
                     first = False
                     hist.Draw(style['drawstyle'])

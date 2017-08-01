@@ -12,12 +12,12 @@ import ROOT
 
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-blind = False
-plotCount = False
+blind = True
+plotCount = True
 doCat = True
-plotMC = False
+plotMC = True
 plotDatadriven = True
-plotLowmass = False
+plotLowmass = True
 plotFakeRegions = False
 plotSignal = False
 plotROC = False
@@ -25,7 +25,7 @@ plotNormalization = False
 plotSOverB = False
 plotSignificance = False
 plotAllMasses = False
-plotSig500 = False
+plotSig500 = True
 
 hpp3lPlotter = Plotter('Hpp3l',new=True)
 
