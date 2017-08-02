@@ -461,7 +461,7 @@ class LimitPlotter(PlotterBase):
             oneSigma[prod].Draw('f')
             expected[prod].Draw('same')
             xsecGraph[prod].Draw('same')
-            if prod=='PP': xsecGraph['PPR'].Draw('same')
+            #if prod=='PP': xsecGraph['PPR'].Draw('same')
             ROOT.gPad.RedrawAxis()
             if not blind: observed[prod].Draw('same')
 
@@ -472,7 +472,7 @@ class LimitPlotter(PlotterBase):
         entries = [
             [xsecGraph['AP'],'#splitline{Assoc. Prod.}{Cross Section}','l'],
             [xsecGraph['PP'],'#splitline{Pair Prod.}{Cross Section}','l'],
-            [xsecGraph['PPR'],'#splitline{Pair Prod. (RH)}{Cross Section}','l'],
+            #[xsecGraph['PPR'],'#splitline{Pair Prod. (RH)}{Cross Section}','l'],
         ]
         legend = self._getLegend(entries=entries,numcol=2,position=legendpos)
         legend.Draw()
@@ -551,7 +551,7 @@ class LimitPlotter(PlotterBase):
         }
 
         nl = len(labels)
-        h = ROOT.TH2F("h", "h; {0}; ".format(xaxis), 1,0,1000 if offAxis else 1900,2*nl+4,0.5,nl+2.5)
+        h = ROOT.TH2F("h", "h; {0}; ".format(xaxis), 1, 200 if doPreviousExclusion else 400, 1200 if offAxis else 2100, 2*nl+4, 0.5, nl+2.5)
         h.GetYaxis().SetRangeUser(1.,nl+2.)
         h.GetYaxis().SetTickSize(0)
         h.GetXaxis().SetLabelSize(0.030)
@@ -682,7 +682,7 @@ class LimitPlotter(PlotterBase):
                 sublegends[prod].SetHeader(prodLabels[prod])
                 sublegends[prod].SetNColumns(1 if offAxis else 2)
                 sublegends[prod].AddEntry(curr[prod+'8'],'19.7 fb^{-1} (8 TeV)','f')
-                sublegends[prod].AddEntry(curr[prod+'13'],'12.9 fb^{-1} (13 TeV)','f')
+                sublegends[prod].AddEntry(curr[prod+'13'],'35.9 fb^{-1} (13 TeV)','f')
                 sublegends[prod].Draw()
 
             expline = ROOT.TLine(*explineargs)

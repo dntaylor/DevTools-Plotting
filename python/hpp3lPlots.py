@@ -12,12 +12,12 @@ import ROOT
 
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-blind = False
+blind = True
 plotCount = True
 doCat = True
 plotMC = True
 plotDatadriven = True
-plotLowmass = False
+plotLowmass = True
 plotFakeRegions = False
 plotSignal = False
 plotROC = False
@@ -130,15 +130,44 @@ def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False,postfix='')
     if postfix: savename += '_{0}'.format(postfix)
     plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=5000,ymin=1)
 
+
+import math
+
+def round_base(x, base=10):
+    return int(base * round(float(x)/base))
+
+def exp_binning(xmin,xmax,func,minwidth=10):
+    bins = []
+    x = xmin
+    while x<xmax:
+        bins += [round_base(x,minwidth)]
+        w = func(x)
+        if w<minwidth: w=minwidth
+        x += w
+    bins += [xmax]
+    return bins
+
 # variable binning
 variable_binning = {
     'hppMass': {
-        'I'  : [x*20 for x in range(10)]+[200+x*20 for x in range(15)]+[500+x*50 for x in range(10)]+[1000+x*100 for x in range(4)]+[1650],
-        'II' : [0,20,40,60,80,100,140,180,220,260,300,350,400,500,600,1650],
-        'III': [x*10 for x in range(20)]+[200+x*20 for x in range(15)]+[500+x*100 for x in range(5)]+[1000,1650],
-        'IV' : [0,20,40,60,80,100,140,180,220,260,300,400,600,1650],
-        'V'  : [0,20,40,60,80,100,150,200,300,400,1650],
-        'VI' : [0,20,40,60,80,100,140,180,220,260,300,350,400,600,1650],
+        #'I'  : [x*20 for x in range(10)]+[200+x*20 for x in range(15)]+[500+x*50 for x in range(10)]+[1000+x*100 for x in range(4)]+[1650],
+        #'II' : [0,20,40,60,80,100,140,180,220,260,300,350,400,500,600,1650],
+        #'III': [x*10 for x in range(20)]+[200+x*20 for x in range(15)]+[500+x*100 for x in range(5)]+[1000,1650],
+        #'IV' : [0,20,40,60,80,100,140,180,220,260,300,400,600,1650],
+        #'V'  : [0,20,40,60,80,100,150,200,300,400,1650],
+        #'VI' : [0,20,40,60,80,100,140,180,220,260,300,350,400,600,1650],
+        'I'  : exp_binning(0,1650,lambda x: math.exp(0.01*x),minwidth=25),
+        'II' : exp_binning(0,1650,lambda x: math.exp(0.02*x),minwidth=25),
+        'III': exp_binning(0,1650,lambda x: math.exp(0.01*x),minwidth=25),
+        'IV' : exp_binning(0,1650,lambda x: math.exp(0.02*x),minwidth=25),
+        'V'  : exp_binning(0,1650,lambda x: math.exp(0.02*x),minwidth=25),
+        'VI' : exp_binning(0,1650,lambda x: math.exp(0.02*x),minwidth=25),
+        #'I'  : exp_binning(0,1650,lambda x: 0.0015*x**2,minwidth=10),
+        #'II' : exp_binning(0,1650,lambda x: 0.002*x**2,minwidth=25),
+        #'III': exp_binning(0,1650,lambda x: 0.0015*x**2,minwidth=10),
+        #'IV' : exp_binning(0,1650,lambda x: 0.002*x**2,minwidth=25),
+        #'V'  : exp_binning(0,1650,lambda x: 0.002*x**2,minwidth=25),
+        #'VI' : exp_binning(0,1650,lambda x: 0.002*x**2,minwidth=25),
     },
     'st': {
         'I'  : [60+x*10 for x in range(14)]+[200+x*20 for x in range(15)]+[500+x*100 for x in range(5)]+[1000,1200,1400,2000],
@@ -160,12 +189,12 @@ variable_binning = {
 
 ymin = {
     'hppMass': {
-        'I'  : 0.001,
-        'II' : 0.0001,
+        'I'  : 0.005,
+        'II' : 0.0005,
         'III': 0.001,
-        'IV' : 0.0001,
+        'IV' : 0.0005,
         'V'  : 0.00001,
-        'VI' : 0.00001,
+        'VI' : 0.00005,
     },
     'st': {
         'I'  : 0.0001,
@@ -193,6 +222,7 @@ def plotWithCategories(plotter,plot,baseDir='default',saveDir='',datadriven=Fals
         if perCatBins and plot in variable_binning:
             kwargs['rebin'] = variable_binning[plot][cat]
             kwargs['yaxis'] = 'Events / 1 GeV'
+            kwargs['overflow'] = False
             kwargs['scalewidth'] = True
         if perCatBins and plot in ymin and kwargs.get('logy',False): kwargs['ymin'] = ymin[plot][cat]
         if doCat: plotter.plot(plotvars,savename,**kwargs)

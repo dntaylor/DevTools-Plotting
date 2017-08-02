@@ -14,12 +14,12 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 
 version = getCMSSWVersion()
 
-blind = False
+blind = True
 doCat = True
 plotCount = True
 plotMC = True
 plotDatadriven = True
-plotLowmass = False
+plotLowmass = True
 plotFakeRegions = False
 plotSignal = False
 plotROC = False
@@ -132,15 +132,37 @@ def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False,postfix='')
     if postfix: savename += '_{0}'.format(postfix)
     plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=500,ymin=0.001)
 
+import math
+
+def round_base(x, base=10):
+    return int(base * round(float(x)/base))
+
+def exp_binning(xmin,xmax,func,minwidth=10):
+    bins = []
+    x = xmin
+    while x<xmax:
+        bins += [round_base(x,minwidth)]
+        w = func(x)
+        if w<minwidth: w=minwidth
+        x += w
+    bins += [xmax]
+    return bins
+
 # variable binning
 variable_binning = {
     'hppMass': {
-        'I'  : [0,50,100,150,200,250,300,400,500,600,800,1000,1650],
-        'II' : [0,50,100,150,200,300,400,600,1000,1650],
-        'III': [0,200,1650],
-        'IV' : [0,50,100,200,300,400,1650],
-        'V'  : [0,50,100,200,400,1650],
-        'VI' : [0,200,1650],
+        #'I'  : [0,50,100,150,200,250,300,400,500,600,800,1000,1650],
+        #'II' : [0,50,100,150,200,300,400,600,1000,1650],
+        #'III': [0,200,1650],
+        #'IV' : [0,50,100,200,300,400,1650],
+        #'V'  : [0,50,100,200,400,1650],
+        #'VI' : [0,200,1650],
+        'I'  : exp_binning(0,1650,lambda x: math.exp(0.015*x),minwidth=50),
+        'II' : exp_binning(0,1650,lambda x: math.exp(0.05*x),minwidth=50),
+        'III': exp_binning(0,1650,lambda x: math.exp(0.05*x),minwidth=200),
+        'IV' : exp_binning(0,1650,lambda x: math.exp(0.05*x),minwidth=50),
+        'V'  : exp_binning(0,1650,lambda x: math.exp(0.05*x),minwidth=50),
+        'VI' : exp_binning(0,1650,lambda x: math.exp(0.05*x),minwidth=200),
     },
     'st': {
         'I'  : [0,50,100,150,200,250,300,400,500,600,800,1000,1400,2000],
@@ -168,6 +190,27 @@ ymax = {
     #},
 }
 
+ymin = {
+    'hppMass': {
+        'I'  : 0.001,
+        'II' : 0.0005,
+        'III': 0.0001,
+        'IV' : 0.0005,
+        'V'  : 0.00005,
+        'VI' : 0.00001,
+    },
+    'st': {
+        'I'  : 0.0001,
+        'II' : 0.0001,
+        'III': 0.0001,
+        'IV' : 0.0001,
+        'V'  : 0.0001,
+        'VI' : 0.00001,
+    },
+}
+
+ymin['hmmMass'] = ymin['hppMass']
+
 def plotWithCategories(plotter,plot,baseDir='default',saveDir='',datadriven=False,postfix='',perCatBins=False,**kwargs):
     plotname = '/'.join([x for x in [baseDir,plot] if x])
     plotvars = getDataDrivenPlot(plotname) if datadriven else plotname
@@ -184,8 +227,10 @@ def plotWithCategories(plotter,plot,baseDir='default',saveDir='',datadriven=Fals
         if plot in variable_binning:
             kwargs['rebin'] = variable_binning[plot][cat]
             kwargs['yaxis'] = 'Events / 1 GeV'
+            kwargs['overflow'] = False
             kwargs['scalewidth'] = True
         if perCatBins and plot in ymax: kwargs['ymax'] = ymax[plot].get(cat,None)
+        if perCatBins and plot in ymin and kwargs.get('logy',False): kwargs['ymin'] = ymin[plot][cat]
         if doCat: plotter.plot(plotvars,savename,**kwargs)
 
 
