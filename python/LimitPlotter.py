@@ -151,11 +151,11 @@ class LimitPlotter(PlotterBase):
                 oneSigma.SetPoint(     i+1,   oneSigma_high.GetX()[i+1],    oneSigma_high.GetY()[i+1])
                 oneSigma.SetPoint(     n+i+1, oneSigma_low.GetX()[n-1-i-1], oneSigma_low.GetY()[n-1-i-1])
 
-        twoSigma.SetFillColor(ROOT.kYellow)
-        twoSigma.SetLineColor(ROOT.kYellow)
+        twoSigma.SetFillColor(ROOT.kOrange)
+        twoSigma.SetLineColor(ROOT.kOrange)
         twoSigma.SetMarkerStyle(0)
-        oneSigma.SetFillColor(ROOT.kSpring)
-        oneSigma.SetLineColor(ROOT.kSpring)
+        oneSigma.SetFillColor(ROOT.kGreen+1)
+        oneSigma.SetLineColor(ROOT.kGreen+1)
         oneSigma.SetMarkerStyle(0)
         expected.SetLineStyle(7)
         expected.SetMarkerStyle(0)
@@ -201,16 +201,16 @@ class LimitPlotter(PlotterBase):
 
         # get the legend
         entries = [
-            [expected,'Expected','l'],
-            [twoSigma,'Expected 2#sigma','F'],
-            [oneSigma,'Expected 1#sigma','F'],
+            [expected,'Median expected','l'],
+            [oneSigma,'68% expected','F'],
+            [twoSigma,'95% expected','F'],
         ]
         if not blind: entries = [[observed,'Observed','l']] + entries
         if asymptoticFilenames:
             entries_asym = [
-                [expected_asym,'Expected (asym.)','l'],
-                [twoSigma_asym,'Expected (asym.) 2#sigma','l'],
-                [oneSigma_asym,'Expected (asym.) 1#sigma','l'],
+                [expected_asym,'Median expected (asym.)','l'],
+                [oneSigma_asym,'68% expected (asym.)','l'],
+                [twoSigma_asym,'95% expected (asym.)','l'],
             ]
             if not blind: entries_asym = [[observed_asym,'Observed (asym.)','l']] + entries_asym
         if asymptoticFilenames:
@@ -438,11 +438,11 @@ class LimitPlotter(PlotterBase):
                     oneSigma[prod].SetPoint(     i+1,   oneSigma_high[prod].GetX()[i+1],    oneSigma_high[prod].GetY()[i+1])
                     oneSigma[prod].SetPoint(     n+i+1, oneSigma_low[prod].GetX()[n-1-i-1], oneSigma_low[prod].GetY()[n-1-i-1])
 
-            twoSigma[prod].SetFillColor(ROOT.kYellow)
-            twoSigma[prod].SetLineColor(ROOT.kYellow)
+            twoSigma[prod].SetFillColor(ROOT.kOrange)
+            twoSigma[prod].SetLineColor(ROOT.kOrange)
             twoSigma[prod].SetMarkerStyle(0)
-            oneSigma[prod].SetFillColor(ROOT.kSpring)
-            oneSigma[prod].SetLineColor(ROOT.kSpring)
+            oneSigma[prod].SetFillColor(ROOT.kGreen+1)
+            oneSigma[prod].SetLineColor(ROOT.kGreen+1)
             oneSigma[prod].SetMarkerStyle(0)
             expected[prod].SetLineStyle(7)
             expected[prod].SetMarkerStyle(0)
@@ -478,9 +478,9 @@ class LimitPlotter(PlotterBase):
         legend.Draw()
 
         entries = [
-            [expected['AP'],'Expected','l'],
-            [twoSigma['AP'],'Expected 2#sigma','F'],
-            [oneSigma['AP'],'Expected 1#sigma','F'],
+            [expected['AP'],'Median expected','l'],
+            [oneSigma['AP'],'68% expected','F'],
+            [twoSigma['AP'],'95% expected','F'],
         ]
         if not blind: entries = [[observed['AP'],'Observed','l']] + entries
         legend2 = self._getLegend(entries=entries,numcol=2,position=legendpos)
