@@ -172,6 +172,10 @@ xsecs = {
     'ZH_HToBB_ZToNuNu_M125_13TeV_powheg_pythia8'                       :      0.8696 * 0.5824 * 0.2          * PB, # ZH * H->bb * Z->inv
     'ZH_HToZZ_4LFilter_M126_13TeV_powheg2-minlo-HZJ_JHUgenV6_pythia8'  :      0.147 * PB,
 
+    'GluGluHToEEG_M125_MLL-0To60_Dalitz_012j_13TeV_amcatnloFXFX_pythia8':     1.668e-03 * PB,   # from gen xsec analyzer
+    'GluGluHToMuMuG_M125_MLL-0To60_Dalitz_012j_13TeV_amcatnloFXFX_pythia8':   8.139e-04 * PB,   # from gen xsec analyzer
+    'GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8'                      :      3.172e+01 * PB,   # from gen xsec analyzer 
+
     # WW
     'WWTo2L2Nu_13TeV-powheg'                                           :     10.481    * PB,
     'WWTo4Q_13TeV-powheg'                                              :     45.20     * PB,

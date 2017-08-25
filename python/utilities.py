@@ -5,6 +5,7 @@ import hashlib
 import glob
 
 from DevTools.Utilities.utilities import python_mkdir, ZMASS, getCMSSWVersion
+from DevTools.Utilities.hdfsUtils import get_hdfs_root_files
 
 CMSSW_BASE = os.environ['CMSSW_BASE']
 
@@ -117,11 +118,12 @@ latestNtuples['80X'] = {
     'Hpp4l'          : '2017-06-29_Hpp4lAnalysis_80X_Moriond_v1-merge',
 # Photon
     'FourPhoton'     : '2017-06-20_FourPhotonAnalysis_80X_Photon_v2-merge',
-    'ThreePhoton'    : '2017-07-31_ThreePhotonAnalysis_80X_Photon_v1-merge',
+    'ThreePhoton'    : '2017-08-14_ThreePhotonAnalysis_80X_Photon_v1-merge',
     'TwoPhoton'      : '2017-06-21_TwoPhotonAnalysis_80X_Photon_v1-merge',
-    'EG'             : '2017-06-22_EGAnalysis_80X_Photon_v1-merge',
+    'EG'             : '2017-08-18_EGAnalysis_80X_Photon_v1',
     'DYGG'           : '2017-06-22_DYGGAnalysis_80X_Photon_v1-merge',
-    'MMG'            : '2017-06-22_MMGAnalysis_80X_Photon_v1-merge',
+    'MMG'            : '2017-08-03_MMGAnalysis_80X_Photon_v1-merge',
+    'LLG'            : '2017-08-23_LLGAnalysis_80X_Photon_v1-merge',
     'SingleJet'      : '2017-07-18_SingleJetAnalysis_80X_QCD_v1-merge',
 }
 
@@ -185,6 +187,35 @@ def getNtupleDirectory(analysis,local=False,version=getCMSSWVersion(),shift=''):
         return os.path.join(baseDir,latestShifts[version][analysis][shift])
     if analysis in latestNtuples[version] and latestNtuples[version][analysis]:
         return os.path.join(baseDir,latestNtuples[version][analysis])
+
+def getTestFiles(analysis,sample,n=1,version=None):
+    if not version: version = getCMSSWVersion()
+
+    sampleMap = {
+        'wz'    : 'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
+        'zz'    : 'ZZTo4L_13TeV_powheg_pythia8',
+        'data'  : 'DoubleMuon',
+        'hpp'   : 'HPlusPlusHMinusMinusHTo4L_M-500_13TeV-pythia8' if version=='76X' else 'HPlusPlusHMinusMinusHTo4L_M-500_TuneCUETP8M1_13TeV_pythia8',
+        'hpp4l' : 'HPlusPlusHMinusMinusHTo4L_M-500_13TeV-pythia8' if version=='76X' else 'HPlusPlusHMinusMinusHTo4L_M-500_TuneCUETP8M1_13TeV_pythia8',
+        'hppr4l': 'HPlusPlusHMinusMinusHRTo4L_M-500_13TeV-pythia8' if version=='76X' else 'HPlusPlusHMinusMinusHRTo4L_M-500_TuneCUETP8M1_13TeV_pythia8',
+        'hpp3l' : 'HPlusPlusHMinusHTo3L_M-500_TuneCUETP8M1_13TeV_calchep-pythia8' if version=='76X' else 'HPlusPlusHMinusHTo3L_M-500_13TeV-calchep-pythia8',
+        #'dy'    : 'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+        'dy'    : 'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+        'w'     : 'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+        'qcd'   : 'QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8',
+        'SingleMuon'    : 'SingleMuon',
+        'SingleElectron': 'SingleElectron',
+        'DoubleMuon'    : 'DoubleMuon',
+        'DoubleEG'      : 'DoubleEG',
+        'MuonEG'        : 'MuonEG',
+        'Tau'           : 'Tau',
+    }
+
+    if sample not in sampleMap: return []
+
+    files = get_hdfs_root_files('{0}/{1}'.format(getNtupleDirectory(analysis,version=version),sampleMap[sample]))
+
+    return files[:min(n,len(files))]
 
 latestHistograms = {}
 
