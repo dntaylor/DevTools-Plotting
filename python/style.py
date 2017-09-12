@@ -54,6 +54,7 @@ colorMap = {
     'HppHmm'    : 'Orange',
     'HppHmmR'   : 'Orange',
     'HppHm'     : 'Orange',
+    'HToAG'     : 'Orange',
     'POWHEG'    : 'LightBlue',
     'AMCATNLO'  : 'Red',
     'SHERPA'    : 'Green',
@@ -91,6 +92,7 @@ labelMap = {
     'HppHmm'    : '#Phi^{++}#Phi^{#font[122]{\55}#font[122]{\55}}',
     'HppHmmR'   : '#Phi_{R}^{++}#Phi_{R}^{#font[122]{\55}#font[122]{\55}}',
     'HppHm'     : '#Phi^{#pm#pm}#Phi^{#mp}',
+    'HToAG'     : 'H#rightarrow A#gamma #rightarrow #gamma#gamma#gamma',
     'AMCATNLO'  : 'amc@NLO',
     'SHERPA'    : 'Sherpa',
     'PYTHIA'    : 'Pythia',
@@ -103,6 +105,11 @@ for sig in ['HppHmm','HppHm','HppHmmR']:
         colorMap[key] = colorMap[sig]
         labelMap[key] = '#splitline{{{0}}}{{({1} GeV)}}'.format(labelMap[sig],mass)
 
+for sig in ['HToAG']:
+    for masses in [(250,1),(250,300),(250,150)]:
+        key = '{0}_{1}_{2}'.format(sig,*masses)
+        colorMap[key] = colorMap[sig]
+        labelMap[key] = '#splitline{{{0}}}{{({1} GeV, {2} GeV)}}'.format(labelMap[sig],*masses)
 
 
 def getStyle(sample):

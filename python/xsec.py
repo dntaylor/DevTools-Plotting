@@ -299,6 +299,11 @@ xsecs = {
     'HPlusPlusHMinusHTo3L_M-1400_13TeV-calchep-pythia8'                :      7.3782e-06 * PB * xsecs_4l_kfactor[1400],
     'HPlusPlusHMinusHTo3L_M-1500_13TeV-calchep-pythia8'                :      4.1720e-06 * PB * xsecs_4l_kfactor[1500],
 
+    # three photon
+    'HToAGmToGmGmGm_M-250_MA-1_TuneCUETP8M1_13TeV_pythia8'             : 1. * PB,
+    'HToAGmToGmGmGm_M-250_MA-30_TuneCUETP8M1_13TeV_pythia8'            : 1. * PB,
+    'HToAGmToGmGmGm_M-250_MA-150_TuneCUETP8M1_13TeV_pythia8'           : 1. * PB,
+
 }
 
 for mass in xsecs_4l_NLO:
