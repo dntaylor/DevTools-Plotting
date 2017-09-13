@@ -50,7 +50,6 @@ class NtupleWrapper(object):
         self.projections = getProjectionParams(self.analysis,self.sample,shift=self.shift,version=self.version,**kwargs)
         self.infile = 0
         self.outfile = 0
-        self.infile = 0
         self.j = 0
         self.initialized = False
         self.temp = True
@@ -68,6 +67,8 @@ class NtupleWrapper(object):
         self.__finish()
 
     def __finish(self):
+        if self.infile:
+            self.infile.Close()
         if self.outfile:
             self.outfile.Close()
 
