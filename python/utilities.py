@@ -118,7 +118,7 @@ latestNtuples['80X'] = {
     'Hpp4l'          : '2017-06-29_Hpp4lAnalysis_80X_Moriond_v1-merge',
 # Photon
     'FourPhoton'     : '2017-06-20_FourPhotonAnalysis_80X_Photon_v2-merge',
-    'ThreePhoton'    : '2017-08-14_ThreePhotonAnalysis_80X_Photon_v1-merge',
+    'ThreePhoton'    : '2017-09-14_ThreePhotonAnalysis_80X_Photon_v2-merge',
     'TwoPhoton'      : '2017-06-21_TwoPhotonAnalysis_80X_Photon_v1-merge',
     'EG'             : '2017-08-18_EGAnalysis_80X_Photon_v1',
     'DYGG'           : '2017-06-22_DYGGAnalysis_80X_Photon_v1-merge',
