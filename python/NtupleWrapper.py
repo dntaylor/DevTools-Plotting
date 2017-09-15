@@ -24,6 +24,7 @@ class NtupleWrapper(object):
     def __init__(self,analysis,sample,**kwargs):
         # default to access via sample/analysis
         self.new = kwargs.pop('new',False)
+        self.version = kwargs.pop('version',getCMSSWVersion())
         self.analysis = analysis
         self.sample = sample
         self.shift = kwargs.pop('shift','')
@@ -31,25 +32,24 @@ class NtupleWrapper(object):
         logging.debug('Initializing {0} {1} {2}'.format(self.analysis,self.sample,self.shift))
         # backup passing custom parameters
         #self.ntuple = kwargs.pop('ntuple','{0}/src/ntuples/{1}/{2}.root'.format(CMSSW_BASE,self.analysis,self.sample))
-        self.ntupleDirectory = kwargs.pop('ntupleDirectory','{0}/{1}'.format(getNtupleDirectory(self.analysis,shift=self.shift),self.sample))
+        self.ntupleDirectory = kwargs.pop('ntupleDirectory','{0}/{1}'.format(getNtupleDirectory(self.analysis,shift=self.shift,version=self.version),self.sample))
         if self.useProof: self.ntupleDirectory.replace('-merge','')
         self.inputFileList = kwargs.pop('inputFileList','')
         self.treeName = kwargs.pop('treeName',getTreeName(self.analysis))
         #self.flat = kwargs.pop('flat','flat/{0}/{1}.root'.format(self.analysis,self.sample))
         flat = getNewFlatHistograms if self.new else getFlatHistograms
         proj = getNewProjectionHistograms if self.new else getProjectionHistograms
-        self.flat = kwargs.pop('flat',flat(self.analysis,self.sample,shift=self.shift))
-        self.proj = kwargs.pop('proj',proj(self.analysis,self.sample,shift=self.shift))
-        self.json = kwargs.pop('json',getSkimJson(self.analysis,self.sample,shift=self.shift))
-        self.pickle = kwargs.pop('pickle',getSkimPickle(self.analysis,self.sample,shift=self.shift))
+        self.flat = kwargs.pop('flat',flat(self.analysis,self.sample,shift=self.shift,version=self.version))
+        self.proj = kwargs.pop('proj',proj(self.analysis,self.sample,shift=self.shift,version=self.version))
+        self.json = kwargs.pop('json',getSkimJson(self.analysis,self.sample,shift=self.shift,version=self.version))
+        self.pickle = kwargs.pop('pickle',getSkimPickle(self.analysis,self.sample,shift=self.shift,version=self.version))
         self.skimInitialized = False
         # get stuff needed to flatten
-        self.histParams = getHistParams(self.analysis,self.sample,shift=self.shift,**kwargs)
-        self.selections = getHistSelections(self.analysis,self.sample,shift=self.shift,**kwargs)
-        self.projections = getProjectionParams(self.analysis,self.sample,shift=self.shift,**kwargs)
+        self.histParams = getHistParams(self.analysis,self.sample,shift=self.shift,version=self.version,**kwargs)
+        self.selections = getHistSelections(self.analysis,self.sample,shift=self.shift,version=self.version,**kwargs)
+        self.projections = getProjectionParams(self.analysis,self.sample,shift=self.shift,version=self.version,**kwargs)
         self.infile = 0
         self.outfile = 0
-        self.infile = 0
         self.j = 0
         self.initialized = False
         self.temp = True
@@ -67,6 +67,8 @@ class NtupleWrapper(object):
         self.__finish()
 
     def __finish(self):
+        if self.infile:
+            self.infile.Close()
         if self.outfile:
             self.outfile.Close()
 
