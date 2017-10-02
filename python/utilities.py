@@ -107,7 +107,7 @@ latestNtuples['80X'] = {
 # Moriond 2017
     'Tau'            : '2017-03-30_TauAnalysis_80X_Moriond_v1-merge',
     'Charge'         : '2017-04-06_ChargeAnalysis_80X_Moriond_v1-merge',
-    'DY'             : '2017-03-01_DYAnalysis_80X_Moriond_v2-merge',
+    'DY'             : '2017-10-01_DYAnalysis_80X_Moriond_v1-merge',
     #'DijetFakeRate'  : '2017-04-19_DijetFakeRateAnalysis_80X_Moriond_v1-merge',
     'DijetFakeRate'  : '2017-04-20_DijetFakeRateAnalysis_80X_Moriond_v1-merge', # with tight muon
     'ZFakeRate'      : '2017-03-21_ZFakeRateAnalysis_80X_Moriond_v1-merge',
