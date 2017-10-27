@@ -107,7 +107,7 @@ latestNtuples['80X'] = {
 # Moriond 2017
     'Tau'            : '2017-03-30_TauAnalysis_80X_Moriond_v1-merge',
     'Charge'         : '2017-04-06_ChargeAnalysis_80X_Moriond_v1-merge',
-    'DY'             : '2017-03-01_DYAnalysis_80X_Moriond_v2-merge',
+    'DY'             : '2017-10-26_DYAnalysis_80X_Moriond_v1-merge',
     #'DijetFakeRate'  : '2017-04-19_DijetFakeRateAnalysis_80X_Moriond_v1-merge',
     'DijetFakeRate'  : '2017-04-20_DijetFakeRateAnalysis_80X_Moriond_v1-merge', # with tight muon
     'ZFakeRate'      : '2017-03-21_ZFakeRateAnalysis_80X_Moriond_v1-merge',
@@ -118,9 +118,9 @@ latestNtuples['80X'] = {
     'Hpp4l'          : '2017-06-29_Hpp4lAnalysis_80X_Moriond_v1-merge',
 # Photon
     'FourPhoton'     : '2017-06-20_FourPhotonAnalysis_80X_Photon_v2-merge',
-    'ThreePhoton'    : '2017-09-14_ThreePhotonAnalysis_80X_Photon_v2-merge',
+    'ThreePhoton'    : '2017-09-15_ThreePhotonAnalysis_80X_Photon_v1-merge',
     'TwoPhoton'      : '2017-06-21_TwoPhotonAnalysis_80X_Photon_v1-merge',
-    'EG'             : '2017-08-18_EGAnalysis_80X_Photon_v1',
+    'EG'             : '2017-09-27_EGAnalysis_80X_Photon_v1-merge',
     'DYGG'           : '2017-06-22_DYGGAnalysis_80X_Photon_v1-merge',
     'MMG'            : '2017-08-03_MMGAnalysis_80X_Photon_v1-merge',
     'LLG'            : '2017-08-23_LLGAnalysis_80X_Photon_v1-merge',
