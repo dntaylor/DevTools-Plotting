@@ -653,7 +653,7 @@ class Plotter(PlotterBase):
                 denom = stack.GetStack().Last().Clone(stackname)
             else:
                 denom = hists.items()[0][1].Clone(stackname)
-            ratiostaterr = self._get_ratio_stat_err(denom)
+            ratiostaterr = self._get_ratio_stat_err(denom,**kwargs)
             ratiostaterr.SetXTitle(xaxis)
             unityargs = [rangex[0],1,rangex[1],1] if len(rangex)==2 else [denom.GetXaxis().GetXmin(),1,denom.GetXaxis().GetXmax(),1]
             ratiounity = ROOT.TLine(*unityargs)
@@ -809,7 +809,7 @@ class Plotter(PlotterBase):
         # the ratio portion
         if plotratio:
             denom = stack.GetStack().Last().Clone('h_stack_{0}_ratio'.format(savename.replace('/','_')))
-            ratiostaterr = self._get_ratio_stat_err(denom)
+            ratiostaterr = self._get_ratio_stat_err(denom,**kwargs)
             ratiostaterr.SetXTitle(xaxis)
             for b,label in enumerate(labels):
                 ratiostaterr.GetXaxis().SetBinLabel(b+1,label)
@@ -1394,7 +1394,7 @@ class Plotter(PlotterBase):
             self.j += 1
             stackname = 'h_stack_{0}_ratio'.format(self.j)
             denom = hists.items()[0][1].Clone(stackname)
-            ratiostaterr = self._get_ratio_stat_err(denom)
+            ratiostaterr = self._get_ratio_stat_err(denom,**kwargs)
             ratiostaterr.SetXTitle(xaxis)
             unityargs = [rangex[0],1,rangex[1],1] if len(rangex)==2 else [denom.GetXaxis().GetXmin(),1,denom.GetXaxis().GetXmax(),1]
             ratiounity = ROOT.TLine(*unityargs)
