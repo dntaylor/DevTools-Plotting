@@ -20,6 +20,7 @@ from hpp4lHistParams import buildHpp4l
 from hpp3lHistParams import buildHpp3l
 from threeLeptonHistParams import buildThreeLepton
 from triggerCountHistParams import buildTriggerCount
+from muMuTauTauHistParams import buildMuMuTauTau
 
 cachedParams = {}
 
@@ -71,6 +72,7 @@ def buildHistParams(analysis,**kwargs):
     if analysis=='Hpp3l':         buildHpp3l(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams,**kwargs)
     if analysis=='ThreeLepton':   buildThreeLepton(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams,**kwargs)
     if analysis=='TriggerCount':  buildTriggerCount(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='MuMuTauTau':    buildMuMuTauTau(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
 
     cachedParams[key] = (selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     return cachedParams[key]
