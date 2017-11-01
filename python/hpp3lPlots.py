@@ -267,7 +267,7 @@ plots = {
 }
 
 blind_cust = {
-    'hppMass': {'blinder': [100,1650], 'rangex': [0,1650],},
+    'hppMass': {'blinder': [200,1650], 'rangex': [0,1650],},
 }
 
 lowmass_cust = {
@@ -446,7 +446,7 @@ if plotDatadriven:
         for plot in blind_cust:
             kwargs = deepcopy(plots[plot])
             kwargs.update(blind_cust[plot])
-            plotWithCategories(hpp3lPlotter,plot,baseDir='',saveDir='datadriven',postfix='blinder',datadriven=True,perCatBins=True,**kwargs)
+            plotWithCategories(hpp3lPlotter,plot,baseDir='default',saveDir='datadriven',postfix='blinder',datadriven=True,perCatBins=True,**kwargs)
 
 
 ########################

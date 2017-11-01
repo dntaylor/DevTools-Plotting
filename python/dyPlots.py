@@ -59,7 +59,7 @@ dyPlotter.plotCounts(countVars,countLabels,savename,numcol=2)
 # plot definitions
 plots = {
     # z cand
-    'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 2 GeV', 'rebin': 20, 'rangex': [50,200], 'logy':1},
+    'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 2 GeV', 'rebin': 20, 'rangex': [50,200], 'logy':1, 'ymin':1000},
     'zPt'                   : {'xaxis': 'p_{T}^{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 50, 'rangex': [0,150]},
     'zDeltaR'               : {'xaxis': '#DeltaR(l^{+}l^{-})', 'yaxis': 'Events', 'rebin': 10},
     'zLeadingLeptonPt'      : {'xaxis': 'p_{T}^{Z_{lead}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 50, 'rangex': [25,150]},
@@ -79,11 +79,11 @@ plots = {
 # signal region
 for plot in plots:
     plotname = 'default/{0}'.format(plot)
-    dyPlotter.plot(plotname,plot,**plots[plot])
+    dyPlotter.plot(plotname,plot,ratiomin=0.8,ratiomax=1.2,**plots[plot])
     for chan in chans:
         plotname = 'default/{0}/{1}'.format(chan,plot)
         savename = '{0}/{1}'.format(chan,plot)
-        dyPlotter.plot(plotname,savename,**plots[plot])
+        dyPlotter.plot(plotname,savename,ratiomin=0.8,ratiomax=1.2,**plots[plot])
 
 # pileup plots
 
