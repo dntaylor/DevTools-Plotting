@@ -83,35 +83,68 @@ sigMap = {
     'HToAAH750A17' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-750_M-17_TuneCUETP8M1_13TeV_madgraph_pythia8'],
     'HToAAH750A19' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-750_M-19_TuneCUETP8M1_13TeV_madgraph_pythia8'],
     'HToAAH750A21' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-750_M-21_TuneCUETP8M1_13TeV_madgraph_pythia8'],
+    'data' : [
+        'SingleMuon',
+    ],
 }
 
 samples = ['QCD','W','Z','TT','WW','WZ','ZZ']
+
+sigMap['BG'] = []
+for s in samples:
+    sigMap['BG'] += sigMap[s]
+
 signals = ['HToAAH125A15']
 
+signame = 'HToAAH{h}A{a}'
+
+hmasses = [125,300,750]
+amasses = [5,7,9,11,13,15,17,19,21]
+
+hColors = {
+    125: ROOT.TColor.GetColor('#000000'),
+    300: ROOT.TColor.GetColor('#B20000'),
+    750: ROOT.TColor.GetColor('#FFCCCC'),
+}
+
+aColors = {
+    5 : ROOT.TColor.GetColor('#000000'),
+    7 : ROOT.TColor.GetColor('#330000'),
+    9 : ROOT.TColor.GetColor('#660000'),
+    11: ROOT.TColor.GetColor('#800000'),
+    13: ROOT.TColor.GetColor('#B20000'),
+    15: ROOT.TColor.GetColor('#FF0000'),
+    17: ROOT.TColor.GetColor('#FF6666'),
+    19: ROOT.TColor.GetColor('#FF9999'),
+    21: ROOT.TColor.GetColor('#FFCCCC'),
+}
+
+
+sels = ['default','regionA','regionB','regionC','regionD']
 
 ########################
 ### plot definitions ###
 ########################
 plots = {
     # h
-    'hMass'                 : {'xaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,650,10), 'logy': True, 'overflow': True},
-    'hMt'                   : {'xaxis': 'm_{T}^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,650,10), 'logy': True, 'overflow': True},
-    'hDeltaMass'            : {'xaxis': 'm^{#mu#mu}-m^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(-250,250,50), 'logy': True, 'overflow': True},
-    'hDeltaMt'              : {'xaxis': 'm^{#mu#mu}-m_{T}^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(-250,250,50), 'logy': True, 'overflow': True},
+    'hMass'                 : {'xaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,650,10), 'logy': False, 'overflow': True},
+    'hMt'                   : {'xaxis': 'm_{T}^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,650,10), 'logy': False, 'overflow': True},
+    'hDeltaMass'            : {'xaxis': 'm^{#mu#mu}-m^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(-250,250,50), 'logy': False, 'overflow': True},
+    'hDeltaMt'              : {'xaxis': 'm^{#mu#mu}-m_{T}^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(-250,250,50), 'logy': False, 'overflow': True},
     # amm
-    'ammMass'               : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'Events / 0.5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.5, range(0,60,1)), 'logy': True, 'overflow': True},
-    'ammDeltaR'             : {'xaxis': '#Delta R(#mu#mu) (GeV)', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.05, range(0,30,1)), 'logy': True, 'overflow': True},
-    'am1Pt'                 : {'xaxis': 'a_{1}^{#mu#mu} #mu_{1} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': True, 'overflow': True},
-    'am2Pt'                 : {'xaxis': 'a_{1}^{#mu#mu} #mu_{2} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': True, 'overflow': True},
+    'ammMass'               : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'Events / 0.5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.5, range(0,60,1)), 'logy': False, 'overflow': True},
+    'ammDeltaR'             : {'xaxis': '#Delta R(#mu#mu) (GeV)', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.05, range(0,30,1)), 'logy': False, 'overflow': True},
+    'am1Pt'                 : {'xaxis': 'a_{1}^{#mu#mu} #mu_{1} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
+    'am2Pt'                 : {'xaxis': 'a_{1}^{#mu#mu} #mu_{2} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
     # att
-    'attMass'               : {'xaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 1 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,60,1), 'logy': True, 'overflow': True},
-    'attMt'                 : {'xaxis': 'm_{T}^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 1 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,60,1), 'logy': True, 'overflow': True},
-    'attDeltaR'             : {'xaxis': '#Delta R(#tau_{#mu}#tau_{h}) (GeV)', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.05, range(0,90,1)), 'logy': True, 'overflow': True},
-    'atmPt'                 : {'xaxis': 'a_{1}^{#tau_{#mu}#tau_{h}} #tau_{#mu} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': True, 'overflow': True},
-    'athPt'                 : {'xaxis': 'a_{1}^{#tau_{#mu}#tau_{h}} #tau_{h} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': True, 'overflow': True},
+    'attMass'               : {'xaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 1 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,60,1), 'logy': False, 'overflow': True},
+    'attMt'                 : {'xaxis': 'm_{T}^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 2 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,120,2), 'logy': False, 'overflow': True},
+    'attDeltaR'             : {'xaxis': '#Delta R(#tau_{#mu}#tau_{h}) (GeV)', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.05, range(0,30,1)), 'logy': False, 'overflow': True},
+    'atmPt'                 : {'xaxis': 'a_{1}^{#tau_{#mu}#tau_{h}} #tau_{#mu} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
+    'athPt'                 : {'xaxis': 'a_{1}^{#tau_{#mu}#tau_{h}} #tau_{h} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
     # event
     'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
-    'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,320,20), 'numcol': 2, 'logy': True, 'overflow': True},
+    'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,320,20), 'numcol': 2, 'logy': False, 'overflow': True},
 }
 
 ############################
@@ -126,12 +159,43 @@ for signal in signals:
 if not blind: plotter.addHistogram('data',sigMap['data'])
 
 
-sels = ['default','regionA','regionB','regionC','regionD']
-
 for plot in plots:
     for sel in sels:
         kwargs = deepcopy(plots[plot])
         plotname = '{0}/{1}'.format(sel,plot)
-        savename = 'mc-{0}/{1}'.format(sel,plot)
+        savename = '{0}/mc/{1}'.format(sel,plot)
         plotter.plot(plotname,savename,**kwargs)
 
+#########################
+### Signals on 1 plot ###
+#########################
+
+for h in hmasses:
+    plotter.clearHistograms()
+
+    for a in amasses:
+        name = signame.format(h=h,a=a)
+        plotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': aColors[a]})
+
+    for plot in plots:
+        for sel in sels:
+            kwargs = deepcopy(plots[plot])
+            plotname = '{0}/{1}'.format(sel,plot)
+            savename = '{0}/h{h}/{1}'.format(sel,plot,h=h)
+            plotter.plot(plotname,savename,plotratio=False,**kwargs)
+    
+
+for a in [5,19]:
+    plotter.clearHistograms()
+    
+    for h in hmasses:
+        name = signame.format(h=h,a=a)
+        plotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': hColors[h]})
+
+    for plot in plots:
+        for sel in sels:
+            kwargs = deepcopy(plots[plot])
+            plotname = '{0}/{1}'.format(sel,plot)
+            savename = '{0}/a{a}/{1}'.format(sel,plot,a=a)
+            plotter.plot(plotname,savename,plotratio=False,**kwargs)
+    

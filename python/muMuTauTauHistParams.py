@@ -33,13 +33,13 @@ def buildMuMuTauTau(selectionParams,sampleSelectionParams,projectionParams,sampl
         'athPt'                       : {'xVariable': 'ath_pt',                         'xBinning': [500, 0, 500],           },
     }
 
-    baseCut = '1'
+    baseCut = 'amm_mass>1 && amm_mass<30'
     scaleFactor = 'genWeight*pileupWeight*triggerEfficiency'
     
     selectionParams['MuMuTauTau'] = {
-        'default' : {'args': [baseCut],                                                                                                  'kwargs': {'mcscalefactor': scaleFactor}},
-        'regionA' : {'args': [baseCut + ' && am1_isolation<0.15 && am2_isolation<0.15 && ath_byVLooseIsolationMVArun2v1DBoldDMwLT>0.5'], 'kwargs': {'mcscalefactor': scaleFactor}},
-        'regionB' : {'args': [baseCut + ' && am1_isolation<0.15 && am2_isolation<0.15 && ath_byVLooseIsolationMVArun2v1DBoldDMwLT<0.5'], 'kwargs': {'mcscalefactor': scaleFactor}},
-        'regionC' : {'args': [baseCut + ' && am1_isolation>0.15 && am2_isolation>0.15 && ath_byVLooseIsolationMVArun2v1DBoldDMwLT>0.5'], 'kwargs': {'mcscalefactor': scaleFactor}},
-        'regionD' : {'args': [baseCut + ' && am1_isolation>0.15 && am2_isolation>0.15 && ath_byVLooseIsolationMVArun2v1DBoldDMwLT<0.5'], 'kwargs': {'mcscalefactor': scaleFactor}},
+        'default' : {'args': [baseCut],                                                                                                    'kwargs': {'mcscalefactor': scaleFactor}},
+        'regionA' : {'args': [baseCut + ' && am1_isolation<0.15 && am2_isolation<0.15 && ath_byVLooseIsolationMVArun2v1DBoldDMwLT>0.5'],   'kwargs': {'mcscalefactor': scaleFactor}},
+        'regionB' : {'args': [baseCut + ' && am1_isolation<0.15 && am2_isolation<0.15 && ath_byVLooseIsolationMVArun2v1DBoldDMwLT<0.5'],   'kwargs': {'mcscalefactor': scaleFactor}},
+        'regionC' : {'args': [baseCut + ' && (am1_isolation>0.15 || am2_isolation>0.15) && ath_byVLooseIsolationMVArun2v1DBoldDMwLT>0.5'], 'kwargs': {'mcscalefactor': scaleFactor}},
+        'regionD' : {'args': [baseCut + ' && (am1_isolation>0.15 || am2_isolation>0.15) && ath_byVLooseIsolationMVArun2v1DBoldDMwLT<0.5'], 'kwargs': {'mcscalefactor': scaleFactor}},
     }

@@ -92,7 +92,7 @@ def getSelectedProjections(analysis,projs,sample,**kwargs):
 def parse_command_line(argv):
     parser = argparse.ArgumentParser(description='Flatten Tree')
 
-    parser.add_argument('analysis', type=str, choices=['WZ','ZZ','DY','Charge','TauCharge','Hpp3l','Hpp4l','Electron','Muon','Tau','DijetFakeRate','WTauFakeRate','WFakeRate','ZFakeRate','ThreeLepton','TriggerCount','MuMuTauTau'], help='Analysis to process')
+    parser.add_argument('analysis', type=str, help='Analysis to process')
     parser.add_argument('shift', type=str, default='', nargs='?', help='Shift to apply to scale factors')
     parser.add_argument('countOnly', type=int, default=0, nargs='?', help='Only do counts, no distributions')
     parser.add_argument('--samples', nargs='+', type=str, default=['*'], help='Samples to flatten. Supports unix style wildcards.')
