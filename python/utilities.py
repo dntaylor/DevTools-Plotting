@@ -127,7 +127,7 @@ latestNtuples['80X'] = {
     'SingleJet'      : '2017-07-18_SingleJetAnalysis_80X_QCD_v1-merge',
 # MuMuTauTau
     'MuMuTauTau'     : '2017-10-31_MuMuTauTauAnalysis_80X_v1',
-    'MuMuTauFakeRate': '2017-11-09_MuMuTauFakeRateAnalysis_80X_v1-merge',
+    'MuMuTauFakeRate': '2017-11-10_MuMuTauFakeRateAnalysis_80X_v1-merge',
 }
 
 latestShifts = {}

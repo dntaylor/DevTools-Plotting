@@ -68,10 +68,11 @@ sigMap['BG'] = []
 for s in samples:
     sigMap['BG'] += sigMap[s]
 
-sels = ['default','vloose',]
+sels = ['default','vloose','nearMuon']
 etaBins = [0,1.479,2.3]
 for eb in range(len(etaBins)-1):
-    sels += ['default/etaBin{0}'.format(eb), 'vloose/etaBin{0}'.format(eb)]
+    sels += ['default/etaBin{0}'.format(eb), 'vloose/etaBin{0}'.format(eb), 'nearMuon/etaBin{0}'.format(eb)]
+
 
 ########################
 ### plot definitions ###
@@ -104,3 +105,32 @@ for plot in plots:
         savename = '{0}/mc/{1}'.format(sel,plot)
         plotter.plot(plotname,savename,**kwargs)
 
+
+# ratios of tight/loose as func of pt/eta
+plotter.clearHistograms()
+plotter.addHistogram('MC',sigMap['BG'])
+plotter.addHistogram('Z',sigMap['Z'])
+plotter.addHistogram('data',sigMap['data'],style={'linecolor':ROOT.kBlack,'name':'Data'})
+plotter.addHistogram('data_uncorrected',sigMap['data'],style={'linecolor':ROOT.kRed,'name':'Uncorrected'})
+
+ptbins = [10,15,20,25,30,50,100]
+etabins = [-2.3,-1.479,0.,1.479,2.3]
+
+cust = {
+    'tPt'     : {'rebin': ptbins, 'overflow': False},
+    #'tEta'    : {'rebin': etabins},
+}
+
+for plot in cust:
+    for num,denom in [('vloose','default')]:
+        kwargs = deepcopy(plots[plot])
+        kwargs.update(cust[plot])
+        kwargs['yaxis'] = 'Ratio'
+        numname = '{0}/{1}'.format(num,plot)
+        denomname = '{0}/{1}'.format(denom,plot)
+        savename = 'ratio/{0}/{1}'.format(num,plot)
+        subtractMap = {
+            #'data': ['MC'],
+        }
+        customOrder = ['Z','data']
+        plotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,subtractMap=subtractMap,**kwargs)
