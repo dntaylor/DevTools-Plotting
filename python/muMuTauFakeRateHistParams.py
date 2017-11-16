@@ -27,9 +27,10 @@ def buildMuMuTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,
     scaleFactor = 'genWeight*pileupWeight*triggerEfficiency'
     
     selectionParams['MuMuTauFakeRate'] = {
-        'default' : {'args': [baseCut],                                                     'kwargs': {'mcscalefactor': scaleFactor}},
-        'vloose'  : {'args': [baseCut + ' && t_byVLooseIsolationMVArun2v1DBoldDMwLT>0.5'],  'kwargs': {'mcscalefactor': scaleFactor}},
-        'nearMuon': {'args': [baseCut + ' && m_pt>0'],                                      'kwargs': {'mcscalefactor': scaleFactor}},
+        'default'         : {'args': [baseCut],                                                               'kwargs': {'mcscalefactor': scaleFactor}},
+        'vloose'          : {'args': [baseCut + ' && t_byVLooseIsolationMVArun2v1DBoldDMwLT>0.5'],            'kwargs': {'mcscalefactor': scaleFactor}},
+        'nearMuon'        : {'args': [baseCut + ' && m_pt>0'],                                                'kwargs': {'mcscalefactor': scaleFactor}},
+        'nearMuonVLoose'  : {'args': [baseCut + ' && m_pt>0 && t_byVLooseIsolationMVArun2v1DBoldDMwLT>0.5'],  'kwargs': {'mcscalefactor': scaleFactor}},
     }
 
     etaBins = [0.,1.479,2.3]

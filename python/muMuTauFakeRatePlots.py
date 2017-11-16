@@ -68,10 +68,10 @@ sigMap['BG'] = []
 for s in samples:
     sigMap['BG'] += sigMap[s]
 
-sels = ['default','vloose','nearMuon']
+sels = ['default','vloose','nearMuon','nearMuonVLoose']
 etaBins = [0,1.479,2.3]
 for eb in range(len(etaBins)-1):
-    sels += ['default/etaBin{0}'.format(eb), 'vloose/etaBin{0}'.format(eb), 'nearMuon/etaBin{0}'.format(eb)]
+    sels += ['default/etaBin{0}'.format(eb), 'vloose/etaBin{0}'.format(eb), 'nearMuon/etaBin{0}'.format(eb), 'nearMuonVLoose/etaBin{0}'.format(eb)]
 
 
 ########################
@@ -122,7 +122,7 @@ cust = {
 }
 
 for plot in cust:
-    for num,denom in [('vloose','default')]:
+    for num,denom in [('vloose','default'),('nearMuonVLoose','nearMuon')]:
         kwargs = deepcopy(plots[plot])
         kwargs.update(cust[plot])
         kwargs['yaxis'] = 'Ratio'
@@ -134,3 +134,15 @@ for plot in cust:
         }
         customOrder = ['Z','data']
         plotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,subtractMap=subtractMap,**kwargs)
+        for eb in range(2):
+            kwargs = deepcopy(plots[plot])
+            kwargs.update(cust[plot])
+            kwargs['yaxis'] = 'Ratio'
+            numname = '{0}/etaBin{1}/{2}'.format(num,eb,plot)
+            denomname = '{0}/etaBin{1}/{2}'.format(denom,eb,plot)
+            savename = 'ratio/{0}/{1}_etaBin{2}'.format(num,plot,eb)
+            subtractMap = {
+                #'data': ['MC'],
+            }
+            customOrder = ['Z','data']
+            plotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,subtractMap=subtractMap,**kwargs)

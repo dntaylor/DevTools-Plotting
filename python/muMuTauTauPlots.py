@@ -13,7 +13,8 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 
 version = getCMSSWVersion()
 
-blind = True
+blind = False
+doDetRegions = True
 
 plotter = Plotter('MuMuTauTau')
 
@@ -45,6 +46,8 @@ sigMap = {
     ],
     'TT': [
         'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+        'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+        'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
     ],
     'WW': [
         'VVTo2L2Nu_13TeV_amcatnloFXFX_madspin_pythia8',
@@ -88,7 +91,8 @@ sigMap = {
     ],
 }
 
-samples = ['QCD','W','Z','TT','WW','WZ','ZZ']
+#samples = ['QCD','W','Z','TT','WW','WZ','ZZ']
+samples = ['W','Z','TT','WW','WZ','ZZ']
 
 sigMap['BG'] = []
 for s in samples:
@@ -122,6 +126,10 @@ aColors = {
 
 sels = ['default','regionA','regionB','regionC','regionD']
 
+if doDetRegions:
+    for sel in ['default','regionA','regionB','regionC','regionD']:
+        sels += ['{0}/{1}'.format(sel,det) for det in ['BB','BE','EE']]
+
 ########################
 ### plot definitions ###
 ########################
@@ -147,6 +155,15 @@ plots = {
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,320,20), 'numcol': 2, 'logy': False, 'overflow': True},
 }
 
+special = {
+    'jpsi': {
+        'ammMass'               : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'Events / 10 MeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.01, range(295,325,1)), 'logy': True, 'overflow': False},
+    },
+    'upsilon': {
+        'ammMass'               : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'Events / 50 MeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.01, range(850,1150,5)), 'logy': True, 'overflow': False},
+    },
+}
+
 ############################
 ### MC based BG estimate ###
 ############################
@@ -165,6 +182,16 @@ for plot in plots:
         plotname = '{0}/{1}'.format(sel,plot)
         savename = '{0}/mc/{1}'.format(sel,plot)
         plotter.plot(plotname,savename,**kwargs)
+
+if blind: plotter.addHistogram('data',sigMap['data'])
+
+for s in special:
+    for plot in special[s]:
+        for sel in sels:
+            kwargs = deepcopy(special[s][plot])
+            plotname = '{0}/{1}'.format(sel,plot)
+            savename = '{0}/mc/{1}_{2}'.format(sel,plot,s)
+            plotter.plot(plotname,savename,**kwargs)
 
 #########################
 ### Signals on 1 plot ###

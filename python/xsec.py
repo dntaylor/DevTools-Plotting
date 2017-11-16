@@ -319,7 +319,6 @@ xsecs = {
 
     # HToAA
     # NOTE: just pulled using gen xsec analyzer... very wrong (probably)
-    # Just multiply by a factor of 0.01 to make closer to reasonable
     'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-5_TuneCUETP8M1_13TeV_madgraph_pythia8'        : 1. * PB, #1.323e+02 * PB * 0.01,
     'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-7_TuneCUETP8M1_13TeV_madgraph_pythia8'        : 1. * PB, #1. * PB,
     'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-9_TuneCUETP8M1_13TeV_madgraph_pythia8'        : 1. * PB, #5.560e+02 * PB * 0.01,

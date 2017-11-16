@@ -21,7 +21,7 @@ def buildMuMuTauTau(selectionParams,sampleSelectionParams,projectionParams,sampl
         'hDeltaMass'                  : {'xVariable': 'amm_mass-att_mass',              'xBinning': [1000, -500, 500],       },
         'hDeltaMt'                    : {'xVariable': 'amm_mass-attmet_mt',             'xBinning': [1000, -500, 500],       },
         # amm
-        'ammMass'                     : {'xVariable': 'amm_mass',                       'xBinning': [120, 0, 30],            },
+        'ammMass'                     : {'xVariable': 'amm_mass',                       'xBinning': [3000, 0, 30],           },
         'ammDeltaR'                   : {'xVariable': 'amm_deltaR',                     'xBinning': [100, 0, 1.5],           },
         'am1Pt'                       : {'xVariable': 'am1_pt',                         'xBinning': [500, 0, 500],           },
         'am2Pt'                       : {'xVariable': 'am2_pt',                         'xBinning': [500, 0, 500],           },
@@ -35,11 +35,23 @@ def buildMuMuTauTau(selectionParams,sampleSelectionParams,projectionParams,sampl
 
     baseCut = 'amm_mass>1 && amm_mass<30'
     scaleFactor = 'genWeight*pileupWeight*triggerEfficiency'
-    
+
     selectionParams['MuMuTauTau'] = {
         'default' : {'args': [baseCut],                                                                                                    'kwargs': {'mcscalefactor': scaleFactor}},
         'regionA' : {'args': [baseCut + ' && am1_isolation<0.15 && am2_isolation<0.15 && ath_byVLooseIsolationMVArun2v1DBoldDMwLT>0.5'],   'kwargs': {'mcscalefactor': scaleFactor}},
         'regionB' : {'args': [baseCut + ' && am1_isolation<0.15 && am2_isolation<0.15 && ath_byVLooseIsolationMVArun2v1DBoldDMwLT<0.5'],   'kwargs': {'mcscalefactor': scaleFactor}},
-        'regionC' : {'args': [baseCut + ' && (am1_isolation>0.15 || am2_isolation>0.15) && ath_byVLooseIsolationMVArun2v1DBoldDMwLT>0.5'], 'kwargs': {'mcscalefactor': scaleFactor}},
-        'regionD' : {'args': [baseCut + ' && (am1_isolation>0.15 || am2_isolation>0.15) && ath_byVLooseIsolationMVArun2v1DBoldDMwLT<0.5'], 'kwargs': {'mcscalefactor': scaleFactor}},
+        'regionC' : {'args': [baseCut + ' && (am1_isolation>0.15 && am2_isolation>0.15) && ath_byVLooseIsolationMVArun2v1DBoldDMwLT>0.5'], 'kwargs': {'mcscalefactor': scaleFactor}},
+        'regionD' : {'args': [baseCut + ' && (am1_isolation>0.15 && am2_isolation>0.15) && ath_byVLooseIsolationMVArun2v1DBoldDMwLT<0.5'], 'kwargs': {'mcscalefactor': scaleFactor}},
     }
+
+    detRegions = {
+        'BB': 'fabs(am1_eta)<0.9 && fabs(am2_eta)<0.9',
+        'BE': '((fabs(am1_eta)<0.9 && fabs(am2_eta)>0.9) || (fabs(am1_eta)>0.9 && fabs(am2_eta)<0.9))',
+        'EE': 'fabs(am1_eta)>0.9 && fabs(am2_eta)>0.9',
+    }
+
+    for region in ['default','regionA','regionB','regionC','regionD']:
+        for det in detRegions:
+            name = '{0}/{1}'.format(region,det)
+            selectionParams['MuMuTauTau'][name] = deepcopy(selectionParams['MuMuTauTau'][region])
+            selectionParams['MuMuTauTau'][name]['args'][0] += ' && {0}'.format(detRegions[det])
