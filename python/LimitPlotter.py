@@ -60,13 +60,19 @@ class LimitPlotter(PlotterBase):
         numcol = kwargs.pop('numcol',1)
         asymptoticFilenames = kwargs.pop('asymptoticFilenames',[])
         smooth = kwargs.pop('smooth',False)
+        ymin = kwargs.pop('ymin',None)
+        ymax = kwargs.pop('ymax',None)
+        logy = kwargs.pop('logy',1)
 
         logging.info('Plotting {0}'.format(savename))
 
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
-        canvas.SetLogy(1)
+        canvas.SetLogy(logy)
 
-        limits = self._readLimits(xvals,filenames)
+        if isinstance(filenames,dict): # not files, map of results
+            limits = filenames
+        else:
+            limits = self._readLimits(xvals,filenames)
         if not limits: return
         if asymptoticFilenames: limits_asym = self._readLimits(xvals,asymptoticFilenames)
 
@@ -182,6 +188,8 @@ class LimitPlotter(PlotterBase):
         expected.GetYaxis().SetTitle(yaxis)
 
         expected.Draw()
+        if ymin: expected.SetMinimum(ymin)
+        if ymax: expected.SetMinimum(ymax)
         twoSigma.Draw('f')
         oneSigma.Draw('f')
 
