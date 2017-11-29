@@ -34,9 +34,11 @@ def buildMuMuTauTau(selectionParams,sampleSelectionParams,projectionParams,sampl
         'atmPt'                       : {'xVariable': 'atm_pt',                         'xBinning': [500, 0, 500],           },
         'athPt'                       : {'xVariable': 'ath_pt',                         'xBinning': [500, 0, 500],           },
         # 2D
-        'ammMass_vs_attMass'          : {'xVariable': 'amm_mass', 'yVariable': 'att_mass', 'xBinning': [300,0,30], 'yBinning': [600,0,60], },
-        'ammMass_vs_hMass'            : {'xVariable': 'amm_mass', 'yVariable': 'h_mass',   'xBinning': [300,0,30], 'yBinning': [1000,0,1000], },
-        'attMass_vs_hMass'            : {'xVariable': 'att_mass', 'yVariable': 'h_mass',   'xBinning': [600,0,60], 'yBinning': [1000,0,1000], },
+        'ammMass_vs_attMass'          : {'xVariable': 'amm_mass', 'yVariable': 'att_mass',  'xBinning': [300,0,30], 'yBinning': [600,0,60], },
+        'ammMass_vs_hMass'            : {'xVariable': 'amm_mass', 'yVariable': 'h_mass',    'xBinning': [300,0,30], 'yBinning': [1000,0,1000], },
+        'attMass_vs_hMass'            : {'xVariable': 'att_mass', 'yVariable': 'h_mass',    'xBinning': [600,0,60], 'yBinning': [1000,0,1000], },
+        'ammMass_vs_ammDeltaR'        : {'xVariable': 'amm_mass', 'yVariable': 'amm_deltaR','xBinning': [300,0,30], 'yBinning': [600,0,6], },
+        'attMass_vs_attDeltaR'        : {'xVariable': 'att_mass', 'yVariable': 'att_deltaR','xBinning': [600,0,60], 'yBinning': [600,0,6], },
     }
 
     baseCut = 'amm_mass>1 && amm_mass<30'

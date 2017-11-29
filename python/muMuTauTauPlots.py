@@ -30,7 +30,8 @@ plotter = Plotter('MuMuTauTau')
 sigMap = getSampleMap()
 
 #samples = ['QCD','W','Z','TT','WW','WZ','ZZ']
-samples = ['W','Z','TT','WW','WZ','ZZ']
+samples = ['JPsi','Upsilon','W','Z','TT','WW','WZ','ZZ']
+#samples = ['W','Z','TT','WW','WZ','ZZ']
 
 sigMap['BG'] = []
 for s in samples:
@@ -101,6 +102,8 @@ plots2D = {
     'ammMass_vs_attMass'    : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)',},
     'ammMass_vs_hMass'      : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'rangey': [0,250],},
     'attMass_vs_hMass'      : {'xaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'rangey': [0,250],},
+    'ammMass_vs_ammDeltaR'  : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': '#Delta R(#mu#mu) (GeV)', 'rangey': [0,3],},
+    'attMass_vs_attDeltaR'  : {'xaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': '#Delta R(#tau_{#mu}#tau_{h}) (GeV)', 'rangey': [0,3],},
 }
 
 special = {

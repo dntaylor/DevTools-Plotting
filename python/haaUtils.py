@@ -1,7 +1,7 @@
 import os
 import sys
 
-sigMap = {
+sampleMap = {
     'Z' : [
         'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
         'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
