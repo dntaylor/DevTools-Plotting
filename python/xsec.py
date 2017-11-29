@@ -21,6 +21,8 @@ xsecs = {
     'SinglePhoton'                                                     : 1.,
     'Tau'                                                              : 1.,
 
+    'JpsiToMuMu_JpsiPt8_TuneCUEP8M1_13TeV-pythia8'                     : 1.640e+06 * PB,
+
     'QCD_Pt-15to3000_TuneCUETP8M1_Flat_13TeV_pythia8'                  : 1.,
     'QCD_Pt-20toInf_MuEnrichedPt15_TuneCUETP8M1_13TeV_pythia8'         : 720648000 * PB,
 
@@ -118,6 +120,7 @@ xsecs = {
     'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :    114.5      * PB,
     'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8' :    114.6      * PB,
     'TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'                    :    502.2      * PB,
+    'TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8'                 :    831.76     * PB,
 
     # TTV
     'TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8'          :      3.697    * PB,

@@ -582,6 +582,11 @@ class NtupleWrapper(object):
         #logging.warning('Unrecognized selection {0}'.format(directory))
         return 0.,0.
 
+    def getHist2D(self,variable):
+        '''Get a histogram'''
+        hist = self.__read(variable)
+        return hist
+
     def getHist(self,variable):
         '''Get a histogram'''
         hist = self.__read(variable)

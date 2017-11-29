@@ -8,13 +8,17 @@ from DevTools.Plotter.Plotter import Plotter
 from DevTools.Utilities.utilities import ZMASS, getCMSSWVersion
 from copy import deepcopy
 import ROOT
+ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 version = getCMSSWVersion()
 
-blind = False
+blind = True
 doDetRegions = True
+doSignals = True
+doMC = True
+do2D = True
 
 plotter = Plotter('MuMuTauTau')
 
@@ -26,6 +30,9 @@ sigMap = {
     'Z' : [
         'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
         'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+    ],
+    'JPsi' : [
+        'JpsiToMuMu_JpsiPt8_TuneCUEP8M1_13TeV-pythia8',
     ],
     'QCD' : [
         'QCD_Pt-15to20_MuEnrichedPt5_TuneCUETP8M1_13TeV_pythia8',
@@ -104,6 +111,7 @@ signame = 'HToAAH{h}A{a}'
 
 hmasses = [125,300,750]
 amasses = [5,7,9,11,13,15,17,19,21]
+amasses = [5,9,13,17,21]
 
 hColors = {
     125: ROOT.TColor.GetColor('#000000'),
@@ -130,6 +138,9 @@ if doDetRegions:
     for sel in ['default','regionA','regionB','regionC','regionD']:
         sels += ['{0}/{1}'.format(sel,det) for det in ['BB','BE','EE']]
 
+#for sel in ['default','regionA','regionB','regionC','regionD']:
+#    sels += ['{0}/{1}'.format(sel,'dr0p8')]
+
 ########################
 ### plot definitions ###
 ########################
@@ -137,8 +148,8 @@ plots = {
     # h
     'hMass'                 : {'xaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,650,10), 'logy': False, 'overflow': True},
     'hMt'                   : {'xaxis': 'm_{T}^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,650,10), 'logy': False, 'overflow': True},
-    'hDeltaMass'            : {'xaxis': 'm^{#mu#mu}-m^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(-250,250,50), 'logy': False, 'overflow': True},
-    'hDeltaMt'              : {'xaxis': 'm^{#mu#mu}-m_{T}^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(-250,250,50), 'logy': False, 'overflow': True},
+    'hDeltaMass'            : {'xaxis': 'm^{#mu#mu}-m^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(-250,250,10), 'logy': True, 'overflow': True},
+    'hDeltaMt'              : {'xaxis': 'm^{#mu#mu}-m_{T}^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(-250,250,10), 'logy': True, 'overflow': True},
     # amm
     'ammMass'               : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'Events / 0.5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.5, range(0,60,1)), 'logy': False, 'overflow': True},
     'ammDeltaR'             : {'xaxis': '#Delta R(#mu#mu) (GeV)', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.05, range(0,30,1)), 'logy': False, 'overflow': True},
@@ -147,7 +158,7 @@ plots = {
     # att
     'attMass'               : {'xaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 1 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,60,1), 'logy': False, 'overflow': True},
     'attMt'                 : {'xaxis': 'm_{T}^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 2 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,120,2), 'logy': False, 'overflow': True},
-    'attDeltaR'             : {'xaxis': '#Delta R(#tau_{#mu}#tau_{h}) (GeV)', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.05, range(0,30,1)), 'logy': False, 'overflow': True},
+    'attDeltaR'             : {'xaxis': '#Delta R(#tau_{#mu}#tau_{h}) (GeV)', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.1, range(0,30,1)), 'logy': False, 'overflow': True},
     'atmPt'                 : {'xaxis': 'a_{1}^{#tau_{#mu}#tau_{h}} #tau_{#mu} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
     'athPt'                 : {'xaxis': 'a_{1}^{#tau_{#mu}#tau_{h}} #tau_{h} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
     # event
@@ -155,74 +166,99 @@ plots = {
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,320,20), 'numcol': 2, 'logy': False, 'overflow': True},
 }
 
+plots2D = {
+    'ammMass_vs_attMass'    : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)',},
+    'ammMass_vs_hMass'      : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'rangey': [0,250],},
+    'attMass_vs_hMass'      : {'xaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'rangey': [0,250],},
+}
+
 special = {
     'jpsi': {
-        'ammMass'               : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'Events / 10 MeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.01, range(295,325,1)), 'logy': True, 'overflow': False},
+        'ammMass'               : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'Events / 10 MeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.01, range(290,400,1)), 'logy': False, 'overflow': False},
     },
     'upsilon': {
-        'ammMass'               : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'Events / 50 MeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.01, range(850,1150,5)), 'logy': True, 'overflow': False},
+        'ammMass'               : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'Events / 50 MeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.01, range(850,1150,5)), 'logy': False, 'overflow': False},
     },
 }
 
 ############################
 ### MC based BG estimate ###
 ############################
-for s in samples:
-    plotter.addHistogramToStack(s,sigMap[s])
-
-for signal in signals:
-    plotter.addHistogram(signal,sigMap[signal],signal=True)
-
-if not blind: plotter.addHistogram('data',sigMap['data'])
-
-
-for plot in plots:
-    for sel in sels:
-        kwargs = deepcopy(plots[plot])
-        plotname = '{0}/{1}'.format(sel,plot)
-        savename = '{0}/mc/{1}'.format(sel,plot)
-        plotter.plot(plotname,savename,**kwargs)
-
-if blind: plotter.addHistogram('data',sigMap['data'])
-
-for s in special:
-    for plot in special[s]:
+if doMC:
+    for s in samples:
+        plotter.addHistogramToStack(s,sigMap[s])
+    
+    for signal in signals:
+        plotter.addHistogram(signal,sigMap[signal],signal=True)
+    
+    if not blind: plotter.addHistogram('data',sigMap['data'])
+    
+    for plot in plots:
         for sel in sels:
-            kwargs = deepcopy(special[s][plot])
+            kwargs = deepcopy(plots[plot])
             plotname = '{0}/{1}'.format(sel,plot)
-            savename = '{0}/mc/{1}_{2}'.format(sel,plot,s)
+            savename = '{0}/mc/{1}'.format(sel,plot)
             plotter.plot(plotname,savename,**kwargs)
+    
+    if blind: plotter.addHistogram('data',sigMap['data'])
+    
+    for s in special:
+        for plot in special[s]:
+            for sel in sels:
+                kwargs = deepcopy(special[s][plot])
+                plotname = '{0}/{1}'.format(sel,plot)
+                savename = '{0}/mc/{1}_{2}'.format(sel,plot,s)
+                plotter.plot(plotname,savename,**kwargs)
 
 #########################
 ### Signals on 1 plot ###
 #########################
 
-for h in hmasses:
-    plotter.clearHistograms()
-
-    for a in amasses:
-        name = signame.format(h=h,a=a)
-        plotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': aColors[a]})
-
-    for plot in plots:
-        for sel in sels:
-            kwargs = deepcopy(plots[plot])
-            plotname = '{0}/{1}'.format(sel,plot)
-            savename = '{0}/h{h}/{1}'.format(sel,plot,h=h)
-            plotter.plot(plotname,savename,plotratio=False,**kwargs)
-    
-
-for a in [5,19]:
-    plotter.clearHistograms()
-    
+if doSignals:
     for h in hmasses:
-        name = signame.format(h=h,a=a)
-        plotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': hColors[h]})
-
-    for plot in plots:
-        for sel in sels:
-            kwargs = deepcopy(plots[plot])
-            plotname = '{0}/{1}'.format(sel,plot)
-            savename = '{0}/a{a}/{1}'.format(sel,plot,a=a)
-            plotter.plot(plotname,savename,plotratio=False,**kwargs)
+        plotter.clearHistograms()
     
+        for a in amasses:
+            name = signame.format(h=h,a=a)
+            plotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': aColors[a]})
+    
+        for plot in plots:
+            for sel in sels:
+                kwargs = deepcopy(plots[plot])
+                plotname = '{0}/{1}'.format(sel,plot)
+                savename = '{0}/h{h}/{1}'.format(sel,plot,h=h)
+                plotter.plot(plotname,savename,plotratio=False,**kwargs)
+        
+    
+    for a in [5,19]:
+        plotter.clearHistograms()
+        
+        for h in hmasses:
+            name = signame.format(h=h,a=a)
+            plotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': hColors[h]})
+    
+        for plot in plots:
+            for sel in sels:
+                kwargs = deepcopy(plots[plot])
+                plotname = '{0}/{1}'.format(sel,plot)
+                savename = '{0}/a{a}/{1}'.format(sel,plot,a=a)
+                plotter.plot(plotname,savename,plotratio=False,**kwargs)
+    
+################
+### 2D plots ###
+################
+if do2D:
+    for sample in samples+signals:
+        plotter.clearHistograms()
+        plotter.addHistogram(sample,sigMap[sample])
+        
+        for plot in plots2D:
+            for sel in sels:
+                kwargs = deepcopy(plots2D[plot])
+                if sample not in signals:
+                    kwargs['rebinx'] = 10
+                    kwargs['rebiny'] = 10
+                plotname = '{0}/{1}'.format(sel,plot)
+                savename = '{0}/2D/{1}/{2}'.format(sel,sample,plot)
+                plotter.plot2D(plotname,savename,**kwargs)
+

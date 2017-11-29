@@ -126,7 +126,7 @@ latestNtuples['80X'] = {
     'LLG'            : '2017-08-23_LLGAnalysis_80X_Photon_v1-merge',
     'SingleJet'      : '2017-07-18_SingleJetAnalysis_80X_QCD_v1-merge',
 # MuMuTauTau
-    'MuMuTauTau'     : '2017-11-15_MuMuTauTauAnalysis_80X_v1',
+    'MuMuTauTau'     : '2017-11-29_MuMuTauTauAnalysis_80X_v1',
     'MuMuTauFakeRate': '2017-11-10_MuMuTauFakeRateAnalysis_80X_v1-merge',
 }
 
