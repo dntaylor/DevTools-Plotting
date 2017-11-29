@@ -22,6 +22,7 @@ xsecs = {
     'Tau'                                                              : 1.,
 
     'JpsiToMuMu_JpsiPt8_TuneCUEP8M1_13TeV-pythia8'                     : 1.640e+06 * PB,
+    'UpsilonMuMu_UpsilonPt6_TuneCUEP8M1_13TeV-pythia8-evtgen'          : 4.410e+05 * PB,
 
     'QCD_Pt-15to3000_TuneCUETP8M1_Flat_13TeV_pythia8'                  : 1.,
     'QCD_Pt-20toInf_MuEnrichedPt15_TuneCUETP8M1_13TeV_pythia8'         : 720648000 * PB,
