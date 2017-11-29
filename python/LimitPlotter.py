@@ -189,7 +189,7 @@ class LimitPlotter(PlotterBase):
 
         expected.Draw()
         if ymin: expected.SetMinimum(ymin)
-        if ymax: expected.SetMinimum(ymax)
+        if ymax: expected.SetMaximum(ymax)
         twoSigma.Draw('f')
         oneSigma.Draw('f')
 
@@ -268,6 +268,94 @@ class LimitPlotter(PlotterBase):
         if not blind: logging.info("Observed Limit: %i GeV" % (dx))
 
         return [l2,l1,x,h1,h2,dx]
+
+    def plotPValue(self,xvals,filenames,savename,**kwargs):
+        '''Plot p-values'''
+        xaxis = kwargs.pop('xaxis','#Phi^{++} Mass (GeV)')
+        yaxis = kwargs.pop('yaxis','Local p-value')
+        blind = kwargs.pop('blind',True)
+        lumipos = kwargs.pop('lumipos',11)
+        isprelim = kwargs.pop('isprelim',True)
+        legendpos = kwargs.pop('legendpos',31)
+        numcol = kwargs.pop('numcol',1)
+        nsigmas = kwargs.pop('nsigmas',7)
+        ymin = kwargs.pop('ymin',ROOT.RooStats.SignificanceToPValue(nsigmas))
+        ymax = kwargs.pop('ymax',1)
+        logy = kwargs.pop('logy',1)
+
+        logging.info('Plotting {0}'.format(savename))
+
+        canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
+        canvas.SetLogy(logy)
+        canvas.SetRightMargin(0.06)
+
+        if isinstance(filenames,dict): # not files, map of results
+            limits = filenames
+        else:
+            limits = self._readLimits(xvals,filenames)
+        if not limits: return
+
+        n = len(xvals)
+        expected = ROOT.TGraph(n)
+        observed = ROOT.TGraph(n)
+
+        for i in range(len(xvals)):
+            expected.SetPoint(     i,   xvals[i],     limits[xvals[i]][0])
+            observed.SetPoint(     i,   xvals[i],     limits[xvals[i]][1])
+
+        expected.SetLineStyle(7)
+        expected.SetMarkerStyle(0)
+        expected.SetFillStyle(0)
+        observed.SetMarkerStyle(0)
+        observed.SetFillStyle(0)
+        observed.SetLineWidth(2)
+
+        expected.GetXaxis().SetLimits(xvals[0],xvals[-1])
+        expected.GetXaxis().SetTitle(xaxis)
+        expected.GetYaxis().SetTitle(yaxis)
+
+        expected.Draw()
+        if ymin: expected.SetMinimum(ymin)
+        if ymax: expected.SetMaximum(ymax)
+
+        def getNDC(x,y):
+            ROOT.gPad.Update()
+            if ROOT.gPad.GetLogx(): x = ROOT.TMath.Log10(x)
+            if ROOT.gPad.GetLogy(): y = ROOT.TMath.Log10(y)
+            xndc = (x - ROOT.gPad.GetX1())/(ROOT.gPad.GetX2() - ROOT.gPad.GetX1())
+            yndc = (y - ROOT.gPad.GetY1())/(ROOT.gPad.GetY2() - ROOT.gPad.GetY1())
+            return xndc, yndc
+
+        sigmaratios = {}
+        sigmatext = {}
+        for s in range(nsigmas):
+            sigma = s+1
+            p = ROOT.RooStats.SignificanceToPValue(sigma)
+            sigmaratios[sigma] = ROOT.TLine(expected.GetXaxis().GetXmin(),p,expected.GetXaxis().GetXmax(),p)
+            sigmaratios[sigma].SetLineColor(ROOT.kRed)
+            sigmaratios[sigma].Draw()
+            sigmatext[sigma] = ROOT.TLatex()
+            sigmatext[sigma].SetNDC()
+            sigmatext[sigma].SetTextSize(0.04)
+            sigmatext[sigma].SetTextColor(ROOT.kRed)
+            sigmatext[sigma].DrawLatex(0.95,getNDC(1,p)[1],'{0}#sigma'.format(sigma))
+
+        #expected.Draw('same')
+        #ROOT.gPad.RedrawAxis()
+        if not blind: observed.Draw('same')
+
+        # get the legend
+        entries = [
+            [expected,'Median expected','l'],
+        ]
+        if not blind: entries = [[observed,'Observed','l']] + entries
+        legend = self._getLegend(entries=entries,numcol=numcol,position=legendpos)
+        legend.Draw()
+
+        # cms lumi styling
+        self._setStyle(canvas,position=lumipos,preliminary=isprelim)
+
+        self._save(canvas,savename)
 
     def plotCrossSectionLimit(self,xvals,apfns,ppfns,savename,**kwargs):
         '''Plot limits'''
