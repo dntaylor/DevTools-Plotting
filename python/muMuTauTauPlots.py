@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 version = getCMSSWVersion()
 
 blind = True
-doDetRegions = True
+doDetRegions = False
 doSignals = True
 doMC = True
 do2D = True
@@ -30,8 +30,10 @@ plotter = Plotter('MuMuTauTau')
 sigMap = getSampleMap()
 
 #samples = ['QCD','W','Z','TT','WW','WZ','ZZ']
-samples = ['JPsi','Upsilon','W','Z','TT','WW','WZ','ZZ']
+#samples = ['JPsi','Upsilon','W','Z','TT','WW','WZ','ZZ']
+#samples = ['JPsi','W','Z','TT','WW','WZ','ZZ']
 #samples = ['W','Z','TT','WW','WZ','ZZ']
+samples = ['TT','W','Z']
 
 sigMap['BG'] = []
 for s in samples:
@@ -70,8 +72,9 @@ if doDetRegions:
     for sel in ['default','regionA','regionB','regionC','regionD']:
         sels += ['{0}/{1}'.format(sel,det) for det in ['BB','BE','EE']]
 
-#for sel in ['default','regionA','regionB','regionC','regionD']:
-#    sels += ['{0}/{1}'.format(sel,'dr0p8')]
+for sel in ['default','regionA','regionB','regionC','regionD']:
+    sels += ['{0}/{1}'.format(sel,'bveto')]
+    sels += ['{0}/{1}'.format(sel,'taubveto')]
 
 ########################
 ### plot definitions ###
@@ -80,22 +83,34 @@ plots = {
     # h
     'hMass'                 : {'xaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,650,10), 'logy': False, 'overflow': True},
     'hMt'                   : {'xaxis': 'm_{T}^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,650,10), 'logy': False, 'overflow': True},
+    'hMcat'                 : {'xaxis': 'm_{CA}^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,650,10), 'logy': True, 'overflow': True},
     'hDeltaMass'            : {'xaxis': 'm^{#mu#mu}-m^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(-250,250,10), 'logy': True, 'overflow': True},
     'hDeltaMt'              : {'xaxis': 'm^{#mu#mu}-m_{T}^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(-250,250,10), 'logy': True, 'overflow': True},
     # amm
     'ammMass'               : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'Events / 0.5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.5, range(0,60,1)), 'logy': False, 'overflow': True},
     'ammDeltaR'             : {'xaxis': '#Delta R(#mu#mu) (GeV)', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.05, range(0,30,1)), 'logy': False, 'overflow': True},
-    'am1Pt'                 : {'xaxis': 'a_{1}^{#mu#mu} #mu_{1} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
+    'ammDeltaPhi'           : {'xaxis': '#Delta #phi(#mu#mu) (GeV)', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': False, 'overflow': False},
+    'am1Pt'                 : {'xaxis': 'a_{1}^{#mu#mu} #mu_{1} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(25,150,5), 'logy': False, 'overflow': True},
+    'am1GenPtRatio'         : {'xaxis': '#mu_{1} p_{T}^{gen}/p_{T}^{reco}', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.01, range(50,150,1)), 'logy': False, 'overflow': True},
     'am2Pt'                 : {'xaxis': 'a_{1}^{#mu#mu} #mu_{2} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
+    'am2GenPtRatio'         : {'xaxis': '#mu_{2} p_{T}^{gen}/p_{T}^{reco}', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.01, range(50,150,1)), 'logy': False, 'overflow': True},
     # att
     'attMass'               : {'xaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 1 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,60,1), 'logy': False, 'overflow': True},
     'attMt'                 : {'xaxis': 'm_{T}^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 2 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,120,2), 'logy': False, 'overflow': True},
+    'attMcat'               : {'xaxis': 'm_{CA}^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 2 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,120,2), 'logy': True, 'overflow': True},
     'attDeltaR'             : {'xaxis': '#Delta R(#tau_{#mu}#tau_{h}) (GeV)', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.1, range(0,30,1)), 'logy': False, 'overflow': True},
+    'attDeltaPhi'           : {'xaxis': '#Delta #phi(#tau_{#mu}#tau_{h}) (GeV)', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': False, 'overflow': False},
     'atmPt'                 : {'xaxis': 'a_{1}^{#tau_{#mu}#tau_{h}} #tau_{#mu} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
-    'athPt'                 : {'xaxis': 'a_{1}^{#tau_{#mu}#tau_{h}} #tau_{h} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
+    'atmGenPtRatio'         : {'xaxis': '#tau_{#mu} p_{T}^{gen}/p_{T}^{reco}', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.01, range(50,150,1)), 'logy': False, 'overflow': True},
+    'athPt'                 : {'xaxis': 'a_{1}^{#tau_{#mu}#tau_{h}} #tau_{h} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(10,150,5), 'logy': False, 'overflow': True},
+    'athGenPtRatio'         : {'xaxis': '#tau_{h} p_{T}^{gen}/p_{T}^{reco}', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.01, range(50,250,1)), 'logy': False, 'overflow': True},
+    'athJetCSV'             : {'xaxis': 'a_{1}^{#tau_{#mu}#tau_{h}} #tau_{h} CSVv2 (GeV)', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': 10, 'logy': True, 'overflow': True},
     # event
     'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,320,20), 'numcol': 2, 'logy': False, 'overflow': True},
+    'nBJetsT'               : {'xaxis': 'Number of b-tagged jets (p_{T} > 20 GeV)', 'yaxis': 'Events', 'rebin': [-0.5,0.5,1.5,2.5], 'overflow': True, 'binlabels': ['0','1','2','#geq3'], 'logy': True,},
+    'nBJetsM'               : {'xaxis': 'Number of b-tagged jets (p_{T} > 20 GeV)', 'yaxis': 'Events', 'rebin': [-0.5,0.5,1.5,2.5], 'overflow': True, 'binlabels': ['0','1','2','#geq3'], 'logy': True,},
+    'nBJetsL'               : {'xaxis': 'Number of b-tagged jets (p_{T} > 20 GeV)', 'yaxis': 'Events', 'rebin': [-0.5,0.5,1.5,2.5], 'overflow': True, 'binlabels': ['0','1','2','#geq3'], 'logy': True,},
 }
 
 plots2D = {

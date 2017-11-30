@@ -21,7 +21,7 @@ xsecs = {
     'SinglePhoton'                                                     : 1.,
     'Tau'                                                              : 1.,
 
-    'JpsiToMuMu_JpsiPt8_TuneCUEP8M1_13TeV-pythia8'                     : 1.640e+06 * PB,
+    'JpsiToMuMu_JpsiPt8_TuneCUEP8M1_13TeV-pythia8'                     : 1.640e+06 * PB * 0.1, # scale down to match data
     'UpsilonMuMu_UpsilonPt6_TuneCUEP8M1_13TeV-pythia8-evtgen'          : 4.410e+05 * PB,
 
     'QCD_Pt-15to3000_TuneCUETP8M1_Flat_13TeV_pythia8'                  : 1.,
