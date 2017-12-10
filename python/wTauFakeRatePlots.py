@@ -99,6 +99,7 @@ plots = {
     'wtMt'                  : {'xaxis': 'm_{T}^{#tau} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
     'tPt'                   : {'xaxis': 'p_{T}^{#tau} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
     'tEta'                  : {'xaxis': '#eta^{#tau}', 'yaxis': 'Events', 'rebin': 5},
+    'tDM'                   : {'xaxis': '#tau Decay Mode', 'yaxis': 'Events',},
     # event
     'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
@@ -115,7 +116,7 @@ plots = {
 }
 
 for plot in plots:
-    for region in  ['loose','medium','tight']:
+    for region in  ['loose','medium','tight','newloose']:
         plotname = '{0}/{1}'.format(region,plot)
         savename = '{0}/{1}'.format(region,plot)
         fakeratePlotter.plot(plotname,savename,**plots[plot])
@@ -144,7 +145,7 @@ cust = {
     'tEta'    : {'yaxis': 'N_{{{num}}} / N_{{{denom}}}', 'rebin': etabins},
 }
 
-numDenom = [('medium','loose'),('tight','loose'),('tight','medium')]
+numDenom = [('medium','loose'),('tight','loose'),('tight','medium'),('medium','newloose'),('tight','newloose')]
 
 for plot in ['tPt','tEta']:
     for num,denom in numDenom:

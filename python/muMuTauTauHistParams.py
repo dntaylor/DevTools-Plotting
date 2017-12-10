@@ -20,6 +20,7 @@ def buildMuMuTauTau(selectionParams,sampleSelectionParams,projectionParams,sampl
         'nBJetsT'                     : {'xVariable': 'numBjetsTight20DR08',            'xBinning': [4,0,4]                  },
         # h
         'hMass'                       : {'xVariable': 'h_mass',                         'xBinning': [1000, 0, 1000],         },
+        'hMassKinFit'                 : {'xVariable': 'h_massKinFit',                   'xBinning': [1000, 0, 1000],         },
         'hMt'                         : {'xVariable': 'hmet_mt',                        'xBinning': [1000, 0, 1000],         },
         'hMcat'                       : {'xVariable': 'hmet_mcat',                      'xBinning': [1000, 0, 1000],         },
         'hDeltaMass'                  : {'xVariable': 'amm_mass-att_mass',              'xBinning': [1000, -500, 500],       },
@@ -27,33 +28,46 @@ def buildMuMuTauTau(selectionParams,sampleSelectionParams,projectionParams,sampl
         # amm
         'ammMass'                     : {'xVariable': 'amm_mass',                       'xBinning': [3000, 0, 30],           },
         'ammDeltaR'                   : {'xVariable': 'amm_deltaR',                     'xBinning': [100, 0, 1.5],           },
-        'ammDeltaPhi'                 : {'xVariable': 'amm_deltaPhi',                   'xBinning': [500, -3.14159, 3.14159],},
+        'ammDeltaPhi'                 : {'xVariable': 'fabs(amm_deltaPhi)',             'xBinning': [500, 0, 3.14159],       },
         'am1Pt'                       : {'xVariable': 'am1_pt',                         'xBinning': [500, 0, 500],           },
         'am1GenPtRatio'               : {'xVariable': 'am1_genPt/am1_pt',               'xBinning': [500, 0, 5],             },
         'am2Pt'                       : {'xVariable': 'am2_pt',                         'xBinning': [500, 0, 500],           },
         'am2GenPtRatio'               : {'xVariable': 'am2_genPt/am2_pt',               'xBinning': [500, 0, 5],             },
         # att
         'attMass'                     : {'xVariable': 'att_mass',                       'xBinning': [300, 0, 300],           },
+        'attMassKinFit'               : {'xVariable': 'att_massKinFit',                 'xBinning': [300, 0, 300],           },
         'attMt'                       : {'xVariable': 'attmet_mt',                      'xBinning': [300, 0, 300],           },
         'attMcat'                     : {'xVariable': 'attmet_mcat',                    'xBinning': [300, 0, 300],           },
         'attDeltaR'                   : {'xVariable': 'att_deltaR',                     'xBinning': [400, 0, 6.0],           },
         'atmPt'                       : {'xVariable': 'atm_pt',                         'xBinning': [500, 0, 500],           },
+        'atmDxy'                      : {'xVariable': 'fabs(atm_dxy)',                  'xBinning': [100, 0, 2.5],           },
+        'atmDz'                       : {'xVariable': 'fabs(atm_dz)',                   'xBinning': [100, 0, 2.5],           },
         'atmGenPtRatio'               : {'xVariable': 'atm_genPt/atm_pt',               'xBinning': [500, 0, 5],             },
-        'atmMetDeltaPhi'              : {'xVariable': 'atmmet_deltaPhi',                'xBinning': [500, -3.14159, 3.14159],},
+        'atmMetDeltaPhi'              : {'xVariable': 'fabs(atmmet_deltaPhi)',          'xBinning': [500, 0, 3.14159],       },
         'athPt'                       : {'xVariable': 'ath_pt',                         'xBinning': [500, 0, 500],           },
-        'athGenPtRatio'               : {'xVariable': 'ath_genPt/ath_pt',               'xBinning': [500, 0, 5],             },
-        'athMetDeltaPhi'              : {'xVariable': 'athmet_deltaPhi',                'xBinning': [500, -3.14159, 3.14159],},
-        'athJetCSV'                   : {'xVariable': 'athjet_CSVv2',                   'xBinning': [500, 0, 1],            },
-        'attDeltaPhi'                 : {'xVariable': 'att_deltaPhi',                   'xBinning': [500, -3.14159, 3.14159],},
+        'athDxy'                      : {'xVariable': 'fabs(ath_dxy)',                  'xBinning': [100, 0, 2.5],           },
+        'athDz'                       : {'xVariable': 'fabs(ath_dz)',                   'xBinning': [100, 0, 2.5],           },
+        #'athGenPtRatio'               : {'xVariable': 'ath_genPt/ath_pt',               'xBinning': [500, 0, 5],             },
+        'athGenPtRatio'               : {'xVariable': 'ath_pt/ath_genJetPt',            'xBinning': [500, 0, 5],             },
+        'athGenPtRatioDM0'            : {'xVariable': 'ath_pt/ath_genJetPt',            'xBinning': [500, 0, 5],             'selection': 'ath_decayMode==0',},
+        'athGenPtRatioDM1'            : {'xVariable': 'ath_pt/ath_genJetPt',            'xBinning': [500, 0, 5],             'selection': 'ath_decayMode==1',},
+        'athGenPtRatioDM10'           : {'xVariable': 'ath_pt/ath_genJetPt',            'xBinning': [500, 0, 5],             'selection': 'ath_decayMode==10',},
+        'athMetDeltaPhi'              : {'xVariable': 'fabs(athmet_deltaPhi)',          'xBinning': [500, 0, 3.14159],       },
+        'athJetCSV'                   : {'xVariable': 'athjet_CSVv2',                   'xBinning': [500, 0, 1],             },
+        'attDeltaPhi'                 : {'xVariable': 'fabs(att_deltaPhi)',             'xBinning': [500, 0, 3.14159],       },
         # 2D
-        'ammMass_vs_attMass'          : {'xVariable': 'amm_mass', 'yVariable': 'att_mass',  'xBinning': [300,0,30], 'yBinning': [600,0,60], },
-        'ammMass_vs_hMass'            : {'xVariable': 'amm_mass', 'yVariable': 'h_mass',    'xBinning': [300,0,30], 'yBinning': [1000,0,1000], },
-        'attMass_vs_hMass'            : {'xVariable': 'att_mass', 'yVariable': 'h_mass',    'xBinning': [600,0,60], 'yBinning': [1000,0,1000], },
-        'ammMass_vs_ammDeltaR'        : {'xVariable': 'amm_mass', 'yVariable': 'amm_deltaR','xBinning': [300,0,30], 'yBinning': [600,0,6], },
-        'attMass_vs_attDeltaR'        : {'xVariable': 'att_mass', 'yVariable': 'att_deltaR','xBinning': [600,0,60], 'yBinning': [600,0,6], },
+        'ammMass_vs_attMass'          : {'xVariable': 'amm_mass',       'yVariable': 'att_mass',       'xBinning': [300,0,30], 'yBinning': [600,0,60], },
+        'ammMass_vs_attMassKinFit'    : {'xVariable': 'amm_mass',       'yVariable': 'att_massKinFit', 'xBinning': [300,0,30], 'yBinning': [600,0,60], },
+        'ammMass_vs_hMass'            : {'xVariable': 'amm_mass',       'yVariable': 'h_mass',         'xBinning': [300,0,30], 'yBinning': [1000,0,1000], },
+        'ammMass_vs_hMassKinFit'      : {'xVariable': 'amm_mass',       'yVariable': 'h_massKinFit',   'xBinning': [300,0,30], 'yBinning': [1000,0,1000], },
+        'attMass_vs_hMass'            : {'xVariable': 'att_mass',       'yVariable': 'h_mass',         'xBinning': [600,0,60], 'yBinning': [1000,0,1000], },
+        'attMassKinFit_vs_hMassKinFit': {'xVariable': 'att_massKinFit', 'yVariable': 'h_massKinFit',   'xBinning': [600,0,60], 'yBinning': [1000,0,1000], },
+        'ammMass_vs_ammDeltaR'        : {'xVariable': 'amm_mass',       'yVariable': 'amm_deltaR',     'xBinning': [300,0,30], 'yBinning': [600,0,6], },
+        'attMass_vs_attDeltaR'        : {'xVariable': 'att_mass',       'yVariable': 'att_deltaR',     'xBinning': [600,0,60], 'yBinning': [600,0,6], },
+        'attMcat_vs_attDeltaR'        : {'xVariable': 'attmet_mcat',    'yVariable': 'att_deltaR',     'xBinning': [600,0,60], 'yBinning': [600,0,6], },
     }
 
-    baseCut = 'amm_mass>1 && amm_mass<30'
+    baseCut = 'amm_mass>1 && amm_mass<30 && fabs(am1_dxy)<0.2 && fabs(am1_dz)<0.5 && fabs(am2_dxy)<0.2 && fabs(am2_dz)<0.5 && fabs(atm_dxy)<0.2 && fabs(atm_dz)<0.5 && fabs(ath_dz)<0.5'
     scaleFactor = 'genWeight*pileupWeight*triggerEfficiency'
 
     selectionParams['MuMuTauTau'] = {
@@ -68,8 +82,10 @@ def buildMuMuTauTau(selectionParams,sampleSelectionParams,projectionParams,sampl
         #'BB': 'fabs(am1_eta)<0.9 && fabs(am2_eta)<0.9',
         #'BE': '((fabs(am1_eta)<0.9 && fabs(am2_eta)>0.9) || (fabs(am1_eta)>0.9 && fabs(am2_eta)<0.9))',
         #'EE': 'fabs(am1_eta)>0.9 && fabs(am2_eta)>0.9',
-        'bveto': 'numBjetsTight20DR08==0',
-        'taubveto': 'athjet_passCSVv2T<0.5',
+        'dr0p8': 'att_deltaR<0.8',
+        #'bveto': 'numBjetsTight20DR08==0',
+        #'taubveto': 'athjet_passCSVv2T<0.5',
+        #'bothbveto': 'numBjetsTight20DR08==0 && athjet_passCSVv2T<0.5',
     }
 
     for region in ['default','regionA','regionB','regionC','regionD']:
