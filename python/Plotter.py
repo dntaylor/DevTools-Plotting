@@ -511,6 +511,9 @@ class Plotter(PlotterBase):
         save = kwargs.pop('save',True)
         getHists = kwargs.pop('getHists',False)
 
+        # overflow doesnt work with logx
+        if logx: kwargs['overflow'] = False
+
         logging.info('Plotting {0}'.format(savename))
 
         ROOT.gDirectory.Delete('h_*')
@@ -600,6 +603,7 @@ class Plotter(PlotterBase):
             stack.SetMaximum(yscale*highestMax)
             stack.GetYaxis().SetLabelSize(0.05)
             if len(rangex)==2: stack.GetXaxis().SetRangeUser(*rangex)
+            if logx: stack.GetXaxis().SetMoreLogLabels()
             if binlabels:
                 for b,label in enumerate(binlabels):
                     stack.GetXaxis().SetBinLabel(b+1,label)
@@ -657,9 +661,6 @@ class Plotter(PlotterBase):
                 denom = hists.items()[0][1].Clone(stackname)
             ratiostaterr = self._get_ratio_stat_err(denom,**kwargs)
             ratiostaterr.SetXTitle(xaxis)
-            unityargs = [rangex[0],1,rangex[1],1] if len(rangex)==2 else [denom.GetXaxis().GetXmin(),1,denom.GetXaxis().GetXmax(),1]
-            ratiounity = ROOT.TLine(*unityargs)
-            ratiounity.SetLineStyle(2)
             ratios = OrderedDict()
             for histName, hist in hists.iteritems():
                 self.j += 1
@@ -674,6 +675,13 @@ class Plotter(PlotterBase):
                 else:
                     num = hist.Clone(numname)
                 numratio = self._get_ratio_err(num,denom,data=histName=='data')
+                if histName=='data':
+                    if len(blinder)==2:
+                        lowbin = num.FindBin(blinder[0])
+                        highbin = num.FindBin(blinder[1])
+                        for b in range(highbin-lowbin+1):
+                            numratio.SetPointEYhigh(b+lowbin,0.)
+                            numratio.SetPointEYlow(b+lowbin,0.)
                 ratios[histName] = numratio
 
             # and draw
@@ -681,9 +689,14 @@ class Plotter(PlotterBase):
             #ratiopad.cd()
             ratiostaterr.Draw("e2")
             if len(rangex)==2: ratiostaterr.GetXaxis().SetRangeUser(*rangex)
+            if logx: ratiostaterr.GetXaxis().SetMoreLogLabels()
             if binlabels:
                 for b,label in enumerate(binlabels):
                     ratiostaterr.GetXaxis().SetBinLabel(b+1,label)
+            #unityargs = [rangex[0],1,rangex[1],1] if len(rangex)==2 else [ratiostaterr.GetXaxis().GetXmin(),1,ratiostaterr.GetXaxis().GetXmax(),1]
+            unityargs = [ratiostaterr.GetXaxis().GetXmin(),1,ratiostaterr.GetXaxis().GetXmax(),1]
+            ratiounity = ROOT.TLine(*unityargs)
+            ratiounity.SetLineStyle(2)
             ratiounity.Draw('same')
             for histName, hist in ratios.iteritems():
                 if histName=='data':

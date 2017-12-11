@@ -156,12 +156,12 @@ variable_binning = {
         #'IV' : [0,20,40,60,80,100,140,180,220,260,300,400,600,1650],
         #'V'  : [0,20,40,60,80,100,150,200,300,400,1650],
         #'VI' : [0,20,40,60,80,100,140,180,220,260,300,350,400,600,1650],
-        'I'  : exp_binning(0,1650,lambda x: math.exp(0.01*x),minwidth=25),
-        'II' : exp_binning(0,1650,lambda x: math.exp(0.02*x),minwidth=25),
-        'III': exp_binning(0,1650,lambda x: math.exp(0.01*x),minwidth=25),
-        'IV' : exp_binning(0,1650,lambda x: math.exp(0.02*x),minwidth=25),
-        'V'  : exp_binning(0,1650,lambda x: math.exp(0.02*x),minwidth=25),
-        'VI' : exp_binning(0,1650,lambda x: math.exp(0.02*x),minwidth=25),
+        'I'  : exp_binning(50,1650,lambda x: math.exp(0.01*x),minwidth=25),
+        'II' : exp_binning(50,1650,lambda x: math.exp(0.02*x),minwidth=25),
+        'III': exp_binning(50,1650,lambda x: math.exp(0.01*x),minwidth=25),
+        'IV' : exp_binning(50,1650,lambda x: math.exp(0.02*x),minwidth=25),
+        'V'  : exp_binning(50,1650,lambda x: math.exp(0.02*x),minwidth=25),
+        'VI' : exp_binning(50,1650,lambda x: math.exp(0.02*x),minwidth=25),
         #'I'  : exp_binning(0,1650,lambda x: 0.0015*x**2,minwidth=10),
         #'II' : exp_binning(0,1650,lambda x: 0.002*x**2,minwidth=25),
         #'III': exp_binning(0,1650,lambda x: 0.0015*x**2,minwidth=10),
@@ -170,12 +170,18 @@ variable_binning = {
         #'VI' : exp_binning(0,1650,lambda x: 0.002*x**2,minwidth=25),
     },
     'st': {
-        'I'  : [60+x*10 for x in range(14)]+[200+x*20 for x in range(15)]+[500+x*100 for x in range(5)]+[1000,1200,1400,2000],
-        'II' : [70,80,90,100,120,140,160,180,200,250,300,350,400,500,600,800,2000],
-        'III': [70+x*10 for x in range(13)]+[200+x*20 for x in range(15)]+[500+x*100 for x in range(5)]+[1000,1200,1400,2000],
-        'IV' : [60,70,80,90,100,120,140,160,180,200,250,300,350,400,500,600,2000],
-        'V'  : [60,70,80,90,100,120,140,160,180,200,250,300,350,400,500,600,2000],
-        'VI' : [100,125,150,200,300,2000],
+        'I'  : exp_binning(50,2050,lambda x: math.exp(0.01*x),minwidth=25),
+        'II' : exp_binning(50,2050,lambda x: math.exp(0.02*x),minwidth=25),
+        'III': exp_binning(50,2050,lambda x: math.exp(0.01*x),minwidth=25),
+        'IV' : exp_binning(50,2050,lambda x: math.exp(0.02*x),minwidth=25),
+        'V'  : exp_binning(50,2050,lambda x: math.exp(0.02*x),minwidth=25),
+        'VI' : exp_binning(100,2050,lambda x: math.exp(0.02*x),minwidth=25),
+        #'I'  : [60+x*10 for x in range(14)]+[200+x*20 for x in range(15)]+[500+x*100 for x in range(5)]+[1000,1200,1400,2000],
+        #'II' : [70,80,90,100,120,140,160,180,200,250,300,350,400,500,600,800,2000],
+        #'III': [70+x*10 for x in range(13)]+[200+x*20 for x in range(15)]+[500+x*100 for x in range(5)]+[1000,1200,1400,2000],
+        #'IV' : [60,70,80,90,100,120,140,160,180,200,250,300,350,400,500,600,2000],
+        #'V'  : [60,70,80,90,100,120,140,160,180,200,250,300,350,400,500,600,2000],
+        #'VI' : [100,125,150,200,300,2000],
     },
     #'hppLeadingLeptonPt': {
     #    'I'  : [30+x*20 for x in range(10)]+[250+x*50 for x in range(5)]+[500],
@@ -206,6 +212,25 @@ ymin = {
     },
 }
 
+ymax = {
+    'hppMass': {
+        'I'  : 2e3,
+        'II' : 5e2,
+        'III': 1e5,
+        'IV' : 2e3,
+        'V'  : 2e3,
+        'VI' : 2e2,
+    },
+    'st': {
+        'I'  : 1e5,
+        'II' : 1e3,
+        'III': 1e6,
+        'IV' : 5e3,
+        'V'  : 1e3,
+        'VI' : 1e2,
+    },
+}
+
 def plotWithCategories(plotter,plot,baseDir='default',saveDir='',datadriven=False,postfix='',perCatBins=False,**kwargs):
     plotname = '/'.join([x for x in [baseDir,plot] if x])
     plotvars = getDataDrivenPlot(plotname) if datadriven else plotname
@@ -225,6 +250,7 @@ def plotWithCategories(plotter,plot,baseDir='default',saveDir='',datadriven=Fals
             kwargs['overflow'] = False
             kwargs['scalewidth'] = True
         if perCatBins and plot in ymin and kwargs.get('logy',False): kwargs['ymin'] = ymin[plot][cat]
+        if perCatBins and plot in ymax and kwargs.get('logy',False): kwargs['ymax'] = ymax[plot][cat]
         if doCat: plotter.plot(plotvars,savename,**kwargs)
 
 def plotChannels(plotter,plot,baseDir='default',saveDir='',datadriven=False,postfix='',**kwargs):
@@ -240,7 +266,7 @@ def plotChannels(plotter,plot,baseDir='default',saveDir='',datadriven=False,post
 ########################
 plots = {
     # hpp
-    'hppMass'               : {'xaxis': 'm_{l^{#pm}l^{#pm}} (GeV)', 'yaxis': 'Events / 25 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,625,25), 'logy': True, 'overflow': True,},
+    'hppMass'               : {'xaxis': 'm_{l^{#pm}l^{#pm}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(50,850,50), 'logy': True, 'overflow': False, 'logx': True},
     #'hppMt'                 : {'xaxis': 'm_{T}^{l^{#pm}l^{#pm}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': True},
     'hppPt'                 : {'xaxis': 'p_{T}^{l^{#pm}l^{#pm}} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': range(0,410,10), 'numcol': 3, 'legendpos':34, 'overflow': True},
     'hppDeltaR'             : {'xaxis': '#DeltaR(l^{#pm}l^{#pm})', 'yaxis': 'Events', 'rebin': 5, 'numcol': 3, 'legendpos':34, 'yscale': 1.8,},
@@ -261,13 +287,17 @@ plots = {
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(0,305,5), 'numcol': 2, 'overflow': True},
     #'metPhi'                : {'xaxis': '#phi(E_{T}^{miss})', 'yaxis': 'Events', 'rebin': 20},
     'mass'                  : {'xaxis': 'm_{3l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,1020,20), 'numcol': 2, 'overflow': True},
-    'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 25 GeV', 'rebin': range(25,525,25), 'numcol': 2, 'logy': True, 'numcol': 2, 'legendpos': 34, 'overflow': True},
+    'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 50 GeV', 'rebin': range(50,1050,50), 'numcol': 2, 'logy': True, 'numcol': 2, 'legendpos': 34, 'overflow': False, 'logx': True},
     'nJets'                 : {'xaxis': 'Number of jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'numcol': 2, 'rebin': [-0.5,0.5,1.5,2.5,3.5,4.5], 'overflow': True, 'binlabels': ['0','1','2','3','4','#geq5']},
     #'pileupWeight'          : {'xaxis': 'Pileup Weight', 'yaxis': 'Events'},
 }
 
 blind_cust = {
-    'hppMass': {'blinder': [200,1650], 'rangex': [0,1650],},
+    'hppMass'               : {'blinder': [200,1650], 'rangex': [50,850], 'ymin': 1,},
+    'st'                    : {'blinder': [400,1050], 'rangex': [50,1050],'ymin': 1},
+    'hppLeadingLeptonPt'    : {'blinder': [200,200],  'rangex': [0,200],  'ymin': 1},
+    'hppSubLeadingLeptonPt' : {'blinder': [200,200],  'rangex': [0,200],  'ymin': 1},
+    'hmLeptonPt'            : {'blinder': [200,200],  'rangex': [0,200],  'ymin': 1},
 }
 
 lowmass_cust = {
