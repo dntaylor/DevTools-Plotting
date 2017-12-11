@@ -6,6 +6,7 @@ from array import array
 from collections import OrderedDict
 
 import ROOT
+ROOT.gROOT.SetBatch(ROOT.kTRUE)
 
 from DevTools.Plotter.PlotterBase import PlotterBase
 from DevTools.Plotter.NtupleWrapper import NtupleWrapper
@@ -15,7 +16,6 @@ from DevTools.Utilities.utilities import *
 import DevTools.Plotter.CMS_lumi as CMS_lumi
 import DevTools.Plotter.tdrstyle as tdrstyle
 
-ROOT.gROOT.SetBatch(ROOT.kTRUE)
 ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 tdrstyle.setTDRStyle()
 ROOT.gStyle.SetPalette(1)
@@ -140,6 +140,16 @@ class Plotter(PlotterBase):
             hist = hist.Clone('h_temp_{0}'.format(self.j))
         return hist
 
+    def _readSampleVariable2D(self,sampleName,variable,**kwargs):
+        '''Read the histogram from file'''
+        analysis = kwargs.pop('analysis',self.analysis)
+        hist = self.sampleFiles[analysis][sampleName].getHist2D(variable)
+        logging.debug('Read {0} {1} {2}: {3}'.format(analysis, sampleName, variable, hist))
+        if hist:
+            self.j += 1
+            hist = hist.Clone('h_temp_{0}'.format(self.j))
+        return hist
+
     def _getTempHistogram(self,sampleName,histName,selection,scalefactor,variable,binning,**kwargs):
         '''Read the histogram from file'''
         analysis = kwargs.pop('analysis',self.analysis)
@@ -164,6 +174,51 @@ class Plotter(PlotterBase):
             logging.debug(' - Integral: {0}; Entries: {1};'.format(hist.Integral(),hist.GetEntries()))
         else:
             logging.debug(' - Failed')
+        return hist
+
+    def _getHistogram2D(self,histName,variable,**kwargs):
+        '''Get a styled histogram'''
+        rebinx = kwargs.pop('rebinx',0)
+        rebiny = kwargs.pop('rebiny',0)
+        analysis = self.analysisDict[histName]
+        # check if it is a variable map, variable list, or single variable
+        if isinstance(variable,dict):       # its a map
+            variable = variable[histName]
+        if isinstance(variable,basestring): # its a single variable
+            variable = [variable]
+        # it is now a list
+        if histName not in self.histDict:
+            logging.error('{0} not defined.'.format(histName))
+            return 0
+
+
+        # get histogram
+        hists = ROOT.TList()
+        logging.debug('Reading {0}'.format(histName))
+        for varName in variable:
+            for sampleName in self.histDict[histName]:
+                hist = self._readSampleVariable2D(sampleName,varName,analysis=analysis)
+                if hist: hists.Add(hist)
+        if hists.IsEmpty(): return 0
+        hist = hists[0].Clone('h_{0}_{1}'.format(histName,varName.replace('/','_')))
+        hist.Reset()
+        hist.Merge(hists)
+
+        logging.debug('{0} - Integral: {1}'.format(histName, hist.Integral()))
+
+        if rebinx:
+            if type(rebinx) in [list,tuple]:
+                pass
+            else:
+                hist = hist.RebinX(rebinx)
+
+        if rebiny:
+            if type(rebiny) in [list,tuple]:
+                pass
+            else:
+                hist = hist.RebinY(rebiny)
+
+
         return hist
 
     def _getHistogram(self,histName,variable,**kwargs):
@@ -1452,7 +1507,8 @@ class Plotter(PlotterBase):
         else:
             return self._saveTemp(canvas)
 
-    def plot2D(self,xVariable,yVariable,savename,**kwargs):
+    #def plot2D(self,xVariable,yVariable,savename,**kwargs):
+    def plot2D(self,plotname,savename,**kwargs):
         '''Plot a variable and save'''
         xaxis = kwargs.pop('xaxis', 'Variable')
         yaxis = kwargs.pop('yaxis', 'Events')
@@ -1463,6 +1519,8 @@ class Plotter(PlotterBase):
         logy = kwargs.pop('logy',False)
         logx = kwargs.pop('logx',False)
         logz = kwargs.pop('logz',False)
+        rangex = kwargs.pop('rangex',[])
+        rangey = kwargs.pop('rangey',[])
         save = kwargs.pop('save',True)
 
         logging.info('Plotting {0}'.format(savename))
@@ -1478,7 +1536,10 @@ class Plotter(PlotterBase):
 
         hists = OrderedDict()
         for i,histName in enumerate(self.histOrder):
-            hist = self._get2DHistogram(histName,xVariable,yVariable,**kwargs)
+            hist = self._getHistogram2D(histName,plotname,**kwargs)
+            if not hist: continue
+            if len(rangex)==2: hist.GetXaxis().SetRangeUser(*rangex)
+            if len(rangey)==2: hist.GetYaxis().SetRangeUser(*rangey)
             hist.Draw('colz')
             if i==0:
                 hist.GetXaxis().SetTitle(xaxis)

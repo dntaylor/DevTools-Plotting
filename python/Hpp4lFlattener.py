@@ -23,6 +23,7 @@ class Hpp4lFlattener(NtupleFlattener):
 
     def __init__(self,sample,**kwargs):
         # controls
+        self.new = True # uses NewDMs for tau loose ID
         self.datadriven = True
         self.datadrivenRegular = True
         self.lowmass = True
@@ -39,10 +40,11 @@ class Hpp4lFlattener(NtupleFlattener):
             elif 'HPlusPlusHMinus' in sample:
                 self.genChannels = gen['AP']
         self.baseCutMap = {
-            'true': lambda row: True,
+            'looseId'  : lambda row: all([getattr(row,'{0}_passLoose{1}'.format(l,'New' if self.new else ''))>0.5 for l in self.leps]),
         }
         self.lowmassCutMap = {
             'hppVeto'  : lambda row: (row.hpp_mass<100 or row.hmm_mass<100),
+            'looseId'  : lambda row: all([getattr(row,'{0}_passLoose{1}'.format(l,'New' if self.new else ''))>0.5 for l in self.leps]),
         }
         self.selectionMap = {}
         self.selectionMap['default'] = lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
@@ -115,15 +117,21 @@ class Hpp4lFlattener(NtupleFlattener):
 
         fake_path = '{0}/src/DevTools/Analyzer/data/fakerates_dijet_hpp_13TeV_Run2016BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
         self.fake_hpp_rootfile = ROOT.TFile(fake_path)
+        self.fakehists['electrons'][self.fakekey.format(num='HppMedium',denom='HppLooseNew')] = self.fake_hpp_rootfile.Get('e/medium_loose/fakeratePtEta')
+        self.fakehists['electrons'][self.fakekey.format(num='HppTight',denom='HppLooseNew')] = self.fake_hpp_rootfile.Get('e/tight_loose/fakeratePtEta')
         self.fakehists['electrons'][self.fakekey.format(num='HppMedium',denom='HppLoose')] = self.fake_hpp_rootfile.Get('e/medium_loose/fakeratePtEta')
         self.fakehists['electrons'][self.fakekey.format(num='HppTight',denom='HppLoose')] = self.fake_hpp_rootfile.Get('e/tight_loose/fakeratePtEta')
         self.fakehists['electrons'][self.fakekey.format(num='HppTight',denom='HppMedium')] = self.fake_hpp_rootfile.Get('e/tight_medium/fakeratePtEta')
+        self.fakehists['muons'][self.fakekey.format(num='HppMedium',denom='HppLooseNew')] = self.fake_hpp_rootfile.Get('m/medium_loose/fakeratePtEta')
+        self.fakehists['muons'][self.fakekey.format(num='HppTight',denom='HppLooseNew')] = self.fake_hpp_rootfile.Get('m/tight_loose/fakeratePtEta')
         self.fakehists['muons'][self.fakekey.format(num='HppMedium',denom='HppLoose')] = self.fake_hpp_rootfile.Get('m/medium_loose/fakeratePtEta')
         self.fakehists['muons'][self.fakekey.format(num='HppTight',denom='HppLoose')] = self.fake_hpp_rootfile.Get('m/tight_loose/fakeratePtEta')
         self.fakehists['muons'][self.fakekey.format(num='HppTight',denom='HppMedium')] = self.fake_hpp_rootfile.Get('m/tight_medium/fakeratePtEta')
 
         fake_path = '{0}/src/DevTools/Analyzer/data/fakerates_w_tau_13TeV_Run2016BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
         self.fake_hpp_rootfile_tau = ROOT.TFile(fake_path)
+        self.fakehists['taus'][self.fakekey.format(num='HppMedium',denom='HppLooseNew')] = self.fake_hpp_rootfile_tau.Get('medium_newloose/fakeratePtEta')
+        self.fakehists['taus'][self.fakekey.format(num='HppTight',denom='HppLooseNew')] = self.fake_hpp_rootfile_tau.Get('tight_newloose/fakeratePtEta')
         self.fakehists['taus'][self.fakekey.format(num='HppMedium',denom='HppLoose')] = self.fake_hpp_rootfile_tau.Get('medium_loose/fakeratePtEta')
         self.fakehists['taus'][self.fakekey.format(num='HppTight',denom='HppLoose')] = self.fake_hpp_rootfile_tau.Get('tight_loose/fakeratePtEta')
         self.fakehists['taus'][self.fakekey.format(num='HppTight',denom='HppMedium')] = self.fake_hpp_rootfile_tau.Get('tight_medium/fakeratePtEta')
@@ -133,7 +141,7 @@ class Hpp4lFlattener(NtupleFlattener):
             'P' : '{0}_mediumScale',
         }
 
-        self.fakeVal = '{0}_mediumFakeRate'
+        self.fakeVal = '{0}_mediumNewFakeRate' if self.new else '{0}_mediumFakeRate'
 
         self.lepID = '{0}_passMedium'
 
@@ -181,7 +189,7 @@ class Hpp4lFlattener(NtupleFlattener):
             for l,lep in enumerate(self.leps):
                 if not passID[l]:
                     # recalculate
-                    fakeEff = self.getFakeRate(chanMap[chan[l]], pts[l], etas[l], 'HppMedium','HppLoose')[0]
+                    fakeEff = self.getFakeRate(chanMap[chan[l]], pts[l], etas[l], 'HppMedium','HppLoose{0}'.format('New' if self.new else ''))[0]
 
                     # read from tree
                     #fake = self.fakeVal.format(lep)

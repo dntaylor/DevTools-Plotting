@@ -102,9 +102,9 @@ fakeratePlotter.addHistogram('data',sigMap['data'],style={'linecolor':ROOT.kBlac
 fakeratePlotter.addHistogram('data_uncorrected',sigMap['data'],style={'linecolor':ROOT.kRed,'name':'Uncorrected'})
 
 etaBins = [0.,1.479,2.3]
-ptBins = [0,10,15,20,25,30,40,50,60,100]
+ptBins = [0,20,25,30,40,50,60,100]
 
-numDenom = [('medium','loose'),('tight','loose'),('tight','medium')]
+numDenom = [('medium','loose'),('tight','loose'),('tight','medium'),('medium','newloose'),('tight','newloose'),]
 
 for num,denom in numDenom:
     xaxis = 'p_{T}^{#tau}'
@@ -124,15 +124,18 @@ for num,denom in numDenom:
         }
         customOrder = ['data']
         hists = fakeratePlotter.plotRatio(numname,denomname,savename,customOrder=customOrder,subtractMap=subtractMap,rebin=ptBins,getHists=True)
-        customOrder = ['W']
-        hists_mc = fakeratePlotter.plotRatio(numname,denomname,savename,customOrder=customOrder,rebin=ptBins,getHists=True)
-        # get the pt bins
         for p in range(len(ptBins)-1):
             pt = float(ptBins[p]+ptBins[p+1])/2.
             eta = float(etaBins[e]+etaBins[e+1])/2.
             key = (pt,eta)
             values[key] = hists['data'].GetBinContent(p+1)
             errors[key] = hists['data'].GetBinError(p+1)
+        customOrder = ['W']
+        hists_mc = fakeratePlotter.plotRatio(numname,denomname,savename,customOrder=customOrder,rebin=ptBins,getHists=True)
+        for p in range(len(ptBins)-1):
+            pt = float(ptBins[p]+ptBins[p+1])/2.
+            eta = float(etaBins[e]+etaBins[e+1])/2.
+            key = (pt,eta)
             values_mc[key] = hists_mc['W'].GetBinContent(p+1)
             errors_mc[key] = hists_mc['W'].GetBinError(p+1)
     # save the values

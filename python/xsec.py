@@ -21,6 +21,9 @@ xsecs = {
     'SinglePhoton'                                                     : 1.,
     'Tau'                                                              : 1.,
 
+    'JpsiToMuMu_JpsiPt8_TuneCUEP8M1_13TeV-pythia8'                     : 1.640e+06 * PB * 0.1, # scale down to match data
+    'UpsilonMuMu_UpsilonPt6_TuneCUEP8M1_13TeV-pythia8-evtgen'          : 4.410e+05 * PB,
+
     'QCD_Pt-15to3000_TuneCUETP8M1_Flat_13TeV_pythia8'                  : 1.,
     'QCD_Pt-20toInf_MuEnrichedPt15_TuneCUETP8M1_13TeV_pythia8'         : 720648000 * PB,
 
@@ -118,6 +121,7 @@ xsecs = {
     'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :    114.5      * PB,
     'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8' :    114.6      * PB,
     'TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'                    :    502.2      * PB,
+    'TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8'                 :    831.76     * PB,
 
     # TTV
     'TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8'          :      3.697    * PB,
@@ -363,6 +367,42 @@ for mass in xsecs_4l_NLO:
     xsecs['HPlusPlusHMinusMinusHTo4L_M-{0}_13TeV-pythia8'.format(mass)] = xsecs_4l_NLO[mass]
     xsecs['HPlusPlusHMinusMinusHRTo4L_M-{0}_TuneCUETP8M1_13TeV_pythia8'.format(mass)] = xsecs_r4l_NLO[mass]
     xsecs['HPlusPlusHMinusMinusHRTo4L_M-{0}_13TeV-pythia8'.format(mass)] = xsecs_r4l_NLO[mass]
+
+# N3LO Higgs
+def getHAA(h,a,mode='ggF',BR=''):
+    # ggF
+    if h==125:
+        xsec = 48.52 * PB
+    elif h==300:
+        xsec = 6.59 * PB
+    elif h==750:
+        xsec = 0.4969 * PB
+    else:
+        xsec = 48.52 * PB #SM
+
+    # BR
+    if BR=='bb':
+        br = 5.809e-1
+    elif BR=='tautau':
+        br = 6.256e-2
+    elif BR=='mumu':
+        br = 2.171e-4
+    elif BR=='cc':
+        br = 2.884e-2
+    elif BR=='gg':
+        br = 8.108e-2
+    elif BR=='gammagamma':
+        br = 2.270e-3
+    elif BR=='Zgamma':
+        br = 1.541e-3
+    elif BR=='WW':
+        br = 2.152e-1
+    elif BR=='ZZ':
+        br = 2.641e-2
+    else:
+        br = 1. # inclusive
+
+    return xsec*br
 
 
 def getXsec(sample):

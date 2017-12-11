@@ -78,6 +78,9 @@ class WTauFakeRateSkimmer(NtupleSkimmer):
         wt = self.getWeight(row,cut='tight')
 
         # setup channels
+        dm = row.t_decayMode
+        passLoose = row.t_passLoose and row.t_decayModeFinding
+        passLooseNew = row.t_passLoose
         passMedium = row.t_passMedium
         passTight = row.t_passTight
         recoChan = ''.join([x for x in row.channel if x in 'emt'])
@@ -88,7 +91,8 @@ class WTauFakeRateSkimmer(NtupleSkimmer):
 
         # increment counts
         if default:
-            self.increment('loose',wl,recoChan)
+            if passLoose: self.increment('loose',wl,recoChan)
+            if passLooseNew: self.increment('newloose',wl,recoChan)
             if passMedium: self.increment('medium',wm,recoChan)
             if passTight: self.increment('tight',wt,recoChan)
 
