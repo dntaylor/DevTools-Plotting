@@ -18,14 +18,14 @@ doCat = True
 plotMC = True
 plotDatadriven = True
 plotLowmass = True
-plotFakeRegions = False
+plotFakeRegions = True
 plotSignal = False
 plotROC = False
 plotNormalization = False
 plotSOverB = False
 plotSignificance = False
 plotAllMasses = False
-plotSig500 = True
+plotSig500 = False
 
 hpp3lPlotter = Plotter('Hpp3l',new=True)
 
@@ -231,26 +231,28 @@ ymax = {
     },
 }
 
-def plotWithCategories(plotter,plot,baseDir='default',saveDir='',datadriven=False,postfix='',perCatBins=False,**kwargs):
+def plotWithCategories(plotter,plot,baseDir='default',saveDir='',datadriven=False,postfix='',perCatBins=False,skipVariable=False,**thiskwargs):
+    kwargs = deepcopy(thiskwargs)
     plotname = '/'.join([x for x in [baseDir,plot] if x])
     plotvars = getDataDrivenPlot(plotname) if datadriven else plotname
     savename = '/'.join([x for x in [saveDir,plot] if x])
     if postfix: savename += '_{0}'.format(postfix)
     plotter.plot(plotvars,savename,**kwargs)
     for cat in cats:
+        kwargs = deepcopy(thiskwargs)
         plotnames = []
         for subcat in subCatChannels[cat]:
             plotnames += ['/'.join([x for x in [baseDir,chan,plot] if x]) for chan in subCatChannels[cat][subcat]]
         plotvars = getDataDrivenPlot(*plotnames) if datadriven else plotnames
         savename = '/'.join([x for x in [saveDir,cat,plot] if x])
         if postfix: savename += '_{0}'.format(postfix)
-        if perCatBins and plot in variable_binning:
+        if perCatBins and plot in variable_binning and not skipVariable:
             kwargs['rebin'] = variable_binning[plot][cat]
             kwargs['yaxis'] = 'Events / 1 GeV'
             kwargs['overflow'] = False
             kwargs['scalewidth'] = True
-        if perCatBins and plot in ymin and kwargs.get('logy',False): kwargs['ymin'] = ymin[plot][cat]
-        if perCatBins and plot in ymax and kwargs.get('logy',False): kwargs['ymax'] = ymax[plot][cat]
+            if plot in ymin and kwargs.get('logy',False): kwargs['ymin'] = ymin[plot][cat]
+            if plot in ymax and kwargs.get('logy',False): kwargs['ymax'] = ymax[plot][cat]
         if doCat: plotter.plot(plotvars,savename,**kwargs)
 
 def plotChannels(plotter,plot,baseDir='default',saveDir='',datadriven=False,postfix='',**kwargs):
@@ -272,12 +274,15 @@ plots = {
     'hppDeltaR'             : {'xaxis': '#DeltaR(l^{#pm}l^{#pm})', 'yaxis': 'Events', 'rebin': 5, 'numcol': 3, 'legendpos':34, 'yscale': 1.8,},
     'hppLeadingLeptonPt'    : {'xaxis': 'p_{T}^{#Phi_{lead}^{#pm#pm}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(10,205,5), 'numcol': 2, 'overflow': True},
     'hppLeadingLeptonEta'   : {'xaxis': '#eta^{#Phi_{lead}^{#pm#pm}}', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, 'rebin': 2, 'yscale': 1.8,},
+    'hppLeadingLeptonDecayMode' : {'xaxis': '#Phi_{lead}^{#pm#pm} Decay Mode', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, },
     'hppSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{#pm#pm}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(10,205,5), 'numcol': 2, 'overflow': True},
     'hppSubLeadingLeptonEta': {'xaxis': '#eta^{#Phi_{sublead}^{#pm#pm}}', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, 'rebin': 2, 'yscale': 1.8,},
+    'hppSubLeadingLeptonDecayMode' : {'xaxis': '#Phi_{sublead}^{#pm#pm} Decay Mode', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, },
     # hm
     'hmMass'                : {'xaxis': 'm_{T}(l^{#mp},E_{T}^{miss}) (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,610,10), 'logy': True, 'overflow': True},
     'hmLeptonPt'            : {'xaxis': 'p_{T}^{#Phi_{lepton}^{#mp}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(10,205,5), 'numcol': 2, 'overflow': True},
     'hmLeptonEta'           : {'xaxis': '#eta^{#Phi_{lepton}^{#mp}}', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, 'rebin': 2, 'yscale': 1.8,},
+    'hmLeptonDecayMode'     : {'xaxis': '#Phi_{lepton}^{#mp} Decay Mode', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, },
     # z cand
     'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(11,241,5), 'numcol': 2, 'legendpos':34, 'yscale': 50, 'logy': True, 'overflow': True,},
     'zPt'                   : {'xaxis': 'p_{T}^{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,320,20), 'numcol': 2, 'overflow': True},
@@ -302,7 +307,7 @@ blind_cust = {
 
 lowmass_cust = {
     # hpp
-    'hppMass'              : {'rangex': [0,300], 'logy': False},
+    'hppMass'              : {'rebin': range(0,300,10), 'yaxis': 'Events / 10 GeV', 'logy': False, 'logx': False,},
     #'hppMt'                : {'rangex': [0,300], 'logy': False},
     'hppPt'                : {'rangex': [0,300]},
     'hppLeadingLeptonPt'   : {'rangex': [0,100]},
@@ -317,7 +322,7 @@ lowmass_cust = {
     # event
     'met'                  : {'rangex': [0,200]},
     'mass'                 : {'rangex': [0,600]},
-    'st'                   : {'rangex': [0,400], 'logy': False},
+    'st'                   : {'logy': False, 'logx': False,},
 }
 
 norm_cust = {
@@ -494,7 +499,7 @@ if plotMC and plotLowmass:
     for plot in plots:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
-        plotWithCategories(hpp3lPlotter,plot,baseDir='lowmass',saveDir='lowmass',**kwargs)
+        plotWithCategories(hpp3lPlotter,plot,baseDir='lowmass',saveDir='lowmass',skipVariable=True,**kwargs)
         if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='lowmass',baseDir='lowmass',**kwargs)
 
 ######################################
@@ -515,7 +520,7 @@ if plotDatadriven and plotLowmass:
     for plot in plots:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
-        plotWithCategories(hpp3lPlotter,plot,baseDir='lowmass',saveDir='lowmass-datadriven',datadriven=True,**kwargs)
+        plotWithCategories(hpp3lPlotter,plot,baseDir='lowmass',saveDir='lowmass-datadriven',datadriven=True,skipVariable=True,**kwargs)
         if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='lowmass-datadriven',baseDir='lowmass',datadriven=True,**kwargs)
 
 ####################

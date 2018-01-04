@@ -8,6 +8,7 @@ from electronHistParams import buildElectron
 from muonHistParams import buildMuon
 from tauHistParams import buildTau
 from wTauFakeRateHistParams import buildWTauFakeRate
+from zTauFakeRateHistParams import buildZTauFakeRate
 from wFakeRateHistParams import buildWFakeRate
 from zFakeRateHistParams import buildZFakeRate
 from dijetFakeRateHistParams import buildDijetFakeRate
@@ -61,6 +62,7 @@ def buildHistParams(analysis,**kwargs):
     if analysis=='Muon':            buildMuon(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='Tau':             buildTau(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='WTauFakeRate':    buildWTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='ZTauFakeRate':    buildZTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='WFakeRate':       buildWFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='ZFakeRate':       buildZFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='DijetFakeRate':   buildDijetFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
