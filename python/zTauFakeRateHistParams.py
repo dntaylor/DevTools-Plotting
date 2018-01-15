@@ -17,8 +17,7 @@ def buildZTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sam
         'met'                         : {'xVariable': 'met_pt',                         'xBinning': [500, 0, 500],           },
         'metPhi'                      : {'xVariable': 'met_phi',                        'xBinning': [500, -3.14159, 3.14159],},
         # z
-        'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [500, 0, 500],           },
-        'mllMinusMZ'                  : {'xVariable': 'fabs(z_mass-{0})'.format(ZMASS), 'xBinning': [200, 0, 200],           },
+        'zMass'                       : {'xVariable': 'z_mass',                         'xBinning': [120, 60, 120],          },
         'zPt'                         : {'xVariable': 'z_pt',                           'xBinning': [500, 0, 500],           },
         'zDeltaR'                     : {'xVariable': 'z_deltaR',                       'xBinning': [500, 0, 5],             },
         'zLeadingLeptonPt'            : {'xVariable': 'z1_pt',                          'xBinning': [1000, 0, 1000],         },
@@ -35,7 +34,7 @@ def buildZTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sam
         'tDM'                         : {'xVariable': 't_decayMode',                    'xBinning': [12, 0 ,12],             },
     }
 
-    frBaseCut = 'z1_pt>25. && z2_pt>20. && z_mass>60 && z_mass<120 && t_decayModeFinding'
+    frBaseCut = 'z_deltaR>0.02 && z1_pt>25. && z2_pt>20. && z_mass>81 && z_mass<101 && t_decayModeFinding'
     frBaseCutLoose = '{0} && t_passLoose==1'.format(frBaseCut)
     frBaseCutMedium = '{0} && t_passMedium==1'.format(frBaseCut)
     frBaseCutTight = '{0} && t_passTight==1'.format(frBaseCut)
@@ -43,7 +42,7 @@ def buildZTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sam
     frScaleFactorMedium = 'z1_mediumScale*z2_mediumScale*t_mediumScale*genWeight*pileupWeight*triggerEfficiency'
     frScaleFactorTight = 'z1_mediumScale*z2_mediumScale*t_tightScale*genWeight*pileupWeight*triggerEfficiency'
 
-    frNewBaseCut = 'z1_pt>25. && z2_pt>20. && z_mass>60 && z_mass<120'
+    frNewBaseCut = 'z_deltaR>0.02 && z1_pt>25. && z2_pt>20. && z_mass>81 && z_mass<101'
     frNewBaseCutLoose = '{0}'.format(frNewBaseCut)
     selectionParams['ZTauFakeRate'] = {
         'loose'      : {'args': [frBaseCutLoose],                   'kwargs': {'mcscalefactor': frScaleFactorLoose, }},

@@ -27,7 +27,7 @@ plotNormalization = False
 plotSOverB = False
 plotSignificance = False
 plotAllMasses = False
-plotSig500 = True
+plotSig500 = False
 
 hpp4lPlotter = Plotter('Hpp4l',new=True)
 

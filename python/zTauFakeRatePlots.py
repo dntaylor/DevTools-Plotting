@@ -143,19 +143,19 @@ numdms = {
     10: [10],
 }
 
-#for plot in plots:
-#    for region in  ['loose','medium','tight','newloose']:
-#        plotname = '{0}/{1}'.format(region,plot)
-#        savename = '{0}/{1}'.format(region,plot)
-#        fakeratePlotter.plot(plotname,savename,**plots[plot])
-#        for sel in ['WMt']:
-#            plotname = '{0}/{1}/{2}'.format(region,sel,plot)
-#            savename = '{0}/{1}/{2}'.format(region,sel,plot)
-#            fakeratePlotter.plot(plotname,savename,**plots[plot])
-#            for dm in dms:
-#                plotname = '{0}/{1}/dm{2}/{3}'.format(region,sel,dm,plot)
-#                savename = '{0}/{1}/dm{2}/{3}'.format(region,sel,dm,plot)
-#                fakeratePlotter.plot(plotname,savename,**plots[plot])
+for plot in plots:
+    for region in  ['loose','medium','tight','newloose']:
+        plotname = '{0}/{1}'.format(region,plot)
+        savename = '{0}/{1}'.format(region,plot)
+        fakeratePlotter.plot(plotname,savename,**plots[plot])
+        #for sel in ['WMt']:
+        #    plotname = '{0}/{1}/{2}'.format(region,sel,plot)
+        #    savename = '{0}/{1}/{2}'.format(region,sel,plot)
+        #    fakeratePlotter.plot(plotname,savename,**plots[plot])
+        #    for dm in dms:
+        #        plotname = '{0}/{1}/dm{2}/{3}'.format(region,sel,dm,plot)
+        #        savename = '{0}/{1}/dm{2}/{3}'.format(region,sel,dm,plot)
+        #        fakeratePlotter.plot(plotname,savename,**plots[plot])
 
 
 

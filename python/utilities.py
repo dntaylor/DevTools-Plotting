@@ -107,15 +107,15 @@ latestNtuples['80X'] = {
 # Moriond 2017
     'Tau'            : '2017-03-30_TauAnalysis_80X_Moriond_v1-merge',
     'Charge'         : '2017-04-06_ChargeAnalysis_80X_Moriond_v1-merge',
-    'DY'             : '2017-10-26_DYAnalysis_80X_Moriond_v1-merge',
-    'DijetFakeRate'  : '2017-04-20_DijetFakeRateAnalysis_80X_Moriond_v1-merge', # with tight muon
+    'DY'             : '2018-01-09_DYAnalysis_80X_Moriond_v1-merge', # fix metFilter
+    'DijetFakeRate'  : '2018-01-09_DijetFakeRateAnalysis_80X_Moriond_v1-merge', # fix metFilter
     'ZFakeRate'      : '2017-03-21_ZFakeRateAnalysis_80X_Moriond_v1-merge',
     'WFakeRate'      : '2017-03-24_WFakeRateAnalysis_80X_Moriond_v1-merge',
-    'WTauFakeRate'   : '2018-01-03_WTauFakeRateAnalysis_80X_Moriond_v1-merge', # new DMs, fix t dz
-    'ZTauFakeRate'   : '2018-01-03_ZTauFakeRateAnalysis_80X_Moriond_v1-merge', # new DMs, fix t dz
+    'WTauFakeRate'   : '2018-01-10_WTauFakeRateAnalysis_80X_Moriond_v2-merge', # new DMs, fix t dz, fix metFilter
+    'ZTauFakeRate'   : '2018-01-10_ZTauFakeRateAnalysis_80X_Moriond_v2-merge', # new DMs, fix t dz, fix metFilter
     'WZ'             : '2017-06-29_WZAnalysis_80X_Moriond_v1-merge',
-    'Hpp3l'          : '2018-01-04_Hpp3lAnalysis_80X_Moriond_v1-merge', # new DMs, fix t dz
-    'Hpp4l'          : '2018-01-04_Hpp4lAnalysis_80X_Moriond_v1-merge', # new DMs, fix t dz
+    'Hpp3l'          : '2018-01-13_Hpp3lAnalysis_80X_Moriond_v1-merge', # new DMs, fix t dz, fix metFilter
+    'Hpp4l'          : '2018-01-13_Hpp4lAnalysis_80X_Moriond_v1-merge', # new DMs, fix t dz, fix metFilter
 # Photon
     'FourPhoton'     : '2017-06-20_FourPhotonAnalysis_80X_Photon_v2-merge',
     'ThreePhoton'    : '2017-09-15_ThreePhotonAnalysis_80X_Photon_v1-merge',
@@ -147,12 +147,18 @@ latestShifts['80X']['Hpp3l'] = {
 #    'UnclusteredEnUp'  : '2016-12-19_Hpp3lAnalysis_UnclusteredEnUp_80X_v1-merge',
 #    'UnclusteredEnDown': '2016-12-19_Hpp3lAnalysis_UnclusteredEnDown_80X_v1-merge',
 # Moriond 2017
-    'ElectronEnUp'     : '2017-07-03_Hpp3lAnalysis_ElectronEnUp_80X_Moriond_v1-merge',
-    'ElectronEnDown'   : '2017-07-03_Hpp3lAnalysis_ElectronEnDown_80X_Moriond_v1-merge',
-    'MuonEnUp'         : '2017-07-03_Hpp3lAnalysis_MuonEnUp_80X_Moriond_v1-merge',
-    'MuonEnDown'       : '2017-07-03_Hpp3lAnalysis_MuonEnDown_80X_Moriond_v1-merge',
-    'TauEnUp'          : '2017-07-03_Hpp3lAnalysis_TauEnUp_80X_Moriond_v1-merge',
-    'TauEnDown'        : '2017-07-03_Hpp3lAnalysis_TauEnDown_80X_Moriond_v1-merge',
+    'ElectronEnUp'     : '2018-01-13_Hpp3lAnalysis_ElectronEnUp_80X_Moriond_v1-merge',
+    'ElectronEnDown'   : '2018-01-13_Hpp3lAnalysis_ElectronEnDown_80X_Moriond_v1-merge',
+    'MuonEnUp'         : '2018-01-13_Hpp3lAnalysis_MuonEnUp_80X_Moriond_v1-merge',
+    'MuonEnDown'       : '2018-01-13_Hpp3lAnalysis_MuonEnDown_80X_Moriond_v1-merge',
+    'TauEnUp'          : '2018-01-13_Hpp3lAnalysis_TauEnUp_80X_Moriond_v1-merge',
+    'TauEnDown'        : '2018-01-13_Hpp3lAnalysis_TauEnDown_80X_Moriond_v1-merge',
+    'JetEnUp'          : '2018-01-13_Hpp3lAnalysis_JetEnUp_80X_Moriond_v1-merge',
+    'JetEnDown'        : '2018-01-13_Hpp3lAnalysis_JetEnDown_80X_Moriond_v1-merge',
+    'JetResUp'         : '2018-01-13_Hpp3lAnalysis_JetResUp_80X_Moriond_v1-merge',
+    'JetResDown'       : '2018-01-13_Hpp3lAnalysis_JetResDown_80X_Moriond_v1-merge',
+    'UnclusteredEnUp'  : '2018-01-13_Hpp3lAnalysis_UnclusteredUp_80X_Moriond_v1-merge',
+    'UnclusteredEnDown': '2018-01-13_Hpp3lAnalysis_UnclusteredDown_80X_Moriond_v1-merge',
 }
 latestShifts['80X']['Hpp4l'] = {
 # ICHEP 2016
@@ -169,12 +175,18 @@ latestShifts['80X']['Hpp4l'] = {
 #    'UnclusteredEnUp'  : '2016-12-19_Hpp4lAnalysis_UnclusteredEnUp_80X_v1-merge',
 #    'UnclusteredEnDown': '2016-12-19_Hpp4lAnalysis_UnclusteredEnDown_80X_v1-merge',
 # Moriond 2017
-    'ElectronEnUp'     : '2017-07-03_Hpp4lAnalysis_ElectronEnUp_80X_Moriond_v1-merge',
-    'ElectronEnDown'   : '2017-07-03_Hpp4lAnalysis_ElectronEnDown_80X_Moriond_v1-merge',
-    'MuonEnUp'         : '2017-07-03_Hpp4lAnalysis_MuonEnUp_80X_Moriond_v1-merge',
-    'MuonEnDown'       : '2017-07-03_Hpp4lAnalysis_MuonEnDown_80X_Moriond_v1-merge',
-    'TauEnUp'          : '2017-07-03_Hpp4lAnalysis_TauEnUp_80X_Moriond_v1-merge',
-    'TauEnDown'        : '2017-07-03_Hpp4lAnalysis_TauEnDown_80X_Moriond_v1-merge',
+    'ElectronEnUp'     : '2018-01-13_Hpp4lAnalysis_ElectronEnUp_80X_Moriond_v1-merge',
+    'ElectronEnDown'   : '2018-01-13_Hpp4lAnalysis_ElectronEnDown_80X_Moriond_v1-merge',
+    'MuonEnUp'         : '2018-01-13_Hpp4lAnalysis_MuonEnUp_80X_Moriond_v1-merge',
+    'MuonEnDown'       : '2018-01-13_Hpp4lAnalysis_MuonEnDown_80X_Moriond_v1-merge',
+    'TauEnUp'          : '2018-01-13_Hpp4lAnalysis_TauEnUp_80X_Moriond_v1-merge',
+    'TauEnDown'        : '2018-01-13_Hpp4lAnalysis_TauEnDown_80X_Moriond_v1-merge',
+    'JetEnUp'          : '2018-01-13_Hpp4lAnalysis_JetEnUp_80X_Moriond_v1-merge',
+    'JetEnDown'        : '2018-01-13_Hpp4lAnalysis_JetEnDown_80X_Moriond_v1-merge',
+    'JetResUp'         : '2018-01-13_Hpp4lAnalysis_JetResUp_80X_Moriond_v1-merge',
+    'JetResDown'       : '2018-01-13_Hpp4lAnalysis_JetResDown_80X_Moriond_v1-merge',
+    'UnclusteredEnUp'  : '2018-01-13_Hpp4lAnalysis_UnclusteredUp_80X_Moriond_v1-merge',
+    'UnclusteredEnDown': '2018-01-13_Hpp4lAnalysis_UnclusteredDown_80X_Moriond_v1-merge',
 }
 
 def getNtupleDirectory(analysis,local=False,version=getCMSSWVersion(),shift=''):

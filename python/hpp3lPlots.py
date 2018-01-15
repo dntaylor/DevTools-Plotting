@@ -26,6 +26,8 @@ plotSOverB = False
 plotSignificance = False
 plotAllMasses = False
 plotSig500 = False
+plotVariableLoose = False
+new = True
 
 hpp3lPlotter = Plotter('Hpp3l',new=True)
 
@@ -297,6 +299,18 @@ plots = {
     #'pileupWeight'          : {'xaxis': 'Pileup Weight', 'yaxis': 'Events'},
 }
 
+plotsFake = {
+    'hpp1Pt'        : {'xaxis': 'p_{T}^{#Phi_{lead}^{#pm#pm}} (GeV)',    'yaxis': 'Events', 'numcol': 2,},
+    'hpp1Eta'       : {'xaxis': '#eta^{#Phi_{lead}^{#pm#pm}}',           'yaxis': 'Events', 'numcol': 3, 'legendpos':34, 'yscale': 1.8,},
+    'hpp1DecayMode' : {'xaxis': '#Phi_{lead}^{#pm#pm} Decay Mode',       'yaxis': 'Events', 'numcol': 3, 'legendpos':34,},
+    'hpp2Pt'        : {'xaxis': 'p_{T}^{#Phi_{sublead}^{#pm#pm}} (GeV)', 'yaxis': 'Events', 'numcol': 2,},
+    'hpp2Eta'       : {'xaxis': '#eta^{#Phi_{sublead}^{#pm#pm}}',        'yaxis': 'Events', 'numcol': 3, 'legendpos':34, 'yscale': 1.8,},
+    'hpp2DecayMode' : {'xaxis': '#Phi_{sublead}^{#pm#pm} Decay Mode',    'yaxis': 'Events', 'numcol': 3, 'legendpos':34,},
+    'hm1Pt'         : {'xaxis': 'p_{T}^{#Phi_{lepton}^{#mp}} (GeV)',     'yaxis': 'Events', 'numcol': 2,},
+    'hm1Eta'        : {'xaxis': '#eta^{#Phi_{lepton}^{#mp}}',            'yaxis': 'Events', 'numcol': 3, 'legendpos':34, 'yscale': 1.8,},
+    'hm1DecayMode'  : {'xaxis': '#Phi_{lepton}^{#mp} Decay Mode',        'yaxis': 'Events', 'numcol': 3, 'legendpos':34, },
+}
+
 blind_cust = {
     'hppMass'               : {'blinder': [200,1650], 'rangex': [50,850], 'ymin': 1,},
     'st'                    : {'blinder': [400,1050], 'rangex': [50,1050],'ymin': 1},
@@ -522,6 +536,15 @@ if plotDatadriven and plotLowmass:
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
         plotWithCategories(hpp3lPlotter,plot,baseDir='lowmass',saveDir='lowmass-datadriven',datadriven=True,skipVariable=True,**kwargs)
         if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='lowmass-datadriven',baseDir='lowmass',datadriven=True,**kwargs)
+
+    if plotVariableLoose:
+        base = 'newloose_{cut}' if new else 'oldloose_{cut}'
+        for c in ['n0p2','n0p1','0p0','0p1','0p2','0p3','0p4']:
+            if plotCount: plotCounts(hpp3lPlotter,baseDir='lowmass/{}'.format(base.format(cut=c)),saveDir='lowmass-datadriven/{}'.format(base.format(cut=c)),datadriven=True)
+
+            for plot in plotsFake:
+                kwargs = deepcopy(plotsFake[plot])
+                plotWithCategories(hpp3lPlotter,plot,baseDir='lowmass/{}'.format(base.format(cut=c)),saveDir='lowmass-datadriven/{}'.format(base.format(cut=c)),datadriven=True,skipVariable=True,**kwargs)
 
 ####################
 ### Fake Regions ###
