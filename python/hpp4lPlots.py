@@ -20,6 +20,7 @@ plotCount = True
 plotMC = True
 plotDatadriven = True
 plotLowmass = True
+plotZveto = True
 plotFakeRegions = False
 plotSignal = False
 plotROC = False
@@ -27,7 +28,7 @@ plotNormalization = False
 plotSOverB = False
 plotSignificance = False
 plotAllMasses = False
-plotSig500 = False
+plotSig500 = True
 
 hpp4lPlotter = Plotter('Hpp4l',new=True)
 
@@ -606,6 +607,43 @@ if plotDatadriven and plotLowmass:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
         plotWithCategories(hpp4lPlotter,plot,baseDir='lowmass',saveDir='lowmass-datadriven',datadriven=True,**kwargs)
+
+########################
+### z veto selection ###
+########################
+if plotMC and plotZveto:
+    hpp4lPlotter.clearHistograms()
+    
+    for s in allsamples:
+        hpp4lPlotter.addHistogramToStack(s,sigMap[s])
+    hpp4lPlotter.addHistogram('data',sigMap['data'])
+    
+    if plotCount: plotCounts(hpp4lPlotter,baseDir='zveto',saveDir='zveto')
+    
+    for plot in plots:
+        kwargs = deepcopy(plots[plot])
+        if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
+        plotWithCategories(hpp4lPlotter,plot,baseDir='zveto',saveDir='zveto',**kwargs)
+
+#####################################
+### z veto datadriven backgrounds ###
+#####################################
+if plotDatadriven and plotZveto:
+    hpp4lPlotter.clearHistograms()
+    
+    hpp4lPlotter.addHistogramToStack('datadriven',datadrivenSamples)
+    
+    for s in samples:
+        hpp4lPlotter.addHistogramToStack(s,sigMapDD[s])
+    
+    hpp4lPlotter.addHistogram('data',sigMapDD['data'])
+    
+    if plotCount: plotCounts(hpp4lPlotter,baseDir='zveto',saveDir='zveto-datadriven',datadriven=True)
+    
+    for plot in plots:
+        kwargs = deepcopy(plots[plot])
+        if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
+        plotWithCategories(hpp4lPlotter,plot,baseDir='zveto',saveDir='zveto-datadriven',datadriven=True,**kwargs)
 
 ############################
 ### Fake Regions lowmass ###

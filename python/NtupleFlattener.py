@@ -87,18 +87,31 @@ class NtupleFlattener(object):
             for hist in self.histParams:
                 if selection in self.selectionHists:
                     if hist not in self.selectionHists[selection]: continue
+                if 'doGen' in self.histParams[hist] and self.histParams[hist]['doGen']:
+                    thisGenChans = genChans
+                else:
+                    thisGenChans = ['all']
                 for chan in chans:
-                    for genChan in genChans:
+                    for genChan in thisGenChans:
                         histName = '{0}/{1}/gen_{2}/{3}'.format(selection,chan,genChan,hist)
                         if genChan=='all': histName = '{0}/{1}/{2}'.format(selection,chan,hist)
                         if chan=='all': histName = '{0}/{1}'.format(selection,hist)
                         xbins = self.histParams[hist]['xBinning']
-                        if isinstance(xbins,array): # variable width array
-                            self.hists[histName] = ROOT.TH1D(histName,histName,len(xbins)-1,xbins)
-                        elif len(xbins)==3: # n, low, high
-                            self.hists[histName] = ROOT.TH1D(histName,histName,xbins[0],xbins[1],xbins[2])
+                        if 'yBinning' in self.histParams[hist]:
+                            ybins = self.histParams[hist]['yBinning']
+                            if isinstance(xbins,array) and isinstance(ybins,array): # variable width array
+                                self.hists[histName] = ROOT.TH2D(histName,histName,len(xbins)-1,xbins,len(ybins)-1,ybins)
+                            elif len(xbins)==3 and len(ybins)==3: # n, low, high
+                                self.hists[histName] = ROOT.TH2D(histName,histName,xbins[0],xbins[1],xbins[2],ybins[0],ybins[1],ybins[2])
+                            else:
+                                self.hists[histName] = ROOT.TH1D()
                         else:
-                            self.hists[histName] = ROOT.TH1D()
+                            if isinstance(xbins,array): # variable width array
+                                self.hists[histName] = ROOT.TH1D(histName,histName,len(xbins)-1,xbins)
+                            elif len(xbins)==3: # n, low, high
+                                self.hists[histName] = ROOT.TH1D(histName,histName,xbins[0],xbins[1],xbins[2])
+                            else:
+                                self.hists[histName] = ROOT.TH1D()
                         self.hists[histName].Sumw2()
 
     def getTree(self):
@@ -199,14 +212,24 @@ class NtupleFlattener(object):
                 if hist not in self.selectionHists[selection]: continue
             if 'selection' in self.histParams:
                 if not self.hstParams[hist]['selection'](row): continue
-            val = self.histParams[hist]['x'](row)
             w = weight*self.histParams[hist]['mcscale'](row) if 'mcscale' in self.histParams[hist] and self.isData else weight
             histName = '{0}/{1}'.format(selection,hist)
-            self.hists[histName].Fill(val,w)
-            if chan!='all':
-                histName = '{0}/{1}/{2}'.format(selection,chan,hist)
-                self.hists[histName].Fill(val,w)
-            if genChan!='all':
-                histName = '{0}/{1}/gen_{2}/{3}'.format(selection,chan,genChan,hist)
-                self.hists[histName].Fill(val,w)
+            xval = self.histParams[hist]['x'](row)
+            if 'y' in self.histParams[hist]:
+                yval = self.histParams[hist]['y'](row)
+                self.hists[histName].Fill(xval,yval,w)
+                if chan!='all':
+                    histName = '{0}/{1}/{2}'.format(selection,chan,hist)
+                    self.hists[histName].Fill(xval,yval,w)
+                if genChan!='all':
+                    histName = '{0}/{1}/gen_{2}/{3}'.format(selection,chan,genChan,hist)
+                    if histName in self.hists: self.hists[histName].Fill(xval,yval,w)
+            else:
+                self.hists[histName].Fill(xval,w)
+                if chan!='all':
+                    histName = '{0}/{1}/{2}'.format(selection,chan,hist)
+                    self.hists[histName].Fill(xval,w)
+                if genChan!='all':
+                    histName = '{0}/{1}/gen_{2}/{3}'.format(selection,chan,genChan,hist)
+                    if histName in self.hists: self.hists[histName].Fill(xval,w)
 

@@ -18,14 +18,15 @@ doCat = True
 plotMC = True
 plotDatadriven = True
 plotLowmass = True
-plotFakeRegions = True
+plotZveto = True
+plotFakeRegions = False
 plotSignal = False
 plotROC = False
 plotNormalization = False
 plotSOverB = False
 plotSignificance = False
 plotAllMasses = False
-plotSig500 = False
+plotSig500 = True
 plotVariableLoose = False
 new = True
 
@@ -497,6 +498,44 @@ if plotDatadriven:
             kwargs.update(blind_cust[plot])
             plotWithCategories(hpp3lPlotter,plot,baseDir='default',saveDir='datadriven',postfix='blinder',datadriven=True,perCatBins=True,**kwargs)
 
+########################
+### z veto selection ###
+########################
+if plotMC and plotZveto:
+    hpp3lPlotter.clearHistograms()
+
+    for s in allsamples:
+        hpp3lPlotter.addHistogramToStack(s,sigMap[s])
+    hpp3lPlotter.addHistogram('data',sigMap['data'])
+
+    if plotCount: plotCounts(hpp3lPlotter,baseDir='zveto',saveDir='zveto')
+
+    for plot in plots:
+        kwargs = deepcopy(plots[plot])
+        if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
+        plotWithCategories(hpp3lPlotter,plot,baseDir='zveto',saveDir='zveto',skipVariable=True,**kwargs)
+        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='zveto',baseDir='zveto',**kwargs)
+
+######################################
+### lowmass datadriven backgrounds ###
+######################################
+if plotDatadriven and plotZveto:
+    hpp3lPlotter.clearHistograms()
+
+    hpp3lPlotter.addHistogramToStack('datadriven',datadrivenSamples)
+
+    for s in samples:
+        hpp3lPlotter.addHistogramToStack(s,sigMapDD[s])
+
+    hpp3lPlotter.addHistogram('data',sigMapDD['data'])
+
+    if plotCount: plotCounts(hpp3lPlotter,baseDir='zveto',saveDir='zveto-datadriven',datadriven=True)
+
+    for plot in plots:
+        kwargs = deepcopy(plots[plot])
+        if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
+        plotWithCategories(hpp3lPlotter,plot,baseDir='zveto',saveDir='zveto-datadriven',datadriven=True,skipVariable=True,**kwargs)
+        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='zveto-datadriven',baseDir='zveto',datadriven=True,**kwargs)
 
 ########################
 ### low mass control ###

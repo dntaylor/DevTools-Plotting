@@ -28,9 +28,11 @@ class Hpp4lFlattener(NtupleFlattener):
         self.tauFakeMode = 'z' # allowed: w, z
         self.doDMFakes = True
         self.datadriven = True
-        self.datadrivenRegular = True
+        self.datadrivenRegular = False
         self.lowmass = True
-        self.doGen = False
+        self.zveto = True
+        self.doGen = True
+        self.limitOnly = False
         self.mass = 500
 
         # setup properties
@@ -49,22 +51,29 @@ class Hpp4lFlattener(NtupleFlattener):
             'hppVeto'  : lambda row: (row.hpp_mass<100 or row.hmm_mass<100),
             'looseId'  : lambda row: all([getattr(row,'{0}_passLoose{1}'.format(l,'New' if self.new else ''))>0.5 for l in self.leps]),
         }
+        self.zvetoCutMap = {
+            'looseId'  : lambda row: all([getattr(row,'{0}_passLoose{1}'.format(l,'New' if self.new else ''))>0.5 for l in self.leps]),
+            'zVeto'    : lambda row: abs(getattr(row,'z_mass')-ZMASS)>10,
+        }
         self.selectionMap = {}
         self.selectionMap['default'] = lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
         if self.lowmass: self.selectionMap['lowmass'] = lambda row: all([self.lowmassCutMap[cut](row) for cut in self.lowmassCutMap])
+        if self.zveto: self.selectionMap['zveto'] = lambda row: all([self.zvetoCutMap[cut](row) for cut in self.zvetoCutMap])
 
         # sample signal plot
         self.cutRegions = {}
-        self.cutRegions[self.mass] = getSelectionMap('Hpp4l',self.mass)
-        self.selectionMap['nMinusOne/massWindow/{0}/hpp0hmm0'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][0][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][0][v](row) for v in ['st','zveto','drmm']])
-        #self.selectionMap['nMinusOne/massWindow/{0}/hpp0hmm1'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][0][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][1][v](row) for v in ['st','zveto','drmm']])
-        #self.selectionMap['nMinusOne/massWindow/{0}/hpp0hmm2'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][0][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][2][v](row) for v in ['st','zveto','drmm']])
-        #self.selectionMap['nMinusOne/massWindow/{0}/hpp1hmm0'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][1][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][0][v](row) for v in ['st','zveto','drmm']])
-        self.selectionMap['nMinusOne/massWindow/{0}/hpp1hmm1'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][1][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][1][v](row) for v in ['st','zveto','drmm']])
-        #self.selectionMap['nMinusOne/massWindow/{0}/hpp1hmm2'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][1][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][2][v](row) for v in ['st','zveto','drmm']])
-        #self.selectionMap['nMinusOne/massWindow/{0}/hpp2hmm0'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][2][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][0][v](row) for v in ['st','zveto','drmm']])
-        #self.selectionMap['nMinusOne/massWindow/{0}/hpp2hmm1'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][2][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][1][v](row) for v in ['st','zveto','drmm']])
-        self.selectionMap['nMinusOne/massWindow/{0}/hpp2hmm2'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][2][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[self.mass][2][v](row) for v in ['st','zveto','drmm']])
+        masses = [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500] if self.limitOnly else [self.mass]
+        for mass in masses:
+            self.cutRegions[mass] = getSelectionMap('Hpp4l',mass)
+            self.selectionMap['nMinusOne/massWindow/{0}/hpp0hmm0'.format(mass)] = lambda row: all([self.cutRegions[mass][0][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[mass][0][v](row) for v in ['st','zveto','drmm']])
+            #self.selectionMap['nMinusOne/massWindow/{0}/hpp0hmm1'.format(mass)] = lambda row: all([self.cutRegions[mass][0][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[mass][1][v](row) for v in ['st','zveto','drmm']])
+            #self.selectionMap['nMinusOne/massWindow/{0}/hpp0hmm2'.format(mass)] = lambda row: all([self.cutRegions[mass][0][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[mass][2][v](row) for v in ['st','zveto','drmm']])
+            #self.selectionMap['nMinusOne/massWindow/{0}/hpp1hmm0'.format(mass)] = lambda row: all([self.cutRegions[mass][1][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[mass][0][v](row) for v in ['st','zveto','drmm']])
+            self.selectionMap['nMinusOne/massWindow/{0}/hpp1hmm1'.format(mass)] = lambda row: all([self.cutRegions[mass][1][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[mass][1][v](row) for v in ['st','zveto','drmm']])
+            #self.selectionMap['nMinusOne/massWindow/{0}/hpp1hmm2'.format(mass)] = lambda row: all([self.cutRegions[mass][1][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[mass][2][v](row) for v in ['st','zveto','drmm']])
+            #self.selectionMap['nMinusOne/massWindow/{0}/hpp2hmm0'.format(mass)] = lambda row: all([self.cutRegions[mass][2][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[mass][0][v](row) for v in ['st','zveto','drmm']])
+            #self.selectionMap['nMinusOne/massWindow/{0}/hpp2hmm1'.format(mass)] = lambda row: all([self.cutRegions[mass][2][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[mass][1][v](row) for v in ['st','zveto','drmm']])
+            self.selectionMap['nMinusOne/massWindow/{0}/hpp2hmm2'.format(mass)] = lambda row: all([self.cutRegions[mass][2][v](row) for v in ['st','zveto','drpp']]+[self.cutRegions[mass][2][v](row) for v in ['st','zveto','drmm']])
 
 
 
@@ -89,36 +98,47 @@ class Hpp4lFlattener(NtupleFlattener):
             'hppMass'                     : {'x': lambda row: row.hpp_mass,                       'xBinning': [1600, 0, 1600],         },
             'hppPt'                       : {'x': lambda row: row.hpp_pt,                         'xBinning': [1600, 0, 1600],         },
             'hppDeltaR'                   : {'x': lambda row: row.hpp_deltaR,                     'xBinning': [50, 0, 5],              },
-            'hppLeadingLeptonPt'          : {'x': lambda row: row.hpp1_pt,                        'xBinning': [1000, 0, 1000],         },
+            'hppLeadingLeptonPt'          : {'x': lambda row: row.hpp1_pt,                        'xBinning': [200, 0, 1000],         },
             'hppLeadingLeptonEta'         : {'x': lambda row: row.hpp1_eta,                       'xBinning': [50, -2.5, 2.5],         },
-            'hppSubLeadingLeptonPt'       : {'x': lambda row: row.hpp2_pt,                        'xBinning': [1000, 0, 1000],         },
+            'hppSubLeadingLeptonPt'       : {'x': lambda row: row.hpp2_pt,                        'xBinning': [200, 0, 1000],         },
             'hppSubLeadingLeptonEta'      : {'x': lambda row: row.hpp2_eta,                       'xBinning': [50, -2.5, 2.5],         },
             # h--
             'hmmMass'                     : {'x': lambda row: row.hmm_mass,                       'xBinning': [1600, 0, 1600],         },
             'hmmPt'                       : {'x': lambda row: row.hmm_pt,                         'xBinning': [1600, 0, 1600],         },
             'hmmDeltaR'                   : {'x': lambda row: row.hmm_deltaR,                     'xBinning': [50, 0, 5],              },
-            'hmmLeadingLeptonPt'          : {'x': lambda row: row.hmm1_pt,                        'xBinning': [1000, 0, 1000],         },
+            'hmmLeadingLeptonPt'          : {'x': lambda row: row.hmm1_pt,                        'xBinning': [200, 0, 1000],         },
             'hmmLeadingLeptonEta'         : {'x': lambda row: row.hmm1_eta,                       'xBinning': [50, -2.5, 2.5],         },
-            'hmmSubLeadingLeptonPt'       : {'x': lambda row: row.hmm2_pt,                        'xBinning': [1000, 0, 1000],         },
+            'hmmSubLeadingLeptonPt'       : {'x': lambda row: row.hmm2_pt,                        'xBinning': [200, 0, 1000],         },
             'hmmSubLeadingLeptonEta'      : {'x': lambda row: row.hmm2_eta,                       'xBinning': [50, -2.5, 2.5],         },
             # best z
-            'zMass'                       : {'x': lambda row: row.z_mass,                         'xBinning': [500, 0, 500],           'selection': lambda row: row.z_mass>0.,},
+            'zMass'                       : {'x': lambda row: row.z_mass,                         'xBinning': [200, 0, 200],           'selection': lambda row: row.z_mass>0.,},
             'mllMinusMZ'                  : {'x': lambda row: abs(row.z_mass-ZMASS),              'xBinning': [100, 0, 100],           'selection': lambda row: row.z_mass>0.,},
-            'zPt'                         : {'x': lambda row: row.z_pt,                           'xBinning': [500, 0, 500],           'selection': lambda row: row.z_mass>0.,},
+            'zPt'                         : {'x': lambda row: row.z_pt,                           'xBinning': [100, 0, 500],           'selection': lambda row: row.z_mass>0.,},
             # event
-            'mass'                        : {'x': lambda row: getattr(row,'4l_mass'),             'xBinning': [2000, 0, 2000],         },
-            'st'                          : {'x': lambda row: row.hpp1_pt+row.hpp2_pt+row.hmm1_pt+row.hmm2_pt, 'xBinning': [2000, 0, 2000],         },
+            'mass'                        : {'x': lambda row: getattr(row,'4l_mass'),             'xBinning': [200, 0, 2000],          },
+            #'hppMassMinusHmmMass'         : {'x': lambda row: row.hpp_mass-row.hmm_mass,          'xBinning': [1600, -800, 800],       },
+            'st'                          : {'x': lambda row: row.hpp1_pt+row.hpp2_pt+row.hmm1_pt+row.hmm2_pt, 'xBinning': [2000, 0, 2000],},
             'nJets'                       : {'x': lambda row: row.numJetsTight30,                 'xBinning': [11, -0.5, 10.5],        },
             # for validating datadriven
-            'hpp1Pt'                      : {'x': lambda row: row.hpp1_pt,                        'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
-            'hpp1Eta'                     : {'x': lambda row: row.hpp1_eta,                       'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]), },
-            'hpp2Pt'                      : {'x': lambda row: row.hpp2_pt,                        'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
-            'hpp2Eta'                     : {'x': lambda row: row.hpp2_eta,                       'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]), },
-            'hmm1Pt'                      : {'x': lambda row: row.hmm1_pt,                        'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
-            'hmm1Eta'                     : {'x': lambda row: row.hmm1_eta,                       'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]), },
-            'hmm2Pt'                      : {'x': lambda row: row.hmm2_pt,                        'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
-            'hmm2Eta'                     : {'x': lambda row: row.hmm2_eta,                       'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]), },
+            #'hpp1Pt'                      : {'x': lambda row: row.hpp1_pt,                        'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
+            #'hpp1Eta'                     : {'x': lambda row: row.hpp1_eta,                       'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]), },
+            #'hpp2Pt'                      : {'x': lambda row: row.hpp2_pt,                        'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
+            #'hpp2Eta'                     : {'x': lambda row: row.hpp2_eta,                       'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]), },
+            #'hmm1Pt'                      : {'x': lambda row: row.hmm1_pt,                        'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
+            #'hmm1Eta'                     : {'x': lambda row: row.hmm1_eta,                       'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]), },
+            #'hmm2Pt'                      : {'x': lambda row: row.hmm2_pt,                        'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
+            #'hmm2Eta'                     : {'x': lambda row: row.hmm2_eta,                       'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]), },
+            # 2D
+            'hppMass_hmmMass'             : {'x': lambda row: row.hpp_mass, 'y': lambda row: row.hmm_mass,                                    'xBinning': [100, 0, 2000], 'yBinning': [50, 0, 2000],},
+            'hppMass_st'                  : {'x': lambda row: row.hpp_mass, 'y': lambda row: row.hpp1_pt+row.hpp2_pt+row.hmm1_pt+row.hmm2_pt, 'xBinning': [100, 0, 2000], 'yBinning': [50, 0, 2000],},
+            # for limits
+            'hppMassForLimits'            : {'x': lambda row: row.hpp_mass,                       'xBinning': [160, 0, 1600],         'doGen': True,},
         }
+
+        if self.limitOnly:
+            self.histParams = {
+                'hppMassForLimits'            : {'x': lambda row: row.hpp_mass,                       'xBinning': [160, 0, 1600],         'doGen': True,},
+            }
 
         # initialize flattener
         super(Hpp4lFlattener, self).__init__('Hpp4l',sample,**kwargs)

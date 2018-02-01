@@ -96,27 +96,38 @@ class LimitPlotter(PlotterBase):
         observed_asym = ROOT.TGraph(n)
 
         for i in range(len(xvals)):
+            if not all(limits[xvals[i]]):
+                print i, xvals[i], limits[xvals[i]]
+                continue
             twoSigma.SetPoint(     i,   xvals[i],     limits[xvals[i]][0]) # 0.025
             oneSigma.SetPoint(     i,   xvals[i],     limits[xvals[i]][1]) # 0.16
             expected.SetPoint(     i,   xvals[i],     limits[xvals[i]][2]) # 0.5
-            oneSigma.SetPoint(     n+i, xvals[n-i-1], limits[xvals[n-i-1]][3]) # 0.84
-            twoSigma.SetPoint(     n+i, xvals[n-i-1], limits[xvals[n-i-1]][4]) # 0.975
+            #oneSigma.SetPoint(     n+i, xvals[n-i-1], limits[xvals[n-i-1]][3]) # 0.84
+            #twoSigma.SetPoint(     n+i, xvals[n-i-1], limits[xvals[n-i-1]][4]) # 0.975
+            oneSigma.SetPoint(2*n-i-1,  xvals[i],     limits[xvals[i]][3]) # 0.84
+            twoSigma.SetPoint(2*n-i-1,  xvals[i],     limits[xvals[i]][4]) # 0.975
             observed.SetPoint(     i,   xvals[i],     limits[xvals[i]][5]) # obs
             twoSigma_high.SetPoint(i,   xvals[i],     limits[xvals[i]][0]) # 0.025
             oneSigma_high.SetPoint(i,   xvals[i],     limits[xvals[i]][1]) # 0.16
-            oneSigma_low.SetPoint( i,   xvals[n-i-1], limits[xvals[n-i-1]][3]) # 0.84
-            twoSigma_low.SetPoint( i,   xvals[n-i-1], limits[xvals[n-i-1]][4]) # 0.975
+            #oneSigma_low.SetPoint( i,   xvals[n-i-1], limits[xvals[n-i-1]][3]) # 0.84
+            #twoSigma_low.SetPoint( i,   xvals[n-i-1], limits[xvals[n-i-1]][4]) # 0.975
+            oneSigma_low.SetPoint(n-i-1,xvals[i],     limits[xvals[i]][3]) # 0.84
+            twoSigma_low.SetPoint(n-i-1,xvals[i],     limits[xvals[i]][4]) # 0.975
             twoSigmaForSmoothing_high.SetPoint(i, xvals[i],     math.log(limits[xvals[i]][0])) # 0.025
             oneSigmaForSmoothing_high.SetPoint(i, xvals[i],     math.log(limits[xvals[i]][1])) # 0.16
-            oneSigmaForSmoothing_low.SetPoint( i, xvals[n-i-1], math.log(limits[xvals[n-i-1]][3])) # 0.84
-            twoSigmaForSmoothing_low.SetPoint( i, xvals[n-i-1], math.log(limits[xvals[n-i-1]][4])) # 0.975
+            #oneSigmaForSmoothing_low.SetPoint( i, xvals[n-i-1], math.log(limits[xvals[n-i-1]][3])) # 0.84
+            #twoSigmaForSmoothing_low.SetPoint( i, xvals[n-i-1], math.log(limits[xvals[n-i-1]][4])) # 0.975
+            oneSigmaForSmoothing_low.SetPoint(n-i-1, xvals[i],  math.log(limits[xvals[i]][3])) # 0.84
+            twoSigmaForSmoothing_low.SetPoint(n-i-1, xvals[i],  math.log(limits[xvals[i]][4])) # 0.975
             expectedForSmoothing.SetPoint(     i, xvals[i],     math.log(limits[xvals[i]][2])) # 0.5
             if asymptoticFilenames:
                 twoSigma_asym.SetPoint(i,  xvals[i],     limits_asym[xvals[i]][0]) # 0.025
                 oneSigma_asym.SetPoint(i,  xvals[i],     limits_asym[xvals[i]][1]) # 0.16
                 expected_asym.SetPoint(i,  xvals[i],     limits_asym[xvals[i]][2]) # 0.5
-                oneSigma_asym.SetPoint(n+i,xvals[n-i-1], limits_asym[xvals[n-i-1]][3]) # 0.84
-                twoSigma_asym.SetPoint(n+i,xvals[n-i-1], limits_asym[xvals[n-i-1]][4]) # 0.975
+                #oneSigma_asym.SetPoint(n+i,xvals[n-i-1], limits_asym[xvals[n-i-1]][3]) # 0.84
+                #twoSigma_asym.SetPoint(n+i,xvals[n-i-1], limits_asym[xvals[n-i-1]][4]) # 0.975
+                oneSigma_asym.SetPoint(2*n-i-1,xvals[i], limits_asym[xvals[i]][3]) # 0.84
+                twoSigma_asym.SetPoint(2*n-i-1,xvals[i], limits_asym[xvals[i]][4]) # 0.975
                 observed_asym.SetPoint(i,  xvals[i],     limits_asym[xvals[i]][5]) # obs
 
         if smooth: # smooth out the expected bands

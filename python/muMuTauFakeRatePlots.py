@@ -65,13 +65,14 @@ sigMap = {
 samples = ['QCD','W','TT','WW','WZ','ZZ','Z']
 
 sigMap['BG'] = []
-for s in samples:
+for s in ['WZ','ZZ']:
     sigMap['BG'] += sigMap[s]
 
-sels = ['default','vloose','nearMuon','nearMuonVLoose']
+sels = ['default','vloose','medium','nearMuon','nearMuonVLoose','nearMuonMedium']
 etaBins = [0,1.479,2.3]
 for eb in range(len(etaBins)-1):
-    sels += ['default/etaBin{0}'.format(eb), 'vloose/etaBin{0}'.format(eb), 'nearMuon/etaBin{0}'.format(eb), 'nearMuonVLoose/etaBin{0}'.format(eb)]
+    sels += ['default/etaBin{0}'.format(eb), 'vloose/etaBin{0}'.format(eb), 'medium/etaBin{0}'.format(eb),
+             'nearMuon/etaBin{0}'.format(eb), 'nearMuonVLoose/etaBin{0}'.format(eb), 'nearMuonMedium/etaBin{0}'.format(eb)]
 
 
 ########################
@@ -85,8 +86,8 @@ plots = {
     # t
     'tPt'                   : {'xaxis': '#tau p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
     # event
-    'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
-    'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,320,20), 'numcol': 2, 'logy': False, 'overflow': True},
+    #'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
+    #'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,320,20), 'numcol': 2, 'logy': False, 'overflow': True},
 }
 
 ############################
@@ -122,7 +123,7 @@ cust = {
 }
 
 for plot in cust:
-    for num,denom in [('vloose','default'),('nearMuonVLoose','nearMuon')]:
+    for num,denom in [('vloose','default'),('nearMuonVLoose','nearMuon'),('medium','default'),('nearMuonMedium','nearMuon')]:
         kwargs = deepcopy(plots[plot])
         kwargs.update(cust[plot])
         kwargs['yaxis'] = 'Ratio'
@@ -130,9 +131,9 @@ for plot in cust:
         denomname = '{0}/{1}'.format(denom,plot)
         savename = 'ratio/{0}/{1}'.format(num,plot)
         subtractMap = {
-            #'data': ['MC'],
+            'data': ['MC'],
         }
-        customOrder = ['Z','data']
+        customOrder = ['data_uncorrected','Z','data']
         plotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,subtractMap=subtractMap,**kwargs)
         for eb in range(2):
             kwargs = deepcopy(plots[plot])
@@ -142,7 +143,7 @@ for plot in cust:
             denomname = '{0}/etaBin{1}/{2}'.format(denom,eb,plot)
             savename = 'ratio/{0}/{1}_etaBin{2}'.format(num,plot,eb)
             subtractMap = {
-                #'data': ['MC'],
+                'data': ['MC'],
             }
-            customOrder = ['Z','data']
+            customOrder = ['data_uncorrected','Z','data']
             plotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,subtractMap=subtractMap,**kwargs)

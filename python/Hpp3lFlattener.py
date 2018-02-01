@@ -28,9 +28,11 @@ class Hpp3lFlattener(NtupleFlattener):
         self.tauFakeMode = 'z' # allowed: w, z
         self.doDMFakes = True
         self.datadriven = True
-        self.datadrivenRegular = True
+        self.datadrivenRegular = False
         self.lowmass = True
-        self.doGen = False
+        self.zveto = True
+        self.doGen = True
+        self.limitOnly = False
         self.mass = 500
 
         # setup properties
@@ -53,16 +55,25 @@ class Hpp3lFlattener(NtupleFlattener):
             '3lmassCut': lambda row: getattr(row,'3l_mass')>100,
             'looseId'  : lambda row: all([getattr(row,'{0}_passLoose{1}'.format(l,'New' if self.new else ''))>0.5 for l in self.leps]),
         }
+        self.zvetoCutMap = {
+            'pt20'     : lambda row: all([getattr(row,'{0}_pt'.format(l))>20 for l in self.leps]),
+            '3lmassCut': lambda row: getattr(row,'3l_mass')>100,
+            'looseId'  : lambda row: all([getattr(row,'{0}_passLoose{1}'.format(l,'New' if self.new else ''))>0.5 for l in self.leps]),
+            'zVeto'    : lambda row: abs(getattr(row,'z_mass')-ZMASS)>10,
+        }
         self.selectionMap = {}
         self.selectionMap['default'] = lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
         if self.lowmass: self.selectionMap['lowmass'] = lambda row: all([self.lowmassCutMap[cut](row) for cut in self.lowmassCutMap])
+        if self.zveto: self.selectionMap['zveto'] = lambda row: all([self.zvetoCutMap[cut](row) for cut in self.zvetoCutMap])
 
         # sample signal plot
         self.cutRegions = {}
-        self.cutRegions[self.mass] = getSelectionMap('Hpp3l',self.mass)
-        self.selectionMap['nMinusOne/massWindow/{0}/hpp0'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][0][v](row) for v in ['st','zveto','met','dr']])
-        self.selectionMap['nMinusOne/massWindow/{0}/hpp1'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][1][v](row) for v in ['st','zveto','met','dr']])
-        self.selectionMap['nMinusOne/massWindow/{0}/hpp2'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][2][v](row) for v in ['st','zveto','met','dr']])
+        masses = [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500] if self.limitOnly else [self.mass]
+        for mass in masses:
+            self.cutRegions[mass] = getSelectionMap('Hpp3l',mass)
+            self.selectionMap['nMinusOne/massWindow/{0}/hpp0'.format(mass)] = lambda row: all([self.cutRegions[mass][0][v](row) for v in ['st','zveto','met','dr']])
+            self.selectionMap['nMinusOne/massWindow/{0}/hpp1'.format(mass)] = lambda row: all([self.cutRegions[mass][1][v](row) for v in ['st','zveto','met','dr']])
+            self.selectionMap['nMinusOne/massWindow/{0}/hpp2'.format(mass)] = lambda row: all([self.cutRegions[mass][2][v](row) for v in ['st','zveto','met','dr']])
         
         # tight loose ids to test fakerates
         #loose = '{}loose'.format('new' if self.new else 'old')
@@ -86,12 +97,12 @@ class Hpp3lFlattener(NtupleFlattener):
                 self.selections += ['{0}/{1}'.format(fakeChan,sel)]
                 if self.datadrivenRegular: self.selections += ['{0}_regular/{1}'.format(fakeChan,sel)]
 
-        limitedHists = [
-            'count',
-            'hpp1Pt','hpp1Eta','hpp1DecayMode',
-            'hpp2Pt','hpp2Eta','hpp2DecayMode',
-            'hm1Pt','hm1Eta', 'hm1DecayMode',
-        ]
+        #limitedHists = [
+        #    'count',
+        #    'hpp1Pt','hpp1Eta','hpp1DecayMode',
+        #    'hpp2Pt','hpp2Eta','hpp2DecayMode',
+        #    'hm1Pt','hm1Eta', 'hm1DecayMode',
+        #]
         #for sel in self.selectionMapDM:
         #    self.selections += [sel]
         #    self.selectionHists[sel] = limitedHists
@@ -135,16 +146,26 @@ class Hpp3lFlattener(NtupleFlattener):
             'st'                          : {'x': lambda row: row.hpp1_pt+row.hpp2_pt+row.hm1_pt, 'xBinning': [2000, 0, 2000],         },
             'nJets'                       : {'x': lambda row: row.numJetsTight30,                 'xBinning': [11, -0.5, 10.5],        },
             # for validating datadriven
-            'hpp1Pt'                      : {'x': lambda row: row.hpp1_pt,                        'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
-            'hpp1Eta'                     : {'x': lambda row: row.hpp1_eta,                       'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]),},
-            'hpp1DecayMode'               : {'x': lambda row: row.hpp1_decayMode,                 'xBinning': [12, 0, 12],                          },
-            'hpp2Pt'                      : {'x': lambda row: row.hpp2_pt,                        'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
-            'hpp2Eta'                     : {'x': lambda row: row.hpp2_eta,                       'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]),},
-            'hpp2DecayMode'               : {'x': lambda row: row.hpp2_decayMode,                 'xBinning': [12, 0, 12],                          },
-            'hm1Pt'                       : {'x': lambda row: row.hm1_pt,                         'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
-            'hm1Eta'                      : {'x': lambda row: row.hm1_eta,                        'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]),},
-            'hm1DecayMode'                : {'x': lambda row: row.hm1_decayMode,                  'xBinning': [12, 0, 12],                          },
+            #'hpp1Pt'                      : {'x': lambda row: row.hpp1_pt,                        'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
+            #'hpp1Eta'                     : {'x': lambda row: row.hpp1_eta,                       'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]),},
+            #'hpp1DecayMode'               : {'x': lambda row: row.hpp1_decayMode,                 'xBinning': [12, 0, 12],                          },
+            #'hpp2Pt'                      : {'x': lambda row: row.hpp2_pt,                        'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
+            #'hpp2Eta'                     : {'x': lambda row: row.hpp2_eta,                       'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]),},
+            #'hpp2DecayMode'               : {'x': lambda row: row.hpp2_decayMode,                 'xBinning': [12, 0, 12],                          },
+            #'hm1Pt'                       : {'x': lambda row: row.hm1_pt,                         'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
+            #'hm1Eta'                      : {'x': lambda row: row.hm1_eta,                        'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]),},
+            #'hm1DecayMode'                : {'x': lambda row: row.hm1_decayMode,                  'xBinning': [12, 0, 12],                          },
+            # 2D
+            'hppMass_hmMass'              : {'x': lambda row: row.hpp_mass, 'y': lambda row: row.hm_mt,                          'xBinning': [100, 0, 2000], 'yBinning': [100, 0, 2000],},
+            'hppMass_st'                  : {'x': lambda row: row.hpp_mass, 'y': lambda row: row.hpp1_pt+row.hpp2_pt+row.hm1_pt, 'xBinning': [100, 0, 2000], 'yBinning': [100, 0, 2000],},
+            # for limits
+            'hppMassForLimits'            : {'x': lambda row: row.hpp_mass,                       'xBinning': [160, 0, 1600],          'doGen': True,},
         }
+
+        if self.limitOnly:
+            self.histParams = {
+                'hppMassForLimits'            : {'x': lambda row: row.hpp_mass,                       'xBinning': [160, 0, 1600],          'doGen': True,},
+            }
 
         # initialize flattener
         super(Hpp3lFlattener, self).__init__('Hpp3l',sample,**kwargs)
