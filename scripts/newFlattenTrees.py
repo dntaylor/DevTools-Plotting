@@ -17,6 +17,7 @@ from DevTools.Plotter.Hpp3lFlattener import Hpp3lFlattener
 from DevTools.Plotter.Hpp4lFlattener import Hpp4lFlattener
 from DevTools.Plotter.WTauFakeRateFlattener import WTauFakeRateFlattener
 from DevTools.Plotter.ZTauFakeRateFlattener import ZTauFakeRateFlattener
+from DevTools.Plotter.MuMuTauTauFlattener import MuMuTauTauFlattener
 
 try:
     from DevTools.Utilities.MultiProgress import MultiProgress
@@ -33,6 +34,7 @@ flatteners = {
     'Hpp4l': Hpp4lFlattener,
     'WTauFakeRate': WTauFakeRateFlattener,
     'ZTauFakeRate': ZTauFakeRateFlattener,
+    'MuMuTauTau': MuMuTauTauFlattener,
 }
 
 def flatten(analysis,sample,**kwargs):

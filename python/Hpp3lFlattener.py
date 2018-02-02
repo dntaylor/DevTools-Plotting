@@ -145,6 +145,7 @@ class Hpp3lFlattener(NtupleFlattener):
             'mass'                        : {'x': lambda row: getattr(row,'3l_mass'),             'xBinning': [2000, 0, 2000],         },
             'st'                          : {'x': lambda row: row.hpp1_pt+row.hpp2_pt+row.hm1_pt, 'xBinning': [2000, 0, 2000],         },
             'nJets'                       : {'x': lambda row: row.numJetsTight30,                 'xBinning': [11, -0.5, 10.5],        },
+            'nBJets'                      : {'x': lambda row: row.numBjetsTight30,                'xBinning': [11, -0.5, 10.5],        },
             # for validating datadriven
             #'hpp1Pt'                      : {'x': lambda row: row.hpp1_pt,                        'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
             #'hpp1Eta'                     : {'x': lambda row: row.hpp1_eta,                       'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]),},

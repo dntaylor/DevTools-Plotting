@@ -62,7 +62,7 @@ sigMap = {
     ],
 }
 
-samples = ['QCD','W','TT','WW','WZ','ZZ','Z']
+samples = ['W','TT','WW','WZ','ZZ','Z']
 
 sigMap['BG'] = []
 for s in ['WZ','ZZ']:

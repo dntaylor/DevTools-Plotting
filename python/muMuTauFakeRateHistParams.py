@@ -23,7 +23,7 @@ def buildMuMuTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,
         'tPt'                         : {'xVariable': 't_pt',                           'xBinning': [500, 0, 500],           },
     }
 
-    baseCut = '1'
+    baseCut = 'z_mass>81 && z_mass<101 && !(tjet_passCSVv2M>0.5)'
     scaleFactor = 'genWeight*pileupWeight*triggerEfficiency'
     
     selectionParams['MuMuTauFakeRate'] = {
