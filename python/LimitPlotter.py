@@ -63,11 +63,14 @@ class LimitPlotter(PlotterBase):
         ymin = kwargs.pop('ymin',None)
         ymax = kwargs.pop('ymax',None)
         logy = kwargs.pop('logy',1)
+        plotunity = kwargs.pop('plotunity',True)
+        leftmargin = kwargs.pop('leftmargin',None)
 
         logging.info('Plotting {0}'.format(savename))
 
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
         canvas.SetLogy(logy)
+        if leftmargin: canvas.SetLeftMargin(leftmargin)
 
         if isinstance(filenames,dict): # not files, map of results
             limits = filenames
@@ -205,7 +208,7 @@ class LimitPlotter(PlotterBase):
         if not blind: observed.Draw('same')
 
         ratiounity = ROOT.TLine(expected.GetXaxis().GetXmin(),1,expected.GetXaxis().GetXmax(),1)
-        ratiounity.Draw()
+        if plotunity: ratiounity.Draw()
 
         # get the legend
         entries = [
