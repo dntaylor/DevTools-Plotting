@@ -21,17 +21,17 @@ tdrstyle.setTDRStyle()
 ROOT.gStyle.SetPalette(1)
 
 # set a custom style, copied from 6.04, just directly when CMSSW has 6.04
-stops = array('d', [0.0000, 0.1250, 0.2500, 0.3750, 0.5000, 0.6250, 0.7500, 0.8750, 1.0000])
+#stops = array('d', [0.0000, 0.1250, 0.2500, 0.3750, 0.5000, 0.6250, 0.7500, 0.8750, 1.0000])
 # rust
-red   = array('d', [  0./255., 30./255., 63./255., 101./255., 143./255., 152./255., 169./255., 187./255., 230./255.])
-green = array('d', [  0./255., 14./255., 28./255.,  42./255.,  58./255.,  61./255.,  67./255.,  74./255.,  91./255.])
-blue  = array('d', [ 39./255., 26./255., 21./255.,  18./255.,  15./255.,  14./255.,  14./255.,  13./255.,  13./255.])
+#red   = array('d', [  0./255., 30./255., 63./255., 101./255., 143./255., 152./255., 169./255., 187./255., 230./255.])
+#green = array('d', [  0./255., 14./255., 28./255.,  42./255.,  58./255.,  61./255.,  67./255.,  74./255.,  91./255.])
+#blue  = array('d', [ 39./255., 26./255., 21./255.,  18./255.,  15./255.,  14./255.,  14./255.,  13./255.,  13./255.])
 # solar
 #red   = array('d', [ 99./255., 116./255., 154./255., 174./255., 200./255., 196./255., 201./255., 201./255., 230./255.])
 #green = array('d', [  0./255.,   0./255.,   8./255.,  32./255.,  58./255.,  83./255., 119./255., 136./255., 173./255.])
 #blue  = array('d', [  5./255.,   6./255.,   7./255.,   9./255.,   9./255.,  14./255.,  17./255.,  19./255.,  24./255.])
-Idx = ROOT.TColor.CreateGradientColorTable(9, stops, red, green, blue, 255);
-ROOT.gStyle.SetNumberContours(255)
+#Idx = ROOT.TColor.CreateGradientColorTable(9, stops, red, green, blue, 255);
+#ROOT.gStyle.SetNumberContours(255)
 
 
 class Plotter(PlotterBase):
@@ -490,7 +490,8 @@ class Plotter(PlotterBase):
                 nVal = num.GetBinContent(b+1)
                 nErr = num.GetBinError(b+1)
                 dVal = denom.GetBinContent(b+1)
-                if dVal>1e-6:
+                #if dVal>1e-6: # why?
+                if dVal>0:
                     val = nVal/dVal
                     err = nErr/dVal
                 else:
@@ -565,6 +566,7 @@ class Plotter(PlotterBase):
         binlabels = kwargs.pop('binlabels',[])
         save = kwargs.pop('save',True)
         getHists = kwargs.pop('getHists',False)
+        doGOF = kwargs.pop('doGOF',False)
 
         # overflow doesnt work with logx
         if logx: kwargs['overflow'] = False
@@ -635,6 +637,14 @@ class Plotter(PlotterBase):
                         hist.SetBinContent(b+lowbin,0.)
                         hist.SetBinError(b+lowbin,0.)
                 hist.SetBinErrorOption(ROOT.TH1.kPoisson)
+                if doGOF:
+                    #ks = hist.KolmogorovTest(stack.GetStack().Last())
+                    ks = hist.KolmogorovTest(stack.GetStack().Last())
+                    chi2_p = hist.Chi2Test(stack.GetStack().Last(),'UW')
+                    chi2_ndf = hist.Chi2Test(stack.GetStack().Last(),'UW CHI2/NDF')
+                    logging.info('1-KS: {}'.format(1-ks))
+                    logging.info('chi2 p: {}'.format(chi2_p))
+                    logging.info('chi2/ndf: {}'.format(chi2_ndf))
             else:
                 hist.SetLineWidth(3)
             if histName in self.histScales:
@@ -1498,6 +1508,7 @@ class Plotter(PlotterBase):
                 else:
                     hist.SetLineWidth(3)
                     hist.Draw('hist same')
+                hist.GetYaxis().SetRangeUser(0.5,1.5)
             #if canvas != ROOT.TVirtualPad.Pad(): canvas.cd()
             ##canvas.cd()
 

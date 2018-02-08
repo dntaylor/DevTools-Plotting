@@ -104,7 +104,7 @@ class NtupleFlattener(object):
                             elif len(xbins)==3 and len(ybins)==3: # n, low, high
                                 self.hists[histName] = ROOT.TH2D(histName,histName,xbins[0],xbins[1],xbins[2],ybins[0],ybins[1],ybins[2])
                             else:
-                                self.hists[histName] = ROOT.TH1D()
+                                self.hists[histName] = ROOT.TH2D()
                         else:
                             if isinstance(xbins,array): # variable width array
                                 self.hists[histName] = ROOT.TH1D(histName,histName,len(xbins)-1,xbins)

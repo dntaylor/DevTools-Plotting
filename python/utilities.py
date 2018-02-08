@@ -128,6 +128,7 @@ latestNtuples['80X'] = {
 # MuMuTauTau
     'MuMuTauTau'     : '2018-02-01_MuMuTauTauAnalysis_80X_v1-merge',
     'MuMuTauFakeRate': '2018-02-01_MuMuTauFakeRateAnalysis_80X_v2-merge',
+    'MuMuMuFakeRate' : '2018-02-05_MuMuMuFakeRateAnalysis_80X_v1-merge',
 }
 
 latestShifts = {}

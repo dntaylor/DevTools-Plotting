@@ -23,6 +23,7 @@ from threeLeptonHistParams import buildThreeLepton
 from triggerCountHistParams import buildTriggerCount
 from muMuTauTauHistParams import buildMuMuTauTau
 from muMuTauFakeRateHistParams import buildMuMuTauFakeRate
+from muMuMuFakeRateHistParams import buildMuMuMuFakeRate
 
 cachedParams = {}
 
@@ -77,6 +78,7 @@ def buildHistParams(analysis,**kwargs):
     if analysis=='TriggerCount':    buildTriggerCount(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='MuMuTauTau':      buildMuMuTauTau(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='MuMuTauFakeRate': buildMuMuTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='MuMuMuFakeRate':  buildMuMuMuFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
 
     cachedParams[key] = (selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     return cachedParams[key]

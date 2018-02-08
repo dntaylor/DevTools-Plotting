@@ -11,12 +11,12 @@ import ROOT
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 fakeratePlotter = Plotter(
-    'MuMuTauFakeRate',
+    'MuMuMuFakeRate',
 )
 
 fakerateMaker = HistMaker(
-    'MuMuTauFakeRate',
-    outputFileName = 'root/MuMuTauFakeRate/fakerates.root',
+    'MuMuMuFakeRate',
+    outputFileName = 'root/MuMuMuFakeRate/fakerates.root',
 )
 
 sigMap = {
@@ -73,14 +73,12 @@ fakeratePlotter.addHistogram('Z',sigMap['Z'])
 fakeratePlotter.addHistogram('data',sigMap['data'],style={'linecolor':ROOT.kBlack,'name':'Corrected'})
 fakeratePlotter.addHistogram('data_uncorrected',sigMap['data'],style={'linecolor':ROOT.kRed,'name':'Uncorrected'})
 
-etaBins = [0.,1.479,2.3]
-ptBins = [10,15,20,25,30,50,100]
+etaBins = [0.,1.0,1.5,2.4]
+ptBins = [3,5,10,15,20,25,30,50,100]
 
-numDenoms = [('vloose','default'),('nearMuonVLoose','nearMuon'),('medium','default'),('nearMuonMedium','nearMuon')]
-for newloose in [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]:
-    numDenoms += [('nearMuonMedium','nearMuonWithMVA{:0.1f}'.format(newloose))]
+numDenoms = [('iso0.15','default'),('iso0.40','default'),('iso0.25','default'),('iso0.15','iso0.40'),]
 
-name = '{0}/etaBin{1}/tPt'
+name = '{0}/etaBin{1}/mPt'
 
 for num,denom in numDenoms:
     xaxis = 'p_{T}^{#tau}'

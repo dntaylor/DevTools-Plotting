@@ -15,7 +15,7 @@ version = getCMSSWVersion()
 
 blind = False
 
-plotter = Plotter('MuMuTauFakeRate')
+plotter = Plotter('MuMuMuFakeRate')
 
 #########################
 ### Define categories ###
@@ -68,11 +68,10 @@ sigMap['BG'] = []
 for s in ['WZ','ZZ']:
     sigMap['BG'] += sigMap[s]
 
-sels = ['default','vloose','medium','nearMuon','nearMuonVLoose','nearMuonMedium']
-etaBins = [0,1.479,2.3]
+sels = ['default','iso0.15','iso0.25','iso0.40']
+etaBins = [0,1.0,1.5,2.4]
 for eb in range(len(etaBins)-1):
-    sels += ['default/etaBin{0}'.format(eb), 'vloose/etaBin{0}'.format(eb), 'medium/etaBin{0}'.format(eb),
-             'nearMuon/etaBin{0}'.format(eb), 'nearMuonVLoose/etaBin{0}'.format(eb), 'nearMuonMedium/etaBin{0}'.format(eb)]
+    sels += ['default/etaBin{0}'.format(eb), 'iso0.15/etaBin{0}'.format(eb), 'iso0.25/etaBin{0}'.format(eb), 'iso0.40/etaBin{0}'.format(eb),]
 
 
 ########################
@@ -84,7 +83,7 @@ plots = {
     'z1Pt'                  : {'xaxis': 'm^{#mu#mu} #mu_{1} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
     'z2Pt'                  : {'xaxis': 'm^{#mu#mu} #mu_{2} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
     # t
-    'tPt'                   : {'xaxis': '#tau p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
+    'mPt'                   : {'xaxis': '#mu p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
     # event
     #'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     #'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,320,20), 'numcol': 2, 'logy': False, 'overflow': True},
@@ -114,17 +113,15 @@ plotter.addHistogram('Z',sigMap['Z'])
 plotter.addHistogram('data',sigMap['data'],style={'linecolor':ROOT.kBlack,'name':'Data'})
 plotter.addHistogram('data_uncorrected',sigMap['data'],style={'linecolor':ROOT.kRed,'name':'Uncorrected'})
 
-ptbins = [10,15,20,25,30,50,100]
-etabins = [-2.3,-1.479,0.,1.479,2.3]
+ptbins = [3,5,10,15,20,25,30,50,100]
+etabins = [-2.4,-1.5,-1.0,0.,1.0,1.5,2.4]
 
 cust = {
-    'tPt'     : {'rebin': ptbins, 'overflow': False},
-    #'tEta'    : {'rebin': etabins},
+    'mPt'     : {'rebin': ptbins, 'overflow': False},
+    #'mEta'    : {'rebin': etabins},
 }
 
-numDenoms = [('vloose','default'),('nearMuonVLoose','nearMuon'),('medium','default'),('nearMuonMedium','nearMuon')]
-for newloose in [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]:
-    numDenoms += [('nearMuonMedium','nearMuonWithMVA{:0.1f}'.format(newloose))]
+numDenoms = [('iso0.15','default'),('iso0.25','default'),('iso0.40','default'),('iso0.15','iso0.40'),]
 
 for plot in cust:
     for num,denom in numDenoms:
@@ -139,7 +136,7 @@ for plot in cust:
         }
         customOrder = ['data_uncorrected','Z','data']
         plotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,subtractMap=subtractMap,**kwargs)
-        for eb in range(2):
+        for eb in range(3):
             kwargs = deepcopy(plots[plot])
             kwargs.update(cust[plot])
             kwargs['yaxis'] = 'Ratio'
