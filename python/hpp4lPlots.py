@@ -20,6 +20,7 @@ plotCount = True
 plotMC = True
 plotDatadriven = True
 plotLowmass = True
+plotZveto = True
 plotFakeRegions = False
 plotSignal = False
 plotROC = False
@@ -157,20 +158,26 @@ variable_binning = {
         #'IV' : [0,50,100,200,300,400,1650],
         #'V'  : [0,50,100,200,400,1650],
         #'VI' : [0,200,1650],
-        'I'  : exp_binning(0,1650,lambda x: math.exp(0.015*x),minwidth=50),
-        'II' : exp_binning(0,1650,lambda x: math.exp(0.05*x),minwidth=50),
-        'III': exp_binning(0,1650,lambda x: math.exp(0.05*x),minwidth=200),
-        'IV' : exp_binning(0,1650,lambda x: math.exp(0.05*x),minwidth=50),
-        'V'  : exp_binning(0,1650,lambda x: math.exp(0.05*x),minwidth=50),
-        'VI' : exp_binning(0,1650,lambda x: math.exp(0.05*x),minwidth=200),
+        'I'  : exp_binning(50,1650,lambda x: math.exp(0.015*x),minwidth=50),
+        'II' : exp_binning(50,1650,lambda x: math.exp(0.05*x),minwidth=50),
+        'III': exp_binning(50,1650,lambda x: math.exp(0.05*x),minwidth=200),
+        'IV' : exp_binning(50,1650,lambda x: math.exp(0.05*x),minwidth=50),
+        'V'  : exp_binning(50,1650,lambda x: math.exp(0.05*x),minwidth=50),
+        'VI' : exp_binning(50,1650,lambda x: math.exp(0.05*x),minwidth=200),
     },
     'st': {
-        'I'  : [0,50,100,150,200,250,300,400,500,600,800,1000,1400,2000],
-        'II' : [0,50,100,150,200,300,400,600,1000,2000],
-        'III': [0,200,600,2000],
-        'IV' : [0,50,100,200,300,400,2000],
-        'V'  : [0,50,100,200,400,2000],
-        'VI' : [0,200,2000],
+        'I'  : exp_binning(100,2100,lambda x: math.exp(0.015*x),minwidth=50),
+        'II' : exp_binning(100,2100,lambda x: math.exp(0.05*x),minwidth=50),
+        'III': exp_binning(100,2100,lambda x: math.exp(0.05*x),minwidth=200),
+        'IV' : exp_binning(100,2100,lambda x: math.exp(0.05*x),minwidth=50),
+        'V'  : exp_binning(100,2100,lambda x: math.exp(0.05*x),minwidth=50),
+        'VI' : exp_binning(100,2100,lambda x: math.exp(0.05*x),minwidth=200),
+        #'I'  : [0,50,100,150,200,250,300,400,500,600,800,1000,1400,2000],
+        #'II' : [0,50,100,150,200,300,400,600,1000,2000],
+        #'III': [0,200,600,2000],
+        #'IV' : [0,50,100,200,300,400,2000],
+        #'V'  : [0,50,100,200,400,2000],
+        #'VI' : [0,200,2000],
     },
     #'hppLeadingLeptonPt': {
     #    'I'  : [30,50,100,150,200,250,300,400,500],
@@ -184,11 +191,25 @@ variable_binning = {
 variable_binning['hmmMass'] = variable_binning['hppMass']
 
 ymax = {
-    #'hppLeadingLeptonPt': {
-    #    'III': 0.05,
-    #    'VI' : 0.02,
-    #},
+    'hppMass': {
+        'I'  : 1e2,
+        'II' : 1e2,
+        'III': 1e2,
+        'IV' : 1e2,
+        'V'  : 1e2,
+        'VI' : 1e2,
+    },
+    'st': {
+        'I'  : 1e2,
+        'II' : 1e2,
+        'III': 1e2,
+        'IV' : 1e2,
+        'V'  : 1e2,
+        'VI' : 1e2,
+    },
 }
+
+ymax['hmmMass'] = ymax['hppMass']
 
 ymin = {
     'hppMass': {
@@ -239,7 +260,7 @@ def plotWithCategories(plotter,plot,baseDir='default',saveDir='',datadriven=Fals
 ########################
 plots = {
     # hpp
-    'hppMass'               : {'xaxis': 'm_{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,650,50), 'logy': True, 'overflow': True},
+    'hppMass'               : {'xaxis': 'm_{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': range(50,850,50), 'logy': True, 'overflow': False, 'logx': True, 'ymin': 1,},
     #'hppMt'                 : {'xaxis': 'm_{T}^{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': False, 'overflow': True,},
     'hppPt'                 : {'xaxis': 'p_{T}^{l^{+}l^{+}} (GeV)', 'yaxis': 'Events / 25 GeV', 'rebin': range(0,325,25), 'overflow': True,},
     'hppDeltaR'             : {'xaxis': '#DeltaR(l^{+}l^{+})', 'yaxis': 'Events', 'rebin': 5, 'numcol': 3, 'legendpos':34, 'yscale': 1.8,},
@@ -248,7 +269,7 @@ plots = {
     'hppSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{++}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(10,230,20), 'numcol': 2, 'overflow': True},
     'hppSubLeadingLeptonEta': {'xaxis': '#eta^{#Phi_{sublead}^{++}}', 'yaxis': 'Events', 'rebin': 5, 'numcol': 3, 'legendpos':34, 'yscale': 1.8,},
     # hmm
-    'hmmMass'               : {'xaxis': 'm_{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,650,50), 'logy': True, 'overflow': True,},
+    'hmmMass'               : {'xaxis': 'm_{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': range(50,850,50), 'logy': True, 'overflow': False, 'logx': True, 'ymin': 1,},
     #'hmmMt'                 : {'xaxis': 'm_{T}^{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': False, 'overflow': True,},
     'hmmPt'                 : {'xaxis': 'p_{T}^{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 25 GeV', 'rebin': range(0,325,25), 'overflow': True,},
     'hmmDeltaR'             : {'xaxis': '#DeltaR(l^{-}l^{-})', 'yaxis': 'Events', 'rebin': 5, 'numcol': 3, 'legendpos':34, 'yscale': 1.8,},
@@ -265,15 +286,20 @@ plots = {
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,320,20), 'numcol': 2, 'overflow': True},
     #'metPhi'                : {'xaxis': '#phi(E_{T}^{miss})', 'yaxis': 'Events', 'rebin': 5},
     'mass'                  : {'xaxis': 'm_{4l} (GeV)', 'yaxis': 'Events / 50 GeV', 'rebin': range(0,650,50), 'numcol': 2, 'overflow': True},
-    'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 25 GeV', 'rebin': range(40,540,50), 'numcol': 2, 'logy': True, 'numcol': 2, 'legendpos': 34, 'overflow': True},
+    'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 100 GeV', 'rebin': range(100,2100,100), 'numcol': 2, 'logy': True, 'numcol': 2, 'legendpos': 34, 'overflow': False, 'logx': True, 'ymin': 1,},
     'nJets'                 : {'xaxis': 'Number of jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'numcol': 2, 'rebin': [-0.5,0.5,1.5,2.5,3.5,4.5], 'overflow': True, 'binlabels': ['0','1','2','3','4','#geq5']},
 }
 
 
 
 blind_cust = {
-    'hppMass': {'blinder': [200,1650], 'rangex': [0,1650],},
-    'hmmMass': {'blinder': [200,1650], 'rangex': [0,1650],},
+    'hppMass'               : {'blinder': [200,850], 'rangex': [50,850],},
+    'hmmMass'               : {'blinder': [200,850], 'rangex': [50,850],},
+    'st'                    : {'blinder': [400,2100], 'rangex': [100,2100],},
+    'hppLeadingLeptonPt'    : {'blinder': [200,200], 'rangex': [0,200],},
+    'hppSubLeadingLeptonPt' : {'blinder': [200,200], 'rangex': [0,200],},
+    'hmmLeadingLeptonPt'    : {'blinder': [200,200], 'rangex': [0,200],},
+    'hmmSubLeadingLeptonPt' : {'blinder': [200,200], 'rangex': [0,200],},
 }
 
 lowmass_cust = {
@@ -581,6 +607,43 @@ if plotDatadriven and plotLowmass:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
         plotWithCategories(hpp4lPlotter,plot,baseDir='lowmass',saveDir='lowmass-datadriven',datadriven=True,**kwargs)
+
+########################
+### z veto selection ###
+########################
+if plotMC and plotZveto:
+    hpp4lPlotter.clearHistograms()
+    
+    for s in allsamples:
+        hpp4lPlotter.addHistogramToStack(s,sigMap[s])
+    hpp4lPlotter.addHistogram('data',sigMap['data'])
+    
+    if plotCount: plotCounts(hpp4lPlotter,baseDir='zveto',saveDir='zveto')
+    
+    for plot in plots:
+        kwargs = deepcopy(plots[plot])
+        if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
+        plotWithCategories(hpp4lPlotter,plot,baseDir='zveto',saveDir='zveto',**kwargs)
+
+#####################################
+### z veto datadriven backgrounds ###
+#####################################
+if plotDatadriven and plotZveto:
+    hpp4lPlotter.clearHistograms()
+    
+    hpp4lPlotter.addHistogramToStack('datadriven',datadrivenSamples)
+    
+    for s in samples:
+        hpp4lPlotter.addHistogramToStack(s,sigMapDD[s])
+    
+    hpp4lPlotter.addHistogram('data',sigMapDD['data'])
+    
+    if plotCount: plotCounts(hpp4lPlotter,baseDir='zveto',saveDir='zveto-datadriven',datadriven=True)
+    
+    for plot in plots:
+        kwargs = deepcopy(plots[plot])
+        if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
+        plotWithCategories(hpp4lPlotter,plot,baseDir='zveto',saveDir='zveto-datadriven',datadriven=True,**kwargs)
 
 ############################
 ### Fake Regions lowmass ###

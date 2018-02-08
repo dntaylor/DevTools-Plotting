@@ -366,6 +366,7 @@ for mass in xsecs_4l_NLO:
     xsecs['HPlusPlusHMinusMinusHTo4L_M-{0}_TuneCUETP8M1_13TeV_pythia8'.format(mass)] = xsecs_4l_NLO[mass]
     xsecs['HPlusPlusHMinusMinusHTo4L_M-{0}_13TeV-pythia8'.format(mass)] = xsecs_4l_NLO[mass]
     xsecs['HPlusPlusHMinusMinusHRTo4L_M-{0}_TuneCUETP8M1_13TeV_pythia8'.format(mass)] = xsecs_r4l_NLO[mass]
+    xsecs['HPlusPlusHMinusMinusHRTo4L_M-{0}_TuneCUETP8M1_13TeV-pythia8'.format(mass)] = xsecs_r4l_NLO[mass]
     xsecs['HPlusPlusHMinusMinusHRTo4L_M-{0}_13TeV-pythia8'.format(mass)] = xsecs_r4l_NLO[mass]
 
 # N3LO Higgs

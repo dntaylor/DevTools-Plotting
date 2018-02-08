@@ -212,6 +212,9 @@ class NtupleWrapper(object):
 
     def __flatten(self,directory,histName,selection,params,**kwargs):
         '''Produce flat histograms for a given selection.'''
+        # only flatten specified hists
+        allowed = kwargs.pop('hists',[])
+        if allowed and histName not in allowed: return False
         # clear old
         ROOT.gDirectory.Delete('h_*')
         ROOT.gDirectory.Delete(histName)
@@ -652,3 +655,4 @@ class NtupleWrapper(object):
                 variable = '/'.join([selectionName,genchan,histName])
             self.__projectChannel(variable)
         self.temp = True
+

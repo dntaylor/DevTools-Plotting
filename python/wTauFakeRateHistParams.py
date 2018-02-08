@@ -74,7 +74,7 @@ def buildWTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sam
             selectionParams['WTauFakeRate'][name] = deepcopy(selectionParams['WTauFakeRate'][sel])
             args = selectionParams['WTauFakeRate'][name]['args']
             selectionParams['WTauFakeRate'][name]['args'][0] = ' && '.join([args[0],subsels[sub]])
-            for dm in [0,1,2,5,6,7,10,11]:
+            for dm in [0,1,5,6,10]:
                 name = '{0}/{1}/dm{2}'.format(sel,sub,dm)
                 selectionParams['WTauFakeRate'][name] = deepcopy(selectionParams['WTauFakeRate'][sel])
                 args = selectionParams['WTauFakeRate'][name]['args']
@@ -89,4 +89,10 @@ def buildWTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sam
             selectionParams['WTauFakeRate'][name] = deepcopy(selectionParams['WTauFakeRate'][sel])
             args = selectionParams['WTauFakeRate'][name]['args']
             selectionParams['WTauFakeRate'][name]['args'][0] = ' && '.join([args[0],'fabs(t_eta)>={0} && fabs(t_eta)<{1}'.format(etaBins[eb],etaBins[eb+1])])
+            for dm in [0,1,5,6,10]:
+                name = '{0}/etaBin{1}/dm{2}'.format(sel,eb,dm)
+                selectionParams['WTauFakeRate'][name] = deepcopy(selectionParams['WTauFakeRate'][sel])
+                args = selectionParams['WTauFakeRate'][name]['args']
+                selectionParams['WTauFakeRate'][name]['args'][0] = ' && '.join([args[0],'fabs(t_eta)>={0} && fabs(t_eta)<{1} && t_decayMode=={2}'.format(etaBins[eb],etaBins[eb+1],dm)])
+                selectionParams['WTauFakeRate'][name]['kwargs']['hists'] = ['tPt']
 

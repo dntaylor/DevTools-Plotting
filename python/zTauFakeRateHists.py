@@ -14,13 +14,13 @@ new = True
 
 
 fakeratePlotter = Plotter(
-    'WTauFakeRate',
+    'ZTauFakeRate',
     new = new,
 )
 
 fakerateMaker = HistMaker(
-    'WTauFakeRate',
-    outputFileName = 'root/WTauFakeRate/fakerates.root',
+    'ZTauFakeRate',
+    outputFileName = 'root/ZTauFakeRate/fakerates.root',
 )
 
 sigMap = {
@@ -64,6 +64,24 @@ sigMap = {
              'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
              'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
             ],
+    'WZ'  : [
+             'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
+             'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
+            ],
+    'WZsub' : [
+             'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
+            ],
+    'ZZ'  : [
+             'ZZTo4L_13TeV_powheg_pythia8',
+             'ZZTo2L2Q_13TeV_powheg_pythia8',
+             'ZZTo2L2Nu_13TeV_powheg_pythia8',
+            ],
+    'ZZsub'  : [
+             'ZZTo4L_13TeV_powheg_pythia8',
+            ],
+    'TTV' : [
+             'tZq_ll_4f_13TeV-amcatnlo-pythia8',
+            ],
     'QCD' : [
              'QCD_Pt_5to10_TuneCUETP8M1_13TeV_pythia8',
              'QCD_Pt_10to15_TuneCUETP8M1_13TeV_pythia8',
@@ -84,24 +102,23 @@ sigMap = {
              'QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8',
             ],
     'data': [
-             #'DoubleMuon',
-             #'DoubleEG',
-             #'MuonEG',
              'SingleMuon',
-             #'SingleElectron',
-             #'Tau',
+             'DoubleMuon',
+             'SingleElectron',
+             'DoubleEG',
             ],
 }
 
-samples = ['T','TT','Z','WW']
+samples = ['W','T','TT','Z','WW','WZ','ZZ','TTV']
+subsamples = ['WZ','ZZ','TTV']
 
 allSamplesDict = {'MC':[]}
 
-for s in samples:
+for s in subsamples:
     allSamplesDict['MC'] += sigMap[s]
 
 fakeratePlotter.addHistogram('MC',allSamplesDict['MC'])
-fakeratePlotter.addHistogram('W',sigMap['W'])
+fakeratePlotter.addHistogram('Z',sigMap['Z'])
 fakeratePlotter.addHistogram('data',sigMap['data'],style={'linecolor':ROOT.kBlack,'name':'Corrected'})
 fakeratePlotter.addHistogram('data_uncorrected',sigMap['data'],style={'linecolor':ROOT.kRed,'name':'Uncorrected'})
 
@@ -160,14 +177,14 @@ for num,denom in numDenom:
             key = (pt,eta)
             values[key] = hists['data'].GetBinContent(p+1)
             errors[key] = hists['data'].GetBinError(p+1)
-        customOrder = ['W']
+        customOrder = ['Z']
         hists_mc = fakeratePlotter.plotRatio(numname,denomname,savename,customOrder=customOrder,rebin=ptBins,getHists=True)
         for p in range(len(ptBins)-1):
             pt = float(ptBins[p]+ptBins[p+1])/2.
             eta = float(etaBins[e]+etaBins[e+1])/2.
             key = (pt,eta)
-            values_mc[key] = hists_mc['W'].GetBinContent(p+1)
-            errors_mc[key] = hists_mc['W'].GetBinError(p+1)
+            values_mc[key] = hists_mc['Z'].GetBinContent(p+1)
+            errors_mc[key] = hists_mc['Z'].GetBinError(p+1)
 
         # now decay modes
         for ndm in numdms:
@@ -185,14 +202,14 @@ for num,denom in numDenom:
                 key = (pt,eta)
                 values_dm[ndm][key] = hists['data'].GetBinContent(p+1)
                 errors_dm[ndm][key] = hists['data'].GetBinError(p+1)
-            customOrder = ['W']
+            customOrder = ['Z']
             hists_mc = fakeratePlotter.plotRatio(numname,denomname,savename,customOrder=customOrder,rebin=ptBins,getHists=True)
             for p in range(len(ptBins)-1):
                 pt = float(ptBins[p]+ptBins[p+1])/2.
                 eta = float(etaBins[e]+etaBins[e+1])/2.
                 key = (pt,eta)
-                values_dm_mc[ndm][key] = hists_mc['W'].GetBinContent(p+1)
-                errors_dm_mc[ndm][key] = hists_mc['W'].GetBinError(p+1)
+                values_dm_mc[ndm][key] = hists_mc['Z'].GetBinContent(p+1)
+                errors_dm_mc[ndm][key] = hists_mc['Z'].GetBinError(p+1)
     # save the values
     print values
     savedir = '{0}_{1}'.format(num,denom)

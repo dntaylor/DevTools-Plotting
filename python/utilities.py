@@ -107,18 +107,15 @@ latestNtuples['80X'] = {
 # Moriond 2017
     'Tau'            : '2017-03-30_TauAnalysis_80X_Moriond_v1-merge',
     'Charge'         : '2017-04-06_ChargeAnalysis_80X_Moriond_v1-merge',
-    'DY'             : '2017-10-26_DYAnalysis_80X_Moriond_v1-merge',
-    #'DijetFakeRate'  : '2017-04-19_DijetFakeRateAnalysis_80X_Moriond_v1-merge',
-    'DijetFakeRate'  : '2017-04-20_DijetFakeRateAnalysis_80X_Moriond_v1-merge', # with tight muon
+    'DY'             : '2018-01-09_DYAnalysis_80X_Moriond_v1-merge', # fix metFilter
+    'DijetFakeRate'  : '2018-01-09_DijetFakeRateAnalysis_80X_Moriond_v1-merge', # fix metFilter
     'ZFakeRate'      : '2017-03-21_ZFakeRateAnalysis_80X_Moriond_v1-merge',
     'WFakeRate'      : '2017-03-24_WFakeRateAnalysis_80X_Moriond_v1-merge',
-    #'WTauFakeRate'   : '2017-03-31_WTauFakeRateAnalysis_80X_Moriond_v1-merge', # loose -0.2
-    'WTauFakeRate'   : '2017-12-05_WTauFakeRateAnalysis_80X_Moriond_v1-merge', # new DMs
+    'WTauFakeRate'   : '2018-01-10_WTauFakeRateAnalysis_80X_Moriond_v2-merge', # new DMs, fix t dz, fix metFilter
+    'ZTauFakeRate'   : '2018-01-10_ZTauFakeRateAnalysis_80X_Moriond_v2-merge', # new DMs, fix t dz, fix metFilter
     'WZ'             : '2017-06-29_WZAnalysis_80X_Moriond_v1-merge',
-    #'Hpp3l'          : '2017-06-29_Hpp3lAnalysis_80X_Moriond_v1-merge',
-    #'Hpp4l'          : '2017-06-29_Hpp4lAnalysis_80X_Moriond_v1-merge',
-    'Hpp3l'          : '2017-12-06_Hpp3lAnalysis_80X_Moriond_v1-merge',
-    'Hpp4l'          : '2017-12-06_Hpp4lAnalysis_80X_Moriond_v1-merge',
+    'Hpp3l'          : '2018-01-13_Hpp3lAnalysis_80X_Moriond_v1-merge', # new DMs, fix t dz, fix metFilter
+    'Hpp4l'          : '2018-01-13_Hpp4lAnalysis_80X_Moriond_v1-merge', # new DMs, fix t dz, fix metFilter
 # Photon
     'FourPhoton'     : '2017-06-20_FourPhotonAnalysis_80X_Photon_v2-merge',
     'ThreePhoton'    : '2017-09-15_ThreePhotonAnalysis_80X_Photon_v1-merge',
@@ -129,8 +126,9 @@ latestNtuples['80X'] = {
     'LLG'            : '2017-08-23_LLGAnalysis_80X_Photon_v1-merge',
     'SingleJet'      : '2017-07-18_SingleJetAnalysis_80X_QCD_v1-merge',
 # MuMuTauTau
-    'MuMuTauTau'     : '2017-12-09_MuMuTauTauAnalysis_80X_v1',
-    'MuMuTauFakeRate': '2017-11-10_MuMuTauFakeRateAnalysis_80X_v1-merge',
+    'MuMuTauTau'     : '2018-02-01_MuMuTauTauAnalysis_80X_v1-merge',
+    'MuMuTauFakeRate': '2018-02-01_MuMuTauFakeRateAnalysis_80X_v2-merge',
+    'MuMuMuFakeRate' : '2018-02-05_MuMuMuFakeRateAnalysis_80X_v1-merge',
 }
 
 latestShifts = {}
@@ -150,12 +148,18 @@ latestShifts['80X']['Hpp3l'] = {
 #    'UnclusteredEnUp'  : '2016-12-19_Hpp3lAnalysis_UnclusteredEnUp_80X_v1-merge',
 #    'UnclusteredEnDown': '2016-12-19_Hpp3lAnalysis_UnclusteredEnDown_80X_v1-merge',
 # Moriond 2017
-    'ElectronEnUp'     : '2017-07-03_Hpp3lAnalysis_ElectronEnUp_80X_Moriond_v1-merge',
-    'ElectronEnDown'   : '2017-07-03_Hpp3lAnalysis_ElectronEnDown_80X_Moriond_v1-merge',
-    'MuonEnUp'         : '2017-07-03_Hpp3lAnalysis_MuonEnUp_80X_Moriond_v1-merge',
-    'MuonEnDown'       : '2017-07-03_Hpp3lAnalysis_MuonEnDown_80X_Moriond_v1-merge',
-    'TauEnUp'          : '2017-07-03_Hpp3lAnalysis_TauEnUp_80X_Moriond_v1-merge',
-    'TauEnDown'        : '2017-07-03_Hpp3lAnalysis_TauEnDown_80X_Moriond_v1-merge',
+    'ElectronEnUp'     : '2018-01-13_Hpp3lAnalysis_ElectronEnUp_80X_Moriond_v1-merge',
+    'ElectronEnDown'   : '2018-01-13_Hpp3lAnalysis_ElectronEnDown_80X_Moriond_v1-merge',
+    'MuonEnUp'         : '2018-01-13_Hpp3lAnalysis_MuonEnUp_80X_Moriond_v1-merge',
+    'MuonEnDown'       : '2018-01-13_Hpp3lAnalysis_MuonEnDown_80X_Moriond_v1-merge',
+    'TauEnUp'          : '2018-01-13_Hpp3lAnalysis_TauEnUp_80X_Moriond_v1-merge',
+    'TauEnDown'        : '2018-01-13_Hpp3lAnalysis_TauEnDown_80X_Moriond_v1-merge',
+    'JetEnUp'          : '2018-01-13_Hpp3lAnalysis_JetEnUp_80X_Moriond_v1-merge',
+    'JetEnDown'        : '2018-01-13_Hpp3lAnalysis_JetEnDown_80X_Moriond_v1-merge',
+    'JetResUp'         : '2018-01-13_Hpp3lAnalysis_JetResUp_80X_Moriond_v1-merge',
+    'JetResDown'       : '2018-01-13_Hpp3lAnalysis_JetResDown_80X_Moriond_v1-merge',
+    'UnclusteredEnUp'  : '2018-01-13_Hpp3lAnalysis_UnclusteredUp_80X_Moriond_v1-merge',
+    'UnclusteredEnDown': '2018-01-13_Hpp3lAnalysis_UnclusteredDown_80X_Moriond_v1-merge',
 }
 latestShifts['80X']['Hpp4l'] = {
 # ICHEP 2016
@@ -172,12 +176,18 @@ latestShifts['80X']['Hpp4l'] = {
 #    'UnclusteredEnUp'  : '2016-12-19_Hpp4lAnalysis_UnclusteredEnUp_80X_v1-merge',
 #    'UnclusteredEnDown': '2016-12-19_Hpp4lAnalysis_UnclusteredEnDown_80X_v1-merge',
 # Moriond 2017
-    'ElectronEnUp'     : '2017-07-03_Hpp4lAnalysis_ElectronEnUp_80X_Moriond_v1-merge',
-    'ElectronEnDown'   : '2017-07-03_Hpp4lAnalysis_ElectronEnDown_80X_Moriond_v1-merge',
-    'MuonEnUp'         : '2017-07-03_Hpp4lAnalysis_MuonEnUp_80X_Moriond_v1-merge',
-    'MuonEnDown'       : '2017-07-03_Hpp4lAnalysis_MuonEnDown_80X_Moriond_v1-merge',
-    'TauEnUp'          : '2017-07-03_Hpp4lAnalysis_TauEnUp_80X_Moriond_v1-merge',
-    'TauEnDown'        : '2017-07-03_Hpp4lAnalysis_TauEnDown_80X_Moriond_v1-merge',
+    'ElectronEnUp'     : '2018-01-13_Hpp4lAnalysis_ElectronEnUp_80X_Moriond_v1-merge',
+    'ElectronEnDown'   : '2018-01-13_Hpp4lAnalysis_ElectronEnDown_80X_Moriond_v1-merge',
+    'MuonEnUp'         : '2018-01-13_Hpp4lAnalysis_MuonEnUp_80X_Moriond_v1-merge',
+    'MuonEnDown'       : '2018-01-13_Hpp4lAnalysis_MuonEnDown_80X_Moriond_v1-merge',
+    'TauEnUp'          : '2018-01-13_Hpp4lAnalysis_TauEnUp_80X_Moriond_v1-merge',
+    'TauEnDown'        : '2018-01-13_Hpp4lAnalysis_TauEnDown_80X_Moriond_v1-merge',
+    'JetEnUp'          : '2018-01-13_Hpp4lAnalysis_JetEnUp_80X_Moriond_v1-merge',
+    'JetEnDown'        : '2018-01-13_Hpp4lAnalysis_JetEnDown_80X_Moriond_v1-merge',
+    'JetResUp'         : '2018-01-13_Hpp4lAnalysis_JetResUp_80X_Moriond_v1-merge',
+    'JetResDown'       : '2018-01-13_Hpp4lAnalysis_JetResDown_80X_Moriond_v1-merge',
+    'UnclusteredEnUp'  : '2018-01-13_Hpp4lAnalysis_UnclusteredUp_80X_Moriond_v1-merge',
+    'UnclusteredEnDown': '2018-01-13_Hpp4lAnalysis_UnclusteredDown_80X_Moriond_v1-merge',
 }
 
 def getNtupleDirectory(analysis,local=False,version=getCMSSWVersion(),shift=''):
@@ -203,7 +213,7 @@ def getTestFiles(analysis,sample,n=1,version=None):
         'data'  : 'DoubleMuon',
         'hpp'   : 'HPlusPlusHMinusMinusHTo4L_M-500_13TeV-pythia8' if version=='76X' else 'HPlusPlusHMinusMinusHTo4L_M-500_TuneCUETP8M1_13TeV_pythia8',
         'hpp4l' : 'HPlusPlusHMinusMinusHTo4L_M-500_13TeV-pythia8' if version=='76X' else 'HPlusPlusHMinusMinusHTo4L_M-500_TuneCUETP8M1_13TeV_pythia8',
-        'hppr4l': 'HPlusPlusHMinusMinusHRTo4L_M-500_13TeV-pythia8' if version=='76X' else 'HPlusPlusHMinusMinusHRTo4L_M-500_TuneCUETP8M1_13TeV_pythia8',
+        'hppr4l': 'HPlusPlusHMinusMinusHRTo4L_M-500_13TeV-pythia8' if version=='76X' else 'HPlusPlusHMinusMinusHRTo4L_M-500_TuneCUETP8M1_13TeV-pythia8',
         'hpp3l' : 'HPlusPlusHMinusHTo3L_M-500_TuneCUETP8M1_13TeV_calchep-pythia8' if version=='76X' else 'HPlusPlusHMinusHTo3L_M-500_13TeV-calchep-pythia8',
         #'dy'    : 'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
         'dy'    : 'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
@@ -278,20 +288,26 @@ latestSkims['80X']['Hpp3l'] = {
 #    'fakeDown'         : '2016-12-21_Hpp3lSkims_fakeDown_80X_v1',
 # Moriond 2017
     #''                 : '2017-05-01_Hpp3lSkims_80X_v1',
-    'ElectronEnUp'     : '2017-07-04_Hpp3lSkims_ElectronEnUp_80X_Moriond_v1',
-    'ElectronEnDown'   : '2017-07-04_Hpp3lSkims_ElectronEnDown_80X_Moriond_v1',
-    'MuonEnUp'         : '2017-07-04_Hpp3lSkims_MuonEnUp_80X_Moriond_v1',
-    'MuonEnDown'       : '2017-07-04_Hpp3lSkims_MuonEnDown_80X_Moriond_v1',
-    'TauEnUp'          : '2017-07-04_Hpp3lSkims_TauEnUp_80X_Moriond_v1',
-    'TauEnDown'        : '2017-07-04_Hpp3lSkims_TauEnDown_80X_Moriond_v1',
-    'lepUp'            : '2017-07-04_Hpp3lSkims_lepUp_80X_Moriond_v1',
-    'lepDown'          : '2017-07-04_Hpp3lSkims_lepDown_80X_Moriond_v1',
-    'trigUp'           : '2017-07-04_Hpp3lSkims_trigUp_80X_Moriond_v1',
-    'trigDown'         : '2017-07-04_Hpp3lSkims_trigDown_80X_Moriond_v1',
-    'puUp'             : '2017-07-04_Hpp3lSkims_puUp_80X_Moriond_v1',
-    'puDown'           : '2017-07-04_Hpp3lSkims_puDown_80X_Moriond_v1',
-    'fakeUp'           : '2017-07-04_Hpp3lSkims_fakeUp_80X_Moriond_v1',
-    'fakeDown'         : '2017-07-04_Hpp3lSkims_fakeDown_80X_Moriond_v1',
+    'ElectronEnUp'     : '2018-01-18_Hpp3lSkims_ElectronEnUp_80X_Moriond_v1',
+    'ElectronEnDown'   : '2018-01-18_Hpp3lSkims_ElectronEnDown_80X_Moriond_v1',
+    'MuonEnUp'         : '2018-01-18_Hpp3lSkims_MuonEnUp_80X_Moriond_v1',
+    'MuonEnDown'       : '2018-01-18_Hpp3lSkims_MuonEnDown_80X_Moriond_v1',
+    'TauEnUp'          : '2018-01-18_Hpp3lSkims_TauEnUp_80X_Moriond_v1',
+    'TauEnDown'        : '2018-01-18_Hpp3lSkims_TauEnDown_80X_Moriond_v1',
+    'JetEnUp'          : '2018-01-18_Hpp3lSkims_JetEnUp_80X_Moriond_v1',
+    'JetEnDown'        : '2018-01-18_Hpp3lSkims_JetEnDown_80X_Moriond_v1',
+    'JetResUp'         : '2018-01-18_Hpp3lSkims_JetResUp_80X_Moriond_v1',
+    'JetResDown'       : '2018-01-18_Hpp3lSkims_JetResDown_80X_Moriond_v1',
+    'UnclusteredEnUp'  : '2018-01-18_Hpp3lSkims_UnclusteredEnUp_80X_Moriond_v1',
+    'UnclusteredEnDown': '2018-01-18_Hpp3lSkims_UnclusteredEnDown_80X_Moriond_v1',
+    'lepUp'            : '2018-01-18_Hpp3lSkims_lepUp_80X_Moriond_v1',
+    'lepDown'          : '2018-01-18_Hpp3lSkims_lepDown_80X_Moriond_v1',
+    'trigUp'           : '2018-01-18_Hpp3lSkims_trigUp_80X_Moriond_v1',
+    'trigDown'         : '2018-01-18_Hpp3lSkims_trigDown_80X_Moriond_v1',
+    'puUp'             : '2018-01-18_Hpp3lSkims_puUp_80X_Moriond_v1',
+    'puDown'           : '2018-01-18_Hpp3lSkims_puDown_80X_Moriond_v1',
+    'fakeUp'           : '2018-01-18_Hpp3lSkims_fakeUp_80X_Moriond_v1',
+    'fakeDown'         : '2018-01-18_Hpp3lSkims_fakeDown_80X_Moriond_v1',
 }
 latestSkims['80X']['Hpp4l'] = {
 # ICHEP 2016
@@ -318,20 +334,26 @@ latestSkims['80X']['Hpp4l'] = {
 #    'fakeDown'         : '2016-12-21_Hpp4lSkims_fakeDown_80X_v1',
 # Moriond 2017
     #''                 : '2017-05-01_Hpp4lSkims_80X_v2',
-    'ElectronEnUp'     : '2017-07-04_Hpp4lSkims_ElectronEnUp_80X_Moriond_v1',
-    'ElectronEnDown'   : '2017-07-04_Hpp4lSkims_ElectronEnDown_80X_Moriond_v1',
-    'MuonEnUp'         : '2017-07-04_Hpp4lSkims_MuonEnUp_80X_Moriond_v1',
-    'MuonEnDown'       : '2017-07-04_Hpp4lSkims_MuonEnDown_80X_Moriond_v1',
-    'TauEnUp'          : '2017-07-04_Hpp4lSkims_TauEnUp_80X_Moriond_v1',
-    'TauEnDown'        : '2017-07-04_Hpp4lSkims_TauEnDown_80X_Moriond_v1',
-    'lepUp'            : '2017-07-04_Hpp4lSkims_lepUp_80X_Moriond_v1',
-    'lepDown'          : '2017-07-04_Hpp4lSkims_lepDown_80X_Moriond_v1',
-    'trigUp'           : '2017-07-04_Hpp4lSkims_trigUp_80X_Moriond_v1',
-    'trigDown'         : '2017-07-04_Hpp4lSkims_trigDown_80X_Moriond_v1',
-    'puUp'             : '2017-07-04_Hpp4lSkims_puUp_80X_Moriond_v1',
-    'puDown'           : '2017-07-04_Hpp4lSkims_puDown_80X_Moriond_v1',
-    'fakeUp'           : '2017-07-04_Hpp4lSkims_fakeUp_80X_Moriond_v1',
-    'fakeDown'         : '2017-07-04_Hpp4lSkims_fakeDown_80X_Moriond_v1',
+    'ElectronEnUp'     : '2018-01-18_Hpp4lSkims_ElectronEnUp_80X_Moriond_v1',
+    'ElectronEnDown'   : '2018-01-18_Hpp4lSkims_ElectronEnDown_80X_Moriond_v1',
+    'MuonEnUp'         : '2018-01-18_Hpp4lSkims_MuonEnUp_80X_Moriond_v1',
+    'MuonEnDown'       : '2018-01-18_Hpp4lSkims_MuonEnDown_80X_Moriond_v1',
+    'TauEnUp'          : '2018-01-18_Hpp4lSkims_TauEnUp_80X_Moriond_v1',
+    'TauEnDown'        : '2018-01-18_Hpp4lSkims_TauEnDown_80X_Moriond_v1',
+    'JetEnUp'          : '2018-01-18_Hpp4lSkims_JetEnUp_80X_Moriond_v1',
+    'JetEnDown'        : '2018-01-18_Hpp4lSkims_JetEnDown_80X_Moriond_v1',
+    'JetResUp'         : '2018-01-18_Hpp4lSkims_JetResUp_80X_Moriond_v1',
+    'JetResDown'       : '2018-01-18_Hpp4lSkims_JetResDown_80X_Moriond_v1',
+    'UnclusteredEnUp'  : '2018-01-18_Hpp4lSkims_UnclusteredEnUp_80X_Moriond_v1',
+    'UnclusteredEnDown': '2018-01-18_Hpp4lSkims_UnclusteredEnDown_80X_Moriond_v1',
+    'lepUp'            : '2018-01-18_Hpp4lSkims_lepUp_80X_Moriond_v1',
+    'lepDown'          : '2018-01-18_Hpp4lSkims_lepDown_80X_Moriond_v1',
+    'trigUp'           : '2018-01-18_Hpp4lSkims_trigUp_80X_Moriond_v1',
+    'trigDown'         : '2018-01-18_Hpp4lSkims_trigDown_80X_Moriond_v1',
+    'puUp'             : '2018-01-18_Hpp4lSkims_puUp_80X_Moriond_v1',
+    'puDown'           : '2018-01-18_Hpp4lSkims_puDown_80X_Moriond_v1',
+    'fakeUp'           : '2018-01-18_Hpp4lSkims_fakeUp_80X_Moriond_v1',
+    'fakeDown'         : '2018-01-18_Hpp4lSkims_fakeDown_80X_Moriond_v1',
 }
 
 def getSkimJson(analysis,sample,version=getCMSSWVersion(),shift=''):
@@ -364,24 +386,11 @@ def getSkimPickle(analysis,sample,version=getCMSSWVersion(),shift=''):
 
 treeMap = {
     ''               : 'Tree',
-    'Charge'         : 'ChargeTree',
-    'DijetFakeRate'  : 'DijetFakeRateTree',
-    'DY'             : 'DYTree',
     'Electron'       : 'ETree',
-    'Hpp3l'          : 'Hpp3lTree',
-    'Hpp4l'          : 'Hpp4lTree',
     'Muon'           : 'MTree',
     'SingleElectron' : 'ETree',
     'SingleMuon'     : 'MTree',
     'Tau'            : 'TTree',
-    'TauCharge'      : 'TauChargeTree',
-    'WTauFakeRate'   : 'WTauFakeRateTree',
-    'WFakeRate'      : 'WFakeRateTree',
-    'ZFakeRate'      : 'ZFakeRateTree',
-    'WZ'             : 'WZTree',
-    'ZZ'             : 'ZZTree',
-    'ThreeLepton'    : 'ThreeLeptonTree',
-    'ThreePhoton'    : 'ThreePhotonTree',
 }
 
 def getTreeName(analysis):

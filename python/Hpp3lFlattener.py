@@ -5,6 +5,7 @@ import os
 import sys
 import itertools
 import operator
+from array import array
 
 import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -24,10 +25,14 @@ class Hpp3lFlattener(NtupleFlattener):
     def __init__(self,sample,**kwargs):
         # controls
         self.new = True # uses NewDMs for tau loose ID
+        self.tauFakeMode = 'z' # allowed: w, z
+        self.doDMFakes = True
         self.datadriven = True
-        self.datadrivenRegular = True
+        self.datadrivenRegular = False
         self.lowmass = True
-        self.doGen = False
+        self.zveto = True
+        self.doGen = True
+        self.limitOnly = False
         self.mass = 500
 
         # setup properties
@@ -50,19 +55,40 @@ class Hpp3lFlattener(NtupleFlattener):
             '3lmassCut': lambda row: getattr(row,'3l_mass')>100,
             'looseId'  : lambda row: all([getattr(row,'{0}_passLoose{1}'.format(l,'New' if self.new else ''))>0.5 for l in self.leps]),
         }
+        self.zvetoCutMap = {
+            'pt20'     : lambda row: all([getattr(row,'{0}_pt'.format(l))>20 for l in self.leps]),
+            '3lmassCut': lambda row: getattr(row,'3l_mass')>100,
+            'looseId'  : lambda row: all([getattr(row,'{0}_passLoose{1}'.format(l,'New' if self.new else ''))>0.5 for l in self.leps]),
+            'zVeto'    : lambda row: abs(getattr(row,'z_mass')-ZMASS)>10,
+        }
         self.selectionMap = {}
         self.selectionMap['default'] = lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
         if self.lowmass: self.selectionMap['lowmass'] = lambda row: all([self.lowmassCutMap[cut](row) for cut in self.lowmassCutMap])
+        if self.zveto: self.selectionMap['zveto'] = lambda row: all([self.zvetoCutMap[cut](row) for cut in self.zvetoCutMap])
 
         # sample signal plot
         self.cutRegions = {}
-        self.cutRegions[self.mass] = getSelectionMap('Hpp3l',self.mass)
-        self.selectionMap['nMinusOne/massWindow/{0}/hpp0'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][0][v](row) for v in ['st','zveto','met','dr']])
-        self.selectionMap['nMinusOne/massWindow/{0}/hpp1'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][1][v](row) for v in ['st','zveto','met','dr']])
-        self.selectionMap['nMinusOne/massWindow/{0}/hpp2'.format(self.mass)] = lambda row: all([self.cutRegions[self.mass][2][v](row) for v in ['st','zveto','met','dr']])
+        masses = [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500] if self.limitOnly else [self.mass]
+        for mass in masses:
+            self.cutRegions[mass] = getSelectionMap('Hpp3l',mass)
+            self.selectionMap['nMinusOne/massWindow/{0}/hpp0'.format(mass)] = lambda row: all([self.cutRegions[mass][0][v](row) for v in ['st','zveto','met','dr']])
+            self.selectionMap['nMinusOne/massWindow/{0}/hpp1'.format(mass)] = lambda row: all([self.cutRegions[mass][1][v](row) for v in ['st','zveto','met','dr']])
+            self.selectionMap['nMinusOne/massWindow/{0}/hpp2'.format(mass)] = lambda row: all([self.cutRegions[mass][2][v](row) for v in ['st','zveto','met','dr']])
         
+        # tight loose ids to test fakerates
+        #loose = '{}loose'.format('new' if self.new else 'old')
+        #mva = 'tauMVA{}'.format('new' if self.new else 'old')
+        #self.selectionMapDM = {}
+        #self.selectionMapDM['lowmass/{}_n0p2'.format(loose)] = lambda row: all([self.lowmassCutMap[cut](row) for cut in self.lowmassCutMap]) and all([getattr(row,'{}_{}'.format(l,mva))>-0.2 for l in self.leps if abs(getattr(row,'{}_pdgId'.format(l)))==15])
+        #self.selectionMapDM['lowmass/{}_n0p1'.format(loose)] = lambda row: all([self.lowmassCutMap[cut](row) for cut in self.lowmassCutMap]) and all([getattr(row,'{}_{}'.format(l,mva))>-0.1 for l in self.leps if abs(getattr(row,'{}_pdgId'.format(l)))==15])
+        #self.selectionMapDM['lowmass/{}_0p0'.format(loose)]  = lambda row: all([self.lowmassCutMap[cut](row) for cut in self.lowmassCutMap]) and all([getattr(row,'{}_{}'.format(l,mva))> 0.0 for l in self.leps if abs(getattr(row,'{}_pdgId'.format(l)))==15])
+        #self.selectionMapDM['lowmass/{}_0p1'.format(loose)]  = lambda row: all([self.lowmassCutMap[cut](row) for cut in self.lowmassCutMap]) and all([getattr(row,'{}_{}'.format(l,mva))> 0.1 for l in self.leps if abs(getattr(row,'{}_pdgId'.format(l)))==15])
+        #self.selectionMapDM['lowmass/{}_0p2'.format(loose)]  = lambda row: all([self.lowmassCutMap[cut](row) for cut in self.lowmassCutMap]) and all([getattr(row,'{}_{}'.format(l,mva))> 0.2 for l in self.leps if abs(getattr(row,'{}_pdgId'.format(l)))==15])
+        #self.selectionMapDM['lowmass/{}_0p3'.format(loose)]  = lambda row: all([self.lowmassCutMap[cut](row) for cut in self.lowmassCutMap]) and all([getattr(row,'{}_{}'.format(l,mva))> 0.3 for l in self.leps if abs(getattr(row,'{}_pdgId'.format(l)))==15])
+        #self.selectionMapDM['lowmass/{}_0p4'.format(loose)]  = lambda row: all([self.lowmassCutMap[cut](row) for cut in self.lowmassCutMap]) and all([getattr(row,'{}_{}'.format(l,mva))> 0.4 for l in self.leps if abs(getattr(row,'{}_pdgId'.format(l)))==15])
 
         self.selections = []
+        self.selectionHists = {}
         for sel in self.selectionMap:
             self.selections += [sel]
             if not self.datadriven: continue
@@ -70,6 +96,20 @@ class Hpp3lFlattener(NtupleFlattener):
                 fakeChan = '{0}P{1}F'.format(3-nf,nf)
                 self.selections += ['{0}/{1}'.format(fakeChan,sel)]
                 if self.datadrivenRegular: self.selections += ['{0}_regular/{1}'.format(fakeChan,sel)]
+
+        #limitedHists = [
+        #    'count',
+        #    'hpp1Pt','hpp1Eta','hpp1DecayMode',
+        #    'hpp2Pt','hpp2Eta','hpp2DecayMode',
+        #    'hm1Pt','hm1Eta', 'hm1DecayMode',
+        #]
+        #for sel in self.selectionMapDM:
+        #    self.selections += [sel]
+        #    self.selectionHists[sel] = limitedHists
+        #    for nf in range(4):
+        #        fakeChan = '{0}P{1}F'.format(3-nf,nf)
+        #        self.selections += ['{0}/{1}'.format(fakeChan,sel)]
+        #        self.selectionHists['{0}/{1}'.format(fakeChan,sel)] = limitedHists
 
 
         # setup histogram parameters
@@ -84,13 +124,16 @@ class Hpp3lFlattener(NtupleFlattener):
             'hppDeltaR'                   : {'x': lambda row: row.hpp_deltaR,                     'xBinning': [50, 0, 5],              },
             'hppLeadingLeptonPt'          : {'x': lambda row: row.hpp1_pt,                        'xBinning': [1000, 0, 1000],         },
             'hppLeadingLeptonEta'         : {'x': lambda row: row.hpp1_eta,                       'xBinning': [50, -2.5, 2.5],         },
+            'hppLeadingLeptonDecayMode'   : {'x': lambda row: row.hpp1_decayMode,                 'xBinning': [12, 0, 12],             },
             'hppSubLeadingLeptonPt'       : {'x': lambda row: row.hpp2_pt,                        'xBinning': [1000, 0, 1000],         },
             'hppSubLeadingLeptonEta'      : {'x': lambda row: row.hpp2_eta,                       'xBinning': [50, -2.5, 2.5],         },
+            'hppSubLeadingLeptonDecayMode': {'x': lambda row: row.hpp2_decayMode,                 'xBinning': [12, 0, 12],             },
             # h-/h+
             'hmMass'                      : {'x': lambda row: row.hm_mt,                          'xBinning': [1600, 0, 1600],         },
             'hmPt'                        : {'x': lambda row: row.hm_pt,                          'xBinning': [1600, 0, 1600],         },
             'hmLeptonPt'                  : {'x': lambda row: row.hm1_pt,                         'xBinning': [1000, 0, 1000],         },
             'hmLeptonEta'                 : {'x': lambda row: row.hm1_eta,                        'xBinning': [50, -2.5, 2.5],         },
+            'hmLeptonDecayMode'           : {'x': lambda row: row.hm1_decayMode,                  'xBinning': [12, 0, 12],             },
             # best z
             'zMass'                       : {'x': lambda row: row.z_mass,                         'xBinning': [500, 0, 500],           'selection': lambda row: row.z_mass>0.,},
             'mllMinusMZ'                  : {'x': lambda row: abs(row.z_mass-ZMASS),              'xBinning': [100, 0, 100],           'selection': lambda row: row.z_mass>0.,},
@@ -102,7 +145,28 @@ class Hpp3lFlattener(NtupleFlattener):
             'mass'                        : {'x': lambda row: getattr(row,'3l_mass'),             'xBinning': [2000, 0, 2000],         },
             'st'                          : {'x': lambda row: row.hpp1_pt+row.hpp2_pt+row.hm1_pt, 'xBinning': [2000, 0, 2000],         },
             'nJets'                       : {'x': lambda row: row.numJetsTight30,                 'xBinning': [11, -0.5, 10.5],        },
+            'nBJets'                      : {'x': lambda row: row.numBjetsTight30,                'xBinning': [11, -0.5, 10.5],        },
+            # for validating datadriven
+            #'hpp1Pt'                      : {'x': lambda row: row.hpp1_pt,                        'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
+            #'hpp1Eta'                     : {'x': lambda row: row.hpp1_eta,                       'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]),},
+            #'hpp1DecayMode'               : {'x': lambda row: row.hpp1_decayMode,                 'xBinning': [12, 0, 12],                          },
+            #'hpp2Pt'                      : {'x': lambda row: row.hpp2_pt,                        'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
+            #'hpp2Eta'                     : {'x': lambda row: row.hpp2_eta,                       'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]),},
+            #'hpp2DecayMode'               : {'x': lambda row: row.hpp2_decayMode,                 'xBinning': [12, 0, 12],                          },
+            #'hm1Pt'                       : {'x': lambda row: row.hm1_pt,                         'xBinning': array('d', [0,20,25,30,40,50,60,100]),},
+            #'hm1Eta'                      : {'x': lambda row: row.hm1_eta,                        'xBinning': array('d', [-2.5,-1.479,0,1.479,2.5]),},
+            #'hm1DecayMode'                : {'x': lambda row: row.hm1_decayMode,                  'xBinning': [12, 0, 12],                          },
+            # 2D
+            'hppMass_hmMass'              : {'x': lambda row: row.hpp_mass, 'y': lambda row: row.hm_mt,                          'xBinning': [100, 0, 2000], 'yBinning': [100, 0, 2000],},
+            'hppMass_st'                  : {'x': lambda row: row.hpp_mass, 'y': lambda row: row.hpp1_pt+row.hpp2_pt+row.hm1_pt, 'xBinning': [100, 0, 2000], 'yBinning': [100, 0, 2000],},
+            # for limits
+            'hppMassForLimits'            : {'x': lambda row: row.hpp_mass,                       'xBinning': [160, 0, 1600],          'doGen': True,},
         }
+
+        if self.limitOnly:
+            self.histParams = {
+                'hppMassForLimits'            : {'x': lambda row: row.hpp_mass,                       'xBinning': [160, 0, 1600],          'doGen': True,},
+            }
 
         # initialize flattener
         super(Hpp3lFlattener, self).__init__('Hpp3l',sample,**kwargs)
@@ -115,23 +179,50 @@ class Hpp3lFlattener(NtupleFlattener):
         fake_path = '{0}/src/DevTools/Analyzer/data/fakerates_dijet_hpp_13TeV_Run2016BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
         self.fake_hpp_rootfile = ROOT.TFile(fake_path)
         self.fakehists['electrons'][self.fakekey.format(num='HppMedium',denom='HppLooseNew')] = self.fake_hpp_rootfile.Get('e/medium_loose/fakeratePtEta')
-        self.fakehists['electrons'][self.fakekey.format(num='HppTight',denom='HppLooseNew')] = self.fake_hpp_rootfile.Get('e/tight_loose/fakeratePtEta')
-        self.fakehists['electrons'][self.fakekey.format(num='HppMedium',denom='HppLoose')] = self.fake_hpp_rootfile.Get('e/medium_loose/fakeratePtEta')
-        self.fakehists['electrons'][self.fakekey.format(num='HppTight',denom='HppLoose')] = self.fake_hpp_rootfile.Get('e/tight_loose/fakeratePtEta')
-        self.fakehists['electrons'][self.fakekey.format(num='HppTight',denom='HppMedium')] = self.fake_hpp_rootfile.Get('e/tight_medium/fakeratePtEta')
-        self.fakehists['muons'][self.fakekey.format(num='HppMedium',denom='HppLooseNew')] = self.fake_hpp_rootfile.Get('m/medium_loose/fakeratePtEta')
-        self.fakehists['muons'][self.fakekey.format(num='HppTight',denom='HppLooseNew')] = self.fake_hpp_rootfile.Get('m/tight_loose/fakeratePtEta')
-        self.fakehists['muons'][self.fakekey.format(num='HppMedium',denom='HppLoose')] = self.fake_hpp_rootfile.Get('m/medium_loose/fakeratePtEta')
-        self.fakehists['muons'][self.fakekey.format(num='HppTight',denom='HppLoose')] = self.fake_hpp_rootfile.Get('m/tight_loose/fakeratePtEta')
-        self.fakehists['muons'][self.fakekey.format(num='HppTight',denom='HppMedium')] = self.fake_hpp_rootfile.Get('m/tight_medium/fakeratePtEta')
+        self.fakehists['electrons'][self.fakekey.format(num='HppTight', denom='HppLooseNew')] = self.fake_hpp_rootfile.Get('e/tight_loose/fakeratePtEta')
+        self.fakehists['electrons'][self.fakekey.format(num='HppMedium',denom='HppLoose')]    = self.fake_hpp_rootfile.Get('e/medium_loose/fakeratePtEta')
+        self.fakehists['electrons'][self.fakekey.format(num='HppTight', denom='HppLoose')]    = self.fake_hpp_rootfile.Get('e/tight_loose/fakeratePtEta')
+        self.fakehists['electrons'][self.fakekey.format(num='HppTight', denom='HppMedium')]   = self.fake_hpp_rootfile.Get('e/tight_medium/fakeratePtEta')
+        self.fakehists['muons'    ][self.fakekey.format(num='HppMedium',denom='HppLooseNew')] = self.fake_hpp_rootfile.Get('m/medium_loose/fakeratePtEta')
+        self.fakehists['muons'    ][self.fakekey.format(num='HppTight', denom='HppLooseNew')] = self.fake_hpp_rootfile.Get('m/tight_loose/fakeratePtEta')
+        self.fakehists['muons'    ][self.fakekey.format(num='HppMedium',denom='HppLoose')]    = self.fake_hpp_rootfile.Get('m/medium_loose/fakeratePtEta')
+        self.fakehists['muons'    ][self.fakekey.format(num='HppTight', denom='HppLoose')]    = self.fake_hpp_rootfile.Get('m/tight_loose/fakeratePtEta')
+        self.fakehists['muons'    ][self.fakekey.format(num='HppTight', denom='HppMedium')]   = self.fake_hpp_rootfile.Get('m/tight_medium/fakeratePtEta')
 
-        fake_path = '{0}/src/DevTools/Analyzer/data/fakerates_w_tau_13TeV_Run2016BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
+        if self.tauFakeMode=='w':
+            fake_path = '{0}/src/DevTools/Analyzer/data/fakerates_w_tau_13TeV_Run2016BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
+        elif self.tauFakeMode=='z':
+            fake_path = '{0}/src/DevTools/Analyzer/data/fakerates_z_tau_13TeV_Run2016BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
+        else:
+            logging.error('Undefined tau fake mode {0}'.format(self.tauFakeMode))
+            raise
         self.fake_hpp_rootfile_tau = ROOT.TFile(fake_path)
-        self.fakehists['taus'][self.fakekey.format(num='HppMedium',denom='HppLooseNew')] = self.fake_hpp_rootfile_tau.Get('medium_newloose/fakeratePtEta')
-        self.fakehists['taus'][self.fakekey.format(num='HppTight',denom='HppLooseNew')] = self.fake_hpp_rootfile_tau.Get('tight_newloose/fakeratePtEta')
-        self.fakehists['taus'][self.fakekey.format(num='HppMedium',denom='HppLoose')] = self.fake_hpp_rootfile_tau.Get('medium_loose/fakeratePtEta')
-        self.fakehists['taus'][self.fakekey.format(num='HppTight',denom='HppLoose')] = self.fake_hpp_rootfile_tau.Get('tight_loose/fakeratePtEta')
-        self.fakehists['taus'][self.fakekey.format(num='HppTight',denom='HppMedium')] = self.fake_hpp_rootfile_tau.Get('tight_medium/fakeratePtEta')
+        self.fakehists['taus'][self.fakekey.format(num='HppMedium',denom='HppLooseNew')]     = self.fake_hpp_rootfile_tau.Get('medium_newloose/fakeratePtEta')
+        self.fakehists['taus'][self.fakekey.format(num='HppTight', denom='HppLooseNew')]     = self.fake_hpp_rootfile_tau.Get('tight_newloose/fakeratePtEta')
+        self.fakehists['taus'][self.fakekey.format(num='HppMedium',denom='HppLooseNewDM0')]  = self.fake_hpp_rootfile_tau.Get('medium_newloose/fakeratePtEtaDM0')
+        self.fakehists['taus'][self.fakekey.format(num='HppTight', denom='HppLooseNewDM0')]  = self.fake_hpp_rootfile_tau.Get('tight_newloose/fakeratePtEtaDM0')
+        self.fakehists['taus'][self.fakekey.format(num='HppMedium',denom='HppLooseNewDM1')]  = self.fake_hpp_rootfile_tau.Get('medium_newloose/fakeratePtEtaDM1')
+        self.fakehists['taus'][self.fakekey.format(num='HppTight', denom='HppLooseNewDM1')]  = self.fake_hpp_rootfile_tau.Get('tight_newloose/fakeratePtEtaDM1')
+        self.fakehists['taus'][self.fakekey.format(num='HppMedium',denom='HppLooseNewDM10')] = self.fake_hpp_rootfile_tau.Get('medium_newloose/fakeratePtEtaDM10')
+        self.fakehists['taus'][self.fakekey.format(num='HppTight', denom='HppLooseNewDM10')] = self.fake_hpp_rootfile_tau.Get('tight_newloose/fakeratePtEtaDM10')
+        self.fakehists['taus'][self.fakekey.format(num='HppMedium',denom='HppLoose')]        = self.fake_hpp_rootfile_tau.Get('medium_loose/fakeratePtEta')
+        self.fakehists['taus'][self.fakekey.format(num='HppTight', denom='HppLoose')]        = self.fake_hpp_rootfile_tau.Get('tight_loose/fakeratePtEta')
+        self.fakehists['taus'][self.fakekey.format(num='HppMedium',denom='HppLooseDM0')]     = self.fake_hpp_rootfile_tau.Get('medium_loose/fakeratePtEtaDM0')
+        self.fakehists['taus'][self.fakekey.format(num='HppTight', denom='HppLooseDM0')]     = self.fake_hpp_rootfile_tau.Get('tight_loose/fakeratePtEtaDM0')
+        self.fakehists['taus'][self.fakekey.format(num='HppMedium',denom='HppLooseDM1')]     = self.fake_hpp_rootfile_tau.Get('medium_loose/fakeratePtEtaDM1')
+        self.fakehists['taus'][self.fakekey.format(num='HppTight', denom='HppLooseDM1')]     = self.fake_hpp_rootfile_tau.Get('tight_loose/fakeratePtEtaDM1')
+        self.fakehists['taus'][self.fakekey.format(num='HppMedium',denom='HppLooseDM10')]    = self.fake_hpp_rootfile_tau.Get('medium_loose/fakeratePtEtaDM10')
+        self.fakehists['taus'][self.fakekey.format(num='HppTight', denom='HppLooseDM10')]    = self.fake_hpp_rootfile_tau.Get('tight_loose/fakeratePtEtaDM10')
+        self.fakehists['taus'][self.fakekey.format(num='HppTight', denom='HppMedium')]       = self.fake_hpp_rootfile_tau.Get('tight_medium/fakeratePtEta')
+
+        for num in ['medium','tight']:
+            for dlab in ['oldloose','newloose']:
+                for dcut in ['n0p2','n0p1','0p0','0p1','0p2','0p3','0p4']:
+                    denom = '{}_{}'.format(dlab,dcut)
+                    self.fakehists['taus'][self.fakekey.format(num=num,denom=denom)]         = self.fake_hpp_rootfile_tau.Get('{}_{}/fakeratePtEta'.format(num,denom))
+                    self.fakehists['taus'][self.fakekey.format(num=num,denom=denom+'DM0')]   = self.fake_hpp_rootfile_tau.Get('{}_{}/fakeratePtEtaDM0'.format(num,denom))
+                    self.fakehists['taus'][self.fakekey.format(num=num,denom=denom+'DM1')]   = self.fake_hpp_rootfile_tau.Get('{}_{}/fakeratePtEtaDM1'.format(num,denom))
+                    self.fakehists['taus'][self.fakekey.format(num=num,denom=denom+'DM10')]  = self.fake_hpp_rootfile_tau.Get('{}_{}/fakeratePtEtaDM10'.format(num,denom))
 
         self.scaleMap = {
             'F' : '{0}_looseScale',
@@ -141,16 +232,28 @@ class Hpp3lFlattener(NtupleFlattener):
         self.fakeVal = '{0}_mediumNewFakeRate' if self.new else '{0}_mediumFakeRate'
 
         self.lepID = '{0}_passMedium'
+        self.lepIDLoose = '{0}_passLooseNew' if self.new else '{0}_passLoose'
 
 
-    def getFakeRate(self,lep,pt,eta,num,denom):
+    def getFakeRate(self,lep,pt,eta,num,denom,dm=None):
+        if lep=='taus' and self.doDMFakes:
+            if dm in [0,5]:
+                denom = denom + 'DM0'
+            elif dm in [1,6]:
+                denom = denom + 'DM1'
+            elif dm in [10]:
+                denom = denom + 'DM10'
         key = self.fakekey.format(num=num,denom=denom)
         hist = self.fakehists[lep][key]
         if pt > 100.: pt = 99.
         b = hist.FindBin(pt,abs(eta))
-        return hist.GetBinContent(b), hist.GetBinError(b)
+        val, err = hist.GetBinContent(b), hist.GetBinError(b)
+        #print key, pt, abs(eta), val, err
+        return val, err
 
-    def getWeight(self,row,doFake=False):
+    def getWeight(self,row,doFake=False,fakeNum=None,fakeDenom=None):
+        if not fakeNum: fakeNum = 'HppMedium'
+        if not fakeDenom: fakeDenom = 'HppLoose{0}'.format('New' if self.new else '')
         passID = [getattr(row,self.lepID.format(l)) for l in self.leps]
         if row.isData:
             weight = 1.
@@ -186,7 +289,12 @@ class Hpp3lFlattener(NtupleFlattener):
             for l,lep in enumerate(self.leps):
                 if not passID[l]:
                     # recalculate
-                    fakeEff = self.getFakeRate(chanMap[chan[l]], pts[l], etas[l], 'HppMedium','HppLoose{0}'.format('New' if self.new else ''))[0]
+                    dm = None if chan[l]!='t' else getattr(row,'{0}_decayMode'.format(lep))
+                    fn = fakeNum
+                    fd = fakeDenom
+                    if isinstance(fakeNum,dict): fn = fakeNum[chan[l]]
+                    if isinstance(fakeDenom,dict): fd = fakeDenom[chan[l]]
+                    fakeEff = self.getFakeRate(chanMap[chan[l]], pts[l], etas[l], fn, fd, dm=dm)[0]
 
                     # read from tree
                     #fake = self.fakeVal.format(lep)
@@ -228,9 +336,17 @@ class Hpp3lFlattener(NtupleFlattener):
         # define weights
         w = self.getWeight(row)
         wf = self.getWeight(row,doFake=True)
+        loose = '{}loose'.format('new' if self.new else 'old')
+        wfs = {}
+        cuts =  ['n0p2','n0p1','0p0','0p1','0p2','0p3','0p4']
+        for cut in cuts:
+            fn = {'e': 'HppMedium', 'm': 'HppMedium', 't': 'medium'}
+            fd = {'e': 'HppLoose{0}'.format('New' if self.new else ''), 'm': 'HppLoose{0}'.format('New' if self.new else ''), 't': '{}_{}'.format(loose,cut)}
+            wfs[cut] = self.getWeight(row,doFake=True,fakeNum=fn,fakeDenom=fd)
 
         # setup channels
         passID = [getattr(row,self.lepID.format(l)) for l in self.leps]
+        passIDLoose = [getattr(row,self.lepIDLoose.format(l)) for l in self.leps]
         region = ''.join(['P' if p else 'F' for p in passID])
         nf = region.count('F')
         fakeChan = '{0}P{1}F'.format(3-nf,nf)
@@ -256,11 +372,21 @@ class Hpp3lFlattener(NtupleFlattener):
         for sel in self.selectionMap:
             result = self.selectionMap[sel](row)
             if result:
+                if not all(passIDLoose): continue
                 if all(passID): self.fill(row,sel,w,recoChan,genChan)
                 if not self.datadriven: continue
                 if isData or genCut: self.fill(row,fakeChan+'/'+sel,wf,recoChan,genChan)
                 if self.datadrivenRegular:self.fill(row,fakeChan+'_regular/'+sel,w,recoChan,genChan)
 
+        #for sel in self.selectionMapDM:
+        #    result = self.selectionMapDM[sel](row)
+        #    if result:
+        #        for cut in cuts:
+        #            if '_'+cut not in sel: continue
+        #            #if not all(passIDLoose): continue # already in selection
+        #            if all(passID): self.fill(row,sel,w,recoChan,genChan)
+        #            if not self.datadriven: continue
+        #            if isData or genCut: self.fill(row,fakeChan+'/'+sel,wfs[cut],recoChan,genChan)
 
 
 def parse_command_line(argv):

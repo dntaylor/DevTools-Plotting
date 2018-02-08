@@ -10,7 +10,7 @@ import ROOT
 
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-fakeratePlotter = Plotter('WTauFakeRate')
+fakeratePlotter = Plotter('ZTauFakeRate')
 
 #########################
 ### Define categories ###
@@ -57,6 +57,24 @@ sigMap = {
              'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
              'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M1',
             ],
+    'WZ'  : [
+             'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
+             'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
+            ],
+    'WZsub' : [
+             'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
+            ],
+    'ZZ'  : [
+             'ZZTo4L_13TeV_powheg_pythia8',
+             'ZZTo2L2Q_13TeV_powheg_pythia8',
+             'ZZTo2L2Nu_13TeV_powheg_pythia8',
+            ],
+    'ZZsub'  : [
+             'ZZTo4L_13TeV_powheg_pythia8',
+            ],
+    'TTV' : [
+             'tZq_ll_4f_13TeV-amcatnlo-pythia8',
+            ],
     'QCD' : [
              'QCD_Pt_5to10_TuneCUETP8M1_13TeV_pythia8',
              'QCD_Pt_10to15_TuneCUETP8M1_13TeV_pythia8',
@@ -78,10 +96,14 @@ sigMap = {
             ],
     'data': [
              'SingleMuon',
+             'DoubleMuon',
+             'SingleElectron',
+             'DoubleEG',
             ],
 }
 
-samples = ['W','T','TT','Z','WW']
+samples = ['W','T','TT','Z','WW','WZ','ZZ','TTV']
+subsamples = ['WZ','ZZ','TTV']
 
 for s in samples:
     fakeratePlotter.addHistogramToStack(s,sigMap[s])
@@ -90,11 +112,11 @@ fakeratePlotter.addHistogram('data',sigMap['data'])
 
 plots = {
     # z cand
-    'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
-    # m cand
-    'wmMt'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
-    'mPt'                   : {'xaxis': 'p_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
-    'mEta'                  : {'xaxis': '#eta^{#mu}', 'yaxis': 'Events', 'rebin': 5},
+    'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 1 GeV', 'rebin': 1},
+    'zLeadingLeptonPt'      : {'xaxis': 'p_{T}^{Z leading} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': 10},
+    'zLeadingLeptonEta'     : {'xaxis': '#eta^{Z leading}', 'yaxis': 'Events', 'rebin': 10},
+    'zSubLeadingLeptonPt'   : {'xaxis': 'p_{T}^{Z subleading} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': 10},
+    'zSubLeadingLeptonEta'  : {'xaxis': '#eta^{Z subleading}', 'yaxis': 'Events', 'rebin': 10},
     # t cand
     'wtMt'                  : {'xaxis': 'm_{T}^{#tau} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
     'tPt'                   : {'xaxis': 'p_{T}^{#tau} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
@@ -103,8 +125,6 @@ plots = {
     # event
     'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
-    'numTightMuons'         : {'xaxis': 'Number of tight muons', 'yaxis': 'Events',},
-    'numLooseMuons'         : {'xaxis': 'Number of loose muons', 'yaxis': 'Events',},
     # runs
     #'wmMt_Run2016B'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
     #'wmMt_Run2016C'                  : {'xaxis': 'm_{T}^{#mu} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': 5},
@@ -128,24 +148,24 @@ for plot in plots:
         plotname = '{0}/{1}'.format(region,plot)
         savename = '{0}/{1}'.format(region,plot)
         fakeratePlotter.plot(plotname,savename,**plots[plot])
-        for sel in ['ZVeto','WMt','all']:
-            plotname = '{0}/{1}/{2}'.format(region,sel,plot)
-            savename = '{0}/{1}/{2}'.format(region,sel,plot)
-            fakeratePlotter.plot(plotname,savename,**plots[plot])
-            for dm in dms:
-                plotname = '{0}/{1}/dm{2}/{3}'.format(region,sel,dm,plot)
-                savename = '{0}/{1}/dm{2}/{3}'.format(region,sel,dm,plot)
-                fakeratePlotter.plot(plotname,savename,**plots[plot])
+        #for sel in ['WMt']:
+        #    plotname = '{0}/{1}/{2}'.format(region,sel,plot)
+        #    savename = '{0}/{1}/{2}'.format(region,sel,plot)
+        #    fakeratePlotter.plot(plotname,savename,**plots[plot])
+        #    for dm in dms:
+        #        plotname = '{0}/{1}/dm{2}/{3}'.format(region,sel,dm,plot)
+        #        savename = '{0}/{1}/dm{2}/{3}'.format(region,sel,dm,plot)
+        #        fakeratePlotter.plot(plotname,savename,**plots[plot])
 
 
 
 # ratios of tight/loose as func of pt/eta
 sigMap['MC'] = []
-for sample in samples:
-    if sample!='W': sigMap['MC'] += sigMap[sample]
+for sample in subsamples:
+    sigMap['MC'] += sigMap[sample]
 fakeratePlotter.clearHistograms()
 fakeratePlotter.addHistogram('MC',sigMap['MC'])
-fakeratePlotter.addHistogram('W',sigMap['W'])
+fakeratePlotter.addHistogram('Z',sigMap['Z'])
 fakeratePlotter.addHistogram('data',sigMap['data'],style={'linecolor':ROOT.kBlack,'name':'Corrected'})
 fakeratePlotter.addHistogram('data_uncorrected',sigMap['data'],style={'linecolor':ROOT.kRed,'name':'Uncorrected'})
 
@@ -171,7 +191,7 @@ for plot in ['tPt','tEta']:
         subtractMap = {
             'data': ['MC'],
         }
-        customOrder = ['data_uncorrected','data','W']
+        customOrder = ['data_uncorrected','data','Z']
         fakeratePlotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,legendpos=34,numcol=2,subtractMap=subtractMap,**kwargs)
         for ndm in numdms:
             kwargs = deepcopy(plots[plot])
@@ -184,7 +204,7 @@ for plot in ['tPt','tEta']:
             subtractMap = {
                 'data': ['MC'],
             }
-            customOrder = ['data_uncorrected','data','W']
+            customOrder = ['data_uncorrected','data','Z']
             fakeratePlotter.plotRatio(numname,denomname,savename,ymax=1.,customOrder=customOrder,legendpos=34,numcol=2,subtractMap=subtractMap,**kwargs)
         #for etabin in range(3):
         #    if plot=='tEta': continue

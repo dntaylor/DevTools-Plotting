@@ -8,6 +8,7 @@ from electronHistParams import buildElectron
 from muonHistParams import buildMuon
 from tauHistParams import buildTau
 from wTauFakeRateHistParams import buildWTauFakeRate
+from zTauFakeRateHistParams import buildZTauFakeRate
 from wFakeRateHistParams import buildWFakeRate
 from zFakeRateHistParams import buildZFakeRate
 from dijetFakeRateHistParams import buildDijetFakeRate
@@ -22,6 +23,7 @@ from threeLeptonHistParams import buildThreeLepton
 from triggerCountHistParams import buildTriggerCount
 from muMuTauTauHistParams import buildMuMuTauTau
 from muMuTauFakeRateHistParams import buildMuMuTauFakeRate
+from muMuMuFakeRateHistParams import buildMuMuMuFakeRate
 
 cachedParams = {}
 
@@ -61,6 +63,7 @@ def buildHistParams(analysis,**kwargs):
     if analysis=='Muon':            buildMuon(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='Tau':             buildTau(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='WTauFakeRate':    buildWTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='ZTauFakeRate':    buildZTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='WFakeRate':       buildWFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='ZFakeRate':       buildZFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='DijetFakeRate':   buildDijetFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
@@ -75,6 +78,7 @@ def buildHistParams(analysis,**kwargs):
     if analysis=='TriggerCount':    buildTriggerCount(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='MuMuTauTau':      buildMuMuTauTau(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='MuMuTauFakeRate': buildMuMuTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='MuMuMuFakeRate':  buildMuMuMuFakeRate(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
 
     cachedParams[key] = (selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     return cachedParams[key]

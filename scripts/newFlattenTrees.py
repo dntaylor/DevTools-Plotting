@@ -15,6 +15,9 @@ from DevTools.Plotter.utilities import getNtupleDirectory, getTreeName
 from DevTools.Plotter.WZFlattener import WZFlattener
 from DevTools.Plotter.Hpp3lFlattener import Hpp3lFlattener
 from DevTools.Plotter.Hpp4lFlattener import Hpp4lFlattener
+from DevTools.Plotter.WTauFakeRateFlattener import WTauFakeRateFlattener
+from DevTools.Plotter.ZTauFakeRateFlattener import ZTauFakeRateFlattener
+from DevTools.Plotter.MuMuTauTauFlattener import MuMuTauTauFlattener
 
 try:
     from DevTools.Utilities.MultiProgress import MultiProgress
@@ -29,6 +32,9 @@ flatteners = {
     'WZ': WZFlattener,
     'Hpp3l': Hpp3lFlattener,
     'Hpp4l': Hpp4lFlattener,
+    'WTauFakeRate': WTauFakeRateFlattener,
+    'ZTauFakeRate': ZTauFakeRateFlattener,
+    'MuMuTauTau': MuMuTauTauFlattener,
 }
 
 def flatten(analysis,sample,**kwargs):
@@ -61,7 +67,7 @@ def getSampleDirectories(analysis,sampleList):
 def parse_command_line(argv):
     parser = argparse.ArgumentParser(description='Flatten Tree')
 
-    parser.add_argument('analysis', type=str, choices=['WZ','Hpp3l','Hpp4l',], help='Analysis to process')
+    parser.add_argument('analysis', type=str, help='Analysis to process')
     parser.add_argument('shift', type=str, default='', nargs='?', help='Shift to apply to scale factors')
     parser.add_argument('--samples', nargs='+', type=str, default=['*'], help='Samples to flatten. Supports unix style wildcards.')
     parser.add_argument('-j',type=int,default=1,help='Number of cores to use')
