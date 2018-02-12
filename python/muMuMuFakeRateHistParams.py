@@ -31,6 +31,10 @@ def buildMuMuMuFakeRate(selectionParams,sampleSelectionParams,projectionParams,s
         'iso0.15'               : {'args': [baseCut + ' && m_isolation<0.15'],                                                          'kwargs': {'mcscalefactor': scaleFactor}},
         'iso0.25'               : {'args': [baseCut + ' && m_isolation<0.25'],                                                          'kwargs': {'mcscalefactor': scaleFactor}},
         'iso0.40'               : {'args': [baseCut + ' && m_isolation<0.40'],                                                          'kwargs': {'mcscalefactor': scaleFactor}},
+        'defaulttrig'           : {'args': [baseCut + ' && (m_matches_IsoMu24 || m_matches_IsoTkMu24)'],                                'kwargs': {'mcscalefactor': scaleFactor}},
+        'iso0.15trig'           : {'args': [baseCut + ' && (m_matches_IsoMu24 || m_matches_IsoTkMu24)' + ' && m_isolation<0.15'],       'kwargs': {'mcscalefactor': scaleFactor}},
+        'iso0.25trig'           : {'args': [baseCut + ' && (m_matches_IsoMu24 || m_matches_IsoTkMu24)' + ' && m_isolation<0.25'],       'kwargs': {'mcscalefactor': scaleFactor}},
+        'iso0.40trig'           : {'args': [baseCut + ' && (m_matches_IsoMu24 || m_matches_IsoTkMu24)' + ' && m_isolation<0.40'],       'kwargs': {'mcscalefactor': scaleFactor}},
     }
 
     etaBins = [0.,1.0,1.5,2.4]

@@ -128,7 +128,7 @@ latestNtuples['80X'] = {
 # MuMuTauTau
     'MuMuTauTau'     : '2018-02-01_MuMuTauTauAnalysis_80X_v1-merge',
     'MuMuTauFakeRate': '2018-02-01_MuMuTauFakeRateAnalysis_80X_v2-merge',
-    'MuMuMuFakeRate' : '2018-02-05_MuMuMuFakeRateAnalysis_80X_v1-merge',
+    'MuMuMuFakeRate' : '2018-02-09_MuMuMuFakeRateAnalysis_80X_v1-merge',
 }
 
 latestShifts = {}
@@ -215,6 +215,7 @@ def getTestFiles(analysis,sample,n=1,version=None):
         'hpp4l' : 'HPlusPlusHMinusMinusHTo4L_M-500_13TeV-pythia8' if version=='76X' else 'HPlusPlusHMinusMinusHTo4L_M-500_TuneCUETP8M1_13TeV_pythia8',
         'hppr4l': 'HPlusPlusHMinusMinusHRTo4L_M-500_13TeV-pythia8' if version=='76X' else 'HPlusPlusHMinusMinusHRTo4L_M-500_TuneCUETP8M1_13TeV-pythia8',
         'hpp3l' : 'HPlusPlusHMinusHTo3L_M-500_TuneCUETP8M1_13TeV_calchep-pythia8' if version=='76X' else 'HPlusPlusHMinusHTo3L_M-500_13TeV-calchep-pythia8',
+        'haa'   : 'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-15_TuneCUETP8M1_13TeV_madgraph_pythia8',
         #'dy'    : 'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
         'dy'    : 'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
         'w'     : 'WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',

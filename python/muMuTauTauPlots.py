@@ -18,10 +18,13 @@ version = getCMSSWVersion()
 blind = True
 doDetRegions = False
 doSignals = False
-doMC = True
+doMC = False
 do2D = False
-doDatadriven = True
+doDatadriven = False
 doLowmass = True
+doHighmass = True
+doMatrix = True
+doNormalizations = False
 #newloose = [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]
 #newloose = [-1,-0.2,0.0,0.2,0.4]
 newloose = []
@@ -80,6 +83,7 @@ aColors = {
 
 sels = ['default','regionA','regionB','regionC','regionD']
 if doLowmass: sels += ['lowmass/default','lowmass/regionA','lowmass/regionB','lowmass/regionC','lowmass/regionD']
+if doHighmass: sels += ['highmass/default','highmass/regionA','highmass/regionB','highmass/regionC','highmass/regionD']
 
 for sel in ['default','regionA','regionB','regionC','regionD']:
     #sels += ['{0}/{1}'.format(sel,'dr0p8')]
@@ -144,6 +148,7 @@ plots = {
     'athIso'                : {'xaxis': '#tau_{h} MVA Iso.', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'logy': False, 'overflow': True},
     'atmIso'                : {'xaxis': '#tau_{#mu} Rel. Iso.', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'logy': False, 'overflow': True},
     # event
+    'genChannel'            : {'xaxis': 'Gen channel', 'yaxis': 'Events',},
     'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,320,20), 'numcol': 2, 'logy': False, 'overflow': True},
     #'nBJetsT'               : {'xaxis': 'Number of b-tagged jets (p_{T} > 20 GeV)', 'yaxis': 'Events', 'rebin': [-0.5,0.5,1.5,2.5], 'overflow': True, 'binlabels': ['0','1','2','#geq3'], 'logy': True,},
@@ -197,7 +202,7 @@ if doMC:
         for signal in signals:
             plotter.addHistogram(signal,sigMap[signal],signal=True)
         
-        if not blind or 'regionD' in sel or 'lowmass' in sel: plotter.addHistogram('data',sigMap['data'])
+        if not blind or 'regionD' in sel or 'lowmass' in sel or 'highmass' in sel: plotter.addHistogram('data',sigMap['data'])
         
         for plot in plots:
             kwargs = deepcopy(plots[plot])
@@ -205,7 +210,7 @@ if doMC:
             savename = '{0}/mc/{1}'.format(sel,plot)
             plotter.plot(plotname,savename,**kwargs)
         
-        if blind and 'regionD' not in sel and 'lowmass' not in sel: plotter.addHistogram('data',sigMap['data'])
+        if blind and 'regionD' not in sel and 'lowmass' not in sel and 'highmass' not in sel: plotter.addHistogram('data',sigMap['data'])
         
         for s in special:
             for plot in special[s]:
@@ -228,7 +233,7 @@ if doSignals:
     
         for plot in plots:
             for sel in sels:
-                if 'lowmass' in sel: continue
+                if 'lowmass' in sel or 'highmass' in sel: continue
                 kwargs = deepcopy(plots[plot])
                 plotname = '{0}/{1}'.format(sel,plot)
                 savename = '{0}/h{h}/{1}'.format(sel,plot,h=h)
@@ -244,7 +249,7 @@ if doSignals:
     
         for plot in plots:
             for sel in sels:
-                if 'lowmass' in sel: continue
+                if 'lowmass' in sel or 'highmass' in sel: continue
                 kwargs = deepcopy(plots[plot])
                 plotname = '{0}/{1}'.format(sel,plot)
                 savename = '{0}/a{a}/{1}'.format(sel,plot,a=a)
@@ -258,14 +263,14 @@ def getDatadrivenPlot(*plots,**kwargs):
     region = kwargs.pop('region','A')
     source = kwargs.pop('source','D')
     looseMVA = kwargs.pop('looseMVA',None)
-    lowmass = kwargs.pop('lowmass',False)
+    tag = kwargs.pop('tag',None)
     histMap = {}
     for s in samples+signals+['data','datadriven']: histMap[s] = []
     for plot in plots:
-        aplot = '{}region{}/{}'.format('lowmass/' if lowmass else '',region,plot)
-        bplot = '{}region{}_fakeFor{}/{}'.format('lowmass/' if lowmass else '',source,region,plot)
+        aplot = '{}region{}/{}'.format(tag+'/' if tag else '',region,plot)
+        bplot = '{}region{}_fakeFor{}/{}'.format(tag+'/' if tag else '',source,region,plot)
         if looseMVA:
-            bplot = '{}region{}_fakeFor{}{:.1f}/{}'.format('lowmass/' if lowmass else '',source,region,looseMVA,plot)
+            bplot = '{}region{}_fakeFor{}{:.1f}/{}'.format(tag+'/' if tag else '',source,region,looseMVA,plot)
         for s in samples+signals+['data']: histMap[s] += [aplot]
         histMap['datadriven'] += [bplot]
     return histMap
@@ -275,7 +280,9 @@ if doDatadriven:
     for s in ['data']:
         ddSamples += sigMap[s]
 
-    for lowmass in set([doLowmass,False]):
+    for tag in ['','lowmass','highmass']:
+        if not doLowmass and tag=='lowmass': continue
+        if not doHighmass and tag=='highmass': continue
         for looseMVA in [None]+newloose:
             for region, source in [('A','B'),('C','D'),('A','D'),('A','C'),('B','D')]:
                 plotter.clearHistograms()
@@ -288,86 +295,327 @@ if doDatadriven:
                 for signal in signals:
                     plotter.addHistogram(signal,sigMap[signal],signal=True)
                 
-                if not blind or lowmass: plotter.addHistogram('data',sigMap['data'])
+                if not blind or tag in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
             
                 for plot in plots:
                     kwargs = deepcopy(plots[plot])
                     plotname = '{}'.format(plot)
-                    savename = '{}region{}/datadriven_from{}/{}'.format('lowmass/' if lowmass else '',region,source,plot)
-                    if looseMVA: savename = '{}region{}/datadriven_from{}{:.1f}/{}'.format('lowmass/' if lowmass else '',region,source,looseMVA,plot)
-                    plotter.plot(getDatadrivenPlot(plotname,region=region,source=source,looseMVA=looseMVA,lowmass=lowmass),savename,**kwargs)
+                    savename = '{}region{}/datadriven_from{}/{}'.format(tag+'/' if tag else '',region,source,plot)
+                    if looseMVA: savename = '{}region{}/datadriven_from{}{:.1f}/{}'.format(tag+'/' if tag else '',region,source,looseMVA,plot)
+                    plotter.plot(getDatadrivenPlot(plotname,region=region,source=source,looseMVA=looseMVA,tag=tag),savename,**kwargs)
                 
-                if blind or not lowmass: plotter.addHistogram('data',sigMap['data'])
+                if blind or tag not in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
                 
                 for s in special:
                     for plot in special[s]:
                         kwargs = deepcopy(special[s][plot])
                         plotname = '{}'.format(plot)
-                        savename = '{}region{}/datadriven_from{}/{}_{}'.format('lowmass/' if lowmass else '',region,source,plot,s)
-                        if looseMVA: savename = '{}region{}/datadriven_from{}{:.1f}/{}_{}'.format('lowmass/' if lowmass else '',region,source,looseMVA,plot,s)
-                        plotter.plot(getDatadrivenPlot(plotname,region=region,source=source,looseMVA=looseMVA,lowmass=lowmass),savename,doGOF=True,**kwargs)
+                        savename = '{}region{}/datadriven_from{}/{}_{}'.format(tag+'/' if tag else '',region,source,plot,s)
+                        if looseMVA: savename = '{}region{}/datadriven_from{}{:.1f}/{}_{}'.format(tag+'/' if tag else '',region,source,looseMVA,plot,s)
+                        plotter.plot(getDatadrivenPlot(plotname,region=region,source=source,looseMVA=looseMVA,tag=tag),savename,doGOF=True,**kwargs)
 
 
-if doLowmass:
-    regions = ['A','B','C','D']
+def getMatrixDatadrivenPlot(*plots,**kwargs):
+    region = kwargs.pop('region','A')
+    sources = kwargs.pop('sources',['A','C'])
+    fakeRegion = kwargs.pop('region','B')
+    fakeSources = kwargs.pop('sources',['B','D'])
+    tag = kwargs.pop('tag',None)
+    doPrompt = kwargs.pop('doPrompt',True)
+    doFake = kwargs.pop('doFake',False)
+    histMap = {}
+    for s in samples+signals+['data','matP','matF']: histMap[s] = []
+    for plot in plots:
+        #aplot = '{}region{}/{}'.format(tag+'/' if tag else '',region,plot)
+        #for s in samples+signals+['data']: histMap[s] += [aplot]
+        applot = ['matrixP/{}region{}_for{}/{}'.format(tag+'/' if tag else '',source,region,plot) for source in sources]
+        afplot = ['matrixF/{}region{}_for{}/{}'.format(tag+'/' if tag else '',source,region,plot) for source in sources]
+        bpplot = ['matrixP/{}region{}_for{}_fakeFor{}/{}'.format(tag+'/' if tag else '',source,fakeRegion,region,plot) for source in fakeSources]
+        bfplot = ['matrixF/{}region{}_for{}_fakeFor{}/{}'.format(tag+'/' if tag else '',source,fakeRegion,region,plot) for source in fakeSources]
+        if doPrompt:
+            for s in samples+signals+['data']: histMap[s] += applot
+            histMap['matP'] += bpplot
+        if doFake:
+            for s in samples+signals+['data']: histMap[s] += afplot
+            histMap['matF'] += bfplot
+    return histMap
 
-    colors = {
-        'A': ROOT.kBlue,
-        'B': ROOT.kGreen,
-        'C': ROOT.kOrange,
-        'D': ROOT.kRed,
-    }
+def getMatrixPlot(*plots,**kwargs):
+    region = kwargs.pop('region','A')
+    sources = kwargs.pop('sources',['A','B','C','D'])
+    tag = kwargs.pop('tag',None)
+    doPrompt = kwargs.pop('doPrompt',True)
+    doFake = kwargs.pop('doFake',True)
+    histMap = {}
+    for s in samples+signals+['data','matP','matF']: histMap[s] = []
+    for plot in plots:
+        #aplot = '{}region{}/{}'.format(tag+'/' if tag else '',region,plot)
+        #for s in samples+signals+['data']: histMap[s] += [aplot]
+        if doPrompt and doFake:
+            aplot = ['{}region{}/{}'.format(tag+'/' if tag else '',source,plot) for source in sources]
+        elif doPrompt:
+            aplot = ['matrixP/{}region{}_for{}/{}'.format(tag+'/' if tag else '',source,region,plot) for source in sources]
+        else:
+            aplot = ['matrixF/{}region{}_for{}/{}'.format(tag+'/' if tag else '',source,region,plot) for source in sources]
+        pplot = ['matrixP/{}region{}_for{}/{}'.format(tag+'/' if tag else '',source,region,plot) for source in sources]
+        fplot = ['matrixF/{}region{}_for{}/{}'.format(tag+'/' if tag else '',source,region,plot) for source in sources]
+        for s in samples+signals+['data']: histMap[s] += aplot
+        if doPrompt: histMap['matP'] += pplot
+        if doFake: histMap['matF'] += fplot
+    return histMap
 
-    plotter.clearHistograms()
+def getMatrixPredictionPlot(*plots,**kwargs):
+    region = kwargs.pop('region','A')
+    sources = kwargs.pop('sources',['A','B','C','D'])
+    tag = kwargs.pop('tag',None)
+    histMap = {}
+    for s in samples+signals+['data','matP','matF']: histMap[s] = []
+    for plot in plots:
+        #aplot = '{}region{}/{}'.format(tag+'/' if tag else '',region,plot)
+        #for s in samples+signals+['data']: histMap[s] += [aplot]
+        aplot = ['{}region{}/{}'.format(tag+'/' if tag else '',region,plot)]
+        pplot = ['matrixP/{}region{}_for{}_p/{}'.format(tag+'/' if tag else '',source,region,plot) for source in sources]
+        fplot = ['matrixF/{}region{}_for{}_f/{}'.format(tag+'/' if tag else '',source,region,plot) for source in sources]
+        for s in samples+signals+['data']: histMap[s] += aplot
+        histMap['matP'] += pplot
+        histMap['matF'] += fplot
+    return histMap
 
-    for region in regions:
-        plotter.addHistogram('region{}'.format(region),sigMap['data'],style={'name':'Region {}'.format(region), 'linecolor': colors[region], 'fillcolor': colors[region]})
+if doMatrix:
+    ddSamples = []
+    for s in ['data']:
+        ddSamples += sigMap[s]
 
+    for tag in ['','lowmass','highmass']:
+        if not doLowmass and tag=='lowmass': continue
+        if not doHighmass and tag=='highmass': continue
+        for doPrompt, doFake in [(1,1),(1,0),(0,1)]:
+
+            for region, sources in [('B',['B','D']),('A',['A','C'])]:
+                plotter.clearHistograms()
+
+                if doFake: plotter.addHistogramToStack('matF',ddSamples)
+                if doPrompt: plotter.addHistogramToStack('matP',ddSamples)
+
+                for s in []:
+                    plotter.addHistogramToStack(s,sigMap[s])
+                
+                for signal in signals:
+                    plotter.addHistogram(signal,sigMap[signal],signal=True)
+                
+                if not blind or tag in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
+            
+                for plot in plots:
+                    kwargs = deepcopy(plots[plot])
+                    plotname = '{}'.format(plot)
+                    savename = '{}region{}/matrix/{}'.format(tag+'/' if tag else '',region,plot)
+                    if doPrompt and not doFake: savename = '{}region{}/matrix_prompt/{}'.format(tag+'/' if tag else '',region,plot)
+                    if not doPrompt and doFake: savename = '{}region{}/matrix_fake/{}'.format(tag+'/' if tag else '',region,plot)
+                    plotter.plot(getMatrixPlot(plotname,region=region,sources=sources,tag=tag,doPrompt=doPrompt,doFake=doFake),savename,**kwargs)
+                
+                if blind or tag not in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
+                
+                for s in special:
+                    for plot in special[s]:
+                        kwargs = deepcopy(special[s][plot])
+                        plotname = '{}'.format(plot)
+                        savename = '{}region{}/matrix/{}_{}'.format(tag+'/' if tag else '',region,plot,s)
+                        if doPrompt and not doFake: savename = '{}region{}/matrix_prompt/{}_{}'.format(tag+'/' if tag else '',region,plot,s)
+                        if not doPrompt and doFake: savename = '{}region{}/matrix_fake/{}_{}'.format(tag+'/' if tag else '',region,plot,s)
+                        plotter.plot(getMatrixPlot(plotname,region=region,sources=sources,tag=tag,doPrompt=doPrompt,doFake=doFake),savename,doGOF=True,**kwargs)
+
+
+        for region, sources in [('B',['B','D']),('A',['A','C'])]:
+            plotter.clearHistograms()
+
+            plotter.addHistogramToStack('matF',ddSamples)
+            plotter.addHistogramToStack('matP',ddSamples)
+
+            for s in []:
+                plotter.addHistogramToStack(s,sigMap[s])
+            
+            for signal in signals:
+                plotter.addHistogram(signal,sigMap[signal],signal=True)
+            
+            if not blind or tag in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
         
-    for plot in plots:
-        kwargs = deepcopy(plots[plot])
-        plotname = {'region{}'.format(region): 'lowmass/region{}/{}'.format(region,plot) for region in regions}
-        savename = 'lowmass/regions/{}'.format(plot)
-        plotter.plot(plotname,savename,**kwargs)
-        savename = 'lowmass/regions_normalized/{}'.format(plot)
-        plotter.plotNormalized(plotname,savename,**kwargs)
+            for plot in plots:
+                kwargs = deepcopy(plots[plot])
+                plotname = '{}'.format(plot)
+                savename = '{}region{}/matrix_prediction/{}'.format(tag+'/' if tag else '',region,plot)
+                plotter.plot(getMatrixPredictionPlot(plotname,region=region,sources=sources,tag=tag),savename,**kwargs)
+            
+            if blind or tag not in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
+            
+            for s in special:
+                for plot in special[s]:
+                    kwargs = deepcopy(special[s][plot])
+                    plotname = '{}'.format(plot)
+                    savename = '{}region{}/matrix_prediction/{}_{}'.format(tag+'/' if tag else '',region,plot,s)
+                    plotter.plot(getMatrixPredictionPlot(plotname,region=region,sources=sources,tag=tag),savename,doGOF=True,**kwargs)
 
-    for s in special:
-        for plot in special[s]:
-            kwargs = deepcopy(special[s][plot])
-            plotname = {'region{}'.format(region): 'lowmass/region{}/{}'.format(region,plot) for region in regions}
-            savename = 'lowmass/regions/{}_{}'.format(plot,s)
-            plotter.plot(plotname,savename,**kwargs)
-            savename = 'lowmass/regions_normalized/{}_{}'.format(plot,s)
-            plotter.plotNormalized(plotname,savename,**kwargs)
+        for doPrompt, doFake in [(1,1),(1,0),(0,1)]:
 
-    for plot in plots:
-        kwargs = deepcopy(plots[plot])
-        plotname = {
-            'regionA': 'lowmass/regionA/{}'.format(plot),
-            'regionB': 'lowmass/regionB_fakeForA/{}'.format(plot),
-            'regionC': 'lowmass/regionC_fakeForA/{}'.format(plot),
-            'regionD': 'lowmass/regionD_fakeForA/{}'.format(plot),
+            region = 'A'
+            fakeRegion = 'B'
+            sources = ['A','C']
+            fakeSources = ['B','D']
+
+            plotter.clearHistograms()
+
+            if doFake: plotter.addHistogramToStack('matF',ddSamples)
+            if doPrompt: plotter.addHistogramToStack('matP',ddSamples)
+
+            for s in []:
+                plotter.addHistogramToStack(s,sigMap[s])
+            
+            for signal in signals:
+                plotter.addHistogram(signal,sigMap[signal],signal=True)
+            
+            if not blind or tag in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
+        
+            for plot in plots:
+                kwargs = deepcopy(plots[plot])
+                plotname = '{}'.format(plot)
+                savename = '{}region{}/matrixDatadriven/{}'.format(tag+'/' if tag else '',region,plot)
+                if doPrompt and not doFake: savename = '{}region{}/matrixDatadriven_prompt/{}'.format(tag+'/' if tag else '',region,plot)
+                if not doPrompt and doFake: savename = '{}region{}/matrixDatadriven_fake/{}'.format(tag+'/' if tag else '',region,plot)
+                plotter.plot(getMatrixDatadrivenPlot(plotname,region=region,sources=sources,fakeRegions=fakeRegion,fakeSources=fakeSources,tag=tag,doFake=doFake,doPrompt=doPrompt),savename,**kwargs)
+            
+            if blind or tag not in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
+            
+            for s in special:
+                for plot in special[s]:
+                    kwargs = deepcopy(special[s][plot])
+                    plotname = '{}'.format(plot)
+                    savename = '{}region{}/matrixDatadriven/{}_{}'.format(tag+'/' if tag else '',region,plot,s)
+                    if doPrompt and not doFake: savename = '{}region{}/matrixDatadriven_prompt/{}_{}'.format(tag+'/' if tag else '',region,plot,s)
+                    if not doPrompt and doFake: savename = '{}region{}/matrixDatadriven_fake/{}_{}'.format(tag+'/' if tag else '',region,plot,s)
+                    plotter.plot(getMatrixDatadrivenPlot(plotname,region=region,sources=sources,fakeRegions=fakeRegion,fakeSources=fakeSources,tag=tag,doFake=doFake,doPrompt=doPrompt),savename,doGOF=True,**kwargs)
+
+
+if doNormalizations:
+    if doLowmass:
+        regions = ['A','B','C','D']
+    
+        colors = {
+            'A': ROOT.kBlue,
+            'B': ROOT.kGreen,
+            'C': ROOT.kOrange,
+            'D': ROOT.kRed,
         }
-        savename = 'lowmass/regions_datadriven/{}'.format(plot)
-        plotter.plot(plotname,savename,**kwargs)
-        savename = 'lowmass/regions_datadriven_normalized/{}'.format(plot)
-        plotter.plotNormalized(plotname,savename,**kwargs)
-
-    for s in special:
-        for plot in special[s]:
-            kwargs = deepcopy(special[s][plot])
+    
+        plotter.clearHistograms()
+    
+        for region in regions:
+            plotter.addHistogram('region{}'.format(region),sigMap['data'],style={'name':'Region {}'.format(region), 'linecolor': colors[region], 'fillcolor': colors[region]})
+    
+            
+        for plot in plots:
+            kwargs = deepcopy(plots[plot])
+            plotname = {'region{}'.format(region): 'lowmass/region{}/{}'.format(region,plot) for region in regions}
+            savename = 'lowmass/regions/{}'.format(plot)
+            plotter.plot(plotname,savename,**kwargs)
+            savename = 'lowmass/regions_normalized/{}'.format(plot)
+            plotter.plotNormalized(plotname,savename,**kwargs)
+    
+        for s in special:
+            for plot in special[s]:
+                kwargs = deepcopy(special[s][plot])
+                plotname = {'region{}'.format(region): 'lowmass/region{}/{}'.format(region,plot) for region in regions}
+                savename = 'lowmass/regions/{}_{}'.format(plot,s)
+                plotter.plot(plotname,savename,**kwargs)
+                savename = 'lowmass/regions_normalized/{}_{}'.format(plot,s)
+                plotter.plotNormalized(plotname,savename,**kwargs)
+    
+        for plot in plots:
+            kwargs = deepcopy(plots[plot])
             plotname = {
                 'regionA': 'lowmass/regionA/{}'.format(plot),
                 'regionB': 'lowmass/regionB_fakeForA/{}'.format(plot),
                 'regionC': 'lowmass/regionC_fakeForA/{}'.format(plot),
                 'regionD': 'lowmass/regionD_fakeForA/{}'.format(plot),
             }
-            savename = 'lowmass/regions_datadriven/{}_{}'.format(plot,s)
+            savename = 'lowmass/regions_datadriven/{}'.format(plot)
             plotter.plot(plotname,savename,**kwargs)
-            savename = 'lowmass/regions_datadriven_normalized/{}_{}'.format(plot,s)
+            savename = 'lowmass/regions_datadriven_normalized/{}'.format(plot)
             plotter.plotNormalized(plotname,savename,**kwargs)
-                
+    
+        for s in special:
+            for plot in special[s]:
+                kwargs = deepcopy(special[s][plot])
+                plotname = {
+                    'regionA': 'lowmass/regionA/{}'.format(plot),
+                    'regionB': 'lowmass/regionB_fakeForA/{}'.format(plot),
+                    'regionC': 'lowmass/regionC_fakeForA/{}'.format(plot),
+                    'regionD': 'lowmass/regionD_fakeForA/{}'.format(plot),
+                }
+                savename = 'lowmass/regions_datadriven/{}_{}'.format(plot,s)
+                plotter.plot(plotname,savename,**kwargs)
+                savename = 'lowmass/regions_datadriven_normalized/{}_{}'.format(plot,s)
+                plotter.plotNormalized(plotname,savename,**kwargs)
+                    
+    
+    if doHighmass:
+        regions = ['A','B','C','D']
+    
+        colors = {
+            'A': ROOT.kBlue,
+            'B': ROOT.kGreen,
+            'C': ROOT.kOrange,
+            'D': ROOT.kRed,
+        }
+    
+        plotter.clearHistograms()
+    
+        for region in regions:
+            plotter.addHistogram('region{}'.format(region),sigMap['data'],style={'name':'Region {}'.format(region), 'linecolor': colors[region], 'fillcolor': colors[region]})
+    
+            
+        for plot in plots:
+            kwargs = deepcopy(plots[plot])
+            plotname = {'region{}'.format(region): 'highmass/region{}/{}'.format(region,plot) for region in regions}
+            savename = 'highmass/regions/{}'.format(plot)
+            plotter.plot(plotname,savename,**kwargs)
+            savename = 'highmass/regions_normalized/{}'.format(plot)
+            plotter.plotNormalized(plotname,savename,**kwargs)
+    
+        for s in special:
+            for plot in special[s]:
+                kwargs = deepcopy(special[s][plot])
+                plotname = {'region{}'.format(region): 'highmass/region{}/{}'.format(region,plot) for region in regions}
+                savename = 'highmass/regions/{}_{}'.format(plot,s)
+                plotter.plot(plotname,savename,**kwargs)
+                savename = 'highmass/regions_normalized/{}_{}'.format(plot,s)
+                plotter.plotNormalized(plotname,savename,**kwargs)
+    
+        for plot in plots:
+            kwargs = deepcopy(plots[plot])
+            plotname = {
+                'regionA': 'highmass/regionA/{}'.format(plot),
+                'regionB': 'highmass/regionB_fakeForA/{}'.format(plot),
+                'regionC': 'highmass/regionC_fakeForA/{}'.format(plot),
+                'regionD': 'highmass/regionD_fakeForA/{}'.format(plot),
+            }
+            savename = 'highmass/regions_datadriven/{}'.format(plot)
+            plotter.plot(plotname,savename,**kwargs)
+            savename = 'highmass/regions_datadriven_normalized/{}'.format(plot)
+            plotter.plotNormalized(plotname,savename,**kwargs)
+    
+        for s in special:
+            for plot in special[s]:
+                kwargs = deepcopy(special[s][plot])
+                plotname = {
+                    'regionA': 'highmass/regionA/{}'.format(plot),
+                    'regionB': 'highmass/regionB_fakeForA/{}'.format(plot),
+                    'regionC': 'highmass/regionC_fakeForA/{}'.format(plot),
+                    'regionD': 'highmass/regionD_fakeForA/{}'.format(plot),
+                }
+                savename = 'highmass/regions_datadriven/{}_{}'.format(plot,s)
+                plotter.plot(plotname,savename,**kwargs)
+                savename = 'highmass/regions_datadriven_normalized/{}_{}'.format(plot,s)
+                plotter.plotNormalized(plotname,savename,**kwargs)
+                    
 
     
     

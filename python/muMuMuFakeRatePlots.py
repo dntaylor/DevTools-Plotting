@@ -54,7 +54,7 @@ sigMap = {
         'WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
     ],
     'ZZ': [
-        'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
+        #'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
         'ZZTo4L_13TeV-amcatnloFXFX-pythia8',
     ],
     'data' : [
@@ -69,9 +69,11 @@ for s in ['WZ','ZZ']:
     sigMap['BG'] += sigMap[s]
 
 sels = ['default','iso0.15','iso0.25','iso0.40']
+sels += ['defaulttrig','iso0.15trig','iso0.25trig','iso0.40trig']
 etaBins = [0,1.0,1.5,2.4]
 for eb in range(len(etaBins)-1):
     sels += ['default/etaBin{0}'.format(eb), 'iso0.15/etaBin{0}'.format(eb), 'iso0.25/etaBin{0}'.format(eb), 'iso0.40/etaBin{0}'.format(eb),]
+    sels += ['defaulttrig/etaBin{0}'.format(eb), 'iso0.15trig/etaBin{0}'.format(eb), 'iso0.25trig/etaBin{0}'.format(eb), 'iso0.40trig/etaBin{0}'.format(eb),]
 
 
 ########################
@@ -83,7 +85,7 @@ plots = {
     'z1Pt'                  : {'xaxis': 'm^{#mu#mu} #mu_{1} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
     'z2Pt'                  : {'xaxis': 'm^{#mu#mu} #mu_{2} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
     # t
-    'mPt'                   : {'xaxis': '#mu p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
+    'mPt'                   : {'xaxis': '#mu p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': True, 'overflow': True},
     # event
     #'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     #'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,320,20), 'numcol': 2, 'logy': False, 'overflow': True},
@@ -117,11 +119,12 @@ ptbins = [3,5,10,15,20,25,30,50,100]
 etabins = [-2.4,-1.5,-1.0,0.,1.0,1.5,2.4]
 
 cust = {
-    'mPt'     : {'rebin': ptbins, 'overflow': False},
+    'mPt'     : {'rebin': ptbins, 'overflow': False, 'logy': False},
     #'mEta'    : {'rebin': etabins},
 }
 
 numDenoms = [('iso0.15','default'),('iso0.25','default'),('iso0.40','default'),('iso0.15','iso0.40'),]
+numDenoms += [('iso0.15trig','defaulttrig'),('iso0.25trig','defaulttrig'),('iso0.40trig','defaulttrig'),('iso0.15trig','iso0.40trig'),]
 
 for plot in cust:
     for num,denom in numDenoms:

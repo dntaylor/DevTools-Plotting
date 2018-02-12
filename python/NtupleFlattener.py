@@ -6,6 +6,7 @@ import json
 import pickle
 import time
 from array import array
+import numbers
 
 sys.argv.append('-b')
 import ROOT
@@ -96,22 +97,36 @@ class NtupleFlattener(object):
                         histName = '{0}/{1}/gen_{2}/{3}'.format(selection,chan,genChan,hist)
                         if genChan=='all': histName = '{0}/{1}/{2}'.format(selection,chan,hist)
                         if chan=='all': histName = '{0}/{1}'.format(selection,hist)
-                        xbins = self.histParams[hist]['xBinning']
+                        xbins = self.histParams[hist].get('xBinning',[])
                         if 'yBinning' in self.histParams[hist]:
                             ybins = self.histParams[hist]['yBinning']
                             if isinstance(xbins,array) and isinstance(ybins,array): # variable width array
                                 self.hists[histName] = ROOT.TH2D(histName,histName,len(xbins)-1,xbins,len(ybins)-1,ybins)
-                            elif len(xbins)==3 and len(ybins)==3: # n, low, high
+                            elif len(xbins)==3 and len(ybins)==3 and all([isinstance(x,numbers.Number) for x in xbins]) and all([isinstance(x,numbers.Number) for x in ybins]): # n, low, high
                                 self.hists[histName] = ROOT.TH2D(histName,histName,xbins[0],xbins[1],xbins[2],ybins[0],ybins[1],ybins[2])
+                            elif len(xbins)>0 and len(ybins)>0:
+                                self.hists[histName] = ROOT.TH1D(histName,histName,len(xbins),0,len(xbins),len(ybins),0,len(ybins))
+                                for i,label in enumerate(xbins):
+                                    self.hists[histName].GetXaxis().SetBinLabel(i+1,label)
+                                for i,label in enumerate(ybins):
+                                    self.hists[histName].GetYaxis().SetBinLabel(i+1,label)
                             else:
                                 self.hists[histName] = ROOT.TH2D()
+                                self.hists[histName].SetName(histName)
+                                self.hists[histName].SetTitle(histName)
                         else:
                             if isinstance(xbins,array): # variable width array
                                 self.hists[histName] = ROOT.TH1D(histName,histName,len(xbins)-1,xbins)
-                            elif len(xbins)==3: # n, low, high
+                            elif len(xbins)==3 and all([isinstance(x,numbers.Number) for x in xbins]): # n, low, high
                                 self.hists[histName] = ROOT.TH1D(histName,histName,xbins[0],xbins[1],xbins[2])
+                            elif len(xbins)>0:
+                                self.hists[histName] = ROOT.TH1D(histName,histName,len(xbins),0,len(xbins))
+                                for i,label in enumerate(xbins):
+                                    self.hists[histName].GetXaxis().SetBinLabel(i+1,label)
                             else:
                                 self.hists[histName] = ROOT.TH1D()
+                                self.hists[histName].SetName(histName)
+                                self.hists[histName].SetTitle(histName)
                         self.hists[histName].Sumw2()
 
     def getTree(self):

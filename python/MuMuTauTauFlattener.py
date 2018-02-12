@@ -6,6 +6,8 @@ import sys
 import itertools
 import operator
 from array import array
+import numpy as np
+from numpy.linalg import inv
 
 import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -40,6 +42,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.doDatadriven = True
         self.datadrivenRegular = False
         self.doLowMass = True
+        self.doHighMass = True
 
         #self.newloose = [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]
         #self.newloose = [-1,-0.2,0.0,0.2,0.4]
@@ -63,35 +66,107 @@ class MuMuTauTauFlattener(NtupleFlattener):
             #'muonIso'    : lambda row: row.am1_isolation<self.isoCut and row.am2_isolation<self.isoCut,
             #'tauMVA'     : lambda row: row.ath_byIsolationMVArun2v1DBoldDMwLTraw>self.mvaCut,
         }
+
+        self.regionMap = {
+            'regionA' : lambda row: row.am1_isolation<0.25 and row.am2_isolation<0.25 and passTauIso(row,'ath'),
+            'regionB' : lambda row: row.am1_isolation<0.25 and row.am2_isolation<0.25 and not passTauIso(row,'ath'),
+            'regionC' : lambda row: row.am1_isolation<0.25 and row.am2_isolation>0.25 and passTauIso(row,'ath'),
+            'regionD' : lambda row: row.am1_isolation<0.25 and row.am2_isolation>0.25 and not passTauIso(row,'ath'),
+        }
+
         self.selectionMap = {}
         self.selectionMap['default'] = lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
-        self.selectionMap['regionA'] = lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap]+[row.am1_isolation<0.25 and row.am2_isolation<0.25 and passTauIso(row,'ath')])
-        self.selectionMap['regionB'] = lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap]+[row.am1_isolation<0.25 and row.am2_isolation<0.25 and not passTauIso(row,'ath')])
-        self.selectionMap['regionC'] = lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap]+[row.am1_isolation<0.25 and row.am2_isolation>0.25 and passTauIso(row,'ath')])
-        self.selectionMap['regionD'] = lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap]+[row.am1_isolation<0.25 and row.am2_isolation>0.25 and not passTauIso(row,'ath')])
         if self.doLowMass:
             self.selectionMap['lowmass/default'] = lambda row: row.amm_mass<4 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
-            self.selectionMap['lowmass/regionA'] = lambda row: row.amm_mass<4 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap]+[row.am1_isolation<0.25 and row.am2_isolation<0.25 and passTauIso(row,'ath')])
-            self.selectionMap['lowmass/regionB'] = lambda row: row.amm_mass<4 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap]+[row.am1_isolation<0.25 and row.am2_isolation<0.25 and not passTauIso(row,'ath')])
-            self.selectionMap['lowmass/regionC'] = lambda row: row.amm_mass<4 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap]+[row.am1_isolation<0.25 and row.am2_isolation>0.25 and passTauIso(row,'ath')])
-            self.selectionMap['lowmass/regionD'] = lambda row: row.amm_mass<4 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap]+[row.am1_isolation<0.25 and row.am2_isolation>0.25 and not passTauIso(row,'ath')])
+        if self.doHighMass:
+            self.selectionMap['highmass/default'] = lambda row: row.amm_mass>25 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
 
         self.selections = []
         self.selectionHists = {}
         for sel in self.selectionMap:
             self.selections += [sel]
+            self.selections += [sel.replace('default','regionA')]
+            self.selections += [sel.replace('default','regionB')]
+            self.selections += [sel.replace('default','regionC')]
+            self.selections += [sel.replace('default','regionD')]
         if self.doDatadriven:
             self.selections += ['regionB_fakeForA']
             self.selections += ['regionC_fakeForA']
             self.selections += ['regionD_fakeForA']
             self.selections += ['regionD_fakeForB']
             self.selections += ['regionD_fakeForC']
+            self.selections += ['matrixP/regionA_forA']
+            self.selections += ['matrixP/regionC_forA']
+            self.selections += ['matrixF/regionA_forA']
+            self.selections += ['matrixF/regionC_forA']
+            self.selections += ['matrixP/regionA_forA_p']
+            self.selections += ['matrixP/regionC_forA_p']
+            self.selections += ['matrixF/regionA_forA_f']
+            self.selections += ['matrixF/regionC_forA_f']
+            self.selections += ['matrixP/regionB_forB']
+            self.selections += ['matrixP/regionD_forB']
+            self.selections += ['matrixF/regionB_forB']
+            self.selections += ['matrixF/regionD_forB']
+            self.selections += ['matrixP/regionB_forB_p']
+            self.selections += ['matrixP/regionD_forB_p']
+            self.selections += ['matrixF/regionB_forB_f']
+            self.selections += ['matrixF/regionD_forB_f']
+            self.selections += ['matrixP/regionB_forB_fakeForA']
+            self.selections += ['matrixP/regionD_forB_fakeForA']
+            self.selections += ['matrixF/regionB_forB_fakeForA']
+            self.selections += ['matrixF/regionD_forB_fakeForA']
             if self.doLowMass:
                 self.selections += ['lowmass/regionB_fakeForA']
                 self.selections += ['lowmass/regionC_fakeForA']
                 self.selections += ['lowmass/regionD_fakeForA']
                 self.selections += ['lowmass/regionD_fakeForB']
                 self.selections += ['lowmass/regionD_fakeForC']
+                self.selections += ['matrixP/lowmass/regionA_forA']
+                self.selections += ['matrixP/lowmass/regionC_forA']
+                self.selections += ['matrixF/lowmass/regionA_forA']
+                self.selections += ['matrixF/lowmass/regionC_forA']
+                self.selections += ['matrixP/lowmass/regionA_forA_p']
+                self.selections += ['matrixP/lowmass/regionC_forA_p']
+                self.selections += ['matrixF/lowmass/regionA_forA_f']
+                self.selections += ['matrixF/lowmass/regionC_forA_f']
+                self.selections += ['matrixP/lowmass/regionB_forB']
+                self.selections += ['matrixP/lowmass/regionD_forB']
+                self.selections += ['matrixF/lowmass/regionB_forB']
+                self.selections += ['matrixF/lowmass/regionD_forB']
+                self.selections += ['matrixP/lowmass/regionB_forB_p']
+                self.selections += ['matrixP/lowmass/regionD_forB_p']
+                self.selections += ['matrixF/lowmass/regionB_forB_f']
+                self.selections += ['matrixF/lowmass/regionD_forB_f']
+                self.selections += ['matrixP/lowmass/regionB_forB_fakeForA']
+                self.selections += ['matrixP/lowmass/regionD_forB_fakeForA']
+                self.selections += ['matrixF/lowmass/regionB_forB_fakeForA']
+                self.selections += ['matrixF/lowmass/regionD_forB_fakeForA']
+            if self.doHighMass:
+                self.selections += ['highmass/regionB_fakeForA']
+                self.selections += ['highmass/regionC_fakeForA']
+                self.selections += ['highmass/regionD_fakeForA']
+                self.selections += ['highmass/regionD_fakeForB']
+                self.selections += ['highmass/regionD_fakeForC']
+                self.selections += ['matrixP/highmass/regionA_forA']
+                self.selections += ['matrixP/highmass/regionC_forA']
+                self.selections += ['matrixF/highmass/regionA_forA']
+                self.selections += ['matrixF/highmass/regionC_forA']
+                self.selections += ['matrixP/highmass/regionA_forA_p']
+                self.selections += ['matrixP/highmass/regionC_forA_p']
+                self.selections += ['matrixF/highmass/regionA_forA_f']
+                self.selections += ['matrixF/highmass/regionC_forA_f']
+                self.selections += ['matrixP/highmass/regionB_forB']
+                self.selections += ['matrixP/highmass/regionD_forB']
+                self.selections += ['matrixF/highmass/regionB_forB']
+                self.selections += ['matrixF/highmass/regionD_forB']
+                self.selections += ['matrixP/highmass/regionB_forB_p']
+                self.selections += ['matrixP/highmass/regionD_forB_p']
+                self.selections += ['matrixF/highmass/regionB_forB_f']
+                self.selections += ['matrixF/highmass/regionD_forB_f']
+                self.selections += ['matrixP/highmass/regionB_forB_fakeForA']
+                self.selections += ['matrixP/highmass/regionD_forB_fakeForA']
+                self.selections += ['matrixF/highmass/regionB_forB_fakeForA']
+                self.selections += ['matrixF/highmass/regionD_forB_fakeForA']
 
             for newloose in self.newloose:
                 self.selections += ['regionB_fakeForA{:.1f}'.format(newloose)]
@@ -105,10 +180,18 @@ class MuMuTauTauFlattener(NtupleFlattener):
                     self.selections += ['lowmass/regionD_fakeForA{:.1f}'.format(newloose)]
                     self.selections += ['lowmass/regionD_fakeForB{:.1f}'.format(newloose)]
                     self.selections += ['lowmass/regionD_fakeForC{:.1f}'.format(newloose)]
+                if self.doHighMass:
+                    self.selections += ['highmass/regionB_fakeForA{:.1f}'.format(newloose)]
+                    self.selections += ['highmass/regionC_fakeForA{:.1f}'.format(newloose)]
+                    self.selections += ['highmass/regionD_fakeForA{:.1f}'.format(newloose)]
+                    self.selections += ['highmass/regionD_fakeForB{:.1f}'.format(newloose)]
+                    self.selections += ['highmass/regionD_fakeForC{:.1f}'.format(newloose)]
 
         # setup histogram parameters
         self.histParams = {
             'count'                       : {'x': lambda row: 1,                                  'xBinning': [1,0,2],                 }, # just a count of events passing selection
+            'genChannel'                  : {'x': lambda row: 'xxxx' if len(row.genChannel)<4 else ''.join(sorted(row.genChannel[:2])+sorted(row.genChannel[2:4])), 
+                                             'xBinning': ['mmhm', 'mmem', 'mmmm','mmhh','mmeh','mmee','xxxx']},
             'numVertices'                 : {'x': lambda row: row.numVertices,                    'xBinning': [60,0,60],               },
             'met'                         : {'x': lambda row: row.met_pt,                         'xBinning': [500, 0, 500],           },
             'metPhi'                      : {'x': lambda row: row.met_phi,                        'xBinning': [50, -3.14159, 3.14159], },
@@ -140,20 +223,20 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'attDeltaR'                   : {'x': lambda row: row.att_deltaR,                     'xBinning': [400, 0, 6.0],           },
             'atmPt'                       : {'x': lambda row: row.atm_pt,                         'xBinning': [500, 0, 500],           },
             'atmEta'                      : {'x': lambda row: row.atm_eta,                        'xBinning': [100, -2.5, 2.5],        },
-            'atmDxy'                      : {'x': lambda row: abs(row.atm_dxy),                   'xBinning': [100, 0, 2.5],           },
-            'atmDz'                       : {'x': lambda row: abs(row.atm_dz),                    'xBinning': [100, 0, 2.5],           },
+            #'atmDxy'                      : {'x': lambda row: abs(row.atm_dxy),                   'xBinning': [100, 0, 2.5],           },
+            #'atmDz'                       : {'x': lambda row: abs(row.atm_dz),                    'xBinning': [100, 0, 2.5],           },
             'atmMetDeltaPhi'              : {'x': lambda row: abs(row.atmmet_deltaPhi),           'xBinning': [500, 0, 3.14159],       },
             'athPt'                       : {'x': lambda row: row.ath_pt,                         'xBinning': [500, 0, 500],           },
             'athEta'                      : {'x': lambda row: row.ath_eta,                        'xBinning': [100, -2.5, 2.5],        },
-            'athDxy'                      : {'x': lambda row: abs(row.ath_dxy),                   'xBinning': [100, 0, 2.5],           },
-            'athDz'                       : {'x': lambda row: abs(row.ath_dz),                    'xBinning': [100, 0, 2.5],           },
+            #'athDxy'                      : {'x': lambda row: abs(row.ath_dxy),                   'xBinning': [100, 0, 2.5],           },
+            #'athDz'                       : {'x': lambda row: abs(row.ath_dz),                    'xBinning': [100, 0, 2.5],           },
             'athMetDeltaPhi'              : {'x': lambda row: abs(row.athmet_deltaPhi),           'xBinning': [500, 0, 3.14159],       },
             'athJetCSV'                   : {'x': lambda row: row.athjet_CSVv2,                   'xBinning': [500, 0, 1],             },
             'attDeltaPhi'                 : {'x': lambda row: abs(row.att_deltaPhi),              'xBinning': [500, 0, 3.14159],       },
             'athIso'                      : {'x': lambda row: row.ath_byIsolationMVArun2v1DBoldDMwLTraw, 'xBinning': [100, -1, 1],     },
             'atmIso'                      : {'x': lambda row: row.atm_isolation,                  'xBinning': [100, 0, 2],             },
-            'athAgainstMuonLoose'         : {'x': lambda row: row.ath_againstMuonLoose3,          'xBinning': [2, -0.5, 1.5],          },
-            'athAgainstMuonTight'         : {'x': lambda row: row.ath_againstMuonTight3,          'xBinning': [2, -0.5, 1.5],          },
+            #'athAgainstMuonLoose'         : {'x': lambda row: row.ath_againstMuonLoose3,          'xBinning': [2, -0.5, 1.5],          },
+            #'athAgainstMuonTight'         : {'x': lambda row: row.ath_againstMuonTight3,          'xBinning': [2, -0.5, 1.5],          },
             # cross terms
             'am1atmDeltaR'                : {'x': lambda row: deltaR_row(row,'am1','atm'),        'xBinning': [400, 0, 6.0],           },
             'am1athDeltaR'                : {'x': lambda row: deltaR_row(row,'am1','ath'),        'xBinning': [400, 0, 6.0],           },
@@ -177,7 +260,8 @@ class MuMuTauTauFlattener(NtupleFlattener):
 
         fake_path = '{0}/src/DevTools/Analyzer/data/fakerates_mmtt_mu_13TeV_Run2016BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
         self.fake_haa_rootfile_mu = ROOT.TFile(fake_path)
-        self.fakehists['muons'][self.fakekey.format(num='HaaTight', denom='HaaLoose')] = self.fake_haa_rootfile_mu.Get('iso0.25_default/fakeratePtEta')
+        self.fakehists['muons'][self.fakekey.format(num='HaaTight',     denom='HaaLoose')]     = self.fake_haa_rootfile_mu.Get('iso0.25_default/fakeratePtEta')
+        self.fakehists['muons'][self.fakekey.format(num='HaaTightTrig', denom='HaaLooseTrig')] = self.fake_haa_rootfile_mu.Get('iso0.25trig_defaulttrig/fakeratePtEta')
         #self.fakehists['muons'][self.fakekey.format(num='HaaTight', denom='HaaLoose')] = self.fake_haa_rootfile_mu.Get('iso0.25_iso0.40/fakeratePtEta')
 
         fake_path = '{0}/src/DevTools/Analyzer/data/fakerates_mmtt_tau_13TeV_Run2016BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
@@ -188,9 +272,25 @@ class MuMuTauTauFlattener(NtupleFlattener):
         for newloose in self.newloose:
             self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose{:.1f}'.format(newloose))] = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuonWithMVA{:.1f}/fakeratePtEta'.format(newloose))
 
+        # efficiencies
+        self.effkey = '{num}_{denom}'
+        self.effhists = {'muons': {}, 'taus': {},}
+
+        # TODO: save efficiencies into root file
+        eff_path = '{0}/src/DevTools/Analyzer/data/efficiencies_mmtt_mu_13TeV_Run2016BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
+        self.eff_haa_rootfile_mu = ROOT.TFile(eff_path)
+        self.effhists['muons'][self.effkey.format(num='HaaTight', denom='HaaLoose')] = self.eff_haa_rootfile_mu.Get('LooseIsoFromLooseIDeffData')
+
     def getFakeRate(self,lep,pt,eta,num,denom,dm=None):
         key = self.fakekey.format(num=num,denom=denom)
         hist = self.fakehists[lep][key]
+        if pt > 100.: pt = 99.
+        b = hist.FindBin(pt,abs(eta))
+        return hist.GetBinContent(b), hist.GetBinError(b)
+
+    def getEfficiency(self,lep,pt,eta,num,denom,dm=None):
+        key = self.effkey.format(num=num,denom=denom)
+        hist = self.effhists[lep][key]
         if pt > 100.: pt = 99.
         b = hist.FindBin(pt,abs(eta))
         return hist.GetBinContent(b), hist.GetBinError(b)
@@ -226,15 +326,51 @@ class MuMuTauTauFlattener(NtupleFlattener):
             for l in fakeLeps:
                 n = fakeNum[l] if isinstance(fakeNum,dict) else fakeNum
                 d = fakeDenom[l] if isinstance(fakeDenom,dict) else fakeDenom
-                if l in ['am2']:
-                    fakeEff = self.getFakeRate('muons', row.am2_pt, row.am2_eta, n, d)[0]
-                elif l in ['ath']:
-                    fakeEff = self.getFakeRate('taus', row.ath_pt, row.ath_eta, n, d)[0]
+                coll = 'taus' if l in ['ath'] else 'muons'
+                fakeEff = self.getFakeRate(coll, getattr(row,'{}_pt'.format(l)), getattr(row,'{}_eta'.format(l)), n, d)[0]
+                if fakeEff>0 and fakeEff<1:
+                    weight *= fakeEff/(1-fakeEff)
                 else:
-                     fakeEff = 0
-                if fakeEff: weight *= fakeEff/(1-fakeEff)
+                    logging.warning('invalid fake eff = {} for {} {} {}'.format(fakeeff,l,n,d))
+
 
         return weight
+
+    def getMatrix(self,row,fakeNum=None,fakeDenom=None,leps=[]):
+        if not fakeNum: fakeNum = 'HaaTight'
+        if not fakeDenom: fakeDenom = 'HaaLoose'
+        f = {}
+        p = {}
+        for l in leps:
+            n = fakeNum[l] if isinstance(fakeNum,dict) else fakeNum
+            d = fakeDenom[l] if isinstance(fakeDenom,dict) else fakeDenom
+            coll = 'taus' if l in ['ath'] else 'muons'
+            f[l] = self.getFakeRate(  coll, getattr(row,'{}_pt'.format(l)), getattr(row,'{}_eta'.format(l)), n, d)[0]
+            p[l] = self.getEfficiency(coll, getattr(row,'{}_pt'.format(l)), getattr(row,'{}_eta'.format(l)), n, d)[0]
+        # PF = Prompt/Fake
+        # pf = pass/fail
+        mat = []
+        for r,Npf in enumerate(itertools.product('pf', repeat=len(leps))):
+            row = []
+            for c,NPF in enumerate(itertools.product('PF', repeat=len(leps))):
+                weight = 1
+                for l, lep in enumerate(leps):
+                    # if pass and prompt: p
+                    if Npf[l]=='p' and NPF[l]=='P': weight *= p[lep]
+                    # if fail and prompt: 1-p
+                    if Npf[l]=='f' and NPF[l]=='P': weight *= (1-p[lep])
+                    # if pass and fake:   f
+                    if Npf[l]=='p' and NPF[l]=='F': weight *= f[lep]
+                    # if fail and fake:   1-f
+                    if Npf[l]=='f' and NPF[l]=='F': weight *= (1-f[lep])
+                row += [weight]
+            mat += [row]
+        a = np.matrix(mat)
+        ainv = inv(a)
+        return ainv, p, f
+
+
+                
 
 
     def perRowAction(self,row):
@@ -263,8 +399,9 @@ class MuMuTauTauFlattener(NtupleFlattener):
         # define weights
         w = self.getWeight(row)
         wb = self.getWeight(row,doFake=True,fakeLeps=['ath']) # region B ath
-        wc = self.getWeight(row,doFake=True,fakeLeps=['am1']) # region C am1
+        wc = self.getWeight(row,doFake=True,fakeLeps=['am2']) # region C am2
         wd = self.getWeight(row,doFake=True,fakeLeps=['am2','ath']) # region D ath, am2
+        mat_bd, p_bd, f_bd = self.getMatrix(row,leps=['am2']) # region A/B from C/D matrix
 
         wbs = {}
         wcs = {}
@@ -275,38 +412,71 @@ class MuMuTauTauFlattener(NtupleFlattener):
             wds[newloose] = self.getWeight(row,doFake=True,fakeDenom={'ath':'HaaLoose{:.1f}'.format(newloose),'am2':'HaaLoose'},fakeLeps=['am2','ath']) # region d am2, ath
             
 
+        # figure out region
+        passRegion = {}
+        for r in self.regionMap:
+            passRegion[r] = self.regionMap[r](row)
+
         # define plot regions
         passMVALoose = row.ath_byIsolationMVArun2v1DBoldDMwLTraw>self.mvaCut
         for sel in self.selectionMap:
             result = self.selectionMap[sel](row)
             if result:
                 if passMVALoose: self.fill(row,sel,w)
+                for r in passRegion:
+                    if passRegion[r] and passMVALoose: self.fill(row,sel.replace('default',r),w)
                 if not self.doDatadriven: continue
-                if 'regionB' in sel:
-                    if passMVALoose: self.fill(row,sel+'_fakeForA',wb)
+                if passRegion['regionA']:
+                    if passMVALoose:
+                        self.fill(row,'matrixP/'+sel.replace('default','regionA')+'_forA',w*mat_bd.item(0,0))
+                        self.fill(row,'matrixF/'+sel.replace('default','regionA')+'_forA',w*mat_bd.item(1,0))
+                        self.fill(row,'matrixP/'+sel.replace('default','regionA')+'_forA_p',w*mat_bd.item(0,0)*p_bd['am2'])
+                        self.fill(row,'matrixF/'+sel.replace('default','regionA')+'_forA_f',w*mat_bd.item(1,0)*f_bd['am2'])
+                if passRegion['regionB']:
+                    if passMVALoose:
+                        self.fill(row,sel.replace('default','regionB')+'_fakeForA',wb)
+                        self.fill(row,'matrixP/'+sel.replace('default','regionB')+'_forB',w*mat_bd.item(0,0))
+                        self.fill(row,'matrixF/'+sel.replace('default','regionB')+'_forB',w*mat_bd.item(1,0))
+                        self.fill(row,'matrixP/'+sel.replace('default','regionB')+'_forB_p',w*mat_bd.item(0,0)*p_bd['am2'])
+                        self.fill(row,'matrixF/'+sel.replace('default','regionB')+'_forB_f',w*mat_bd.item(1,0)*f_bd['am2'])
+                        self.fill(row,'matrixP/'+sel.replace('default','regionB')+'_forB_fakeForA',wb*mat_bd.item(0,0))
+                        self.fill(row,'matrixF/'+sel.replace('default','regionB')+'_forB_fakeForA',wb*mat_bd.item(1,0))
                     for newloose in self.newloose:
                         if row.ath_byIsolationMVArun2v1DBoldDMwLTraw<newloose: continue
-                        self.fill(row,sel+'_fakeForA{:.1f}'.format(newloose),wbs[newloose])
-                if 'regionC' in sel:
-                    if passMVALoose: self.fill(row,sel+'_fakeForA',wc)
+                        self.fill(row,sel.replace('default','regionB')+'_fakeForA{:.1f}'.format(newloose),wbs[newloose])
+                if passRegion['regionC']:
+                    if passMVALoose:
+                        self.fill(row,sel.replace('default','regionC')+'_fakeForA',wc)
+                        self.fill(row,'matrixP/'+sel.replace('default','regionC')+'_forA',w*mat_bd.item(0,1))
+                        self.fill(row,'matrixF/'+sel.replace('default','regionC')+'_forA',w*mat_bd.item(1,1))
+                        self.fill(row,'matrixP/'+sel.replace('default','regionC')+'_forA_p',w*mat_bd.item(0,1)*p_bd['am2'])
+                        self.fill(row,'matrixF/'+sel.replace('default','regionC')+'_forA_f',w*mat_bd.item(1,1)*f_bd['am2'])
                     for newloose in self.newloose:
                         if row.ath_byIsolationMVArun2v1DBoldDMwLTraw<newloose: continue
-                        self.fill(row,sel+'_fakeForA{:.1f}'.format(newloose),wcs[newloose])
-                if 'regionD' in sel:
-                    if passMVALoose: self.fill(row,sel+'_fakeForA',wd)
-                    if passMVALoose: self.fill(row,sel+'_fakeForB',wc)
-                    if passMVALoose: self.fill(row,sel+'_fakeForC',wb)
+                        self.fill(row,sel.replace('default','regionC')+'_fakeForA{:.1f}'.format(newloose),wcs[newloose])
+                if passRegion['regionD']:
+                    if passMVALoose:
+                        self.fill(row,sel.replace('default','regionD')+'_fakeForA',wd)
+                        self.fill(row,sel.replace('default','regionD')+'_fakeForB',wc)
+                        self.fill(row,sel.replace('default','regionD')+'_fakeForC',wb)
+                        self.fill(row,'matrixP/'+sel.replace('default','regionD')+'_forB',w*mat_bd.item(0,1))
+                        self.fill(row,'matrixF/'+sel.replace('default','regionD')+'_forB',w*mat_bd.item(1,1))
+                        self.fill(row,'matrixP/'+sel.replace('default','regionD')+'_forB_p',w*mat_bd.item(0,1)*p_bd['am2'])
+                        self.fill(row,'matrixF/'+sel.replace('default','regionD')+'_forB_f',w*mat_bd.item(1,1)*f_bd['am2'])
+                        self.fill(row,'matrixP/'+sel.replace('default','regionD')+'_forB_fakeForA',wb*mat_bd.item(0,1))
+                        self.fill(row,'matrixF/'+sel.replace('default','regionD')+'_forB_fakeForA',wb*mat_bd.item(1,1))
                     for newloose in self.newloose:
                         if row.ath_byIsolationMVArun2v1DBoldDMwLTraw<newloose: continue
-                        self.fill(row,sel+'_fakeForA{:.1f}'.format(newloose),wds[newloose])
-                        self.fill(row,sel+'_fakeForB{:.1f}'.format(newloose),wcs[newloose])
-                        self.fill(row,sel+'_fakeForC{:.1f}'.format(newloose),wbs[newloose])
+                        self.fill(row,sel.replace('default','regionD')+'_fakeForA{:.1f}'.format(newloose),wds[newloose])
+                        self.fill(row,sel.replace('default','regionD')+'_fakeForB{:.1f}'.format(newloose),wcs[newloose])
+                        self.fill(row,sel.replace('default','regionD')+'_fakeForC{:.1f}'.format(newloose),wbs[newloose])
 
 
 def parse_command_line(argv):
     parser = argparse.ArgumentParser(description='Run Flattener')
 
-    parser.add_argument('sample', type=str, default='SingleMuon', nargs='?', help='Sample to flatten')
+    #parser.add_argument('sample', type=str, default='SingleMuon', nargs='?', help='Sample to flatten')
+    parser.add_argument('sample', type=str, default='SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-15_TuneCUETP8M1_13TeV_madgraph_pythia8', nargs='?', help='Sample to flatten')
     parser.add_argument('shift', type=str, default='', nargs='?', help='Shift to apply to scale factors')
 
     return parser.parse_args(argv)

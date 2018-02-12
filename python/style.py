@@ -24,6 +24,8 @@ colors = {
 }
 
 colorMap = {
+    'matP'      : 'LightBlue',
+    'matF'      : 'Gray',
     'MC'        : 'Red',
     'BG'        : 'Blue',
     'EWK'       : 'Blue',
@@ -65,6 +67,8 @@ colorMap = {
 }
 
 labelMap = {
+    'matP'      : 'Prompt',
+    'matF'      : 'Nonprompt',
     'MC'        : 'Simulation',
     'BG'        : 'Background',
     'EWK'       : 'Electroweak',

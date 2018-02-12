@@ -77,6 +77,7 @@ etaBins = [0.,1.0,1.5,2.4]
 ptBins = [3,5,10,15,20,25,30,50,100]
 
 numDenoms = [('iso0.15','default'),('iso0.40','default'),('iso0.25','default'),('iso0.15','iso0.40'),]
+numDenoms += [('iso0.15trig','defaulttrig'),('iso0.40trig','defaulttrig'),('iso0.25trig','defaulttrig'),('iso0.15trig','iso0.40trig'),]
 
 name = '{0}/etaBin{1}/mPt'
 
