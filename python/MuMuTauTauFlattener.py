@@ -280,10 +280,41 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.effkey = '{num}_{denom}'
         self.effhists = {'muons': {}, 'taus': {},}
 
-        # TODO: save efficiencies into root file
+        #  prompt efficiencies loose iso from loose id
         eff_path = '{0}/src/DevTools/Analyzer/data/efficiencies_mmtt_mu_13TeV_Run2016BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
         self.eff_haa_rootfile_mu = ROOT.TFile(eff_path)
         self.effhists['muons'][self.effkey.format(num='HaaTight', denom='HaaLoose')] = self.eff_haa_rootfile_mu.Get('LooseIsoFromLooseIDeffData')
+
+        # scalefactors, note: private, not full pt range (starts at 10)
+        path = '{0}/src/DevTools/Analyzer/data/scalefactors_muon_2016.root'.format(os.environ['CMSSW_BASE'])
+        self.muon_rootfile = ROOT.TFile(path)
+        self.muon_scales = {}
+        for idName in ['LooseID','LooseIsoFromLooseID','MediumID','LooseIsoFromMediumID']:
+            self.muon_scales[idName] = self.muon_rootfile.Get(idName)
+
+        # tracking
+        path = '{0}/src/DevTools/Analyzer/data/Tracking_EfficienciesAndSF_BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
+        rootfile = ROOT.TFile(path)
+        self.tracking_pog_scales = {}
+        self.tracking_pog_scales['TrackingVtx']    = self.__parseAsymmErrors(rootfile.Get('ratio_eff_vtx_dr030e030_corr'))
+        self.tracking_pog_scales['TrackingEta']    = self.__parseAsymmErrors(rootfile.Get('ratio_eff_eta3_dr030e030_corr'))
+        rootfile.Close()
+
+    def __parseAsymmErrors(self,graph):
+        vals = []
+        x,y = ROOT.Double(0), ROOT.Double(0)
+        for i in range(graph.GetN()):
+            graph.GetPoint(i,x,y)
+            val = {
+                'x'        : float(x),
+                'y'        : float(y),
+                'errx_up'  : float(graph.GetErrorXhigh(i)),
+                'errx_down': float(graph.GetErrorXlow(i)),
+                'erry_up'  : float(graph.GetErrorYhigh(i)),
+                'erry_down': float(graph.GetErrorYlow(i)),
+            }
+            vals += [val]
+        return vals
 
     def getFakeRate(self,lep,pt,eta,num,denom,dm=None):
         key = self.fakekey.format(num=num,denom=denom)
@@ -299,6 +330,25 @@ class MuMuTauTauFlattener(NtupleFlattener):
         b = hist.FindBin(pt,abs(eta))
         return hist.GetBinContent(b), hist.GetBinError(b)
 
+    def getMuonScaleFactor(self,id,pt,eta):
+        if pt>200: pt = 199
+        if pt<10: pt = 11
+        hist = self.muon_scales[id]
+        b = hist.FindBin(pt,eta)
+        val = hist.GetBinContent(b)
+        err = hist.GetBinError(b)
+        return val, err
+        
+    def getTrackingScaleFactor(self,eta):
+        etaName = 'TrackingEta'
+        for valDict in self.tracking_pog_scales[etaName]:
+            etaLow = valDict['x'] - valDict['errx_down']
+            etaHigh = valDict['x'] + valDict['errx_up']
+            if eta>=etaLow and eta<=etaHigh:
+                valEta = valDict['y']
+                errEta = (valDict['erry_up']+valDict['erry_down'])/2.
+        return valEta, errEta
+
     def getWeight(self,row,doFake=False,fakeNum=None,fakeDenom=None,fakeLeps=[]):
         if not fakeNum: fakeNum = 'HaaTight'
         if not fakeDenom: fakeDenom = 'HaaLoose'
@@ -311,13 +361,30 @@ class MuMuTauTauFlattener(NtupleFlattener):
             if self.shift=='trigDown': base = ['genWeight','pileupWeight','triggerEfficiencyDown']
             if self.shift=='puUp': base = ['genWeight','pileupWeightUp','triggerEfficiency']
             if self.shift=='puDown': base = ['genWeight','pileupWeightDown','triggerEfficiency']
-            # TODO: add lep efficiencies
-            #for l,lep in enumerate(self.leps):
-            #    shiftString = ''
-            #    if self.shift == 'lepUp': shiftString = 'Up'
-            #    if self.shift == 'lepDown': shiftString = 'Down'
-            #    base += [self.scaleMap['P' if passID[l] else 'F'].format(lep)+shiftString]
             vals = [getattr(row,scale) for scale in base]
+            # tau id: 0.99 for VL/L, 0.97 for M
+            vals += [0.99]
+            # muon
+            m1id = self.getMuonScaleFactor('LooseID',row.am1_pt,row.am1_eta)
+            m1iso = self.getMuonScaleFactor('LooseIsoFromLooseID',row.am1_pt,row.am1_eta)
+            m2id = self.getMuonScaleFactor('LooseID',row.am2_pt,row.am2_eta)
+            m2iso = self.getMuonScaleFactor('LooseIsoFromLooseID',row.am2_pt,row.am2_eta)
+            m3id = self.getMuonScaleFactor('LooseID',row.atm_pt,row.atm_eta)
+            m1tr = self.getTrackingScaleFactor(row.am1_eta)
+            m2tr = self.getTrackingScaleFactor(row.am2_eta)
+            m3tr = self.getTrackingScaleFactor(row.atm_eta)
+            if self.shift=='lepUp':
+                vals += [m1tr[0]+m1tr[1], m1id[0]+m1id[1], m1iso[0]+m1iso[1]]
+                vals += [m2tr[0]+m2tr[1], m2id[0]+m2id[1], m2iso[0]+m2iso[1]]
+                vals += [m3tr[0]+m3tr[1], m3id[0]+m3id[1]]
+            elif self.shift=='lepDown':
+                vals += [m1tr[0]-m1tr[1], m1id[0]-m1id[1], m1iso[0]-m1iso[1]]
+                vals += [m2tr[0]-m2tr[1], m2id[0]-m2id[1], m2iso[0]-m2iso[1]]
+                vals += [m3tr[0]-m3tr[1], m3id[0]-m3id[1]]
+            else:
+                vals += [m1tr[0], m1id[0], m1iso[0]]
+                vals += [m2tr[0], m2id[0], m2iso[0]]
+                vals += [m3tr[0], m3id[0]]
             for scale,val in zip(base,vals):
                 if val != val: logging.warning('{0}: {1} is NaN'.format(row.channel,scale))
             weight = prod([val for val in vals if val==val])
@@ -331,7 +398,10 @@ class MuMuTauTauFlattener(NtupleFlattener):
                 n = fakeNum[l] if isinstance(fakeNum,dict) else fakeNum
                 d = fakeDenom[l] if isinstance(fakeDenom,dict) else fakeDenom
                 coll = 'taus' if l in ['ath'] else 'muons'
-                fakeEff = self.getFakeRate(coll, getattr(row,'{}_pt'.format(l)), getattr(row,'{}_eta'.format(l)), n, d)[0]
+                fake = self.getFakeRate(coll, getattr(row,'{}_pt'.format(l)), getattr(row,'{}_eta'.format(l)), n, d)
+                fakeEff = fake[0]
+                if self.shift=='fakeUp': fakeEff = fake[0]+fake[1]
+                if self.shift=='fakeDown': fakeEff = fake[0]-fake[1]
                 if fakeEff>0 and fakeEff<1:
                     weight *= fakeEff/(1-fakeEff)
                 else:
@@ -349,8 +419,14 @@ class MuMuTauTauFlattener(NtupleFlattener):
             n = fakeNum[l] if isinstance(fakeNum,dict) else fakeNum
             d = fakeDenom[l] if isinstance(fakeDenom,dict) else fakeDenom
             coll = 'taus' if l in ['ath'] else 'muons'
-            f[l] = self.getFakeRate(  coll, getattr(row,'{}_pt'.format(l)), getattr(row,'{}_eta'.format(l)), n, d)[0]
-            p[l] = self.getEfficiency(coll, getattr(row,'{}_pt'.format(l)), getattr(row,'{}_eta'.format(l)), n, d)[0]
+            fake = self.getFakeRate(  coll, getattr(row,'{}_pt'.format(l)), getattr(row,'{}_eta'.format(l)), n, d)
+            f[l] = fake[0]
+            if self.shift=='fakeUp': f[l] = fake[0]+fake[1]
+            if self.shift=='fakeDown': f[l] = fake[0]-fake[1]
+            prompt = self.getEfficiency(coll, getattr(row,'{}_pt'.format(l)), getattr(row,'{}_eta'.format(l)), n, d)
+            p[l] = prompt[0]
+            if self.shift=='lepUp': p[l] = prompt[0]+prompt[1]
+            if self.shift=='lepDown': p[l] = prompt[0]-prompt[1]
         # PF = Prompt/Fake
         # pf = pass/fail
         mat = []
