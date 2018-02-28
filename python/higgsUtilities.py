@@ -307,6 +307,8 @@ sigMaps = {
     'Hpp4lDataDriven' : {
         'ZZ' : [
                  'ZZTo4L_13TeV_powheg_pythia8',
+                 'ZZTo2L2Nu_13TeV_powheg_pythia8',
+                 'ZZTo2L2Q_13TeV_powheg_pythia8',
                  'GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8',
                  'GluGluToContinToZZTo2mu2tau_13TeV_MCFM701_pythia8',
                  'GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8',
@@ -314,9 +316,15 @@ sigMaps = {
                  'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8',
                 ],
         'TTV' : [
+                 'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
                  'ttZJets_13TeV_madgraphMLM-pythia8',
+                 'tZq_ll_4f_13TeV-amcatnlo-pythia8',
+                 'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+                 'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+                 'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
                 ],
         'VVV' : [
+                 'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
                  'WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
                  'WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
                  'ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
@@ -398,9 +406,13 @@ sigMaps = {
         'WZ' : [
                  #'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
                  'WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8', # more stats but neg weights
+                 'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
+                 'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8',
                 ],
         'ZZ' : [
                  'ZZTo4L_13TeV_powheg_pythia8',
+                 'ZZTo2L2Nu_13TeV_powheg_pythia8',
+                 'ZZTo2L2Q_13TeV_powheg_pythia8',
                  'GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8',
                  'GluGluToContinToZZTo2mu2tau_13TeV_MCFM701_pythia8',
                  'GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8',
@@ -412,6 +424,9 @@ sigMaps = {
                  #'ttWJets_13TeV_madgraphMLM',
                  'ttZJets_13TeV_madgraphMLM-pythia8',
                  'tZq_ll_4f_13TeV-amcatnlo-pythia8',
+                 'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+                 'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
+                 'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
                 ],
         'VVV' : [
                  'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8',

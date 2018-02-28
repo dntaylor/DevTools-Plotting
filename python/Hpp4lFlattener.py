@@ -13,6 +13,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 from NtupleFlattener import NtupleFlattener
 from DevTools.Utilities.utilities import prod, ZMASS
 from DevTools.Plotter.higgsUtilities import *
+from DevTools.Analyzer.BTagScales import BTagScales
 
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
@@ -33,7 +34,9 @@ class Hpp4lFlattener(NtupleFlattener):
         self.zveto = True
         self.doGen = True
         self.limitOnly = False
+        self.doBVeto = True
         self.mass = 500
+        self.btag_scales = BTagScales('80X')
 
         # setup properties
         self.leps = ['hpp1','hpp2','hmm1','hmm2']
@@ -46,14 +49,20 @@ class Hpp4lFlattener(NtupleFlattener):
                 self.genChannels = gen['AP']
         self.baseCutMap = {
             'looseId'  : lambda row: all([getattr(row,'{0}_passLoose{1}'.format(l,'New' if self.new else ''))>0.5 for l in self.leps]),
+            #'bjetveto' : lambda row: row.numBjetsTight30==0,
+            #'bjetveto' : lambda row: all([getattr(row,'{0}jet_passCSVv2M'.format(l))<0.5 for l in self.leps]),
         }
         self.lowmassCutMap = {
             'hppVeto'  : lambda row: (row.hpp_mass<100 or row.hmm_mass<100),
             'looseId'  : lambda row: all([getattr(row,'{0}_passLoose{1}'.format(l,'New' if self.new else ''))>0.5 for l in self.leps]),
+            #'bjetveto' : lambda row: row.numBjetsTight30==0,
+            #'bjetveto' : lambda row: all([getattr(row,'{0}jet_passCSVv2M'.format(l))<0.5 for l in self.leps]),
         }
         self.zvetoCutMap = {
             'looseId'  : lambda row: all([getattr(row,'{0}_passLoose{1}'.format(l,'New' if self.new else ''))>0.5 for l in self.leps]),
             'zVeto'    : lambda row: abs(getattr(row,'z_mass')-ZMASS)>10,
+            #'bjetveto' : lambda row: row.numBjetsTight30==0,
+            #'bjetveto' : lambda row: all([getattr(row,'{0}jet_passCSVv2M'.format(l))<0.5 for l in self.leps]),
         }
         self.selectionMap = {}
         self.selectionMap['default'] = lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
@@ -98,18 +107,22 @@ class Hpp4lFlattener(NtupleFlattener):
             'hppMass'                     : {'x': lambda row: row.hpp_mass,                       'xBinning': [1600, 0, 1600],         },
             'hppPt'                       : {'x': lambda row: row.hpp_pt,                         'xBinning': [1600, 0, 1600],         },
             'hppDeltaR'                   : {'x': lambda row: row.hpp_deltaR,                     'xBinning': [50, 0, 5],              },
-            'hppLeadingLeptonPt'          : {'x': lambda row: row.hpp1_pt,                        'xBinning': [200, 0, 1000],         },
+            'hppLeadingLeptonPt'          : {'x': lambda row: row.hpp1_pt,                        'xBinning': [200, 0, 1000],          },
             'hppLeadingLeptonEta'         : {'x': lambda row: row.hpp1_eta,                       'xBinning': [50, -2.5, 2.5],         },
-            'hppSubLeadingLeptonPt'       : {'x': lambda row: row.hpp2_pt,                        'xBinning': [200, 0, 1000],         },
+            'hppSubLeadingLeptonPt'       : {'x': lambda row: row.hpp2_pt,                        'xBinning': [200, 0, 1000],          },
             'hppSubLeadingLeptonEta'      : {'x': lambda row: row.hpp2_eta,                       'xBinning': [50, -2.5, 2.5],         },
+            'hppLeadingLeptonJetCSV'      : {'x': lambda row: row.hpp1jet_CSVv2,                  'xBinning': [50, 0, 1],              },
+            'hppSubLeadingLeptonJetCSV'   : {'x': lambda row: row.hpp2jet_CSVv2,                  'xBinning': [50, 0, 1],              },
             # h--
             'hmmMass'                     : {'x': lambda row: row.hmm_mass,                       'xBinning': [1600, 0, 1600],         },
             'hmmPt'                       : {'x': lambda row: row.hmm_pt,                         'xBinning': [1600, 0, 1600],         },
             'hmmDeltaR'                   : {'x': lambda row: row.hmm_deltaR,                     'xBinning': [50, 0, 5],              },
-            'hmmLeadingLeptonPt'          : {'x': lambda row: row.hmm1_pt,                        'xBinning': [200, 0, 1000],         },
+            'hmmLeadingLeptonPt'          : {'x': lambda row: row.hmm1_pt,                        'xBinning': [200, 0, 1000],          },
             'hmmLeadingLeptonEta'         : {'x': lambda row: row.hmm1_eta,                       'xBinning': [50, -2.5, 2.5],         },
-            'hmmSubLeadingLeptonPt'       : {'x': lambda row: row.hmm2_pt,                        'xBinning': [200, 0, 1000],         },
+            'hmmSubLeadingLeptonPt'       : {'x': lambda row: row.hmm2_pt,                        'xBinning': [200, 0, 1000],          },
             'hmmSubLeadingLeptonEta'      : {'x': lambda row: row.hmm2_eta,                       'xBinning': [50, -2.5, 2.5],         },
+            'hmmLeadingLeptonJetCSV'      : {'x': lambda row: row.hmm1jet_CSVv2,                  'xBinning': [50, 0, 1],              },
+            'hmmSubLeadingLeptonJetCSV'   : {'x': lambda row: row.hmm2jet_CSVv2,                  'xBinning': [50, 0, 1],              },
             # best z
             'zMass'                       : {'x': lambda row: row.z_mass,                         'xBinning': [200, 0, 200],           'selection': lambda row: row.z_mass>0.,},
             'mllMinusMZ'                  : {'x': lambda row: abs(row.z_mass-ZMASS),              'xBinning': [100, 0, 100],           'selection': lambda row: row.z_mass>0.,},
@@ -222,6 +235,21 @@ class Hpp4lFlattener(NtupleFlattener):
         b = hist.FindBin(pt,abs(eta))
         return hist.GetBinContent(b), hist.GetBinError(b)
 
+    def getBTagWeight(self,row):
+        op = 1 # medium
+        s = 'central'
+        if self.shift == 'btagUp': s = 'up'
+        if self.shift == 'btagDown': s = 'down'
+        w = 1
+        for l in self.leps:
+            pt = getattr(row,'{0}jet_pt'.format(l))
+            if not pt>0: continue
+            eta = getattr(row,'{0}jet_eta'.format(l))
+            sf = self.btag_scales.get_sf_csv(1,pt,eta,shift=s)
+            if getattr(row,'{0}jet_passCSVv2M'.format(l))>0.5:
+                w *= 1-sf
+        return w
+
     def getWeight(self,row,doFake=False,fakeNum=None,fakeDenom=None):
         if not fakeNum: fakeNum = 'HppMedium'
         if not fakeDenom: fakeDenom = 'HppLoose{0}'.format('New' if self.new else '')
@@ -247,6 +275,8 @@ class Hpp4lFlattener(NtupleFlattener):
             # scale to lumi/xsec
             weight *= float(self.intLumi)/self.sampleLumi if self.sampleLumi else 0.
             if hasattr(row,'qqZZkfactor'): weight *= row.qqZZkfactor/1.1 # ZZ variable k factor
+            # b tagging (veto)
+            if self.doBVeto: weight *= self.getBTagWeight(row)
         # fake scales
         if doFake:
             chanMap = {'e': 'electrons', 'm': 'muons', 't': 'taus',}
@@ -276,6 +306,10 @@ class Hpp4lFlattener(NtupleFlattener):
 
     def perRowAction(self,row):
         isData = row.isData
+
+        # Don't do for MC, events that pass btag contribute a factor of 1-SF
+        passbveto = all([getattr(row,'{0}jet_passCSVv2M'.format(l))<0.5 for l in self.leps])
+        if isData and not passbveto and self.doBVeto: return
 
         # per sample cuts
         keep = True
@@ -323,7 +357,13 @@ class Hpp4lFlattener(NtupleFlattener):
 
         # define count regions
         if not isData:
-            genCut = all([getattr(row,'{0}_genMatch'.format(lep)) and getattr(row,'{0}_genDeltaR'.format(lep))<0.1 for lep in self.leps])
+            #genCut = all([getattr(row,'{0}_genMatch'.format(lep)) and getattr(row,'{0}_genDeltaR'.format(lep))<0.1 for lep in self.leps])
+            genCut = all([
+                (getattr(row,'{0}_genMatch'.format(lep)) and getattr(row,'{0}_genDeltaR'.format(lep))<0.1)
+                or
+                (getattr(row,'{0}_genJetMatch'.format(lep)) and getattr(row,'{0}_genJetDeltaR'.format(lep))<0.1)
+                for lep in self.leps
+            ])
 
         # define plot regions
         for sel in self.selectionMap:

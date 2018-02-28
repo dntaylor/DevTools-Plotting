@@ -17,10 +17,10 @@ version = getCMSSWVersion()
 
 blind = True
 doDetRegions = False
-doSignals = False
-doMC = False
+doSignals = True
+doMC = True
 do2D = False
-doDatadriven = False
+doDatadriven = True
 doLowmass = True
 doHighmass = True
 doMatrix = True

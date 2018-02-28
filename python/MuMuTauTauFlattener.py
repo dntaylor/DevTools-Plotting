@@ -43,6 +43,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.datadrivenRegular = False
         self.doLowMass = True
         self.doHighMass = True
+        self.doBVeto = True
 
         #self.newloose = [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]
         #self.newloose = [-1,-0.2,0.0,0.2,0.4]
@@ -57,7 +58,6 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'ammWindow'  : lambda row: row.amm_mass>1 and row.amm_mass<30,
             'attDR'      : lambda row: row.att_deltaR<0.8,
             'trigger'    : lambda row: row.am1_matches_IsoMu24 or row.am1_matches_IsoTkMu24,
-            'taubveto'   : lambda row: row.athjet_passCSVv2M<0.5,
             'mmDR'       : lambda row: row.amm_deltaR<1,
             'm1tmDR'     : lambda row: deltaR_row(row,'am1','atm')>0.4,
             'm1thDR'     : lambda row: deltaR_row(row,'am1','ath')>0.8,
@@ -66,6 +66,8 @@ class MuMuTauTauFlattener(NtupleFlattener):
             #'muonIso'    : lambda row: row.am1_isolation<self.isoCut and row.am2_isolation<self.isoCut,
             #'tauMVA'     : lambda row: row.ath_byIsolationMVArun2v1DBoldDMwLTraw>self.mvaCut,
         }
+        if self.doBVeto:
+            self.baseCutMap['taubveto'] = lambda row: row.athjet_passCSVv2M<0.5
 
         self.regionMap = {
             'regionA' : lambda row: row.am1_isolation<0.25 and row.am2_isolation<0.25 and passTauIso(row,'ath'),
@@ -269,6 +271,8 @@ class MuMuTauTauFlattener(NtupleFlattener):
         #self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')] = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuon/fakeratePtEta')
         self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')] = self.fake_haa_rootfile_tau.Get('nearMuonVLoose_nearMuon/fakeratePtEta')
         #self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')] = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuonWithMVA/fakeratePtEta')
+        if not self.doBVeto:
+            self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')] = self.fake_haa_rootfile_tau.Get('noBVeto/nearMuonVLoose_nearMuon/fakeratePtEta')
         for newloose in self.newloose:
             self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose{:.1f}'.format(newloose))] = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuonWithMVA{:.1f}/fakeratePtEta'.format(newloose))
 

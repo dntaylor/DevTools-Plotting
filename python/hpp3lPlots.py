@@ -281,11 +281,14 @@ plots = {
     'hppSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{#pm#pm}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(10,205,5), 'numcol': 2, 'overflow': True},
     'hppSubLeadingLeptonEta': {'xaxis': '#eta^{#Phi_{sublead}^{#pm#pm}}', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, 'rebin': 2, 'yscale': 1.8,},
     'hppSubLeadingLeptonDecayMode' : {'xaxis': '#Phi_{sublead}^{#pm#pm} Decay Mode', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, },
+    'hppLeadingLeptonJetCSV' : {'xaxis': '#Phi_{lead}^{#pm#pm} jet CSV', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, },
+    'hppSubLeadingLeptonJetCSV' : {'xaxis': '#Phi_{sublead}^{#pm#pm} jet CSV', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, },
     # hm
     'hmMass'                : {'xaxis': 'm_{T}(l^{#mp},E_{T}^{miss}) (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,610,10), 'logy': True, 'overflow': True},
     'hmLeptonPt'            : {'xaxis': 'p_{T}^{#Phi_{lepton}^{#mp}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(10,205,5), 'numcol': 2, 'overflow': True},
     'hmLeptonEta'           : {'xaxis': '#eta^{#Phi_{lepton}^{#mp}}', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, 'rebin': 2, 'yscale': 1.8,},
     'hmLeptonDecayMode'     : {'xaxis': '#Phi_{lepton}^{#mp} Decay Mode', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, },
+    'hmLeptonJetCSV'     : {'xaxis': '#Phi_{lepton}^{#mp} jet CSV', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, },
     # z cand
     'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(11,241,5), 'numcol': 2, 'legendpos':34, 'yscale': 50, 'logy': True, 'overflow': True,},
     'zPt'                   : {'xaxis': 'p_{T}^{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,320,20), 'numcol': 2, 'overflow': True},
@@ -297,6 +300,7 @@ plots = {
     'mass'                  : {'xaxis': 'm_{3l} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,1020,20), 'numcol': 2, 'overflow': True},
     'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 50 GeV', 'rebin': range(50,1050,50), 'numcol': 2, 'logy': True, 'numcol': 2, 'legendpos': 34, 'overflow': False, 'logx': True},
     'nJets'                 : {'xaxis': 'Number of jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'numcol': 2, 'rebin': [-0.5,0.5,1.5,2.5,3.5,4.5], 'overflow': True, 'binlabels': ['0','1','2','3','4','#geq5']},
+    'nBJets'                : {'xaxis': 'Number of b jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'numcol': 2, 'rebin': [-0.5,0.5,1.5,2.5,3.5,4.5], 'overflow': True, 'binlabels': ['0','1','2','3','4','#geq5']},
     #'pileupWeight'          : {'xaxis': 'Pileup Weight', 'yaxis': 'Events'},
 }
 

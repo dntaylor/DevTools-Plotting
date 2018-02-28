@@ -232,7 +232,7 @@ ymin = {
 
 ymin['hmmMass'] = ymin['hppMass']
 
-def plotWithCategories(plotter,plot,baseDir='default',saveDir='',datadriven=False,postfix='',perCatBins=False,**kwargs):
+def plotWithCategories(plotter,plot,baseDir='default',saveDir='',datadriven=False,postfix='',perCatBins=False,skipVariable=False,**kwargs):
     plotname = '/'.join([x for x in [baseDir,plot] if x])
     plotvars = getDataDrivenPlot(plotname) if datadriven else plotname
     savename = '/'.join([x for x in [saveDir,plot] if x])
@@ -245,13 +245,13 @@ def plotWithCategories(plotter,plot,baseDir='default',saveDir='',datadriven=Fals
         plotvars = getDataDrivenPlot(*plotnames) if datadriven else plotnames
         savename = '/'.join([x for x in [saveDir,cat,plot] if x])
         if postfix: savename += '_{0}'.format(postfix)
-        if plot in variable_binning:
+        if perCatBins and plot in variable_binning and not skipVariable:
             kwargs['rebin'] = variable_binning[plot][cat]
             kwargs['yaxis'] = 'Events / 1 GeV'
             kwargs['overflow'] = False
             kwargs['scalewidth'] = True
-        if perCatBins and plot in ymax: kwargs['ymax'] = ymax[plot].get(cat,None)
-        if perCatBins and plot in ymin and kwargs.get('logy',False): kwargs['ymin'] = ymin[plot][cat]
+            if plot in ymax: kwargs['ymax'] = ymax[plot].get(cat,None)
+            if plot in ymin and kwargs.get('logy',False): kwargs['ymin'] = ymin[plot][cat]
         if doCat: plotter.plot(plotvars,savename,**kwargs)
 
 
@@ -268,6 +268,8 @@ plots = {
     'hppLeadingLeptonEta'   : {'xaxis': '#eta^{#Phi_{lead}^{++}}', 'yaxis': 'Events', 'rebin': 5, 'numcol': 3, 'legendpos':34, 'yscale': 1.8,},
     'hppSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{++}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(10,230,20), 'numcol': 2, 'overflow': True},
     'hppSubLeadingLeptonEta': {'xaxis': '#eta^{#Phi_{sublead}^{++}}', 'yaxis': 'Events', 'rebin': 5, 'numcol': 3, 'legendpos':34, 'yscale': 1.8,},
+    'hppLeadingLeptonJetCSV': {'xaxis': '#Phi_{lead}^{++} jet CSV', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, },
+    'hppSubLeadingLeptonJetCSV': {'xaxis': '#Phi_{sublead}^{++} jet CSV', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34, },
     # hmm
     'hmmMass'               : {'xaxis': 'm_{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': range(50,850,50), 'logy': True, 'overflow': False, 'logx': True, 'ymin': 1,},
     #'hmmMt'                 : {'xaxis': 'm_{T}^{l^{-}l^{-}} (GeV)', 'yaxis': 'Events / 50 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': False, 'overflow': True,},
@@ -277,6 +279,8 @@ plots = {
     'hmmLeadingLeptonEta'   : {'xaxis': '#eta^{#Phi_{lead}^{--}}', 'yaxis': 'Events', 'rebin': 5, 'numcol': 3, 'legendpos':34, 'yscale': 1.8,},
     'hmmSubLeadingLeptonPt' : {'xaxis': 'p_{T}^{#Phi_{sublead}^{--}} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(10,230,20), 'numcol': 2, 'overflow': True},
     'hmmSubLeadingLeptonEta': {'xaxis': '#eta^{#Phi_{sublead}^{--}}', 'yaxis': 'Events', 'rebin': 5, 'numcol': 3, 'legendpos':34, 'yscale': 1.8,},
+    'hmmLeadingLeptonJetCSV': {'xaxis': '#Phi_{lead}^{--} jet CSV', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34,},
+    'hmmSubLeadingLeptonJetCSV': {'xaxis': '#Phi_{sublead}^{--} jet CSV', 'yaxis': 'Events', 'numcol': 3, 'legendpos':34,},
     # z cand
     'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 10 GeV', 'rebin': range(11,241,10), 'numcol': 2, 'legendpos':34, 'logy': False, 'overflow': True,},
     #'zDeltaR'               : {'xaxis': '#DeltaR(l^{+}l^{-})', 'yaxis': 'Events', 'rebin': 5},
@@ -288,6 +292,7 @@ plots = {
     'mass'                  : {'xaxis': 'm_{4l} (GeV)', 'yaxis': 'Events / 50 GeV', 'rebin': range(0,650,50), 'numcol': 2, 'overflow': True},
     'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 100 GeV', 'rebin': range(100,2100,100), 'numcol': 2, 'logy': True, 'numcol': 2, 'legendpos': 34, 'overflow': False, 'logx': True, 'ymin': 1,},
     'nJets'                 : {'xaxis': 'Number of jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'numcol': 2, 'rebin': [-0.5,0.5,1.5,2.5,3.5,4.5], 'overflow': True, 'binlabels': ['0','1','2','3','4','#geq5']},
+    'nBJets'                : {'xaxis': 'Number of b jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'numcol': 2, 'rebin': [-0.5,0.5,1.5,2.5,3.5,4.5], 'overflow': True, 'binlabels': ['0','1','2','3','4','#geq5']},
 }
 
 
@@ -304,13 +309,13 @@ blind_cust = {
 
 lowmass_cust = {
     # hpp
-    'hppMass'              : {'rangex': [0,300], 'logy': False},
+    'hppMass'              : {'rebin': range(0,300,20), 'yaxis': 'Events / 20 GeV', 'logy': False, 'logx': False,},
     'hppMt'                : {'rangex': [0,300], 'logy': False},
     'hppPt'                : {'rangex': [0,300]},
     'hppLeadingLeptonPt'   : {'rangex': [0,300]},
     'hppSubLeadingLeptonPt': {'rangex': [0,300]},
     # hmm
-    'hmmMass'              : {'rangex': [0,300], 'logy': False},
+    'hmmMass'              : {'rebin': range(0,300,20), 'yaxis': 'Events / 20 GeV', 'logy': False, 'logx': False,},
     #'hmmMt'                : {'rangex': [0,300], 'logy': False},
     'hmmPt'                : {'rangex': [0,300]},
     'hmmLeadingLeptonPt'   : {'rangex': [0,300]},
@@ -586,7 +591,7 @@ if plotMC and plotLowmass:
     for plot in plots:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
-        plotWithCategories(hpp4lPlotter,plot,baseDir='lowmass',saveDir='lowmass',**kwargs)
+        plotWithCategories(hpp4lPlotter,plot,baseDir='lowmass',saveDir='lowmass',skipVariable=True,**kwargs)
 
 ######################################
 ### lowmass datadriven backgrounds ###
@@ -606,7 +611,7 @@ if plotDatadriven and plotLowmass:
     for plot in plots:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
-        plotWithCategories(hpp4lPlotter,plot,baseDir='lowmass',saveDir='lowmass-datadriven',datadriven=True,**kwargs)
+        plotWithCategories(hpp4lPlotter,plot,baseDir='lowmass',saveDir='lowmass-datadriven',datadriven=True,skipVariable=True,**kwargs)
 
 ########################
 ### z veto selection ###
@@ -623,7 +628,7 @@ if plotMC and plotZveto:
     for plot in plots:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
-        plotWithCategories(hpp4lPlotter,plot,baseDir='zveto',saveDir='zveto',**kwargs)
+        plotWithCategories(hpp4lPlotter,plot,baseDir='zveto',saveDir='zveto',skipVariable=True,**kwargs)
 
 #####################################
 ### z veto datadriven backgrounds ###
@@ -643,7 +648,7 @@ if plotDatadriven and plotZveto:
     for plot in plots:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
-        plotWithCategories(hpp4lPlotter,plot,baseDir='zveto',saveDir='zveto-datadriven',datadriven=True,**kwargs)
+        plotWithCategories(hpp4lPlotter,plot,baseDir='zveto',saveDir='zveto-datadriven',datadriven=True,skipVariable=True,**kwargs)
 
 ############################
 ### Fake Regions lowmass ###

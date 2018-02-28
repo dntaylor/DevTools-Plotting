@@ -24,6 +24,7 @@ def buildMuMuTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,
     }
 
     baseCut = 'z_mass>81 && z_mass<101 && !(tjet_passCSVv2M>0.5)'
+    baseCutNoBVeto = 'z_mass>81 && z_mass<101'
     scaleFactor = 'genWeight*pileupWeight*triggerEfficiency'
     
     selectionParams['MuMuTauFakeRate'] = {
@@ -34,13 +35,20 @@ def buildMuMuTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,
         'nearMuonWithMVA'       : {'args': [baseCut + ' && m_pt>0 && mt_deltaR<0.8 && t_byIsolationMVArun2v1DBoldDMwLTraw>0.2'],     'kwargs': {'mcscalefactor': scaleFactor}},
         'nearMuonVLoose'        : {'args': [baseCut + ' && m_pt>0 && mt_deltaR<0.8 && t_byVLooseIsolationMVArun2v1DBoldDMwLT>0.5'],  'kwargs': {'mcscalefactor': scaleFactor}},
         'nearMuonMedium'        : {'args': [baseCut + ' && m_pt>0 && mt_deltaR<0.8 && t_byMediumIsolationMVArun2v1DBoldDMwLT>0.5'],  'kwargs': {'mcscalefactor': scaleFactor}},
+        'noBVeto/default'               : {'args': [baseCutNoBVeto],                                                                                'kwargs': {'mcscalefactor': scaleFactor}},
+        'noBVeto/vloose'                : {'args': [baseCutNoBVeto + ' && t_byVLooseIsolationMVArun2v1DBoldDMwLT>0.5'],                             'kwargs': {'mcscalefactor': scaleFactor}},
+        'noBVeto/medium'                : {'args': [baseCutNoBVeto + ' && t_byMediumIsolationMVArun2v1DBoldDMwLT>0.5'],                             'kwargs': {'mcscalefactor': scaleFactor}},
+        'noBVeto/nearMuon'              : {'args': [baseCutNoBVeto + ' && m_pt>0 && mt_deltaR<0.8'],                                                'kwargs': {'mcscalefactor': scaleFactor}},
+        'noBVeto/nearMuonWithMVA'       : {'args': [baseCutNoBVeto + ' && m_pt>0 && mt_deltaR<0.8 && t_byIsolationMVArun2v1DBoldDMwLTraw>0.2'],     'kwargs': {'mcscalefactor': scaleFactor}},
+        'noBVeto/nearMuonVLoose'        : {'args': [baseCutNoBVeto + ' && m_pt>0 && mt_deltaR<0.8 && t_byVLooseIsolationMVArun2v1DBoldDMwLT>0.5'],  'kwargs': {'mcscalefactor': scaleFactor}},
+        'noBVeto/nearMuonMedium'        : {'args': [baseCutNoBVeto + ' && m_pt>0 && mt_deltaR<0.8 && t_byMediumIsolationMVArun2v1DBoldDMwLT>0.5'],  'kwargs': {'mcscalefactor': scaleFactor}},
     }
 
-    for loosecut in [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]:
-        selectionParams['MuMuTauFakeRate']['nearMuonWithMVA{:.1f}'.format(loosecut)] = {
-            'args': [baseCut + ' && m_pt>0 && mt_deltaR<0.8 && t_byIsolationMVArun2v1DBoldDMwLTraw>{}'.format(loosecut)],
-            'kwargs': {'mcscalefactor': scaleFactor},
-        }
+    #for loosecut in [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]:
+    #    selectionParams['MuMuTauFakeRate']['nearMuonWithMVA{:.1f}'.format(loosecut)] = {
+    #        'args': [baseCut + ' && m_pt>0 && mt_deltaR<0.8 && t_byIsolationMVArun2v1DBoldDMwLTraw>{}'.format(loosecut)],
+    #        'kwargs': {'mcscalefactor': scaleFactor},
+    #    }
 
     etaBins = [0.,1.479,2.3]
 

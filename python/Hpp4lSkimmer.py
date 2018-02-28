@@ -9,6 +9,7 @@ import operator
 from NtupleSkimmer import NtupleSkimmer
 from DevTools.Utilities.utilities import prod, ZMASS
 from DevTools.Plotter.higgsUtilities import *
+from DevTools.Analyzer.BTagScales import BTagScales
 
 import ROOT
 
@@ -29,6 +30,8 @@ class Hpp4lSkimmer(NtupleSkimmer):
         self.doDMFakes = True
         self.optimize = False
         self.var = 'st'
+        self.doBVeto = True
+        self.btag_scales = BTagScales('80X')
 
         # setup output files
         self.leps = ['hpp1','hpp2','hmm1','hmm2']
@@ -115,6 +118,21 @@ class Hpp4lSkimmer(NtupleSkimmer):
         b = hist.FindBin(pt,abs(eta))
         return hist.GetBinContent(b), hist.GetBinError(b)
 
+    def getBTagWeight(self,row):
+        op = 1 # medium
+        s = 'central'
+        if self.shift == 'btagUp': s = 'up'
+        if self.shift == 'btagDown': s = 'down'
+        w = 1
+        for l in self.leps:
+            pt = getattr(row,'{0}jet_pt'.format(l))
+            if not pt>0: continue
+            eta = getattr(row,'{0}jet_eta'.format(l))
+            sf = self.btag_scales.get_sf_csv(1,pt,eta,shift=s)
+            if getattr(row,'{0}jet_passCSVv2M'.format(l))>0.5:
+                w *= 1-sf
+        return w
+        
     def getWeight(self,row,doFake=False,fakeNum=None,fakeDenom=None):
         if not fakeNum: fakeNum = 'HppMedium'
         if not fakeDenom: fakeDenom = 'HppLoose{0}'.format('New' if self.new else '')
@@ -140,6 +158,8 @@ class Hpp4lSkimmer(NtupleSkimmer):
             # scale to lumi/xsec
             weight *= float(self.intLumi)/self.sampleLumi if self.sampleLumi else 0.
             if hasattr(row,'qqZZkfactor'): weight *= row.qqZZkfactor/1.1 # ZZ variable k factor
+            # b taggin (veto)
+            if self.doBVeto: weight *= self.getBTagWeight(row)
         # fake scales
         if doFake:
             chanMap = {'e': 'electrons', 'm': 'muons', 't': 'taus',}
@@ -171,6 +191,9 @@ class Hpp4lSkimmer(NtupleSkimmer):
 
         passLooseId = all([getattr(row,'{0}_passLoose{1}'.format(l,'New' if self.new else ''))>0.5 for l in self.leps])
         if not passLooseId: return
+        # Don't do for MC, events that pass btag contribute a factor of 1-SF
+        passbveto = all([getattr(row,'{0}jet_passCSVv2M'.format(l))<0.5 for l in self.leps])
+        if isData and not passbveto and self.doBVeto: return
 
         # per sample cuts
         keep = True
@@ -218,7 +241,13 @@ class Hpp4lSkimmer(NtupleSkimmer):
         default = True
         lowmass = row.hpp_mass<100 or row.hmm_mass<100
         if not isData:
-            genCut = all([getattr(row,'{0}_genMatch'.format(lep)) and getattr(row,'{0}_genDeltaR'.format(lep))<0.1 for lep in self.leps])
+            #genCut = all([getattr(row,'{0}_genMatch'.format(lep)) and getattr(row,'{0}_genDeltaR'.format(lep))<0.1 for lep in self.leps])
+            genCut = all([
+                (getattr(row,'{0}_genMatch'.format(lep)) and getattr(row,'{0}_genDeltaR'.format(lep))<0.1)
+                or
+                (getattr(row,'{0}_genJetMatch'.format(lep)) and getattr(row,'{0}_genJetDeltaR'.format(lep))<0.1)
+                for lep in self.leps
+            ])
 
         # cut map
         v = {

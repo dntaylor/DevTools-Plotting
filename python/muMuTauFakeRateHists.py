@@ -76,7 +76,11 @@ fakeratePlotter.addHistogram('data_uncorrected',sigMap['data'],style={'linecolor
 etaBins = [0.,1.479,2.3]
 ptBins = [10,15,20,25,30,50,100]
 
-numDenoms = [('vloose','default'),('nearMuonVLoose','nearMuon'),('medium','default'),('nearMuonMedium','nearMuon')]
+numDenoms = []
+numDenoms_base = [('vloose','default'),('nearMuonVLoose','nearMuon'),('medium','default'),('nearMuonMedium','nearMuon')]
+for n, d in numDenoms_base:
+    numDenoms += [(n,d)]
+    numDenoms += [('noBVeto/{}'.format(n), 'noBVeto/{}'.format(d))]
 for newloose in [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]:
     numDenoms += [('nearMuonMedium','nearMuonWithMVA{:0.1f}'.format(newloose))]
 
@@ -95,6 +99,8 @@ for num,denom in numDenoms:
         numname = name.format(num,e)
         denomname = name.format(denom,e)
         savename = '{0}_{1}'.format(num,denom)
+        if '/' in num:
+            savename = '{0}_{1}'.format(num,denom.split('/')[-1])
         subtractMap = {
             'data': ['MC'],
         }
@@ -118,6 +124,8 @@ for num,denom in numDenoms:
     # save the values
     print values
     savedir = '{0}_{1}'.format(num,denom)
+    if '/' in num:
+        savedir = '{0}_{1}'.format(num,denom.split('/')[-1])
     savename = 'fakeratePtEta'
     fakerateMaker.make2D(savename,values,errors,ptBins,etaBins,savedir=savedir,xaxis=xaxis,yaxis=yaxis)
     savename = 'fakeratePtEta_fromMC'
