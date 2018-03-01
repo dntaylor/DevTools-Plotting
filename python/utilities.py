@@ -234,14 +234,35 @@ def getTestFiles(analysis,sample,n=1,version=None):
 
     return files[:min(n,len(files))]
 
-latestHistograms = {}
+latestHistograms = {'80X':{}}
+
+latestHistograms['80X']['MuMuTauTau'] = {
+    'lepUp'            : '2018-02-28_MuMuTauTauHistogramsNew_lepUp_80X_Moriond_v1',
+    'lepDown'          : '2018-02-28_MuMuTauTauHistogramsNew_lepDown_80X_Moriond_v1',
+    'trigUp'           : '2018-02-28_MuMuTauTauHistogramsNew_trigUp_80X_Moriond_v1',
+    'trigDown'         : '2018-02-28_MuMuTauTauHistogramsNew_trigDown_80X_Moriond_v1',
+    'puUp'             : '2018-02-28_MuMuTauTauHistogramsNew_puUp_80X_Moriond_v1',
+    'puDown'           : '2018-02-28_MuMuTauTauHistogramsNew_puDown_80X_Moriond_v1',
+    'fakeUp'           : '2018-02-28_MuMuTauTauHistogramsNew_fakeUp_80X_Moriond_v1',
+    'fakeDown'         : '2018-02-28_MuMuTauTauHistogramsNew_fakeDown_80X_Moriond_v1',
+}
 
 def getNewFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
     flat = 'newflat/{0}/{1}.root'.format(analysis,sample)
+    if shift in latestHistograms.get(version,{}).get(analysis,{}):
+        baseDir = '/hdfs/store/user/dntaylor'
+        flatpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],sample)
+        for fname in glob.glob('{0}/*.root'.format(flatpath)):
+            if 'projection' not in fname: flat = fname
     return flat
 
 def getNewProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
     flat = 'newflat/{0}/{1}.root'.format(analysis,sample)
+    if shift in latestHistograms.get(version,{}).get(analysis,{}):
+        baseDir = '/hdfs/store/user/dntaylor'
+        flatpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],sample)
+        for fname in glob.glob('{0}/*.root'.format(flatpath)):
+            if 'projection' not in fname: flat = fname
     return flat
         
 def getFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
