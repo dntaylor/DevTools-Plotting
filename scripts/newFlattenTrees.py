@@ -85,13 +85,19 @@ def main(argv=None):
 
     grid = False
     if 'INPUT' in os.environ and 'OUTPUT' in os.environ:
+        print 'We are on the grid'
         inputFileList = os.environ['INPUT']
         outputFile = os.environ['OUTPUT']
+        print 'inputfilelist', inputFileList
+        print 'outputfile', outputFile
         # figureout the sample
         with open(inputFileList,'r') as f:
             inputfiles = [x.strip() for x in f.readlines()]
             jobparams = inputfiles[0].split('/')
             sample = jobparams[-2]
+        print 'inputfiles', inputfiles
+        print 'jobparams', jobparams
+        print 'sample', sample
         grid = True
     else:
         directories = getSampleDirectories(args.analysis,args.samples)
