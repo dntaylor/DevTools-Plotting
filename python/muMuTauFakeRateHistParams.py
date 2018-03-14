@@ -21,6 +21,7 @@ def buildMuMuTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,
         'z2Pt'                        : {'xVariable': 'z2_pt',                          'xBinning': [500, 0, 500],           },
         # t
         'tPt'                         : {'xVariable': 't_pt',                           'xBinning': [500, 0, 500],           },
+        'tDM'                         : {'xVariable': 't_decayMode',                    'xBinning': [15, 0, 15],             },
     }
 
     baseCut = 'z_mass>81 && z_mass<101 && !(tjet_passCSVv2M>0.5)'
@@ -43,6 +44,13 @@ def buildMuMuTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,
         'noBVeto/nearMuonVLoose'        : {'args': [baseCutNoBVeto + ' && m_pt>0 && mt_deltaR<0.8 && t_byVLooseIsolationMVArun2v1DBoldDMwLT>0.5'],  'kwargs': {'mcscalefactor': scaleFactor}},
         'noBVeto/nearMuonMedium'        : {'args': [baseCutNoBVeto + ' && m_pt>0 && mt_deltaR<0.8 && t_byMediumIsolationMVArun2v1DBoldDMwLT>0.5'],  'kwargs': {'mcscalefactor': scaleFactor}},
     }
+
+    for sel in selectionParams['MuMuTauFakeRate'].keys():
+        for dm in [0,1,10]:
+            name = '{0}/dm{1}'.format(sel,dm)
+            selectionParams['MuMuTauFakeRate'][name] = deepcopy(selectionParams['MuMuTauFakeRate'][sel])
+            args = selectionParams['MuMuTauFakeRate'][name]['args']
+            selectionParams['MuMuTauFakeRate'][name]['args'][0] = args[0] + ' && t_decayMode=={0}'.format(dm)
 
     #for loosecut in [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]:
     #    selectionParams['MuMuTauFakeRate']['nearMuonWithMVA{:.1f}'.format(loosecut)] = {

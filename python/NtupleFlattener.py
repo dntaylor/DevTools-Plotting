@@ -105,11 +105,11 @@ class NtupleFlattener(object):
                             elif len(xbins)==3 and len(ybins)==3 and all([isinstance(x,numbers.Number) for x in xbins]) and all([isinstance(x,numbers.Number) for x in ybins]): # n, low, high
                                 self.hists[histName] = ROOT.TH2D(histName,histName,xbins[0],xbins[1],xbins[2],ybins[0],ybins[1],ybins[2])
                             elif len(xbins)>0 and len(ybins)>0:
-                                self.hists[histName] = ROOT.TH1D(histName,histName,len(xbins),0,len(xbins),len(ybins),0,len(ybins))
+                                self.hists[histName] = ROOT.TH2D(histName,histName,len(xbins),0,len(xbins),len(ybins),0,len(ybins))
                                 for i,label in enumerate(xbins):
-                                    self.hists[histName].GetXaxis().SetBinLabel(i+1,label)
+                                    self.hists[histName].GetXaxis().SetBinLabel(i+1,str(label))
                                 for i,label in enumerate(ybins):
-                                    self.hists[histName].GetYaxis().SetBinLabel(i+1,label)
+                                    self.hists[histName].GetYaxis().SetBinLabel(i+1,str(label))
                             else:
                                 self.hists[histName] = ROOT.TH2D()
                                 self.hists[histName].SetName(histName)

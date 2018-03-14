@@ -520,9 +520,9 @@ if plotMC and plotZveto:
         plotWithCategories(hpp3lPlotter,plot,baseDir='zveto',saveDir='zveto',skipVariable=True,**kwargs)
         if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='zveto',baseDir='zveto',**kwargs)
 
-######################################
-### lowmass datadriven backgrounds ###
-######################################
+####################################
+### zveto datadriven backgrounds ###
+####################################
 if plotDatadriven and plotZveto:
     hpp3lPlotter.clearHistograms()
 

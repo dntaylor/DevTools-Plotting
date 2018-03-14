@@ -27,9 +27,12 @@ def deltaR_row(row,a,b):
     bPhi = getattr(row,'{}_phi'.format(b))
     return deltaR(aEta,aPhi,bEta,bPhi)
 
+doMedium = True
 def passTauIso(row,lep):
-    #return getattr(row,'{}_byMediumIsolationMVArun2v1DBoldDMwLT'.format(lep))>0.5
-    return getattr(row,'{}_byVLooseIsolationMVArun2v1DBoldDMwLT'.format(lep))>0.5
+    if doMedium:
+        return getattr(row,'{}_byMediumIsolationMVArun2v1DBoldDMwLT'.format(lep))>0.5
+    else:
+        return getattr(row,'{}_byVLooseIsolationMVArun2v1DBoldDMwLT'.format(lep))>0.5
 
 
 class MuMuTauTauFlattener(NtupleFlattener):
@@ -44,6 +47,15 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.doLowMass = True
         self.doHighMass = True
         self.doBVeto = True
+        self.doDM = True
+        self.doPerDM = True
+        self.doMedium = doMedium
+        self.doMediumMuon = False
+        self.doGenMatch = False
+
+        if self.doMediumMuon:
+            logging.error('Cannot use medium muon yet')
+            raise
 
         #self.newloose = [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]
         #self.newloose = [-1,-0.2,0.0,0.2,0.4]
@@ -63,11 +75,14 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'm1thDR'     : lambda row: deltaR_row(row,'am1','ath')>0.8,
             'm2tmDR'     : lambda row: deltaR_row(row,'am2','atm')>0.4,
             'm2thDR'     : lambda row: deltaR_row(row,'am2','ath')>0.8,
+            #'tPt'        : lambda row: row.ath_pt>20,
             #'muonIso'    : lambda row: row.am1_isolation<self.isoCut and row.am2_isolation<self.isoCut,
             #'tauMVA'     : lambda row: row.ath_byIsolationMVArun2v1DBoldDMwLTraw>self.mvaCut,
         }
         if self.doBVeto:
             self.baseCutMap['taubveto'] = lambda row: row.athjet_passCSVv2M<0.5
+        if self.doMediumMuon:
+            self.baseCutMap['medMuon'] = lambda row: row.am1_isMediumMuonICHEP and row.am2_isMediumMuonICHEP and row.atm_isMediumMuonICHEP
 
         self.regionMap = {
             'regionA' : lambda row: row.am1_isolation<0.25 and row.am2_isolation<0.25 and passTauIso(row,'ath'),
@@ -77,11 +92,22 @@ class MuMuTauTauFlattener(NtupleFlattener):
         }
 
         self.selectionMap = {}
+        baseSels = []
         self.selectionMap['default'] = lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+        baseSels += ['default']
+        if self.doPerDM:
+            self.selectionMap['dm0/default']  = lambda row: row.ath_decayMode==0 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            self.selectionMap['dm1/default']  = lambda row: row.ath_decayMode==1 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            self.selectionMap['dm10/default'] = lambda row: row.ath_decayMode==10 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            baseSels += ['dm0']
+            baseSels += ['dm1']
+            baseSels += ['dm10']
         if self.doLowMass:
             self.selectionMap['lowmass/default'] = lambda row: row.amm_mass<4 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            baseSels += ['lowmass']
         if self.doHighMass:
             self.selectionMap['highmass/default'] = lambda row: row.amm_mass>25 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            baseSels += ['highmass']
 
         self.selections = []
         self.selectionHists = {}
@@ -92,102 +118,40 @@ class MuMuTauTauFlattener(NtupleFlattener):
             self.selections += [sel.replace('default','regionC')]
             self.selections += [sel.replace('default','regionD')]
         if self.doDatadriven:
-            self.selections += ['regionB_fakeForA']
-            self.selections += ['regionC_fakeForA']
-            self.selections += ['regionD_fakeForA']
-            self.selections += ['regionD_fakeForB']
-            self.selections += ['regionD_fakeForC']
-            self.selections += ['matrixP/regionA_forA']
-            self.selections += ['matrixP/regionC_forA']
-            self.selections += ['matrixF/regionA_forA']
-            self.selections += ['matrixF/regionC_forA']
-            self.selections += ['matrixP/regionA_forA_p']
-            self.selections += ['matrixP/regionC_forA_p']
-            self.selections += ['matrixF/regionA_forA_f']
-            self.selections += ['matrixF/regionC_forA_f']
-            self.selections += ['matrixP/regionB_forB']
-            self.selections += ['matrixP/regionD_forB']
-            self.selections += ['matrixF/regionB_forB']
-            self.selections += ['matrixF/regionD_forB']
-            self.selections += ['matrixP/regionB_forB_p']
-            self.selections += ['matrixP/regionD_forB_p']
-            self.selections += ['matrixF/regionB_forB_f']
-            self.selections += ['matrixF/regionD_forB_f']
-            self.selections += ['matrixP/regionB_forB_fakeForA']
-            self.selections += ['matrixP/regionD_forB_fakeForA']
-            self.selections += ['matrixF/regionB_forB_fakeForA']
-            self.selections += ['matrixF/regionD_forB_fakeForA']
-            if self.doLowMass:
-                self.selections += ['lowmass/regionB_fakeForA']
-                self.selections += ['lowmass/regionC_fakeForA']
-                self.selections += ['lowmass/regionD_fakeForA']
-                self.selections += ['lowmass/regionD_fakeForB']
-                self.selections += ['lowmass/regionD_fakeForC']
-                self.selections += ['matrixP/lowmass/regionA_forA']
-                self.selections += ['matrixP/lowmass/regionC_forA']
-                self.selections += ['matrixF/lowmass/regionA_forA']
-                self.selections += ['matrixF/lowmass/regionC_forA']
-                self.selections += ['matrixP/lowmass/regionA_forA_p']
-                self.selections += ['matrixP/lowmass/regionC_forA_p']
-                self.selections += ['matrixF/lowmass/regionA_forA_f']
-                self.selections += ['matrixF/lowmass/regionC_forA_f']
-                self.selections += ['matrixP/lowmass/regionB_forB']
-                self.selections += ['matrixP/lowmass/regionD_forB']
-                self.selections += ['matrixF/lowmass/regionB_forB']
-                self.selections += ['matrixF/lowmass/regionD_forB']
-                self.selections += ['matrixP/lowmass/regionB_forB_p']
-                self.selections += ['matrixP/lowmass/regionD_forB_p']
-                self.selections += ['matrixF/lowmass/regionB_forB_f']
-                self.selections += ['matrixF/lowmass/regionD_forB_f']
-                self.selections += ['matrixP/lowmass/regionB_forB_fakeForA']
-                self.selections += ['matrixP/lowmass/regionD_forB_fakeForA']
-                self.selections += ['matrixF/lowmass/regionB_forB_fakeForA']
-                self.selections += ['matrixF/lowmass/regionD_forB_fakeForA']
-            if self.doHighMass:
-                self.selections += ['highmass/regionB_fakeForA']
-                self.selections += ['highmass/regionC_fakeForA']
-                self.selections += ['highmass/regionD_fakeForA']
-                self.selections += ['highmass/regionD_fakeForB']
-                self.selections += ['highmass/regionD_fakeForC']
-                self.selections += ['matrixP/highmass/regionA_forA']
-                self.selections += ['matrixP/highmass/regionC_forA']
-                self.selections += ['matrixF/highmass/regionA_forA']
-                self.selections += ['matrixF/highmass/regionC_forA']
-                self.selections += ['matrixP/highmass/regionA_forA_p']
-                self.selections += ['matrixP/highmass/regionC_forA_p']
-                self.selections += ['matrixF/highmass/regionA_forA_f']
-                self.selections += ['matrixF/highmass/regionC_forA_f']
-                self.selections += ['matrixP/highmass/regionB_forB']
-                self.selections += ['matrixP/highmass/regionD_forB']
-                self.selections += ['matrixF/highmass/regionB_forB']
-                self.selections += ['matrixF/highmass/regionD_forB']
-                self.selections += ['matrixP/highmass/regionB_forB_p']
-                self.selections += ['matrixP/highmass/regionD_forB_p']
-                self.selections += ['matrixF/highmass/regionB_forB_f']
-                self.selections += ['matrixF/highmass/regionD_forB_f']
-                self.selections += ['matrixP/highmass/regionB_forB_fakeForA']
-                self.selections += ['matrixP/highmass/regionD_forB_fakeForA']
-                self.selections += ['matrixF/highmass/regionB_forB_fakeForA']
-                self.selections += ['matrixF/highmass/regionD_forB_fakeForA']
+            for b in baseSels:
+                tag = '' if b=='default' else '{}/'.format(b)
+                self.selections += ['{}regionB_fakeForA'.format(tag)]
+                self.selections += ['{}regionC_fakeForA'.format(tag)]
+                self.selections += ['{}regionD_fakeForA'.format(tag)]
+                self.selections += ['{}regionD_fakeForB'.format(tag)]
+                self.selections += ['{}regionD_fakeForC'.format(tag)]
+                self.selections += ['matrixP/{}regionA_forA'.format(tag)]
+                self.selections += ['matrixP/{}regionC_forA'.format(tag)]
+                self.selections += ['matrixF/{}regionA_forA'.format(tag)]
+                self.selections += ['matrixF/{}regionC_forA'.format(tag)]
+                self.selections += ['matrixP/{}regionA_forA_p'.format(tag)]
+                self.selections += ['matrixP/{}regionC_forA_p'.format(tag)]
+                self.selections += ['matrixF/{}regionA_forA_f'.format(tag)]
+                self.selections += ['matrixF/{}regionC_forA_f'.format(tag)]
+                self.selections += ['matrixP/{}regionB_forB'.format(tag)]
+                self.selections += ['matrixP/{}regionD_forB'.format(tag)]
+                self.selections += ['matrixF/{}regionB_forB'.format(tag)]
+                self.selections += ['matrixF/{}regionD_forB'.format(tag)]
+                self.selections += ['matrixP/{}regionB_forB_p'.format(tag)]
+                self.selections += ['matrixP/{}regionD_forB_p'.format(tag)]
+                self.selections += ['matrixF/{}regionB_forB_f'.format(tag)]
+                self.selections += ['matrixF/{}regionD_forB_f'.format(tag)]
+                self.selections += ['matrixP/{}regionB_forB_fakeForA'.format(tag)]
+                self.selections += ['matrixP/{}regionD_forB_fakeForA'.format(tag)]
+                self.selections += ['matrixF/{}regionB_forB_fakeForA'.format(tag)]
+                self.selections += ['matrixF/{}regionD_forB_fakeForA'.format(tag)]
 
-            for newloose in self.newloose:
-                self.selections += ['regionB_fakeForA{:.1f}'.format(newloose)]
-                self.selections += ['regionC_fakeForA{:.1f}'.format(newloose)]
-                self.selections += ['regionD_fakeForA{:.1f}'.format(newloose)]
-                self.selections += ['regionD_fakeForB{:.1f}'.format(newloose)]
-                self.selections += ['regionD_fakeForC{:.1f}'.format(newloose)]
-                if self.doLowMass:
-                    self.selections += ['lowmass/regionB_fakeForA{:.1f}'.format(newloose)]
-                    self.selections += ['lowmass/regionC_fakeForA{:.1f}'.format(newloose)]
-                    self.selections += ['lowmass/regionD_fakeForA{:.1f}'.format(newloose)]
-                    self.selections += ['lowmass/regionD_fakeForB{:.1f}'.format(newloose)]
-                    self.selections += ['lowmass/regionD_fakeForC{:.1f}'.format(newloose)]
-                if self.doHighMass:
-                    self.selections += ['highmass/regionB_fakeForA{:.1f}'.format(newloose)]
-                    self.selections += ['highmass/regionC_fakeForA{:.1f}'.format(newloose)]
-                    self.selections += ['highmass/regionD_fakeForA{:.1f}'.format(newloose)]
-                    self.selections += ['highmass/regionD_fakeForB{:.1f}'.format(newloose)]
-                    self.selections += ['highmass/regionD_fakeForC{:.1f}'.format(newloose)]
+                for newloose in self.newloose:
+                    self.selections += ['{}regionB_fakeForA{:.1f}'.format(tag,newloose)]
+                    self.selections += ['{}regionC_fakeForA{:.1f}'.format(tag,newloose)]
+                    self.selections += ['{}regionD_fakeForA{:.1f}'.format(tag,newloose)]
+                    self.selections += ['{}regionD_fakeForB{:.1f}'.format(tag,newloose)]
+                    self.selections += ['{}regionD_fakeForC{:.1f}'.format(tag,newloose)]
 
         # setup histogram parameters
         self.histParams = {
@@ -218,10 +182,10 @@ class MuMuTauTauFlattener(NtupleFlattener):
             #'am1PassMedium'               : {'x': lambda row: row.am1_isMediumMuonICHEP,          'xBinning': [2, -0.5, 1.5],          },
             #'am2PassMedium'               : {'x': lambda row: row.am2_isMediumMuonICHEP,          'xBinning': [2, -0.5, 1.5],          },
             # att
-            'attMass'                     : {'x': lambda row: row.att_mass,                       'xBinning': [300, 0, 300],           },
-            'attMassKinFit'               : {'x': lambda row: row.att_massKinFit,                 'xBinning': [300, 0, 300],           },
-            'attMt'                       : {'x': lambda row: row.attmet_mt,                      'xBinning': [300, 0, 300],           },
-            'attMcat'                     : {'x': lambda row: row.attmet_mcat,                    'xBinning': [300, 0, 300],           },
+            'attMass'                     : {'x': lambda row: row.att_mass,                       'xBinning': [3000, 0, 60],           },
+            'attMassKinFit'               : {'x': lambda row: row.att_massKinFit,                 'xBinning': [3000, 0, 60],           },
+            'attMt'                       : {'x': lambda row: row.attmet_mt,                      'xBinning': [3000, 0, 60],           },
+            'attMcat'                     : {'x': lambda row: row.attmet_mcat,                    'xBinning': [3000, 0, 60],           },
             'attDeltaR'                   : {'x': lambda row: row.att_deltaR,                     'xBinning': [400, 0, 6.0],           },
             'atmPt'                       : {'x': lambda row: row.atm_pt,                         'xBinning': [500, 0, 500],           },
             'atmEta'                      : {'x': lambda row: row.atm_eta,                        'xBinning': [100, -2.5, 2.5],        },
@@ -232,6 +196,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'athEta'                      : {'x': lambda row: row.ath_eta,                        'xBinning': [100, -2.5, 2.5],        },
             #'athDxy'                      : {'x': lambda row: abs(row.ath_dxy),                   'xBinning': [100, 0, 2.5],           },
             #'athDz'                       : {'x': lambda row: abs(row.ath_dz),                    'xBinning': [100, 0, 2.5],           },
+            'athDM'                       : {'x': lambda row: row.ath_decayMode,                  'xBinning': [15, 0, 15],             },
             'athMetDeltaPhi'              : {'x': lambda row: abs(row.athmet_deltaPhi),           'xBinning': [500, 0, 3.14159],       },
             'athJetCSV'                   : {'x': lambda row: row.athjet_CSVv2,                   'xBinning': [500, 0, 1],             },
             'attDeltaPhi'                 : {'x': lambda row: abs(row.att_deltaPhi),              'xBinning': [500, 0, 3.14159],       },
@@ -250,6 +215,9 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'ammMass_hMassKinFit'         : {'x': lambda row: row.amm_mass, 'y': lambda row: row.h_massKinFit, 'xBinning': [60, 0, 30], 'yBinning': [50, 0, 1000] },
             'am2Iso_athIso'               : {'x': lambda row: row.am2_isolation, 'y': lambda row: row.ath_byIsolationMVArun2v1DBoldDMwLTraw,    'xBinning': [40,0,2], 'yBinning': [40,-1,1] },
             'am2Iso_athPassIso'           : {'x': lambda row: row.am2_isolation, 'y': lambda row: row.ath_byMediumIsolationMVArun2v1DBoldDMwLT, 'xBinning': [40,0,2], 'yBinning': [2,-0.5,1.5] },
+            'genChannel_athDM'            : {'x': lambda row: 'xxxx' if len(row.genChannel)<4 else ''.join(sorted(row.genChannel[:2])+sorted(row.genChannel[2:4])), 
+                                             'y': lambda row: str(int(row.ath_decayMode)),
+                                             'xBinning': ['mmhm', 'mmem', 'mmmm','mmhh','mmeh','mmee','xxxx'], 'yBinning': ['0','1','5','6','10']},
         }
 
         # initialize flattener
@@ -264,15 +232,24 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.fake_haa_rootfile_mu = ROOT.TFile(fake_path)
         self.fakehists['muons'][self.fakekey.format(num='HaaTight',     denom='HaaLoose')]     = self.fake_haa_rootfile_mu.Get('iso0.25_default/fakeratePtEta')
         self.fakehists['muons'][self.fakekey.format(num='HaaTightTrig', denom='HaaLooseTrig')] = self.fake_haa_rootfile_mu.Get('iso0.25trig_defaulttrig/fakeratePtEta')
-        #self.fakehists['muons'][self.fakekey.format(num='HaaTight', denom='HaaLoose')] = self.fake_haa_rootfile_mu.Get('iso0.25_iso0.40/fakeratePtEta')
 
         fake_path = '{0}/src/DevTools/Analyzer/data/fakerates_mmtt_tau_13TeV_Run2016BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
         self.fake_haa_rootfile_tau = ROOT.TFile(fake_path)
         #self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')] = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuon/fakeratePtEta')
-        self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')] = self.fake_haa_rootfile_tau.Get('nearMuonVLoose_nearMuon/fakeratePtEta')
-        #self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')] = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuonWithMVA/fakeratePtEta')
+        self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')]        = self.fake_haa_rootfile_tau.Get('nearMuonVLoose_nearMuon/fakeratePtEta')
+        self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM0']  = self.fake_haa_rootfile_tau.Get('nearMuonVLoose_nearMuon/fakeratePtEta_DM0')
+        self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM1']  = self.fake_haa_rootfile_tau.Get('nearMuonVLoose_nearMuon/fakeratePtEta_DM1')
+        self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM10'] = self.fake_haa_rootfile_tau.Get('nearMuonVLoose_nearMuon/fakeratePtEta_DM10')
+        if self.doMedium:
+            self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')]        = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuon/fakeratePtEta')
+            self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM0']  = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuon/fakeratePtEta_DM0')
+            self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM1']  = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuon/fakeratePtEta_DM1')
+            self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM10'] = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuon/fakeratePtEta_DM10')
         if not self.doBVeto:
-            self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')] = self.fake_haa_rootfile_tau.Get('noBVeto/nearMuonVLoose_nearMuon/fakeratePtEta')
+            self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')]        = self.fake_haa_rootfile_tau.Get('noBVeto/nearMuonVLoose_nearMuon/fakeratePtEta')
+            self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM0']  = self.fake_haa_rootfile_tau.Get('noBVeto/nearMuonVLoose_nearMuon/fakeratePtEta_DM0')
+            self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM1']  = self.fake_haa_rootfile_tau.Get('noBVeto/nearMuonVLoose_nearMuon/fakeratePtEta_DM1')
+            self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM10'] = self.fake_haa_rootfile_tau.Get('noBVeto/nearMuonVLoose_nearMuon/fakeratePtEta_DM10')
         for newloose in self.newloose:
             self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose{:.1f}'.format(newloose))] = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuonWithMVA{:.1f}/fakeratePtEta'.format(newloose))
 
@@ -318,6 +295,8 @@ class MuMuTauTauFlattener(NtupleFlattener):
 
     def getFakeRate(self,lep,pt,eta,num,denom,dm=None):
         key = self.fakekey.format(num=num,denom=denom)
+        if lep=='taus' and dm in [0,1,10] and self.doDM:
+            key += 'DM{}'.format(dm)
         hist = self.fakehists[lep][key]
         if pt > 100.: pt = 99.
         b = hist.FindBin(pt,abs(eta))
@@ -398,7 +377,10 @@ class MuMuTauTauFlattener(NtupleFlattener):
                 n = fakeNum[l] if isinstance(fakeNum,dict) else fakeNum
                 d = fakeDenom[l] if isinstance(fakeDenom,dict) else fakeDenom
                 coll = 'taus' if l in ['ath'] else 'muons'
-                fake = self.getFakeRate(coll, getattr(row,'{}_pt'.format(l)), getattr(row,'{}_eta'.format(l)), n, d)
+                if coll=='taus' and self.doDM:
+                    fake = self.getFakeRate(coll, getattr(row,'{}_pt'.format(l)), getattr(row,'{}_eta'.format(l)), n, d, dm=getattr(row,'{}_decayMode'.format(l)))
+                else:
+                    fake = self.getFakeRate(coll, getattr(row,'{}_pt'.format(l)), getattr(row,'{}_eta'.format(l)), n, d)
                 fakeEff = fake[0]
                 if self.shift=='fakeUp': fakeEff = fake[0]+fake[1]
                 if self.shift=='fakeDown': fakeEff = fake[0]-fake[1]
@@ -473,6 +455,15 @@ class MuMuTauTauFlattener(NtupleFlattener):
         if self.sample=='W2JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          : keep = row.numGenJets==2
         if self.sample=='W3JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          : keep = row.numGenJets==3
         if self.sample=='W4JetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          : keep = row.numGenJets==4
+
+        if self.doGenMatch and 'SUSY' in self.sample:
+            genchan = 'xxxx' if len(row.genChannel)<4 else ''.join(sorted(row.genChannel[:2])+sorted(row.genChannel[2:4]))
+            if genchan not in ['mmhm']: keep = False
+            if row.am1_genTruthDeltaR>0.1: keep = False
+            if row.am2_genTruthDeltaR>0.1: keep = False
+            if row.atm_genTruthDeltaR>0.1: keep = False
+            if row.ath_genTruthDeltaR>0.1: keep = False
+
         if not keep: return
 
 

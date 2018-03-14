@@ -81,10 +81,11 @@ numDenoms_base = [('vloose','default'),('nearMuonVLoose','nearMuon'),('medium','
 for n, d in numDenoms_base:
     numDenoms += [(n,d)]
     numDenoms += [('noBVeto/{}'.format(n), 'noBVeto/{}'.format(d))]
-for newloose in [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]:
-    numDenoms += [('nearMuonMedium','nearMuonWithMVA{:0.1f}'.format(newloose))]
+#for newloose in [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]:
+#    numDenoms += [('nearMuonMedium','nearMuonWithMVA{:0.1f}'.format(newloose))]
 
 name = '{0}/etaBin{1}/tPt'
+dmname = '{0}/dm{1}/etaBin{2}/tPt'
 
 for num,denom in numDenoms:
     xaxis = 'p_{T}^{#tau}'
@@ -130,4 +131,48 @@ for num,denom in numDenoms:
     fakerateMaker.make2D(savename,values,errors,ptBins,etaBins,savedir=savedir,xaxis=xaxis,yaxis=yaxis)
     savename = 'fakeratePtEta_fromMC'
     fakerateMaker.make2D(savename,values_mc,errors_mc,ptBins,etaBins,savedir=savedir,xaxis=xaxis,yaxis=yaxis)
+
+    for dm in [0,1,10]:
+        values = {}
+        errors = {}
+        values_mc = {}
+        errors_mc = {}
+        # get the values
+        for e in range(len(etaBins)-1):
+            # get the histogram
+            numname = dmname.format(num,dm,e)
+            denomname = dmname.format(denom,dm,e)
+            savename = '{0}_{1}_{2}'.format(num,denom,dm)
+            if '/' in num:
+                savename = '{0}_{1}_{2}'.format(num,denom.split('/')[-1],dm)
+            subtractMap = {
+                'data': ['MC'],
+            }
+            customOrder = ['data']
+            hists = fakeratePlotter.plotRatio(numname,denomname,savename,customOrder=customOrder,subtractMap=subtractMap,rebin=ptBins,getHists=True)
+            for p in range(len(ptBins)-1):
+                pt = float(ptBins[p]+ptBins[p+1])/2.
+                eta = float(etaBins[e]+etaBins[e+1])/2.
+                key = (pt,eta)
+                values[key] = hists['data'].GetBinContent(p+1)
+                errors[key] = hists['data'].GetBinError(p+1)
+            customOrder = ['Z']
+            hists_mc = fakeratePlotter.plotRatio(numname,denomname,savename,customOrder=customOrder,rebin=ptBins,getHists=True)
+            for p in range(len(ptBins)-1):
+                pt = float(ptBins[p]+ptBins[p+1])/2.
+                eta = float(etaBins[e]+etaBins[e+1])/2.
+                key = (pt,eta)
+                values_mc[key] = hists_mc['Z'].GetBinContent(p+1)
+                errors_mc[key] = hists_mc['Z'].GetBinError(p+1)
+
+        # save the values
+        print values
+        savedir = '{0}_{1}'.format(num,denom)
+        if '/' in num:
+            savedir = '{0}_{1}'.format(num,denom.split('/')[-1])
+        savename = 'fakeratePtEta_DM{}'.format(dm)
+        fakerateMaker.make2D(savename,values,errors,ptBins,etaBins,savedir=savedir,xaxis=xaxis,yaxis=yaxis)
+        savename = 'fakeratePtEta_DM{}_fromMC'.format(dm)
+        fakerateMaker.make2D(savename,values_mc,errors_mc,ptBins,etaBins,savedir=savedir,xaxis=xaxis,yaxis=yaxis)
+
 
