@@ -237,6 +237,13 @@ class MuMuTauTauFlattener(NtupleFlattener):
                                              'xBinning': ['mmhm', 'mmem', 'mmmm','mmhh','mmeh','mmee','xxxx'], 'yBinning': ['0','1','5','6','10']},
         }
 
+        self.datasetParams = {
+            'ammMass_dataset'             : {'x': lambda row: row.amm_mass, },
+            'ammMass_attMass_dataset'     : {'x': lambda row: row.amm_mass, 'y': lambda row: row.att_mass, },
+            'ammMass_hMass_dataset'       : {'x': lambda row: row.amm_mass, 'y': lambda row: row.h_mass, },
+            'ammMass_hMassKinFit_dataset' : {'x': lambda row: row.amm_mass, 'y': lambda row: row.h_massKinFit, },
+        }
+
         # initialize flattener
         super(MuMuTauTauFlattener, self).__init__('MuMuTauTau',sample,**kwargs)
 
