@@ -18,7 +18,9 @@ import DevTools.Plotter.tdrstyle as tdrstyle
 
 ROOT.gROOT.ProcessLine("gErrorIgnoreLevel = 2001;")
 tdrstyle.setTDRStyle()
-ROOT.gStyle.SetPalette(1)
+#ROOT.gStyle.SetPalette(1)
+ROOT.gStyle.SetPalette(ROOT.kBlackBody)
+ROOT.gStyle.SetPaintTextFormat('4.2f');
 
 # set a custom style, copied from 6.04, just directly when CMSSW has 6.04
 #stops = array('d', [0.0000, 0.1250, 0.2500, 0.3750, 0.5000, 0.6250, 0.7500, 0.8750, 1.0000])
@@ -41,6 +43,7 @@ class Plotter(PlotterBase):
         '''Initialize the plotter'''
         super(Plotter, self).__init__(analysis,**kwargs)
         self.new = kwargs.pop('new',False)
+        self.shifts = kwargs.pop('shifts',[])
 
         # empty initialization
         self.histDict = {}
@@ -48,6 +51,7 @@ class Plotter(PlotterBase):
         self.stackOrder = []
         self.histOrder = []
         self.sampleFiles = {}
+        self.shiftFiles = {}
         self.styles = {}
         self.signals = []
         self.histScales = {}
@@ -73,6 +77,12 @@ class Plotter(PlotterBase):
         if sampleName not in self.sampleFiles[analysis]:
             self.sampleFiles[analysis][sampleName] = NtupleWrapper(analysis,sampleName,new=self.new,**kwargs)
             ROOT.gROOT.cd()
+            for s in self.shifts:
+                for d in ['Up','Down']:
+                    if s+d not in self.shiftFiles: self.shiftFiles[s+d] = {}
+                    if analysis not in self.shiftFiles[s+d]: self.shiftFiles[s+d][analysis] = {}
+                    if sampleName not in self.shiftFiles[s+d][analysis]:
+                        self.shiftFiles[s+d][analysis][sampleName] =  NtupleWrapper(analysis,sampleName,new=self.new,shift=s+d,**kwargs)
 
     def setSelectionMap(self,selMap):
         '''Set a map of per sample selections.'''
@@ -112,7 +122,7 @@ class Plotter(PlotterBase):
         if scale!=1: self.histScales[histName] = scale
 
     def addUncertainty(self,*histNames,**uncertainties):
-        '''Add an uncertainty to a histogram'''
+        '''Add a constant uncertainty to a histogram'''
         for histName in histNames:
             if histName not in self.uncertainties: self.uncertainties[histName] = {}
             for uncName, val in uncertainties.iteritems():
@@ -133,7 +143,11 @@ class Plotter(PlotterBase):
     def _readSampleVariable(self,sampleName,variable,**kwargs):
         '''Read the histogram from file'''
         analysis = kwargs.pop('analysis',self.analysis)
-        hist = self.sampleFiles[analysis][sampleName].getHist(variable)
+        shift = kwargs.pop('shift','')
+        if shift:
+            hist = self.shiftFiles[shift][analysis][sampleName].getHist(variable)
+        else:
+            hist = self.sampleFiles[analysis][sampleName].getHist(variable)
         logging.debug('Read {0} {1} {2}: {3}'.format(analysis, sampleName, variable, hist))
         if hist:
             self.j += 1
@@ -153,7 +167,11 @@ class Plotter(PlotterBase):
     def _getTempHistogram(self,sampleName,histName,selection,scalefactor,variable,binning,**kwargs):
         '''Read the histogram from file'''
         analysis = kwargs.pop('analysis',self.analysis)
-        hist = self.sampleFiles[analysis][sampleName].getTempHist(histName,selection,scalefactor,variable,binning)
+        shift = kwargs.pop('shift','')
+        if shift:
+            hist = self.shiftFiles[shift][analysis][sampleName].getTempHist(histName,selection,scalefactor,variable,binning)
+        else:
+            hist = self.sampleFiles[analysis][sampleName].getTempHist(histName,selection,scalefactor,variable,binning)
         logging.debug('Create temp {0} {1} {2}: {3}'.format(analysis, sampleName, histName, hist))
         if hist:
             self.j += 1
@@ -221,10 +239,9 @@ class Plotter(PlotterBase):
 
         return hist
 
-    def _getHistogram(self,histName,variable,**kwargs):
+    def _getShiftedHistogram(self,histName,variable,shift='',**kwargs):
         '''Get a styled histogram'''
         rebin = kwargs.pop('rebin',0)
-        nofill = kwargs.pop('nofill',False)
         analysis = self.analysisDict[histName]
         scalefactor = kwargs.pop('scalefactor','1')
         mcscalefactor = kwargs.pop('mcscalefactor','1')
@@ -253,9 +270,9 @@ class Plotter(PlotterBase):
                 if selection and binning: # get temp hist
                     sf = '*'.join([scalefactor,datascalefactor if isData(sampleName) else mcscalefactor])
                     thissel = '{0} && {1}'.format(selection, self.sampleSelection[sampleName]) if sampleName in self.sampleSelection else selection
-                    hist = self._getTempHistogram(sampleName,histName,thissel,sf,varName,binning,analysis=analysis)
+                    hist = self._getTempHistogram(sampleName,histName,thissel,sf,varName,binning,analysis=analysis,shift=shift)
                 else:
-                    hist = self._readSampleVariable(sampleName,varName,analysis=analysis)
+                    hist = self._readSampleVariable(sampleName,varName,analysis=analysis,shift=shift)
                 if hist: hists.Add(hist)
         if hists.IsEmpty(): return 0
         hist = hists[0].Clone('h_{0}_{1}'.format(histName,varName.replace('/','_')))
@@ -292,7 +309,32 @@ class Plotter(PlotterBase):
             htmp.SetEntries(hist.GetEntries())
             hist = htmp
 
-        # add uncertainties
+        return hist
+
+    def _getHistogram(self,histName,variable,**kwargs):
+        '''Get a styled histogram'''
+        nofill = kwargs.pop('nofill',False)
+
+        hist = self._getShiftedHistogram(histName,variable,**kwargs)
+
+        if not isinstance(hist,ROOT.TH1): return hist
+
+        # add shape uncertainties
+        for s in self.shifts:
+            histUp = self._getShiftedHistogram(histName,variable,shift=s+'Up',**kwargs)
+            histDown = self._getShiftedHistogram(histName,variable,shift=s+'Down',**kwargs)
+            for b in range(hist.GetNbinsX()):
+                bVal = hist.GetBinContent(b+1)
+                bErr = hist.GetBinError(b+1)
+                bUpVal = histUp.GetBinContent(b+1)
+                bDownVal = histUp.GetBinContent(b+1)
+                upRel = (bUpVal - bVal)/bVal if bVal else 0
+                downRel = (bDownVal - bVal)/bVal if bVal else 0
+                rel = (abs(upRel)+abs(downRel))/2
+                newErr = (bErr**2 + (bVal*rel)**2)**0.5
+                hist.SetBinError(b+1,newErr)
+
+        # add constant uncertainties
         if histName in self.uncertainties:
             unc2 = 0.
             for uncName,val in self.uncertainties[histName].iteritems():
@@ -1533,6 +1575,7 @@ class Plotter(PlotterBase):
         rangex = kwargs.pop('rangex',[])
         rangey = kwargs.pop('rangey',[])
         save = kwargs.pop('save',True)
+        text = kwargs.pop('text',False)
 
         logging.info('Plotting {0}'.format(savename))
         canvas = ROOT.TCanvas(savename,savename,50,50,600,600)
@@ -1551,7 +1594,10 @@ class Plotter(PlotterBase):
             if not hist: continue
             if len(rangex)==2: hist.GetXaxis().SetRangeUser(*rangex)
             if len(rangey)==2: hist.GetYaxis().SetRangeUser(*rangey)
-            hist.Draw('colz')
+            if text:
+                hist.Draw('colz text')
+            else:
+                hist.Draw('colz')
             if i==0:
                 hist.GetXaxis().SetTitle(xaxis)
                 hist.GetYaxis().SetTitle(yaxis)

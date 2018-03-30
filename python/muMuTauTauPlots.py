@@ -19,7 +19,9 @@ blind = True
 doDetRegions = False
 doSignals = True
 doMC = True
-do2D = False
+do2D = True
+doDM = True
+doAllSignals = True
 doDatadriven = True
 doLowmass = True
 doHighmass = True
@@ -28,6 +30,8 @@ doNormalizations = False
 #newloose = [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]
 #newloose = [-1,-0.2,0.0,0.2,0.4]
 newloose = []
+
+toPlot = []
 
 plotter = Plotter('MuMuTauTau',new=True)
 
@@ -65,7 +69,7 @@ for h in hmasses:
 hColors = {
     125: ROOT.TColor.GetColor('#000000'),
     300: ROOT.TColor.GetColor('#B20000'),
-    750: ROOT.TColor.GetColor('#FFCCCC'),
+    750: ROOT.TColor.GetColor('#FF6666'),
 }
 
 aColors = {
@@ -79,33 +83,33 @@ aColors = {
     19: ROOT.TColor.GetColor('#FF9999'),
     21: ROOT.TColor.GetColor('#FFCCCC'),
 }
+aColors = {
+    5 : ROOT.TColor.GetColor('#000000'),
+    9 : ROOT.TColor.GetColor('#660000'),
+    13: ROOT.TColor.GetColor('#800000'),
+    17: ROOT.TColor.GetColor('#B20000'),
+    21: ROOT.TColor.GetColor('#FF6666'),
+}
 
 
-sels = ['default','regionA','regionB','regionC','regionD']
-if doLowmass: sels += ['lowmass/default','lowmass/regionA','lowmass/regionB','lowmass/regionC','lowmass/regionD']
-if doHighmass: sels += ['highmass/default','highmass/regionA','highmass/regionB','highmass/regionC','highmass/regionD']
+basesels = ['default','regionA','regionB','regionC','regionD']
+sels = list(basesels)
+subsels = []
+if doLowmass: subsels += ['lowmass']
+if doHighmass: subsels += ['highmass']
+if doDM: subsels += ['dm0','dm1','dm10']
 
-for sel in ['default','regionA','regionB','regionC','regionD']:
-    #sels += ['{0}/{1}'.format(sel,'dr0p8')]
-    #sels += ['{0}/{1}'.format(sel,'bveto')]
-    #sels += ['{0}/{1}'.format(sel,'taubveto')]
-    #sels += ['{0}/{1}'.format(sel,'bothbveto')]
-    #sels += ['{0}/{1}'.format(sel,det) for det in ['BB','BE','EE']]
-    #sels += ['{0}/{1}'.format(sel,'kflower')]
-    #sels += ['{0}/{1}'.format(sel,'kfupper')]
-    #sels += ['{0}/{1}'.format(sel,'kfbad')]
-    #sels += ['{0}/{1}'.format(sel,'kfgood')]
-    #sels += ['{0}/{1}'.format(sel,'genMatch')]
-    #sels += ['{0}/{1}'.format(sel,'notGenMatch')]
-    pass
+for sel in basesels:
+    for subsel in subsels:
+        sels += ['{}/{}'.format(subsel,sel)]
 
 ########################
 ### plot definitions ###
 ########################
 plots = {
     # h
-    'hMass'                 : {'xaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,1000,10), 'logy': False, 'overflow': True},
-    'hMassKinFit'           : {'xaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,1000,10), 'logy': False, 'overflow': True},
+    'hMass'                 : {'xaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,500,10), 'logy': False, 'overflow': True},
+    'hMassKinFit'           : {'xaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,500,10), 'logy': False, 'overflow': True},
     'hMt'                   : {'xaxis': 'm_{T}^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,650,10), 'logy': False, 'overflow': True},
     'hMcat'                 : {'xaxis': 'm_{CA}^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,650,10), 'logy': True, 'overflow': True},
     'hDeltaMass'            : {'xaxis': 'm^{#mu#mu}-m^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(-250,250,10), 'logy': True, 'overflow': True},
@@ -125,11 +129,11 @@ plots = {
     #'am1PassMedium'         : {'xaxis': 'a_{1}^{#mu#mu} #mu_{1} Pass Medium', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'logy': False, 'overflow': False},
     #'am2PassMedium'         : {'xaxis': 'a_{1}^{#mu#mu} #mu_{2} Pass Medium', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'logy': False, 'overflow': False},
     # att
-    'attMass'               : {'xaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 1 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,60,1), 'logy': False, 'overflow': True},
-    'attMassKinFit'         : {'xaxis': 'm^{#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'yaxis': 'Events / 1 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,60,1), 'logy': False, 'overflow': True},
+    'attMass'               : {'xaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 1 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,30,1), 'logy': False, 'overflow': True},
+    'attMassKinFit'         : {'xaxis': 'm^{#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'yaxis': 'Events / 1 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,30,1), 'logy': False, 'overflow': True},
     'attMt'                 : {'xaxis': 'm_{T}^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 2 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,120,2), 'logy': False, 'overflow': True},
     'attMcat'               : {'xaxis': 'm_{CA}^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 2 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,120,2), 'logy': True, 'overflow': True},
-    'attDeltaR'             : {'xaxis': '#Delta R(#tau_{#mu}#tau_{h})', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.1, range(0,30,1)), 'logy': False, 'overflow': True},
+    'attDeltaR'             : {'xaxis': '#Delta R(#tau_{#mu}#tau_{h})', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.05, range(0,30,1)), 'logy': False, 'overflow': True},
     'attDeltaPhi'           : {'xaxis': '#Delta #phi(#tau_{#mu}#tau_{h})', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': False, 'overflow': False},
     'atmPt'                 : {'xaxis': '#tau_{#mu} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
     'atmEta'                : {'xaxis': '#tau_{#mu} #eta', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': False, 'overflow': False},
@@ -140,6 +144,7 @@ plots = {
     'athEta'                : {'xaxis': '#tau_{h} #eta', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': 5, 'logy': False, 'overflow': False},
     #'athDxy'                : {'xaxis': 'a_{1}^{#tau_{#mu}#tau_{h}} #tau_{h} d_{xy} (cm)', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': 1, 'logy': True},
     #'athDz'                 : {'xaxis': 'a_{1}^{#tau_{#mu}#tau_{h}} #tau_{h} d_{z} (cm)', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': 1, 'logy': True},
+    'athDM'                 : {'xaxis': '#tau_{h} Decay Mode', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'logy': False, 'yscale': 1.5,},
     #'athGenPtRatio'         : {'xaxis': '#tau_{h} p_{T}^{reco}/p_{T}^{gen}', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.01, range(0,250,5)), 'logy': False, 'overflow': True},
     #'athGenPtRatioDM0'      : {'xaxis': '#tau_{h} p_{T}^{reco}/p_{T}^{gen} (DM 0)', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.01, range(0,250,5)), 'logy': False, 'overflow': True},
     #'athGenPtRatioDM1'      : {'xaxis': '#tau_{h} p_{T}^{reco}/p_{T}^{gen} (DM 1)', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.01, range(0,250,5)), 'logy': False, 'overflow': True},
@@ -160,11 +165,20 @@ plots = {
     'am2athDeltaR'          : {'xaxis': '#Delta R(#mu_{2}#tau_{h})', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.1, range(0,60,2)), 'logy': False, 'overflow': True},
 }
 
+plotsSignal = {
+    'hMass'      : {'yaxis': 'Events / 10 GeV', 'rebin': range(0,1000,10),},
+    'hMassKinFit': {'yaxis': 'Events / 10 GeV', 'rebin': range(0,1000,10),},
+    'ammMass'    : {'yaxis': 'Events / 50 MeV', 'rebin': map(lambda x: x*0.05, range(0,600,1)),},
+    'attMass'    : {'yaxis': 'Events / 500 MeV', 'rebin': map(lambda x: x*0.1, range(0,200,5)),},
+    'ammDeltaR'  : {'rebin':  map(lambda x: x*0.015, range(0,100,1)),},
+    'attDeltaR'  : {'rebin':  map(lambda x: x*0.015, range(0,100,1)),},
+}
+
 plots2D = {
-    #'ammMass_vs_attMass'          : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)',},
+    'ammMass_vs_attMass'          : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)',},
     #'ammMass_vs_attMassKinFit'    : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#tau_{#mu}#tau_{h}} Kin. Fit (GeV)',},
-    #'ammMass_vs_hMass'            : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'rangey': [0,1000],},
-    #'ammMass_vs_hMassKinFit'      : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'rangey': [0,1000],},
+    'ammMass_vs_hMass'            : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'rangey': [0,1000],},
+    'ammMass_vs_hMassKinFit'      : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'rangey': [0,1000],},
     #'attMass_vs_hMass'            : {'xaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'rangey': [0,1000],},
     ##'attMassKinFit_vs_hMassKinFit': {'xaxis': 'm^{#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'rangey': [0,1000],},
     #'hMass_vs_hMassKinFit'        : {'xaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'rangex': [0,1000], 'rangey': [0,1000],},
@@ -172,6 +186,7 @@ plots2D = {
     #'attMass_vs_attDeltaR'        : {'xaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': '#Delta R(#tau_{#mu}#tau_{h}) (GeV)', 'rangey': [0,3],},
     #'attMcat_vs_attDeltaR'        : {'xaxis': 'm_{CA}^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': '#Delta R(#tau_{#mu}#tau_{h}) (GeV)', 'rangey': [0,6],},
     'am2Iso_athIso'                : {'xaxis': '#mu_{2} Rel. Iso.', 'yaxis': '#tau_{h} MVA Iso.', 'rangex': [0,0.4], 'rangey': [-1,1],},
+    'genChannel_athDM'             : {'xaxis': 'Gen Channel', 'yaxis': '#tau_{h} Decay Mode', 'text': True},
 }
 
 special = {
@@ -189,6 +204,14 @@ special = {
     },
 }
 
+if toPlot:
+    for p in plots.keys():
+        if p not in toPlot: plots.pop(p)
+    for s in special.keys():
+        for p in special[s].keys():
+            if p not in toPlot: special[s].pop(p)
+
+
 ############################
 ### MC based BG estimate ###
 ############################
@@ -199,8 +222,9 @@ if doMC:
         for s in samples:
             plotter.addHistogramToStack(s,sigMap[s])
         
-        for signal in signals:
-            plotter.addHistogram(signal,sigMap[signal],signal=True)
+        if 'lowmass' not in sel and 'highmass' not in sel:
+            for signal in signals:
+                plotter.addHistogram(signal,sigMap[signal],signal=True)
         
         if not blind or 'regionD' in sel or 'lowmass' in sel or 'highmass' in sel: plotter.addHistogram('data',sigMap['data'])
         
@@ -235,6 +259,7 @@ if doSignals:
             for sel in sels:
                 if 'lowmass' in sel or 'highmass' in sel: continue
                 kwargs = deepcopy(plots[plot])
+                if plot in plotsSignal: kwargs.update(deepcopy(plotsSignal[plot]))
                 plotname = '{0}/{1}'.format(sel,plot)
                 savename = '{0}/h{h}/{1}'.format(sel,plot,h=h)
                 plotter.plot(plotname,savename,plotratio=False,**kwargs)
@@ -251,6 +276,7 @@ if doSignals:
             for sel in sels:
                 if 'lowmass' in sel or 'highmass' in sel: continue
                 kwargs = deepcopy(plots[plot])
+                if plot in plotsSignal: kwargs.update(deepcopy(plotsSignal[plot]))
                 plotname = '{0}/{1}'.format(sel,plot)
                 savename = '{0}/a{a}/{1}'.format(sel,plot,a=a)
                 plotter.plot(plotname,savename,plotratio=False,**kwargs)
@@ -292,8 +318,9 @@ if doDatadriven:
                 for s in []:
                     plotter.addHistogramToStack(s,sigMap[s])
                 
-                for signal in signals:
-                    plotter.addHistogram(signal,sigMap[signal],signal=True)
+                if tag=='':
+                    for signal in signals:
+                        plotter.addHistogram(signal,sigMap[signal],signal=True)
                 
                 if not blind or tag in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
             
@@ -400,8 +427,9 @@ if doMatrix:
                 for s in []:
                     plotter.addHistogramToStack(s,sigMap[s])
                 
-                for signal in signals:
-                    plotter.addHistogram(signal,sigMap[signal],signal=True)
+                if tag=='':
+                    for signal in signals:
+                        plotter.addHistogram(signal,sigMap[signal],signal=True)
                 
                 if not blind or tag in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
             
@@ -434,8 +462,9 @@ if doMatrix:
             for s in []:
                 plotter.addHistogramToStack(s,sigMap[s])
             
-            for signal in signals:
-                plotter.addHistogram(signal,sigMap[signal],signal=True)
+            if tag=='':
+                for signal in signals:
+                    plotter.addHistogram(signal,sigMap[signal],signal=True)
             
             if not blind or tag in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
         
@@ -469,8 +498,9 @@ if doMatrix:
             for s in []:
                 plotter.addHistogramToStack(s,sigMap[s])
             
-            for signal in signals:
-                plotter.addHistogram(signal,sigMap[signal],signal=True)
+            if tag=='':
+                for signal in signals:
+                    plotter.addHistogram(signal,sigMap[signal],signal=True)
             
             if not blind or tag in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
         
@@ -624,7 +654,10 @@ if doNormalizations:
 ### 2D plots ###
 ################
 if do2D:
-    for sample in samples+signals+['data']:
+    allsamples = samples+signals+['data']
+    if doAllSignals:
+        allsamples = samples+allsignals+['data']
+    for sample in allsamples:
         plotter.clearHistograms()
         plotter.addHistogram(sample,sigMap[sample])
         

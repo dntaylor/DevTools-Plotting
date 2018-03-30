@@ -74,9 +74,15 @@ base_sels = ['default','vloose','medium','nearMuon','nearMuonVLoose','nearMuonMe
 for sel in base_sels:
     sels += [sel]
     sels += ['noBVeto/{}'.format(sel)]
+    for dm in [0,1,10]:
+        sels += ['{}/dm{}'.format(sel,dm)]
+        sels += ['noBVeto/{}/dm{}'.format(sel,dm)]
     for eb in range(len(etaBins)-1):
         sels += ['{}/etaBin{}'.format(sel,eb)]
         sels += ['noBVeto/{}/etaBin{}'.format(sel,eb)]
+        for dm in [0,1,10]:
+            sels += ['{}/dm{}/etaBin{}'.format(sel,dm,eb)]
+            sels += ['noBVeto/{}/dm{}/etaBin{}'.format(sel,dm,eb)]
 
 
 ########################
@@ -89,6 +95,7 @@ plots = {
     'z2Pt'                  : {'xaxis': 'm^{#mu#mu} #mu_{2} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
     # t
     'tPt'                   : {'xaxis': '#tau p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
+    'tDM'                   : {'xaxis': '#tau Decay Mode', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'logy': False, 'yscale': 1.5,},
     # event
     #'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     #'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,320,20), 'numcol': 2, 'logy': False, 'overflow': True},
@@ -131,8 +138,11 @@ numDenoms_base = [('vloose','default'),('nearMuonVLoose','nearMuon'),('medium','
 for n, d in numDenoms_base:
     numDenoms += [(n,d)]
     numDenoms += [('noBVeto/{}'.format(n), 'noBVeto/{}'.format(d))]
-for newloose in [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]:
-    numDenoms += [('nearMuonMedium','nearMuonWithMVA{:0.1f}'.format(newloose))]
+    for dm in [0,1,10]:
+        numDenoms += [('{}/dm{}'.format(n,dm), '{}/dm{}'.format(d,dm))]
+        numDenoms += [('noBVeto/{}/dm{}'.format(n,dm), 'noBVeto/{}/dm{}'.format(d,dm))]
+#for newloose in [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]:
+#    numDenoms += [('nearMuonMedium','nearMuonWithMVA{:0.1f}'.format(newloose))]
 
 for plot in cust:
     for num,denom in numDenoms:
@@ -142,8 +152,8 @@ for plot in cust:
         numname = '{0}/{1}'.format(num,plot)
         denomname = '{0}/{1}'.format(denom,plot)
         savename = 'ratio/{0}_{1}/{2}'.format(num,denom,plot)
-        if '/' in num:
-            savename = 'ratio/{0}_{1}/{2}'.format(num,denom.split('/')[-1],plot)
+        #if '/' in num:
+        #    savename = 'ratio/{0}_{1}/{2}'.format(num,denom.split('/')[-1],plot)
         subtractMap = {
             'data': ['MC'],
         }
@@ -156,8 +166,8 @@ for plot in cust:
             numname = '{0}/etaBin{1}/{2}'.format(num,eb,plot)
             denomname = '{0}/etaBin{1}/{2}'.format(denom,eb,plot)
             savename = 'ratio/{0}_{1}/{2}_etaBin{3}'.format(num,denom,plot,eb)
-            if '/' in num:
-                savename = 'ratio/{0}_{1}/{2}_etaBin{3}'.format(num,denom.split('/')[-1],plot,eb)
+            #if '/' in num:
+            #    savename = 'ratio/{0}_{1}/{2}_etaBin{3}'.format(num,denom.split('/')[-1],plot,eb)
             subtractMap = {
                 'data': ['MC'],
             }

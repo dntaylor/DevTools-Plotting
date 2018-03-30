@@ -29,6 +29,7 @@ plotSOverB = False
 plotSignificance = False
 plotAllMasses = False
 plotSig500 = True
+toPlot = []
 
 hpp4lPlotter = Plotter('Hpp4l',new=True)
 
@@ -295,6 +296,10 @@ plots = {
     'nBJets'                : {'xaxis': 'Number of b jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'numcol': 2, 'rebin': [-0.5,0.5,1.5,2.5,3.5,4.5], 'overflow': True, 'binlabels': ['0','1','2','3','4','#geq5']},
 }
 
+for p in plots.keys():
+    if toPlot and p not in toPlot:
+        plots.pop(p)
+
 
 
 blind_cust = {
@@ -325,8 +330,9 @@ lowmass_cust = {
     'mllMinusMZ'           : {'rangex': [0,60]},
     # event
     'met'                  : {'rangex': [0,200]},
-    'mass'                 : {'rangex': [0,600], 'rebin':5, 'yaxis': 'Events / 50 GeV'},
-    'st'                   : {'rangex': [0,400], 'rebin':5, 'yaxis': 'Events / 50 GeV', 'logy': False},
+    'mass'                 : {},
+    'st'                   : {'rebin': range(100,600,50), 'yaxis': 'Events / 50 GeV', 'logy': False, 'logx': False},
+    #'st'                   : {'logy': False, 'logx': False},
 }
 
 norm_cust = {
@@ -448,6 +454,7 @@ if plotMC:
         hpp4lPlotter.addHistogram('data',sigMap['data'])
         
         for plot in blind_cust:
+            if plot not in plots: continue
             kwargs = deepcopy(plots[plot])
             kwargs.update(blind_cust[plot])
             plotWithCategories(hpp4lPlotter,plot,baseDir='default',saveDir='mc',postfix='blinder',perCatBins=True,**kwargs)
@@ -552,6 +559,7 @@ if plotDatadriven:
         hpp4lPlotter.addHistogram('data',sigMapDD['data'])
     
         for plot in blind_cust:
+            if plot not in plots: continue
             kwargs = deepcopy(plots[plot])
             kwargs.update(blind_cust[plot])
             plotWithCategories(hpp4lPlotter,plot,baseDir='default',saveDir='datadriven',postfix='blinder',datadriven=True,perCatBins=True,**kwargs)
