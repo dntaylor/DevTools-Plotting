@@ -200,6 +200,8 @@ class LimitPlotter(PlotterBase):
         expected.GetXaxis().SetLimits(xvals[0],xvals[-1])
         expected.GetXaxis().SetTitle(xaxis)
         expected.GetYaxis().SetTitle(yaxis)
+        expected.GetYaxis().SetTitleSize(0.05)
+        expected.GetYaxis().SetTitleOffset(1.6)
 
         expected.Draw()
         if ymin: expected.SetMinimum(ymin)

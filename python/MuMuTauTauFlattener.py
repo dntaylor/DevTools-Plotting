@@ -252,6 +252,13 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'am2Iso_athPassIso'           : {'x': lambda row: row.am2_isolation, 'y': lambda row: row.ath_byMediumIsolationMVArun2v1DBoldDMwLT, 'xBinning': [40,0,2], 'yBinning': [2,-0.5,1.5] },
         }
 
+        self.datasetParams = {
+            'ammMass_dataset'             : {'x': lambda row: row.amm_mass, },
+            'ammMass_attMass_dataset'     : {'x': lambda row: row.amm_mass, 'y': lambda row: row.att_mass, },
+            'ammMass_hMass_dataset'       : {'x': lambda row: row.amm_mass, 'y': lambda row: row.h_mass, },
+            'ammMass_hMassKinFit_dataset' : {'x': lambda row: row.amm_mass, 'y': lambda row: row.h_massKinFit, },
+        }
+
         # initialize flattener
         super(MuMuTauTauFlattener, self).__init__('MuMuTauTau',sample,**kwargs)
 
