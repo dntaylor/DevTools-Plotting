@@ -238,10 +238,10 @@ class MuMuTauTauFlattener(NtupleFlattener):
         }
 
         self.datasetParams = {
-            'ammMass_dataset'             : {'x': lambda row: row.amm_mass, },
-            'ammMass_attMass_dataset'     : {'x': lambda row: row.amm_mass, 'y': lambda row: row.att_mass, },
-            'ammMass_hMass_dataset'       : {'x': lambda row: row.amm_mass, 'y': lambda row: row.h_mass, },
-            'ammMass_hMassKinFit_dataset' : {'x': lambda row: row.amm_mass, 'y': lambda row: row.h_massKinFit, },
+            'ammMass_dataset'             : {'x': lambda row: row.amm_mass, 'xVar': ROOT.RooRealVar('x','x',0,60), },
+            'ammMass_attMass_dataset'     : {'x': lambda row: row.amm_mass, 'xVar': ROOT.RooRealVar('x','x',0,60), 'y': lambda row: row.att_mass,     'yVar': ROOT.RooRealVar('y','y',0,60),   },
+            'ammMass_hMass_dataset'       : {'x': lambda row: row.amm_mass, 'xVar': ROOT.RooRealVar('x','x',0,60), 'y': lambda row: row.h_mass,       'yVar': ROOT.RooRealVar('y','y',0,1000), },
+            'ammMass_hMassKinFit_dataset' : {'x': lambda row: row.amm_mass, 'xVar': ROOT.RooRealVar('x','x',0,60), 'y': lambda row: row.h_massKinFit, 'yVar': ROOT.RooRealVar('y','y',0,1000), },
         }
 
         # initialize flattener

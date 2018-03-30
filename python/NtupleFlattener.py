@@ -51,6 +51,7 @@ class NtupleFlattener(object):
         self.tchain = 0
         self.initialized = False
         self.hists = {}
+        self.datasets = {}
 
     def __initializeNtuple(self):
         tchain = ROOT.TChain(self.treeName)
@@ -84,6 +85,7 @@ class NtupleFlattener(object):
         if hasattr(self,'genChannels'): genChans += self.genChannels
         if not hasattr(self,'selections'): self.selections = ['default']
         if not hasattr(self,'selectionHists'): self.selectionHists = {}
+        if not hasattr(self,'datasetParams'): self.datasetParams = {}
         for selection in self.selections:
             for hist in self.histParams:
                 if selection in self.selectionHists:
@@ -128,6 +130,22 @@ class NtupleFlattener(object):
                                 self.hists[histName].SetName(histName)
                                 self.hists[histName].SetTitle(histName)
                         self.hists[histName].Sumw2()
+            for hist in self.datasetParams:
+                if 'doGen' in self.datasetParams[hist] and self.datasetParams[hist]['doGen']:
+                    thisGenChans = genChans
+                else:
+                    thisGenChans = ['all']
+                for chan in chans:
+                    for genChan in thisGenChans:
+                        histName = '{0}/{1}/gen_{2}/{3}'.format(selection,chan,genChan,hist)
+                        if genChan=='all': histName = '{0}/{1}/{2}'.format(selection,chan,hist)
+                        if chan=='all': histName = '{0}/{1}'.format(selection,hist)
+                        x = self.datasetParams[hist].get('xVar',None)
+                        if 'yVar' in self.datasetParams[hist]:
+                            y = self.datasetParams[hist].get('yVar',None)
+                            self.datasets[histName] = ROOT.RooDataSet(histName,histName,ROOT.RooArgSet(x,y))
+                        else:
+                            self.datasets[histName] = ROOT.RooDataSet(histName,histName,ROOT.RooArgSet(x))
 
     def getTree(self):
         if not self.initialized: self.__initializeNtuple()
@@ -185,7 +203,7 @@ class NtupleFlattener(object):
         Write histograms to files
         '''
         total = 0
-        totalHists = len(self.hists)
+        totalHists = len(self.hists)+len(self.datasets)
         if hasProgress and self.pbar:
             self.pbar.maxval = totalHists
             self.pbar.start()
@@ -202,6 +220,21 @@ class NtupleFlattener(object):
             directory = '/'.join(components[:-1])
             histName = components[-1]
             hist = self.hists[h]
+            hist.SetName(histName)
+            hist.SetTitle(histName)
+            if not self.outfile.GetDirectory(directory): self.outfile.mkdir(directory)
+            self.outfile.cd('{0}:/{1}'.format(self.outputFile,directory))
+            hist.Write('',ROOT.TObject.kOverwrite)
+        for h in sorted(self.datasets):
+            total += 1
+            if hasProgress and self.pbar:
+                self.pbar.update(total)
+            else:
+                logging.info('{0}: Writing {1} dataset {2}/{3} {4}'.format(self.analysis,self.sample,total,totalHists,h))
+            components = h.split('/')
+            directory = '/'.join(components[:-1])
+            histName = components[-1]
+            hist = self.datasets[h]
             hist.SetName(histName)
             hist.SetTitle(histName)
             if not self.outfile.GetDirectory(directory): self.outfile.mkdir(directory)
@@ -226,7 +259,7 @@ class NtupleFlattener(object):
             if selection in self.selectionHists:
                 if hist not in self.selectionHists[selection]: continue
             if 'selection' in self.histParams:
-                if not self.hstParams[hist]['selection'](row): continue
+                if not self.histParams[hist]['selection'](row): continue
             w = weight*self.histParams[hist]['mcscale'](row) if 'mcscale' in self.histParams[hist] and self.isData else weight
             histName = '{0}/{1}'.format(selection,hist)
             xval = self.histParams[hist]['x'](row)
@@ -247,4 +280,30 @@ class NtupleFlattener(object):
                 if genChan!='all':
                     histName = '{0}/{1}/gen_{2}/{3}'.format(selection,chan,genChan,hist)
                     if histName in self.hists: self.hists[histName].Fill(xval,w)
+
+        for hist in self.datasetParams:
+            w = weight*self.datasetParams[hist]['mcscale'](row) if 'mcscale' in self.datasetParams[hist] and self.isData else weight
+            histName = '{0}/{1}'.format(selection,hist)
+            xval = self.datasetParams[hist]['x'](row)
+            x = self.datasetParams[hist]['xVar']
+            x.setVal(xval)
+            if 'y' in self.datasetParams[hist]:
+                yval = self.datasetParams[hist]['y'](row)
+                y = self.datasetParams[hist]['yVar']
+                y.setVal(yval)
+                self.datasets[histName].add(ROOT.RooArgSet(x,y),w)
+                if chan!='all':
+                    histName = '{0}/{1}/{2}'.format(selection,chan,hist)
+                    self.datasets[histName].add(ROOT.RooArgSet(x,y),w)
+                if genChan!='all':
+                    histName = '{0}/{1}/gen_{2}/{3}'.format(selection,chan,genChan,hist)
+                    if histName in self.datasets: self.datasets[histName].add(ROOT.RooArgSet(x,y),w)
+            else:
+                self.datasets[histName].add(ROOT.RooArgSet(x),w)
+                if chan!='all':
+                    histName = '{0}/{1}/{2}'.format(selection,chan,hist)
+                    self.datasets[histName].add(ROOT.RooArgSet(x),w)
+                if genChan!='all':
+                    histName = '{0}/{1}/gen_{2}/{3}'.format(selection,chan,genChan,hist)
+                    if histName in self.datasets: self.datasets[histName].add(ROOT.RooArgSet(x),w)
 
