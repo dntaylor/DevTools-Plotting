@@ -70,10 +70,14 @@ for s in ['WZ','ZZ']:
 
 sels = ['default','iso0.15','iso0.25','iso0.40']
 sels += ['defaulttrig','iso0.15trig','iso0.25trig','iso0.40trig']
+sels += ['mediumdefault','mediumiso0.15','mediumiso0.25','mediumiso0.40']
+sels += ['mediumdefaulttrig','mediumiso0.15trig','mediumiso0.25trig','mediumiso0.40trig']
 etaBins = [0,1.0,1.5,2.4]
 for eb in range(len(etaBins)-1):
     sels += ['default/etaBin{0}'.format(eb), 'iso0.15/etaBin{0}'.format(eb), 'iso0.25/etaBin{0}'.format(eb), 'iso0.40/etaBin{0}'.format(eb),]
     sels += ['defaulttrig/etaBin{0}'.format(eb), 'iso0.15trig/etaBin{0}'.format(eb), 'iso0.25trig/etaBin{0}'.format(eb), 'iso0.40trig/etaBin{0}'.format(eb),]
+    sels += ['mediumdefault/etaBin{0}'.format(eb), 'mediumiso0.15/etaBin{0}'.format(eb), 'mediumiso0.25/etaBin{0}'.format(eb), 'mediumiso0.40/etaBin{0}'.format(eb),]
+    sels += ['mediumdefaulttrig/etaBin{0}'.format(eb), 'mediumiso0.15trig/etaBin{0}'.format(eb), 'mediumiso0.25trig/etaBin{0}'.format(eb), 'mediumiso0.40trig/etaBin{0}'.format(eb),]
 
 
 ########################
@@ -125,6 +129,8 @@ cust = {
 
 numDenoms = [('iso0.15','default'),('iso0.25','default'),('iso0.40','default'),('iso0.15','iso0.40'),]
 numDenoms += [('iso0.15trig','defaulttrig'),('iso0.25trig','defaulttrig'),('iso0.40trig','defaulttrig'),('iso0.15trig','iso0.40trig'),]
+numDenoms += [('mediumiso0.15','mediumdefault'),('mediumiso0.25','mediumdefault'),('mediumiso0.40','mediumdefault'),('mediumiso0.15','mediumiso0.40'),]
+numDenoms += [('mediumiso0.15trig','mediumdefaulttrig'),('mediumiso0.25trig','mediumdefaulttrig'),('mediumiso0.40trig','mediumdefaulttrig'),('mediumiso0.15trig','mediumiso0.40trig'),]
 
 for plot in cust:
     for num,denom in numDenoms:

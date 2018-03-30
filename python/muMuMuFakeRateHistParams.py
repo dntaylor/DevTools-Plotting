@@ -24,6 +24,7 @@ def buildMuMuMuFakeRate(selectionParams,sampleSelectionParams,projectionParams,s
     }
 
     baseCut = 'z_mass>81 && z_mass<101'
+    baseCutMedium = '{} && m_isMediumMuonICHEP'.format(baseCut)
     scaleFactor = 'genWeight*pileupWeight*triggerEfficiency'
     
     selectionParams['MuMuMuFakeRate'] = {
@@ -35,6 +36,14 @@ def buildMuMuMuFakeRate(selectionParams,sampleSelectionParams,projectionParams,s
         'iso0.15trig'           : {'args': [baseCut + ' && (m_matches_IsoMu24 || m_matches_IsoTkMu24)' + ' && m_isolation<0.15'],       'kwargs': {'mcscalefactor': scaleFactor}},
         'iso0.25trig'           : {'args': [baseCut + ' && (m_matches_IsoMu24 || m_matches_IsoTkMu24)' + ' && m_isolation<0.25'],       'kwargs': {'mcscalefactor': scaleFactor}},
         'iso0.40trig'           : {'args': [baseCut + ' && (m_matches_IsoMu24 || m_matches_IsoTkMu24)' + ' && m_isolation<0.40'],       'kwargs': {'mcscalefactor': scaleFactor}},
+        'mediumdefault'         : {'args': [baseCutMedium],                                                                             'kwargs': {'mcscalefactor': scaleFactor}},
+        'mediumiso0.15'         : {'args': [baseCutMedium + ' && m_isolation<0.15'],                                                    'kwargs': {'mcscalefactor': scaleFactor}},
+        'mediumiso0.25'         : {'args': [baseCutMedium + ' && m_isolation<0.25'],                                                    'kwargs': {'mcscalefactor': scaleFactor}},
+        'mediumiso0.40'         : {'args': [baseCutMedium + ' && m_isolation<0.40'],                                                    'kwargs': {'mcscalefactor': scaleFactor}},
+        'mediumdefaulttrig'     : {'args': [baseCutMedium + ' && (m_matches_IsoMu24 || m_matches_IsoTkMu24)'],                          'kwargs': {'mcscalefactor': scaleFactor}},
+        'mediumiso0.15trig'     : {'args': [baseCutMedium + ' && (m_matches_IsoMu24 || m_matches_IsoTkMu24)' + ' && m_isolation<0.15'], 'kwargs': {'mcscalefactor': scaleFactor}},
+        'mediumiso0.25trig'     : {'args': [baseCutMedium + ' && (m_matches_IsoMu24 || m_matches_IsoTkMu24)' + ' && m_isolation<0.25'], 'kwargs': {'mcscalefactor': scaleFactor}},
+        'mediumiso0.40trig'     : {'args': [baseCutMedium + ' && (m_matches_IsoMu24 || m_matches_IsoTkMu24)' + ' && m_isolation<0.40'], 'kwargs': {'mcscalefactor': scaleFactor}},
     }
 
     etaBins = [0.,1.0,1.5,2.4]

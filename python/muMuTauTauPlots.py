@@ -16,17 +16,17 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 version = getCMSSWVersion()
 
 blind = True
-doDetRegions = False
-doSignals = True
-doMC = True
+doSignals = False
+doMC = False
 do2D = True
 doDM = True
 doAllSignals = True
-doDatadriven = True
+doDatadriven = False
 doLowmass = True
 doHighmass = True
-doMatrix = True
+doMatrix = False
 doNormalizations = False
+doSignficance = False
 #newloose = [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]
 #newloose = [-1,-0.2,0.0,0.2,0.4]
 newloose = []
@@ -95,9 +95,22 @@ aColors = {
 basesels = ['default','regionA','regionB','regionC','regionD']
 sels = list(basesels)
 subsels = []
-if doLowmass: subsels += ['lowmass']
-if doHighmass: subsels += ['highmass']
-if doDM: subsels += ['dm0','dm1','dm10']
+tags = ['']
+if doDM: 
+    subsels += ['dm0','dm1','dm10']
+    tags += ['dm0','dm1','dm10']
+if doLowmass:
+    subsels += ['lowmass']
+    tags += ['lowmass']
+    if doDM: 
+        subsels += ['lowmassdm0','lowmassdm1','lowmassdm10']
+        tags += ['lowmassdm0','lowmassdm1','lowmassdm10']
+if doHighmass: 
+    subsels += ['highmass']
+    tags += ['highmass']
+    if doDM: 
+        subsels += ['highmassdm0','highmassdm1','highmassdm10']
+        tags += ['highmassdm0','highmassdm1','highmassdm10']
 
 for sel in basesels:
     for subsel in subsels:
@@ -151,6 +164,7 @@ plots = {
     #'athGenPtRatioDM10'     : {'xaxis': '#tau_{h} p_{T}^{reco}/p_{T}^{gen} (DM 10)', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.01, range(0,250,5)), 'logy': False, 'overflow': True},
     'athJetCSV'             : {'xaxis': '#tau_{h} CSVv2', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': 10, 'logy': True, 'overflow': True},
     'athIso'                : {'xaxis': '#tau_{h} MVA Iso.', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'logy': False, 'overflow': True},
+    'athIsoCB'              : {'xaxis': '#tau_{h} CB Iso.', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'logy': False, 'overflow': True},
     'atmIso'                : {'xaxis': '#tau_{#mu} Rel. Iso.', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'logy': False, 'overflow': True},
     # event
     'genChannel'            : {'xaxis': 'Gen channel', 'yaxis': 'Events',},
@@ -175,18 +189,18 @@ plotsSignal = {
 }
 
 plots2D = {
-    'ammMass_vs_attMass'          : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)',},
-    #'ammMass_vs_attMassKinFit'    : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#tau_{#mu}#tau_{h}} Kin. Fit (GeV)',},
-    'ammMass_vs_hMass'            : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'rangey': [0,1000],},
-    'ammMass_vs_hMassKinFit'      : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'rangey': [0,1000],},
-    #'attMass_vs_hMass'            : {'xaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'rangey': [0,1000],},
-    ##'attMassKinFit_vs_hMassKinFit': {'xaxis': 'm^{#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'rangey': [0,1000],},
-    #'hMass_vs_hMassKinFit'        : {'xaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'rangex': [0,1000], 'rangey': [0,1000],},
-    #'ammMass_vs_ammDeltaR'        : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': '#Delta R(#mu#mu) (GeV)', 'rangey': [0,3],},
-    #'attMass_vs_attDeltaR'        : {'xaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': '#Delta R(#tau_{#mu}#tau_{h}) (GeV)', 'rangey': [0,3],},
-    #'attMcat_vs_attDeltaR'        : {'xaxis': 'm_{CA}^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': '#Delta R(#tau_{#mu}#tau_{h}) (GeV)', 'rangey': [0,6],},
-    'am2Iso_athIso'                : {'xaxis': '#mu_{2} Rel. Iso.', 'yaxis': '#tau_{h} MVA Iso.', 'rangex': [0,0.4], 'rangey': [-1,1],},
-    'genChannel_athDM'             : {'xaxis': 'Gen Channel', 'yaxis': '#tau_{h} Decay Mode', 'text': True},
+    'ammMass_attMass'          : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)',},
+    #'ammMass_attMassKinFit'    : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#tau_{#mu}#tau_{h}} Kin. Fit (GeV)',},
+    'ammMass_hMass'            : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'rangey': [0,1000],},
+    'ammMass_hMassKinFit'      : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'rangey': [0,1000],},
+    #'attMass_hMass'            : {'xaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'rangey': [0,1000],},
+    ##'attMassKinFit_hMassKinFit': {'xaxis': 'm^{#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'rangey': [0,1000],},
+    #'hMass_hMassKinFit'        : {'xaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'rangex': [0,1000], 'rangey': [0,1000],},
+    #'ammMass_ammDeltaR'        : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': '#Delta R(#mu#mu) (GeV)', 'rangey': [0,3],},
+    #'attMass_attDeltaR'        : {'xaxis': 'm^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': '#Delta R(#tau_{#mu}#tau_{h}) (GeV)', 'rangey': [0,3],},
+    #'attMcat_attDeltaR'        : {'xaxis': 'm_{CA}^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': '#Delta R(#tau_{#mu}#tau_{h}) (GeV)', 'rangey': [0,6],},
+    'am2Iso_athIso'            : {'xaxis': '#mu_{2} Rel. Iso.', 'yaxis': '#tau_{h} MVA Iso.', 'rangex': [0,0.4], 'rangey': [-1,1],},
+    'genChannel_athDM'         : {'xaxis': 'Gen Channel', 'yaxis': '#tau_{h} Decay Mode', 'text': True},
 }
 
 special = {
@@ -306,9 +320,7 @@ if doDatadriven:
     for s in ['data']:
         ddSamples += sigMap[s]
 
-    for tag in ['','lowmass','highmass']:
-        if not doLowmass and tag=='lowmass': continue
-        if not doHighmass and tag=='highmass': continue
+    for tag in tags:
         for looseMVA in [None]+newloose:
             for region, source in [('A','B'),('C','D'),('A','D'),('A','C'),('B','D')]:
                 plotter.clearHistograms()
@@ -322,7 +334,7 @@ if doDatadriven:
                     for signal in signals:
                         plotter.addHistogram(signal,sigMap[signal],signal=True)
                 
-                if not blind or tag in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
+                if not blind or 'lowmass' in tag or 'highmass' in tag: plotter.addHistogram('data',sigMap['data'])
             
                 for plot in plots:
                     kwargs = deepcopy(plots[plot])
@@ -330,8 +342,8 @@ if doDatadriven:
                     savename = '{}region{}/datadriven_from{}/{}'.format(tag+'/' if tag else '',region,source,plot)
                     if looseMVA: savename = '{}region{}/datadriven_from{}{:.1f}/{}'.format(tag+'/' if tag else '',region,source,looseMVA,plot)
                     plotter.plot(getDatadrivenPlot(plotname,region=region,source=source,looseMVA=looseMVA,tag=tag),savename,**kwargs)
-                
-                if blind or tag not in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
+
+                if blind or ('lowmass' not in tag and 'highmass' not in tag): plotter.addHistogram('data',sigMap['data'])
                 
                 for s in special:
                     for plot in special[s]:
@@ -413,9 +425,7 @@ if doMatrix:
     for s in ['data']:
         ddSamples += sigMap[s]
 
-    for tag in ['','lowmass','highmass']:
-        if not doLowmass and tag=='lowmass': continue
-        if not doHighmass and tag=='highmass': continue
+    for tag in tags:
         for doPrompt, doFake in [(1,1),(1,0),(0,1)]:
 
             for region, sources in [('B',['B','D']),('A',['A','C'])]:
@@ -431,7 +441,7 @@ if doMatrix:
                     for signal in signals:
                         plotter.addHistogram(signal,sigMap[signal],signal=True)
                 
-                if not blind or tag in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
+                if not blind or 'lowmass' in tag or 'highmass' in tag: plotter.addHistogram('data',sigMap['data'])
             
                 for plot in plots:
                     kwargs = deepcopy(plots[plot])
@@ -441,7 +451,7 @@ if doMatrix:
                     if not doPrompt and doFake: savename = '{}region{}/matrix_fake/{}'.format(tag+'/' if tag else '',region,plot)
                     plotter.plot(getMatrixPlot(plotname,region=region,sources=sources,tag=tag,doPrompt=doPrompt,doFake=doFake),savename,**kwargs)
                 
-                if blind or tag not in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
+                if blind or ('lowmass' not in tag and 'highmass' not in tag): plotter.addHistogram('data',sigMap['data'])
                 
                 for s in special:
                     for plot in special[s]:
@@ -466,7 +476,7 @@ if doMatrix:
                 for signal in signals:
                     plotter.addHistogram(signal,sigMap[signal],signal=True)
             
-            if not blind or tag in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
+            if not blind or 'lowmass' in tag or 'highmass' in tag: plotter.addHistogram('data',sigMap['data'])
         
             for plot in plots:
                 kwargs = deepcopy(plots[plot])
@@ -474,7 +484,7 @@ if doMatrix:
                 savename = '{}region{}/matrix_prediction/{}'.format(tag+'/' if tag else '',region,plot)
                 plotter.plot(getMatrixPredictionPlot(plotname,region=region,sources=sources,tag=tag),savename,**kwargs)
             
-            if blind or tag not in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
+            if blind or ('lowmass' not in tag and 'highmass' not in tag): plotter.addHistogram('data',sigMap['data'])
             
             for s in special:
                 for plot in special[s]:
@@ -502,7 +512,7 @@ if doMatrix:
                 for signal in signals:
                     plotter.addHistogram(signal,sigMap[signal],signal=True)
             
-            if not blind or tag in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
+            if not blind or 'lowmass' in tag or 'highmass' in tag: plotter.addHistogram('data',sigMap['data'])
         
             for plot in plots:
                 kwargs = deepcopy(plots[plot])
@@ -512,7 +522,7 @@ if doMatrix:
                 if not doPrompt and doFake: savename = '{}region{}/matrixDatadriven_fake/{}'.format(tag+'/' if tag else '',region,plot)
                 plotter.plot(getMatrixDatadrivenPlot(plotname,region=region,sources=sources,fakeRegions=fakeRegion,fakeSources=fakeSources,tag=tag,doFake=doFake,doPrompt=doPrompt),savename,**kwargs)
             
-            if blind or tag not in ['lowmass','highmass']: plotter.addHistogram('data',sigMap['data'])
+            if blind or ('lowmass' not in tag and 'highmass' not in tag): plotter.addHistogram('data',sigMap['data'])
             
             for s in special:
                 for plot in special[s]:

@@ -77,7 +77,15 @@ etaBins = [0.,1.479,2.3]
 ptBins = [10,15,20,25,30,50,100]
 
 numDenoms = []
-numDenoms_base = [('vloose','default'),('nearMuonVLoose','nearMuon'),('medium','default'),('nearMuonMedium','nearMuon')]
+numDenoms_base = [
+    ('vloose','default'),('nearMuonVLoose','nearMuon'),
+    ('loose','default'),('nearMuonLoose','nearMuon'),
+    ('medium','default'),('nearMuonMedium','nearMuon'),
+    ('tight','default'),('nearMuonTight','nearMuon'),
+    ('cutbased/loose','default'),('cutbased/nearMuonLoose','nearMuon'),
+    ('cutbased/medium','default'),('cutbased/nearMuonMedium','nearMuon'),
+    ('cutbased/tight','default'),('cutbased/nearMuonTight','nearMuon'),
+]
 for n, d in numDenoms_base:
     numDenoms += [(n,d)]
     numDenoms += [('noBVeto/{}'.format(n), 'noBVeto/{}'.format(d))]
@@ -100,7 +108,7 @@ for num,denom in numDenoms:
         numname = name.format(num,e)
         denomname = name.format(denom,e)
         savename = '{0}_{1}'.format(num,denom)
-        if '/' in num:
+        if '/' in denom:
             savename = '{0}_{1}'.format(num,denom.split('/')[-1])
         subtractMap = {
             'data': ['MC'],
@@ -125,7 +133,7 @@ for num,denom in numDenoms:
     # save the values
     print values
     savedir = '{0}_{1}'.format(num,denom)
-    if '/' in num:
+    if '/' in denom:
         savedir = '{0}_{1}'.format(num,denom.split('/')[-1])
     savename = 'fakeratePtEta'
     fakerateMaker.make2D(savename,values,errors,ptBins,etaBins,savedir=savedir,xaxis=xaxis,yaxis=yaxis)
@@ -143,7 +151,7 @@ for num,denom in numDenoms:
             numname = dmname.format(num,dm,e)
             denomname = dmname.format(denom,dm,e)
             savename = '{0}_{1}_{2}'.format(num,denom,dm)
-            if '/' in num:
+            if '/' in denom:
                 savename = '{0}_{1}_{2}'.format(num,denom.split('/')[-1],dm)
             subtractMap = {
                 'data': ['MC'],
@@ -168,7 +176,7 @@ for num,denom in numDenoms:
         # save the values
         print values
         savedir = '{0}_{1}'.format(num,denom)
-        if '/' in num:
+        if '/' in denom:
             savedir = '{0}_{1}'.format(num,denom.split('/')[-1])
         savename = 'fakeratePtEta_DM{}'.format(dm)
         fakerateMaker.make2D(savename,values,errors,ptBins,etaBins,savedir=savedir,xaxis=xaxis,yaxis=yaxis)

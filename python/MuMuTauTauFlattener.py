@@ -28,6 +28,7 @@ def deltaR_row(row,a,b):
     return deltaR(aEta,aPhi,bEta,bPhi)
 
 doMedium = True
+doCutbased = False
 def passTauIso(row,lep):
     if doMedium:
         return getattr(row,'{}_byMediumIsolationMVArun2v1DBoldDMwLT'.format(lep))>0.5
@@ -50,6 +51,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.doDM = True
         self.doPerDM = True
         self.doMedium = doMedium
+        self.doCutbased = doCutbased
         self.doMediumMuon = False
         self.doGenMatch = False
 
@@ -96,8 +98,8 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.selectionMap['default'] = lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
         baseSels += ['default']
         if self.doPerDM:
-            self.selectionMap['dm0/default']  = lambda row: row.ath_decayMode==0 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
-            self.selectionMap['dm1/default']  = lambda row: row.ath_decayMode==1 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            self.selectionMap['dm0/default']  = lambda row: row.ath_decayMode==0  and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            self.selectionMap['dm1/default']  = lambda row: row.ath_decayMode==1  and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
             self.selectionMap['dm10/default'] = lambda row: row.ath_decayMode==10 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
             baseSels += ['dm0']
             baseSels += ['dm1']
@@ -105,9 +107,23 @@ class MuMuTauTauFlattener(NtupleFlattener):
         if self.doLowMass:
             self.selectionMap['lowmass/default'] = lambda row: row.amm_mass<4 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
             baseSels += ['lowmass']
+            if self.doPerDM:
+                self.selectionMap['lowmassdm0/default']  = lambda row: row.ath_decayMode==0  and row.amm_mass<4 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['lowmassdm1/default']  = lambda row: row.ath_decayMode==1  and row.amm_mass<4 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['lowmassdm10/default'] = lambda row: row.ath_decayMode==10 and row.amm_mass<4 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                baseSels += ['lowmassdm0']
+                baseSels += ['lowmassdm1']
+                baseSels += ['lowmassdm10']
         if self.doHighMass:
             self.selectionMap['highmass/default'] = lambda row: row.amm_mass>25 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
             baseSels += ['highmass']
+            if self.doPerDM:
+                self.selectionMap['highmassdm0/default']  = lambda row: row.ath_decayMode==0  and row.amm_mass>25 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['highmassdm1/default']  = lambda row: row.ath_decayMode==1  and row.amm_mass>25 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['highmassdm10/default'] = lambda row: row.ath_decayMode==10 and row.amm_mass>25 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                baseSels += ['highmassdm0']
+                baseSels += ['highmassdm1']
+                baseSels += ['highmassdm10']
 
         self.selections = []
         self.selectionHists = {}
@@ -200,7 +216,8 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'athMetDeltaPhi'              : {'x': lambda row: abs(row.athmet_deltaPhi),           'xBinning': [500, 0, 3.14159],       },
             'athJetCSV'                   : {'x': lambda row: row.athjet_CSVv2,                   'xBinning': [500, 0, 1],             },
             'attDeltaPhi'                 : {'x': lambda row: abs(row.att_deltaPhi),              'xBinning': [500, 0, 3.14159],       },
-            'athIso'                      : {'x': lambda row: row.ath_byIsolationMVArun2v1DBoldDMwLTraw, 'xBinning': [100, -1, 1],     },
+            'athIso'                      : {'x': lambda row: row.ath_byIsolationMVArun2v1DBoldDMwLTraw,        'xBinning': [100, -1, 1], },
+            'athIsoCB'                    : {'x': lambda row: row.ath_byCombinedIsolationDeltaBetaCorrRaw3Hits, 'xBinning': [10, 0, 10],  },
             'atmIso'                      : {'x': lambda row: row.atm_isolation,                  'xBinning': [100, 0, 2],             },
             #'athAgainstMuonLoose'         : {'x': lambda row: row.ath_againstMuonLoose3,          'xBinning': [2, -0.5, 1.5],          },
             #'athAgainstMuonTight'         : {'x': lambda row: row.ath_againstMuonTight3,          'xBinning': [2, -0.5, 1.5],          },
@@ -232,6 +249,9 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.fake_haa_rootfile_mu = ROOT.TFile(fake_path)
         self.fakehists['muons'][self.fakekey.format(num='HaaTight',     denom='HaaLoose')]     = self.fake_haa_rootfile_mu.Get('iso0.25_default/fakeratePtEta')
         self.fakehists['muons'][self.fakekey.format(num='HaaTightTrig', denom='HaaLooseTrig')] = self.fake_haa_rootfile_mu.Get('iso0.25trig_defaulttrig/fakeratePtEta')
+        if self.doMediumMuon:
+            self.fakehists['muons'][self.fakekey.format(num='HaaTight',     denom='HaaLoose')]     = self.fake_haa_rootfile_mu.Get('mediumiso0.25_mediumdefault/fakeratePtEta')
+            self.fakehists['muons'][self.fakekey.format(num='HaaTightTrig', denom='HaaLooseTrig')] = self.fake_haa_rootfile_mu.Get('mediumiso0.25trig_mediumdefaulttrig/fakeratePtEta')
 
         fake_path = '{0}/src/DevTools/Analyzer/data/fakerates_mmtt_tau_13TeV_Run2016BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
         self.fake_haa_rootfile_tau = ROOT.TFile(fake_path)
@@ -258,6 +278,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.effhists = {'muons': {}, 'taus': {},}
 
         #  prompt efficiencies loose iso from loose id
+        #  TODO: updated for medium
         eff_path = '{0}/src/DevTools/Analyzer/data/efficiencies_mmtt_mu_13TeV_Run2016BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
         self.eff_haa_rootfile_mu = ROOT.TFile(eff_path)
         self.effhists['muons'][self.effkey.format(num='HaaTight', denom='HaaLoose')] = self.eff_haa_rootfile_mu.Get('LooseIsoFromLooseIDeffData')
@@ -349,6 +370,12 @@ class MuMuTauTauFlattener(NtupleFlattener):
             m2id = self.getMuonScaleFactor('LooseID',row.am2_pt,row.am2_eta)
             m2iso = self.getMuonScaleFactor('LooseIsoFromLooseID',row.am2_pt,row.am2_eta)
             m3id = self.getMuonScaleFactor('LooseID',row.atm_pt,row.atm_eta)
+            if self.doMediumMuon:
+                m1id = self.getMuonScaleFactor('MediumID',row.am1_pt,row.am1_eta)
+                m1iso = self.getMuonScaleFactor('LooseIsoFromMediumID',row.am1_pt,row.am1_eta)
+                m2id = self.getMuonScaleFactor('MediumID',row.am2_pt,row.am2_eta)
+                m2iso = self.getMuonScaleFactor('LooseIsoFromMediumID',row.am2_pt,row.am2_eta)
+                m3id = self.getMuonScaleFactor('MediumID',row.atm_pt,row.atm_eta)
             m1tr = self.getTrackingScaleFactor(row.am1_eta)
             m2tr = self.getTrackingScaleFactor(row.am2_eta)
             m3tr = self.getTrackingScaleFactor(row.atm_eta)

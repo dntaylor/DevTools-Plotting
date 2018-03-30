@@ -3,6 +3,7 @@ import json
 import sys
 import logging
 from itertools import product, combinations_with_replacement
+import math
 
 from DevTools.Plotter.Plotter import Plotter
 from DevTools.Utilities.utilities import ZMASS
@@ -15,10 +16,10 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 blind = True
 plotCount = True
 doCat = True
-plotMC = True
+plotMC = False
 plotDatadriven = True
 plotLowmass = True
-plotZveto = True
+plotZveto = False
 plotFakeRegions = False
 plotSignal = False
 plotROC = False
@@ -29,6 +30,7 @@ plotAllMasses = False
 plotSig500 = True
 plotVariableLoose = False
 new = True
+doUncertainties = True
 
 hpp3lPlotter = Plotter('Hpp3l',new=True)
 
@@ -77,6 +79,24 @@ sigColors = {
     1400: ROOT.TColor.GetColor('#FFB2B2'),
     1500: ROOT.TColor.GetColor('#FFCCCC'),
 }
+
+#########################
+### add uncertainties ###
+#########################
+if doUncertainties:
+    shifts = ['lep','trig','btag','pu','fake','ElectronEn','TauEn','MuonEn','JetEn']
+    hpp3lPlotter.addShiftUncertainty(*shifts)
+    mcsamples = allsamples + signals
+    hpp3lPlotter.addUncertainty(
+        *mcsamples,
+        lumi=0.025,
+        idiso=(0.02**2 * 3)**0.5,
+        trigeff=0.005
+    )
+    hpp3lPlotter.addUncertainty('WZ',WZxsec=0.080)
+    hpp3lPlotter.addUncertainty('ZZ',ZZxsec=0.032)
+    hpp3lPlotter.addUncertainty('TTV',TTVxsec=0.15)
+    hpp3lPlotter.addUncertainty('VVV',VVVxsec=0.06)
 
 
 ########################
@@ -133,8 +153,6 @@ def plotCounts(plotter,baseDir='default',saveDir='',datadriven=False,postfix='')
     if postfix: savename += '_{0}'.format(postfix)
     plotter.plotCounts(countVars,countLabels,savename,numcol=3,logy=1,legendpos=34,yscale=5000,ymin=1)
 
-
-import math
 
 def round_base(x, base=10):
     return int(base * round(float(x)/base))

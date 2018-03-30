@@ -134,7 +134,15 @@ cust = {
 }
 
 numDenoms = []
-numDenoms_base = [('vloose','default'),('nearMuonVLoose','nearMuon'),('medium','default'),('nearMuonMedium','nearMuon')]
+numDenoms_base = [
+    ('vloose','default'),('nearMuonVLoose','nearMuon'),
+    ('loose','default'),('nearMuonLoose','nearMuon'),
+    ('medium','default'),('nearMuonMedium','nearMuon'),
+    ('tight','default'),('nearMuonTight','nearMuon'),
+    ('cutbased/loose','default'),('cutbased/nearMuonLoose','nearMuon'),
+    ('cutbased/medium','default'),('cutbased/nearMuonMedium','nearMuon'),
+    ('cutbased/tight','default'),('cutbased/nearMuonTight','nearMuon'),
+]
 for n, d in numDenoms_base:
     numDenoms += [(n,d)]
     numDenoms += [('noBVeto/{}'.format(n), 'noBVeto/{}'.format(d))]

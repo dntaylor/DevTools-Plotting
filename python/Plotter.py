@@ -43,7 +43,6 @@ class Plotter(PlotterBase):
         '''Initialize the plotter'''
         super(Plotter, self).__init__(analysis,**kwargs)
         self.new = kwargs.pop('new',False)
-        self.shifts = kwargs.pop('shifts',[])
 
         # empty initialization
         self.histDict = {}
@@ -57,6 +56,7 @@ class Plotter(PlotterBase):
         self.histScales = {}
         self.sampleSelection = {}
         self.uncertainties = {}
+        self.shifts = []
         self.j = 0
 
     #def __exit__(self, type, value, traceback):
@@ -128,6 +128,10 @@ class Plotter(PlotterBase):
             for uncName, val in uncertainties.iteritems():
                 self.uncertainties[histName][uncName] = val
 
+    def addShiftUncertainty(self,*shifts):
+        for shift in shifts:
+            if shift not in self.shifts: self.shifts += [shift]
+
     def clearHistograms(self):
         self.sampleFiles = {}
         self.analysisDict = {}
@@ -138,7 +142,7 @@ class Plotter(PlotterBase):
         self.signals = []
         self.histScales = {}
         self.sampleSelection = {}
-        self.uncertainties = {}
+        #self.uncertainties = {}
 
     def _readSampleVariable(self,sampleName,variable,**kwargs):
         '''Read the histogram from file'''
@@ -218,7 +222,8 @@ class Plotter(PlotterBase):
                 hist = self._readSampleVariable2D(sampleName,varName,analysis=analysis)
                 if hist: hists.Add(hist)
         if hists.IsEmpty(): return 0
-        hist = hists[0].Clone('h_{0}_{1}'.format(histName,varName.replace('/','_')))
+        self.j += 1
+        hist = hists[0].Clone('h_{0}_{1}_{2}'.format(histName,varName.replace('/','_'),self.j))
         hist.Reset()
         hist.Merge(hists)
 
@@ -275,7 +280,8 @@ class Plotter(PlotterBase):
                     hist = self._readSampleVariable(sampleName,varName,analysis=analysis,shift=shift)
                 if hist: hists.Add(hist)
         if hists.IsEmpty(): return 0
-        hist = hists[0].Clone('h_{0}_{1}'.format(histName,varName.replace('/','_')))
+        self.j += 1
+        hist = hists[0].Clone('h_{0}_{1}_{2}'.format(histName,varName.replace('/','_'),self.j))
         hist.Reset()
         hist.Merge(hists)
 
@@ -421,7 +427,8 @@ class Plotter(PlotterBase):
                 hist = self._readSampleVariable(sampleName,xVariable,analysis=analysis)
             if hist: hists.Add(hist)
         if hists.IsEmpty(): return 0
-        hist = hists[0].Clone('h_{0}_{1}'.format(histName,xVariable.replace('/','_')))
+        self.j += 1
+        hist = hists[0].Clone('h_{0}_{1}_{2}'.format(histName,xVariable.replace('/','_'),self.j))
         hist.Reset()
         hist.Merge(hists)
         if rebinx: hist = hist.RebinX(rebinx)
@@ -454,7 +461,8 @@ class Plotter(PlotterBase):
 
     def _get_stat_err(self, hist):
         '''Create statistical errorbars froma histogram'''
-        staterr = hist.Clone("{0}_staterr".format(hist.GetName))
+        self.j += 1
+        staterr = hist.Clone("{0}_staterr_{1}".format(hist.GetName,self.j))
         staterr.SetFillColor(ROOT.kGray+3)
         staterr.SetLineColor(ROOT.kGray+3)
         staterr.SetLineWidth(0)
@@ -466,7 +474,8 @@ class Plotter(PlotterBase):
         '''Return a statistical error bars for a ratio plot'''
         ratiomin = kwargs.pop('ratiomin',0.5)
         ratiomax = kwargs.pop('ratiomax',1.5)
-        ratiostaterr = hist.Clone("{0}_ratiostaterr".format(hist.GetName))
+        self.j += 1
+        ratiostaterr = hist.Clone("{0}_ratiostaterr_{1}".format(hist.GetName,self.j))
         #ratiostaterr.Sumw2()
         ratiostaterr.SetStats(0)
         ratiostaterr.SetTitle("")
@@ -930,7 +939,8 @@ class Plotter(PlotterBase):
 
         # the ratio portion
         if plotratio:
-            denom = stack.GetStack().Last().Clone('h_stack_{0}_ratio'.format(savename.replace('/','_')))
+            self.j +=  1
+            denom = stack.GetStack().Last().Clone('h_stack_{0}_ratio_{1}'.format(savename.replace('/','_'),self.j))
             ratiostaterr = self._get_ratio_stat_err(denom,**kwargs)
             ratiostaterr.SetXTitle(xaxis)
             for b,label in enumerate(labels):
@@ -945,11 +955,13 @@ class Plotter(PlotterBase):
                     sighists = ROOT.TList()
                     sighists.Add(hist)
                     sighists.Add(denom)
-                    num = sighists[0].Clone('h_{0}_{1}_ratio'.format(histName,savename.replace('/','_')))
+                    self.j += 1
+                    num = sighists[0].Clone('h_{0}_{1}_ratio_{2}'.format(histName,savename.replace('/','_'),self.j))
                     num.Reset()
                     num.Merge(sighists)
                 else:
-                    num = hist.Clone('h_{0}_{1}_ratio'.format(histName,savename.replace('/','_')))
+                    self.j += 1
+                    num = hist.Clone('h_{0}_{1}_ratio_{2}'.format(histName,savename.replace('/','_'),self.j))
                 numratio = self._get_ratio_err(num,denom,data=histName=='data')
                 ratios[histName] = numratio
 
@@ -1241,7 +1253,10 @@ class Plotter(PlotterBase):
                     sigErr2 += sig.GetBinError(j)**2
                     bgVal += bg.GetBinContent(j)
                     bgErr2 += bg.GetBinError(j)**2
-                significanceVal = sigVal / (sigVal+bgVal) if sigVal+bgVal else 0.
+                sigErr = sigErr**0.5
+                bgErr = bgErr**0.5
+                #significanceVal = sigVal / (sigVal+bgVal) if sigVal+bgVal else 0.
+                significanceVal = asimovSignificance((sigVal,sigErr),(bgVal,bgErr))
                 if significanceVal>0: thisMin = min(thisMin,significanceVal)
                 significance.SetBinContent(b+1,significanceVal)
                 significance.SetBinError(b+1,0.)

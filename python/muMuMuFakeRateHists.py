@@ -78,6 +78,8 @@ ptBins = [3,5,10,15,20,25,30,50,100]
 
 numDenoms = [('iso0.15','default'),('iso0.40','default'),('iso0.25','default'),('iso0.15','iso0.40'),]
 numDenoms += [('iso0.15trig','defaulttrig'),('iso0.40trig','defaulttrig'),('iso0.25trig','defaulttrig'),('iso0.15trig','iso0.40trig'),]
+numDenoms += [('mediumiso0.15','mediumdefault'),('mediumiso0.40','mediumdefault'),('mediumiso0.25','mediumdefault'),('mediumiso0.15','mediumiso0.40'),]
+numDenoms += [('mediumiso0.15trig','mediumdefaulttrig'),('mediumiso0.40trig','mediumdefaulttrig'),('mediumiso0.25trig','mediumdefaulttrig'),('mediumiso0.15trig','mediumiso0.40trig'),]
 
 name = '{0}/etaBin{1}/mPt'
 

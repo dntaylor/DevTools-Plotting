@@ -17,10 +17,10 @@ version = getCMSSWVersion()
 blind = True
 doCat = True
 plotCount = True
-plotMC = True
+plotMC = False
 plotDatadriven = True
 plotLowmass = True
-plotZveto = True
+plotZveto = False
 plotFakeRegions = False
 plotSignal = False
 plotROC = False
@@ -29,6 +29,7 @@ plotSOverB = False
 plotSignificance = False
 plotAllMasses = False
 plotSig500 = True
+doUncertainties = True
 toPlot = []
 
 hpp4lPlotter = Plotter('Hpp4l',new=True)
@@ -80,6 +81,23 @@ sigColors = {
     1500: ROOT.TColor.GetColor('#FFCCCC'),
 }
 
+#########################
+### add uncertainties ###
+#########################
+if doUncertainties:
+    shifts = ['lep','trig','btag','pu','fake','ElectronEn','TauEn','MuonEn','JetEn']
+    hpp4lPlotter.addShiftUncertainty(*shifts)
+    mcsamples = allsamples + signals
+    hpp4lPlotter.addUncertainty(
+        *mcsamples,
+        lumi=0.025,
+        idiso=(0.02**2 * 4)**0.5,
+        trigeff=0.005
+    )
+    hpp4lPlotter.addUncertainty('WZ',WZxsec=0.080)
+    hpp4lPlotter.addUncertainty('ZZ',ZZxsec=0.032)
+    hpp4lPlotter.addUncertainty('TTV',TTVxsec=0.15)
+    hpp4lPlotter.addUncertainty('VVV',VVVxsec=0.06)
 
 ########################
 ### Helper functions ###
