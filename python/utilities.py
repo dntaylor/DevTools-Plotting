@@ -238,14 +238,14 @@ def getTestFiles(analysis,sample,n=1,version=None):
 latestHistograms = {'80X':{}}
 
 latestHistograms['80X']['MuMuTauTau'] = {
-    'lepUp'            : '2018-03-30_MuMuTauTauHistogramsNew_lepUp_80X_Moriond_v1',
-    'lepDown'          : '2018-03-30_MuMuTauTauHistogramsNew_lepDown_80X_Moriond_v1',
-    'trigUp'           : '2018-03-30_MuMuTauTauHistogramsNew_trigUp_80X_Moriond_v1',
-    'trigDown'         : '2018-03-30_MuMuTauTauHistogramsNew_trigDown_80X_Moriond_v1',
-    'puUp'             : '2018-03-30_MuMuTauTauHistogramsNew_puUp_80X_Moriond_v1',
-    'puDown'           : '2018-03-30_MuMuTauTauHistogramsNew_puDown_80X_Moriond_v1',
-    'fakeUp'           : '2018-03-30_MuMuTauTauHistogramsNew_fakeUp_80X_Moriond_v1',
-    'fakeDown'         : '2018-03-30_MuMuTauTauHistogramsNew_fakeDown_80X_Moriond_v1',
+    'lepUp'            : '2018-04-01_MuMuTauTauHistogramsNew_lepUp_80X_Moriond_v1',
+    'lepDown'          : '2018-04-01_MuMuTauTauHistogramsNew_lepDown_80X_Moriond_v1',
+    'trigUp'           : '2018-04-01_MuMuTauTauHistogramsNew_trigUp_80X_Moriond_v1',
+    'trigDown'         : '2018-04-01_MuMuTauTauHistogramsNew_trigDown_80X_Moriond_v1',
+    'puUp'             : '2018-04-01_MuMuTauTauHistogramsNew_puUp_80X_Moriond_v1',
+    'puDown'           : '2018-04-01_MuMuTauTauHistogramsNew_puDown_80X_Moriond_v1',
+    'fakeUp'           : '2018-04-01_MuMuTauTauHistogramsNew_fakeUp_80X_Moriond_v1',
+    'fakeDown'         : '2018-04-01_MuMuTauTauHistogramsNew_fakeDown_80X_Moriond_v1',
 }
 
 def getNewFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
