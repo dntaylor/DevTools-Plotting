@@ -141,11 +141,12 @@ class NtupleFlattener(object):
                         if genChan=='all': histName = '{0}/{1}/{2}'.format(selection,chan,hist)
                         if chan=='all': histName = '{0}/{1}'.format(selection,hist)
                         x = self.datasetParams[hist].get('xVar',None)
+                        w = self.datasetParams[hist].get('wVar',None)
                         if 'yVar' in self.datasetParams[hist]:
                             y = self.datasetParams[hist].get('yVar',None)
-                            self.datasets[histName] = ROOT.RooDataSet(histName,histName,ROOT.RooArgSet(x,y))
+                            self.datasets[histName] = ROOT.RooDataSet(histName,histName,ROOT.RooArgSet(x,y,w),w.GetName())
                         else:
-                            self.datasets[histName] = ROOT.RooDataSet(histName,histName,ROOT.RooArgSet(x))
+                            self.datasets[histName] = ROOT.RooDataSet(histName,histName,ROOT.RooArgSet(x,w),w.GetName())
 
     def getTree(self):
         if not self.initialized: self.__initializeNtuple()
@@ -282,7 +283,9 @@ class NtupleFlattener(object):
                     if histName in self.hists: self.hists[histName].Fill(xval,w)
 
         for hist in self.datasetParams:
-            w = weight*self.datasetParams[hist]['mcscale'](row) if 'mcscale' in self.datasetParams[hist] and self.isData else weight
+            wval = weight*self.datasetParams[hist]['mcscale'](row) if 'mcscale' in self.datasetParams[hist] and self.isData else weight
+            w = self.datasetParams[hist]['wVar']
+            w.setVal(wval)
             histName = '{0}/{1}'.format(selection,hist)
             xval = self.datasetParams[hist]['x'](row)
             x = self.datasetParams[hist]['xVar']
@@ -291,19 +294,19 @@ class NtupleFlattener(object):
                 yval = self.datasetParams[hist]['y'](row)
                 y = self.datasetParams[hist]['yVar']
                 y.setVal(yval)
-                self.datasets[histName].add(ROOT.RooArgSet(x,y),w)
+                self.datasets[histName].add(ROOT.RooArgSet(x,y,w))
                 if chan!='all':
                     histName = '{0}/{1}/{2}'.format(selection,chan,hist)
-                    self.datasets[histName].add(ROOT.RooArgSet(x,y),w)
+                    self.datasets[histName].add(ROOT.RooArgSet(x,y,w))
                 if genChan!='all':
                     histName = '{0}/{1}/gen_{2}/{3}'.format(selection,chan,genChan,hist)
-                    if histName in self.datasets: self.datasets[histName].add(ROOT.RooArgSet(x,y),w)
+                    if histName in self.datasets: self.datasets[histName].add(ROOT.RooArgSet(x,y,w))
             else:
-                self.datasets[histName].add(ROOT.RooArgSet(x),w)
+                self.datasets[histName].add(ROOT.RooArgSet(x,w))
                 if chan!='all':
                     histName = '{0}/{1}/{2}'.format(selection,chan,hist)
-                    self.datasets[histName].add(ROOT.RooArgSet(x),w)
+                    self.datasets[histName].add(ROOT.RooArgSet(x,w))
                 if genChan!='all':
                     histName = '{0}/{1}/gen_{2}/{3}'.format(selection,chan,genChan,hist)
-                    if histName in self.datasets: self.datasets[histName].add(ROOT.RooArgSet(x),w)
+                    if histName in self.datasets: self.datasets[histName].add(ROOT.RooArgSet(x,w))
 
