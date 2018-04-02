@@ -144,9 +144,9 @@ class NtupleFlattener(object):
                         w = self.datasetParams[hist].get('wVar',None)
                         if 'yVar' in self.datasetParams[hist]:
                             y = self.datasetParams[hist].get('yVar',None)
-                            self.datasets[histName] = ROOT.RooDataSet(histName,histName,ROOT.RooArgSet(x,y,w),w.GetName())
+                            self.datasets[histName] = ROOT.RooDataSet(histName,histName,ROOT.RooArgSet(x,y,w))#,w.GetName())
                         else:
-                            self.datasets[histName] = ROOT.RooDataSet(histName,histName,ROOT.RooArgSet(x,w),w.GetName())
+                            self.datasets[histName] = ROOT.RooDataSet(histName,histName,ROOT.RooArgSet(x,w))#,w.GetName())
 
     def getTree(self):
         if not self.initialized: self.__initializeNtuple()
