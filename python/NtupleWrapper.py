@@ -144,6 +144,7 @@ class NtupleWrapper(object):
             if hist:
                 self.j += 1
                 hist = hist.Clone('h_{0}_{1}_{2}'.format(self.sample,variable.replace('/','_'),self.j))
+                if hist.InheritsFrom('RooDataSet'): return hist
                 hist.SetDirectory(0)
                 return hist
         if os.path.isfile(self.flat):
@@ -153,6 +154,7 @@ class NtupleWrapper(object):
                 self.j += 1
                 hist = hist.Clone('h_{0}_{1}_{2}'.format(self.sample,variable.replace('/','_'),self.j))
                 hist.SetDirectory(0)
+                if hist.InheritsFrom('RooDataSet'): return hist
                 return hist
             # attempt to project
             #hist = self.__projectChannel(variable,temp=True)
@@ -599,6 +601,14 @@ class NtupleWrapper(object):
             return self.__projectChannel(variable)
         else:
             return hist
+
+    def getDataset(self,variable,weight='w',selection='1'):
+        '''Get a RooDataSet'''
+        ds = self.__read(variable)
+        # recreate ds with weights
+        if weight:
+            ds = ROOT.RooDataSet(ds.GetName(),ds.GetTitle(),ds,ds.get(),selection,'w')
+        return ds
 
     def getCount(self,directory):
         '''Get a count'''
