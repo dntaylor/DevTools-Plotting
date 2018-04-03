@@ -602,12 +602,16 @@ class NtupleWrapper(object):
         else:
             return hist
 
-    def getDataset(self,variable,weight='w',selection='1'):
+    def getDataset(self,variable,weight='w',selection='1',variables=None):
         '''Get a RooDataSet'''
         ds = self.__read(variable)
         # recreate ds with weights
-        if weight:
-            ds = ROOT.RooDataSet(ds.GetName(),ds.GetTitle(),ds,ds.get(),selection,'w')
+        # TODO: temporary to leave weights as variable
+        #if weight:
+        #    ds = ROOT.RooDataSet(ds.GetName(),ds.GetTitle(),ds,ds.get(),selection,'w')
+        # recreate datset with new variables
+        #if variables:
+        #    ds = ROOT.RooDataSet(ds.GetName(),ds.GetTitle(),ds,variables,selection,'_weight_')
         return ds
 
     def getCount(self,directory):
