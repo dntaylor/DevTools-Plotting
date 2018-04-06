@@ -280,8 +280,8 @@ class LimitPlotter(PlotterBase):
             dx = 0
 
 
-        logging.info("Expected Limit: %i GeV (+%i, -%i)" % (x, h1-x, x-l1))
-        if not blind: logging.info("Observed Limit: %i GeV" % (dx))
+        #logging.info("Expected Limit: %i GeV (+%i, -%i)" % (x, h1-x, x-l1))
+        #if not blind: logging.info("Observed Limit: %i GeV" % (dx))
 
         return [l2,l1,x,h1,h2,dx]
 
