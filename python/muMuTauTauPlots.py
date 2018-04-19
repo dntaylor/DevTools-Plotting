@@ -16,15 +16,17 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 version = getCMSSWVersion()
 
 blind = True
-doSignals = False
-doMC = False
+doSignals = True
+doMC = True
 do2D = True
 doDM = True
 doAllSignals = True
-doDatadriven = False
+doDatadriven = True
 doLowmass = True
-doHighmass = True
-doMatrix = False
+doHighmass = False
+doDESY = False
+doSameSign = False
+doMatrix = True
 doNormalizations = False
 doSignficance = False
 #newloose = [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]
@@ -85,6 +87,7 @@ aColors = {
 }
 aColors = {
     5 : ROOT.TColor.GetColor('#000000'),
+    7 : ROOT.TColor.GetColor('#330000'),
     9 : ROOT.TColor.GetColor('#660000'),
     13: ROOT.TColor.GetColor('#800000'),
     17: ROOT.TColor.GetColor('#B20000'),
@@ -95,9 +98,13 @@ aColors = {
 basesels = ['default','regionA','regionB','regionC','regionD']
 sels = list(basesels)
 subsels = []
+desysels = []
+signalsels = list(basesels)
+signalsubsels = []
 tags = ['']
 if doDM: 
     subsels += ['dm0','dm1','dm10']
+    signalsubsels += ['dm0','dm1','dm10']
     tags += ['dm0','dm1','dm10']
 if doLowmass:
     subsels += ['lowmass']
@@ -111,10 +118,24 @@ if doHighmass:
     if doDM: 
         subsels += ['highmassdm0','highmassdm1','highmassdm10']
         tags += ['highmassdm0','highmassdm1','highmassdm10']
+if doSameSign: 
+    subsels += ['samesign']
+    signalsubsels += ['samesign']
+    tags += ['samesign']
+    if doDM: 
+        subsels += ['samesigndm0','samesigndm1','samesigndm10']
+        signalsubsels += ['samesigndm0','samesigndm1','samesigndm10']
+        tags += ['samesigndm0','samesigndm1','samesigndm10']
+signalsubsels += ['genMatch']
+if doDM:
+    signalsubsels += ['genMatchdm0','genMatchdm1','genMatchdm10']
 
 for sel in basesels:
     for subsel in subsels:
         sels += ['{}/{}'.format(subsel,sel)]
+    for subsel in signalsubsels:
+        signalsels += ['{}/{}'.format(subsel,sel)]
+    desysels += ['desy/{}'.format(sel)]
 
 ########################
 ### plot definitions ###
@@ -260,6 +281,22 @@ if doMC:
 #########################
 ### Signals on 1 plot ###
 #########################
+if doDESY:
+    plotter.clearHistograms()
+    
+    h = 125
+    for a in [7,9]:
+        name = signame.format(h=h,a=a)
+        plotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': aColors[a]})
+    
+    for plot in plots:
+        for sel in desysels:
+            kwargs = deepcopy(plots[plot])
+            if plot in plotsSignal: kwargs.update(deepcopy(plotsSignal[plot]))
+            plotname = '{0}/{1}'.format(sel,plot)
+            savename = '{0}/h{h}/{1}'.format(sel,plot,h=h)
+            plotter.plot(plotname,savename,plotratio=False,**kwargs)
+    
 
 if doSignals:
     for h in hmasses:
@@ -270,7 +307,7 @@ if doSignals:
             plotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': aColors[a]})
     
         for plot in plots:
-            for sel in sels:
+            for sel in signalsels:
                 if 'lowmass' in sel or 'highmass' in sel: continue
                 kwargs = deepcopy(plots[plot])
                 if plot in plotsSignal: kwargs.update(deepcopy(plotsSignal[plot]))
@@ -287,7 +324,7 @@ if doSignals:
             plotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': hColors[h]})
     
         for plot in plots:
-            for sel in sels:
+            for sel in signalsels:
                 if 'lowmass' in sel or 'highmass' in sel: continue
                 kwargs = deepcopy(plots[plot])
                 if plot in plotsSignal: kwargs.update(deepcopy(plotsSignal[plot]))
@@ -672,7 +709,8 @@ if do2D:
         plotter.addHistogram(sample,sigMap[sample])
         
         for plot in plots2D:
-            for sel in sels:
+            thesels = signalsels if sample in allsignals else sels
+            for sel in thesels:
                 #if sample=='data' and blind and 'regionD' not in sel: continue
                 kwargs = deepcopy(plots2D[plot])
                 #if sample not in allsignals:

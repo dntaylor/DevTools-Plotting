@@ -78,19 +78,19 @@ ptBins = [10,15,20,25,30,50,100]
 
 numDenoms = []
 numDenoms_base = [
-    ('vloose','default'),('nearMuonVLoose','nearMuon'),
-    ('loose','default'),('nearMuonLoose','nearMuon'),
-    ('medium','default'),('nearMuonMedium','nearMuon'),
-    ('tight','default'),('nearMuonTight','nearMuon'),
-    ('cutbased/loose','default'),('cutbased/nearMuonLoose','nearMuon'),
-    ('cutbased/medium','default'),('cutbased/nearMuonMedium','nearMuon'),
-    ('cutbased/tight','default'),('cutbased/nearMuonTight','nearMuon'),
+    ('nearMuonVLoose','nearMuon'),
+    ('nearMuonLoose','nearMuon'),
+    ('nearMuonMedium','nearMuon'),
+    ('nearMuonTight','nearMuon'),
+    ('cutbased/nearMuonLoose','nearMuon'),
+    ('cutbased/nearMuonMedium','nearMuon'),
+    ('cutbased/nearMuonTight','nearMuon'),
 ]
 for n, d in numDenoms_base:
     numDenoms += [(n,d)]
     numDenoms += [('noBVeto/{}'.format(n), 'noBVeto/{}'.format(d))]
-#for newloose in [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]:
-#    numDenoms += [('nearMuonMedium','nearMuonWithMVA{:0.1f}'.format(newloose))]
+for newloose in [-0.8,-0.5]:
+    numDenoms += [('nearMuonMedium','nearMuonWithMVA{:0.1f}'.format(newloose))]
 
 name = '{0}/etaBin{1}/tPt'
 dmname = '{0}/dm{1}/etaBin{2}/tPt'

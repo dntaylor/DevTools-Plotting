@@ -70,7 +70,7 @@ for s in ['WZ','ZZ']:
 
 sels = []
 etaBins = [0,1.479,2.3]
-base_sels = ['default','vloose','medium','nearMuon','nearMuonVLoose','nearMuonMedium']
+base_sels = ['nearMuon','nearMuonVLoose','nearMuonMedium']
 for sel in base_sels:
     sels += [sel]
     sels += ['noBVeto/{}'.format(sel)]
@@ -135,13 +135,13 @@ cust = {
 
 numDenoms = []
 numDenoms_base = [
-    ('vloose','default'),('nearMuonVLoose','nearMuon'),
-    ('loose','default'),('nearMuonLoose','nearMuon'),
-    ('medium','default'),('nearMuonMedium','nearMuon'),
-    ('tight','default'),('nearMuonTight','nearMuon'),
-    ('cutbased/loose','default'),('cutbased/nearMuonLoose','nearMuon'),
-    ('cutbased/medium','default'),('cutbased/nearMuonMedium','nearMuon'),
-    ('cutbased/tight','default'),('cutbased/nearMuonTight','nearMuon'),
+    ('nearMuonVLoose','nearMuon'),
+    ('nearMuonLoose','nearMuon'),
+    ('nearMuonMedium','nearMuon'),
+    ('nearMuonTight','nearMuon'),
+    ('cutbased/nearMuonLoose','nearMuon'),
+    ('cutbased/nearMuonMedium','nearMuon'),
+    ('cutbased/nearMuonTight','nearMuon'),
 ]
 for n, d in numDenoms_base:
     numDenoms += [(n,d)]
@@ -149,8 +149,10 @@ for n, d in numDenoms_base:
     for dm in [0,1,10]:
         numDenoms += [('{}/dm{}'.format(n,dm), '{}/dm{}'.format(d,dm))]
         numDenoms += [('noBVeto/{}/dm{}'.format(n,dm), 'noBVeto/{}/dm{}'.format(d,dm))]
-#for newloose in [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]:
-#    numDenoms += [('nearMuonMedium','nearMuonWithMVA{:0.1f}'.format(newloose))]
+for newloose in [-0.8,-0.5]:
+    numDenoms += [('nearMuonMedium','nearMuonWithMVA{:0.1f}'.format(newloose))]
+    for dm in [0,1,10]:
+        numDenoms += [('nearMuonMedium/dm{}'.format(dm),'nearMuonWithMVA{:0.1f}/dm{}'.format(newloose,dm))]
 
 for plot in cust:
     for num,denom in numDenoms:

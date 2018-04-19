@@ -34,6 +34,7 @@ class NtupleFlattener(object):
         self.analysis = analysis
         self.sample = sample
         self.shift = kwargs.pop('shift','')
+        self.skipHists = kwargs.pop('skipHists',False)
         self.isData = isData(self.sample)
         logging.debug('Initializing {0} {1} {2}'.format(self.analysis,self.sample,self.shift))
         # backup passing custom parameters
@@ -79,6 +80,7 @@ class NtupleFlattener(object):
         logging.debug('Initialized {0}: summedWeights = {1}; xsec = {2}; sampleLumi = {3}; intLumi = {4}'.format(self.sample,summedWeights,self.xsec,self.sampleLumi,self.intLumi))
 
     def __initializeHistograms(self):
+        if self.skipHists: self.histParams = {}
         chans = ['all']
         genChans = ['all']
         if hasattr(self,'channels'): chans += self.channels

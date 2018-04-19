@@ -43,6 +43,7 @@ def flatten(analysis,sample,**kwargs):
     shift = kwargs.pop('shift','')
     njobs = kwargs.pop('njobs',1)
     job = kwargs.pop('job',0)
+    skipHists = kwargs.pop('skipHists',False)
     multi = kwargs.pop('multi',False)
     if hasProgress:
         pbar = kwargs.pop('progressbar',ProgressBar(widgets=['{0}: '.format(sample),' ',SimpleProgress(),' ',Percentage(),' ',Bar(),' ',ETA()]))
@@ -50,9 +51,9 @@ def flatten(analysis,sample,**kwargs):
         pbar = None
 
     if outputFile:
-        flattener = flatteners[analysis](sample,inputFileList=inputFileList,outputFile=outputFile,shift=shift,progressbar=pbar)
+        flattener = flatteners[analysis](sample,inputFileList=inputFileList,outputFile=outputFile,shift=shift,progressbar=pbar,skipHists=skipHists)
     else:
-        flattener = flatteners[analysis](sample,inputFileList=inputFileList,shift=shift,progressbar=pbar)
+        flattener = flatteners[analysis](sample,inputFileList=inputFileList,shift=shift,progressbar=pbar,skipHists=skipHists)
 
     flattener.flatten()
 
@@ -69,6 +70,7 @@ def parse_command_line(argv):
 
     parser.add_argument('analysis', type=str, help='Analysis to process')
     parser.add_argument('shift', type=str, default='', nargs='?', help='Shift to apply to scale factors')
+    parser.add_argument('--skipHists', action='store_true', help='Skip histograms')
     parser.add_argument('--samples', nargs='+', type=str, default=['*'], help='Samples to flatten. Supports unix style wildcards.')
     parser.add_argument('-j',type=int,default=1,help='Number of cores to use')
 
@@ -115,7 +117,7 @@ def main(argv=None):
         for directory in directories:
             sample = directory.split('/')[-1]
             if sample.endswith('.root'): sample = sample[:-5]
-            multi.addJob(sample,flatten,args=(args.analysis,sample,),kwargs={'shift':args.shift,'multi':True,})
+            multi.addJob(sample,flatten,args=(args.analysis,sample,),kwargs={'shift':args.shift,'multi':True,'skipHists':args.skipHists,})
         multi.retrieve()
     else:
         for directory in directories:
@@ -125,6 +127,7 @@ def main(argv=None):
                     sample,
                     shift=args.shift,
                     multi=False,
+                    skipHists=args.skipHists,
                     )
 
     logging.info('Finished')

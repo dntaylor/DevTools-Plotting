@@ -35,6 +35,30 @@ def passTauIso(row,lep):
     else:
         return getattr(row,'{}_byVLooseIsolationMVArun2v1DBoldDMwLT'.format(lep))>0.5
 
+def loadEvents(mh,ma):
+    fname = '{}/src/DevTools/Plotter/python/events_{}.out'.format(os.environ['CMSSW_BASE'],ma)
+    if not os.path.isfile(fname): return []
+    with open(fname) as f:
+        result = [l.strip() for l in f.readlines()]
+    return result
+
+def passGenMatch(row,lep):
+    gm  = getattr(row,'{}_genMatch'.format(lep))    and getattr(row,'{}_genDeltaR'.format(lep))<0.4
+    gjm = getattr(row,'{}_genJetMatch'.format(lep)) and getattr(row,'{}_genJetDeltaR'.format(lep))<0.4
+    return gm or gjm
+
+
+events = {}
+events[125] = {}
+events[125][7] = loadEvents(125,7)
+events[125][9] = loadEvents(125,9)
+
+
+def desyEvent(row,mh,ma):
+    if mh not in events: return False
+    if ma not in events[mh]: return False
+    rle = '{run}:{lumi}:{event}'.format(run=row.run,lumi=row.lumi,event=row.event)
+    return rle in events[mh][ma]
 
 class MuMuTauTauFlattener(NtupleFlattener):
     '''
@@ -42,11 +66,14 @@ class MuMuTauTauFlattener(NtupleFlattener):
     '''
 
     def __init__(self,sample,**kwargs):
+
         # controls
         self.doDatadriven = True
         self.datadrivenRegular = False
         self.doLowMass = True
-        self.doHighMass = True
+        self.doHighMass = False
+        self.doSameSign = True
+        self.doDESY = True
         self.doBVeto = True
         self.doDM = True
         self.doPerDM = True
@@ -54,17 +81,29 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.doCutbased = doCutbased
         self.doMediumMuon = False
         self.doGenMatch = False
+        self.doNewloose = False
 
         if self.doMediumMuon:
             logging.error('Cannot use medium muon yet')
             raise
 
-        #self.newloose = [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]
-        #self.newloose = [-1,-0.2,0.0,0.2,0.4]
-        self.newloose = []
 
-        self.mvaCut = -1
+        self.mvaCut = -1 # -0.8, -0.5
         self.isoCut = 0.4
+
+        self.mh = 0
+        self.ma = 0
+        if 'SUSY' in sample:
+            if 'M-300_' in sample:
+                self.mh = 300
+            elif 'M-750_' in sample:
+                self.mh = 750
+            else:
+                self.mh = 125
+            for a in [5, 7, 9, 11, 13, 15, 17, 19, 21]:
+                if 'M-{}_'.format(a) in sample: self.ma = a
+        if self.mh not in [125]: self.doDESY = False
+        if self.ma not in [7,9]: self.doDESY = False
 
         # setup properties
         self.leps = ['am1','am2','ath','atm']
@@ -124,6 +163,36 @@ class MuMuTauTauFlattener(NtupleFlattener):
                 baseSels += ['highmassdm0']
                 baseSels += ['highmassdm1']
                 baseSels += ['highmassdm10']
+        if self.doSameSign:
+            self.selectionMap['samesign/default'] = lambda row: row.pass_Mu17_Mu8_SameSign_DZ and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            baseSels += ['samesign']
+            if self.doPerDM:
+                self.selectionMap['samesigndm0/default']  = lambda row: row.ath_decayMode==0  and row.pass_Mu17_Mu8_SameSign_DZ and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['samesigndm1/default']  = lambda row: row.ath_decayMode==1  and row.pass_Mu17_Mu8_SameSign_DZ and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['samesigndm10/default'] = lambda row: row.ath_decayMode==10 and row.pass_Mu17_Mu8_SameSign_DZ and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                baseSels += ['samesigndm0']
+                baseSels += ['samesigndm1']
+                baseSels += ['samesigndm10']
+        if self.doDESY:
+            self.selectionMap['desy/default'] = lambda row: desyEvent(row,self.mh,self.ma) and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            baseSels += ['desy']
+            if self.doPerDM:
+                self.selectionMap['desydm0/default']  = lambda row: row.ath_decayMode==0  and desyEvent(row,self.mh,self.ma) and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['desydm1/default']  = lambda row: row.ath_decayMode==1  and desyEvent(row,self.mh,self.ma) and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['desydm10/default'] = lambda row: row.ath_decayMode==10 and desyEvent(row,self.mh,self.ma) and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                baseSels += ['desydm0']
+                baseSels += ['desydm1']
+                baseSels += ['desydm10']
+        if self.ma and self.mh:
+            self.selectionMap['genMatch/default'] = lambda row: passGenMatch(row,'ath') and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            baseSels += ['genMatch']
+            if self.doPerDM:
+                self.selectionMap['genMatchdm0/default']  = lambda row: row.ath_decayMode==0  and passGenMatch(row,'ath') and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['genMatchdm1/default']  = lambda row: row.ath_decayMode==1  and passGenMatch(row,'ath') and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['genMatchdm10/default'] = lambda row: row.ath_decayMode==10 and passGenMatch(row,'ath') and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                baseSels += ['genMatchdm0']
+                baseSels += ['genMatchdm1']
+                baseSels += ['genMatchdm10']
 
         self.selections = []
         self.selectionHists = {}
@@ -161,13 +230,6 @@ class MuMuTauTauFlattener(NtupleFlattener):
                 self.selections += ['matrixP/{}regionD_forB_fakeForA'.format(tag)]
                 self.selections += ['matrixF/{}regionB_forB_fakeForA'.format(tag)]
                 self.selections += ['matrixF/{}regionD_forB_fakeForA'.format(tag)]
-
-                for newloose in self.newloose:
-                    self.selections += ['{}regionB_fakeForA{:.1f}'.format(tag,newloose)]
-                    self.selections += ['{}regionC_fakeForA{:.1f}'.format(tag,newloose)]
-                    self.selections += ['{}regionD_fakeForA{:.1f}'.format(tag,newloose)]
-                    self.selections += ['{}regionD_fakeForB{:.1f}'.format(tag,newloose)]
-                    self.selections += ['{}regionD_fakeForC{:.1f}'.format(tag,newloose)]
 
         # setup histogram parameters
         self.histParams = {
@@ -238,10 +300,13 @@ class MuMuTauTauFlattener(NtupleFlattener):
         }
 
         self.datasetParams = {
-            'ammMass_dataset'             : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass, 'xVar': ROOT.RooRealVar('x','x',0,30), },
-            'ammMass_attMass_dataset'     : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass, 'xVar': ROOT.RooRealVar('x','x',0,30), 'y': lambda row: row.att_mass,     'yVar': ROOT.RooRealVar('y','y',0,60),   },
-            'ammMass_hMass_dataset'       : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass, 'xVar': ROOT.RooRealVar('x','x',0,30), 'y': lambda row: row.h_mass,       'yVar': ROOT.RooRealVar('y','y',0,1000), },
-            'ammMass_hMassKinFit_dataset' : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass, 'xVar': ROOT.RooRealVar('x','x',0,30), 'y': lambda row: row.h_massKinFit, 'yVar': ROOT.RooRealVar('y','y',0,1000), },
+            'ammMass_dataset'             : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   },
+            'attMass_dataset'             : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.att_mass,     'xVar': ROOT.RooRealVar('x','x',0,60),   },
+            'hMass_dataset'               : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_mass,       'xVar': ROOT.RooRealVar('x','x',0,1000), },
+            'hMassKinFit_dataset'         : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_massKinFit, 'xVar': ROOT.RooRealVar('x','x',0,1000), },
+            'ammMass_attMass_dataset'     : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.att_mass,     'yVar': ROOT.RooRealVar('y','y',0,60),   },
+            'ammMass_hMass_dataset'       : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.h_mass,       'yVar': ROOT.RooRealVar('y','y',0,1000), },
+            'ammMass_hMassKinFit_dataset' : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.h_massKinFit, 'yVar': ROOT.RooRealVar('y','y',0,1000), },
         }
 
         # initialize flattener
@@ -272,13 +337,16 @@ class MuMuTauTauFlattener(NtupleFlattener):
             self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM0']  = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuon/fakeratePtEta_DM0')
             self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM1']  = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuon/fakeratePtEta_DM1')
             self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM10'] = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuon/fakeratePtEta_DM10')
+            if self.doNewloose:
+                self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')]        = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuonWithMVA{:.1f}/fakeratePtEta'.format(self.mvaCut))
+                self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM0']  = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuonWithMVA{:.1f}/fakeratePtEta_DM0'.format(self.mvaCut))
+                self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM1']  = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuonWithMVA{:.1f}/fakeratePtEta_DM1'.format(self.mvaCut))
+                self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM10'] = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuonWithMVA{:.1f}/fakeratePtEta_DM10'.format(self.mvaCut))
         if not self.doBVeto:
             self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')]        = self.fake_haa_rootfile_tau.Get('noBVeto/nearMuonVLoose_nearMuon/fakeratePtEta')
             self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM0']  = self.fake_haa_rootfile_tau.Get('noBVeto/nearMuonVLoose_nearMuon/fakeratePtEta_DM0')
             self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM1']  = self.fake_haa_rootfile_tau.Get('noBVeto/nearMuonVLoose_nearMuon/fakeratePtEta_DM1')
             self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose')+'DM10'] = self.fake_haa_rootfile_tau.Get('noBVeto/nearMuonVLoose_nearMuon/fakeratePtEta_DM10')
-        for newloose in self.newloose:
-            self.fakehists['taus'][self.fakekey.format(num='HaaTight', denom='HaaLoose{:.1f}'.format(newloose))] = self.fake_haa_rootfile_tau.Get('nearMuonMedium_nearMuonWithMVA{:.1f}/fakeratePtEta'.format(newloose))
 
         # efficiencies
         self.effkey = '{num}_{denom}'
@@ -508,73 +576,51 @@ class MuMuTauTauFlattener(NtupleFlattener):
         wd = self.getWeight(row,doFake=True,fakeLeps=['am2','ath']) # region D ath, am2
         mat_bd, p_bd, f_bd = self.getMatrix(row,leps=['am2']) # region A/B from C/D matrix
 
-        wbs = {}
-        wcs = {}
-        wds = {}
-        for newloose in self.newloose:
-            wbs[newloose] = self.getWeight(row,doFake=True,fakeDenom='HaaLoose{:.1f}'.format(newloose),fakeLeps=['ath']) # region B ath
-            wcs[newloose] = self.getWeight(row,doFake=True,fakeLeps=['am2']) # region c am2
-            wds[newloose] = self.getWeight(row,doFake=True,fakeDenom={'ath':'HaaLoose{:.1f}'.format(newloose),'am2':'HaaLoose'},fakeLeps=['am2','ath']) # region d am2, ath
-            
-
         # figure out region
         passRegion = {}
         for r in self.regionMap:
             passRegion[r] = self.regionMap[r](row)
 
         # define plot regions
-        passMVALoose = row.ath_byIsolationMVArun2v1DBoldDMwLTraw>self.mvaCut
+        passMVALoose = True
+        if self.doNewloose: passMVALoose = row.ath_byIsolationMVArun2v1DBoldDMwLTraw>self.mvaCut
         for sel in self.selectionMap:
+            if not passMVALoose: continue
             result = self.selectionMap[sel](row)
             if result:
-                if passMVALoose: self.fill(row,sel,w)
+                self.fill(row,sel,w)
                 for r in passRegion:
-                    if passRegion[r] and passMVALoose: self.fill(row,sel.replace('default',r),w)
+                    if passRegion[r]: self.fill(row,sel.replace('default',r),w)
                 if not self.doDatadriven: continue
                 if passRegion['regionA']:
-                    if passMVALoose:
-                        self.fill(row,'matrixP/'+sel.replace('default','regionA')+'_forA',w*mat_bd.item(0,0))
-                        self.fill(row,'matrixF/'+sel.replace('default','regionA')+'_forA',w*mat_bd.item(1,0))
-                        self.fill(row,'matrixP/'+sel.replace('default','regionA')+'_forA_p',w*mat_bd.item(0,0)*p_bd['am2'])
-                        self.fill(row,'matrixF/'+sel.replace('default','regionA')+'_forA_f',w*mat_bd.item(1,0)*f_bd['am2'])
+                    self.fill(row,'matrixP/'+sel.replace('default','regionA')+'_forA',w*mat_bd.item(0,0))
+                    self.fill(row,'matrixF/'+sel.replace('default','regionA')+'_forA',w*mat_bd.item(1,0))
+                    self.fill(row,'matrixP/'+sel.replace('default','regionA')+'_forA_p',w*mat_bd.item(0,0)*p_bd['am2'])
+                    self.fill(row,'matrixF/'+sel.replace('default','regionA')+'_forA_f',w*mat_bd.item(1,0)*f_bd['am2'])
                 if passRegion['regionB']:
-                    if passMVALoose:
-                        self.fill(row,sel.replace('default','regionB')+'_fakeForA',wb)
-                        self.fill(row,'matrixP/'+sel.replace('default','regionB')+'_forB',w*mat_bd.item(0,0))
-                        self.fill(row,'matrixF/'+sel.replace('default','regionB')+'_forB',w*mat_bd.item(1,0))
-                        self.fill(row,'matrixP/'+sel.replace('default','regionB')+'_forB_p',w*mat_bd.item(0,0)*p_bd['am2'])
-                        self.fill(row,'matrixF/'+sel.replace('default','regionB')+'_forB_f',w*mat_bd.item(1,0)*f_bd['am2'])
-                        self.fill(row,'matrixP/'+sel.replace('default','regionB')+'_forB_fakeForA',wb*mat_bd.item(0,0))
-                        self.fill(row,'matrixF/'+sel.replace('default','regionB')+'_forB_fakeForA',wb*mat_bd.item(1,0))
-                    for newloose in self.newloose:
-                        if row.ath_byIsolationMVArun2v1DBoldDMwLTraw<newloose: continue
-                        self.fill(row,sel.replace('default','regionB')+'_fakeForA{:.1f}'.format(newloose),wbs[newloose])
+                    self.fill(row,sel.replace('default','regionB')+'_fakeForA',wb)
+                    self.fill(row,'matrixP/'+sel.replace('default','regionB')+'_forB',w*mat_bd.item(0,0))
+                    self.fill(row,'matrixF/'+sel.replace('default','regionB')+'_forB',w*mat_bd.item(1,0))
+                    self.fill(row,'matrixP/'+sel.replace('default','regionB')+'_forB_p',w*mat_bd.item(0,0)*p_bd['am2'])
+                    self.fill(row,'matrixF/'+sel.replace('default','regionB')+'_forB_f',w*mat_bd.item(1,0)*f_bd['am2'])
+                    self.fill(row,'matrixP/'+sel.replace('default','regionB')+'_forB_fakeForA',wb*mat_bd.item(0,0))
+                    self.fill(row,'matrixF/'+sel.replace('default','regionB')+'_forB_fakeForA',wb*mat_bd.item(1,0))
                 if passRegion['regionC']:
-                    if passMVALoose:
-                        self.fill(row,sel.replace('default','regionC')+'_fakeForA',wc)
-                        self.fill(row,'matrixP/'+sel.replace('default','regionC')+'_forA',w*mat_bd.item(0,1))
-                        self.fill(row,'matrixF/'+sel.replace('default','regionC')+'_forA',w*mat_bd.item(1,1))
-                        self.fill(row,'matrixP/'+sel.replace('default','regionC')+'_forA_p',w*mat_bd.item(0,1)*p_bd['am2'])
-                        self.fill(row,'matrixF/'+sel.replace('default','regionC')+'_forA_f',w*mat_bd.item(1,1)*f_bd['am2'])
-                    for newloose in self.newloose:
-                        if row.ath_byIsolationMVArun2v1DBoldDMwLTraw<newloose: continue
-                        self.fill(row,sel.replace('default','regionC')+'_fakeForA{:.1f}'.format(newloose),wcs[newloose])
+                    self.fill(row,sel.replace('default','regionC')+'_fakeForA',wc)
+                    self.fill(row,'matrixP/'+sel.replace('default','regionC')+'_forA',w*mat_bd.item(0,1))
+                    self.fill(row,'matrixF/'+sel.replace('default','regionC')+'_forA',w*mat_bd.item(1,1))
+                    self.fill(row,'matrixP/'+sel.replace('default','regionC')+'_forA_p',w*mat_bd.item(0,1)*p_bd['am2'])
+                    self.fill(row,'matrixF/'+sel.replace('default','regionC')+'_forA_f',w*mat_bd.item(1,1)*f_bd['am2'])
                 if passRegion['regionD']:
-                    if passMVALoose:
-                        self.fill(row,sel.replace('default','regionD')+'_fakeForA',wd)
-                        self.fill(row,sel.replace('default','regionD')+'_fakeForB',wc)
-                        self.fill(row,sel.replace('default','regionD')+'_fakeForC',wb)
-                        self.fill(row,'matrixP/'+sel.replace('default','regionD')+'_forB',w*mat_bd.item(0,1))
-                        self.fill(row,'matrixF/'+sel.replace('default','regionD')+'_forB',w*mat_bd.item(1,1))
-                        self.fill(row,'matrixP/'+sel.replace('default','regionD')+'_forB_p',w*mat_bd.item(0,1)*p_bd['am2'])
-                        self.fill(row,'matrixF/'+sel.replace('default','regionD')+'_forB_f',w*mat_bd.item(1,1)*f_bd['am2'])
-                        self.fill(row,'matrixP/'+sel.replace('default','regionD')+'_forB_fakeForA',wb*mat_bd.item(0,1))
-                        self.fill(row,'matrixF/'+sel.replace('default','regionD')+'_forB_fakeForA',wb*mat_bd.item(1,1))
-                    for newloose in self.newloose:
-                        if row.ath_byIsolationMVArun2v1DBoldDMwLTraw<newloose: continue
-                        self.fill(row,sel.replace('default','regionD')+'_fakeForA{:.1f}'.format(newloose),wds[newloose])
-                        self.fill(row,sel.replace('default','regionD')+'_fakeForB{:.1f}'.format(newloose),wcs[newloose])
-                        self.fill(row,sel.replace('default','regionD')+'_fakeForC{:.1f}'.format(newloose),wbs[newloose])
+                    self.fill(row,sel.replace('default','regionD')+'_fakeForA',wd)
+                    self.fill(row,sel.replace('default','regionD')+'_fakeForB',wc)
+                    self.fill(row,sel.replace('default','regionD')+'_fakeForC',wb)
+                    self.fill(row,'matrixP/'+sel.replace('default','regionD')+'_forB',w*mat_bd.item(0,1))
+                    self.fill(row,'matrixF/'+sel.replace('default','regionD')+'_forB',w*mat_bd.item(1,1))
+                    self.fill(row,'matrixP/'+sel.replace('default','regionD')+'_forB_p',w*mat_bd.item(0,1)*p_bd['am2'])
+                    self.fill(row,'matrixF/'+sel.replace('default','regionD')+'_forB_f',w*mat_bd.item(1,1)*f_bd['am2'])
+                    self.fill(row,'matrixP/'+sel.replace('default','regionD')+'_forB_fakeForA',wb*mat_bd.item(0,1))
+                    self.fill(row,'matrixF/'+sel.replace('default','regionD')+'_forB_fakeForA',wb*mat_bd.item(1,1))
 
 
 def parse_command_line(argv):
@@ -583,6 +629,7 @@ def parse_command_line(argv):
     #parser.add_argument('sample', type=str, default='SingleMuon', nargs='?', help='Sample to flatten')
     parser.add_argument('sample', type=str, default='SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-15_TuneCUETP8M1_13TeV_madgraph_pythia8', nargs='?', help='Sample to flatten')
     parser.add_argument('shift', type=str, default='', nargs='?', help='Shift to apply to scale factors')
+    parser.add_argument('--skipHists', action='store_true',help='Skip histograms, only do datasets')
 
     return parser.parse_args(argv)
 
@@ -595,6 +642,7 @@ def main(argv=None):
     flattener = MuMuTauTauFlattener(
         args.sample,
         shift=args.shift,
+        skipHists=args.skipHists,
     )
 
     flattener.flatten()
