@@ -273,7 +273,14 @@ class Hpp3lFlattener(NtupleFlattener):
             pt = getattr(row,'{0}jet_pt'.format(l))
             if not pt>0: continue
             eta = getattr(row,'{0}jet_eta'.format(l))
-            sf = self.btag_scales.get_sf_csv(1,pt,eta,shift=s)
+            hf = getattr(row,'{}jet_hadronFlavour'.format(l))
+            if hf==5: #b
+                flavor = 0
+            elif hf==4: #c
+                flavor = 1
+            else: # light
+                flavor = 2
+            sf = self.btag_scales.get_sf_csv(1,pt,eta,shift=s,flavor=flavor)
             if getattr(row,'{0}jet_passCSVv2M'.format(l))>0.5:
                 w *= 1-sf
         return w

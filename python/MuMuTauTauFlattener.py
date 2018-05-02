@@ -81,7 +81,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.doCutbased = doCutbased
         self.doMediumMuon = False
         self.doGenMatch = False
-        self.doNewloose = False
+        self.doNewloose = True
 
         if self.doMediumMuon:
             logging.error('Cannot use medium muon yet')
@@ -120,8 +120,8 @@ class MuMuTauTauFlattener(NtupleFlattener):
             #'muonIso'    : lambda row: row.am1_isolation<self.isoCut and row.am2_isolation<self.isoCut,
             #'tauMVA'     : lambda row: row.ath_byIsolationMVArun2v1DBoldDMwLTraw>self.mvaCut,
         }
-        if self.doBVeto:
-            self.baseCutMap['taubveto'] = lambda row: row.athjet_passCSVv2M<0.5
+        #if self.doBVeto: # do via scale factor method
+        #    self.baseCutMap['taubveto'] = lambda row: row.athjet_passCSVv2M<0.5
         if self.doMediumMuon:
             self.baseCutMap['medMuon'] = lambda row: row.am1_isMediumMuonICHEP and row.am2_isMediumMuonICHEP and row.atm_isMediumMuonICHEP
 
@@ -389,6 +389,27 @@ class MuMuTauTauFlattener(NtupleFlattener):
             vals += [val]
         return vals
 
+    def getBTagWeight(self,row):
+        op = 1 # medium
+        s = 'central'
+        if self.shift == 'btagUp': s = 'up'
+        if self.shift == 'btagDown': s = 'down'
+        w = 1
+        pt = row.athjet_pt
+        if not pt>0: return 1
+        eta = row.athjet_eta
+        hf = row.athjet_hadronFlavour
+        if hf==5: #b
+            flavor = 0
+        elif hf==4: #c
+            flavor = 1
+        else: # light
+            flavor = 2
+        sf = self.btag_scales.get_sf_csv(1,pt,eta,shift=s,flavor=flavor)
+        if row.athjet_passCSVv2M>0.5:
+            w *= 1-sf
+        return w
+
     def getFakeRate(self,lep,pt,eta,num,denom,dm=None):
         key = self.fakekey.format(num=num,denom=denom)
         if lep=='taus' and dm in [0,1,10] and self.doDM:
@@ -472,6 +493,8 @@ class MuMuTauTauFlattener(NtupleFlattener):
             # scale to lumi/xsec
             weight *= float(self.intLumi)/self.sampleLumi if self.sampleLumi else 0.
             if hasattr(row,'qqZZkfactor'): weight *= row.qqZZkfactor/1.1 # ZZ variable k factor
+            # b taggin (veto)
+            if self.doBVeto: weight *= self.getBTagWeight(row)
         # fake scales
         if doFake:
             if not row.isData: weight *= -1
@@ -539,6 +562,10 @@ class MuMuTauTauFlattener(NtupleFlattener):
 
     def perRowAction(self,row):
         isData = row.isData
+
+        # Don't do for MC, events that pass btag contribute a factor of 1-SF
+        passbveto = row.athjet_passCSVv2M<0.5
+        if isData and not passbveto and self.doBVeto: return
 
         # per sample cuts
         keep = True
