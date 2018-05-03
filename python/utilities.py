@@ -126,8 +126,7 @@ latestNtuples['80X'] = {
     'LLG'            : '2017-08-23_LLGAnalysis_80X_Photon_v1-merge',
     'SingleJet'      : '2017-07-18_SingleJetAnalysis_80X_QCD_v1-merge',
 # MuMuTauTau
-    'MuMuTauTau'     : '2018-04-18_MuMuTauTauAnalysis_80X_v1-merge',
-    #'MuMuTauTau'     : '2018-03-10_MuMuTauTauAnalysis_80X_uncleaned_v1-merge',
+    'MuMuTauTau'     : '2018-05-02_MuMuTauTauAnalysis_80X_v1-merge',
     'MuMuTauFakeRate': '2018-03-19_MuMuTauFakeRateAnalysis_80X_v2-merge',
     'MuMuMuFakeRate' : '2018-02-09_MuMuMuFakeRateAnalysis_80X_v1-merge',
 }
@@ -189,6 +188,21 @@ latestShifts['80X']['Hpp4l'] = {
     'JetResDown'       : '2018-02-17_Hpp4lAnalysis_JetResDown_80X_Moriond_v1-merge',
     'UnclusteredEnUp'  : '2018-02-17_Hpp4lAnalysis_UnclusteredUp_80X_Moriond_v1-merge',
     'UnclusteredEnDown': '2018-02-17_Hpp4lAnalysis_UnclusteredDown_80X_Moriond_v1-merge',
+}
+latestShifts['80X']['MuMuTauTau'] = {
+# Moriond 2017
+    'ElectronEnUp'     : '2018-05-02_MuMuTauTauAnalysis_ElectronEnUp_80X_Moriond_v1-merge',
+    'ElectronEnDown'   : '2018-05-02_MuMuTauTauAnalysis_ElectronEnDown_80X_Moriond_v1-merge',
+    'MuonEnUp'         : '2018-05-02_MuMuTauTauAnalysis_MuonEnUp_80X_Moriond_v1-merge',
+    'MuonEnDown'       : '2018-05-02_MuMuTauTauAnalysis_MuonEnDown_80X_Moriond_v1-merge',
+    'TauEnUp'          : '2018-05-02_MuMuTauTauAnalysis_TauEnUp_80X_Moriond_v1-merge',
+    'TauEnDown'        : '2018-05-02_MuMuTauTauAnalysis_TauEnDown_80X_Moriond_v1-merge',
+    'JetEnUp'          : '2018-05-02_MuMuTauTauAnalysis_JetEnUp_80X_Moriond_v1-merge',
+    'JetEnDown'        : '2018-05-02_MuMuTauTauAnalysis_JetEnDown_80X_Moriond_v1-merge',
+    'JetResUp'         : '2018-05-02_MuMuTauTauAnalysis_JetResUp_80X_Moriond_v1-merge',
+    'JetResDown'       : '2018-05-02_MuMuTauTauAnalysis_JetResDown_80X_Moriond_v1-merge',
+    'UnclusteredEnUp'  : '2018-05-02_MuMuTauTauAnalysis_UnclusteredUp_80X_Moriond_v1-merge',
+    'UnclusteredEnDown': '2018-05-02_MuMuTauTauAnalysis_UnclusteredDown_80X_Moriond_v1-merge',
 }
 
 def getNtupleDirectory(analysis,local=False,version=getCMSSWVersion(),shift=''):

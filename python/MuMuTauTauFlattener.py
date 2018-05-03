@@ -16,6 +16,7 @@ from NtupleFlattener import NtupleFlattener
 from DevTools.Utilities.utilities import prod, ZMASS
 from DevTools.Plotter.higgsUtilities import *
 from DevTools.Analyzer.utilities import deltaR, deltaPhi
+from DevTools.Analyzer.BTagScales import BTagScales
 
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
@@ -83,12 +84,14 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.doGenMatch = False
         self.doNewloose = True
 
+        self.btag_scales = BTagScales('80X')
+
         if self.doMediumMuon:
             logging.error('Cannot use medium muon yet')
             raise
 
 
-        self.mvaCut = -1 # -0.8, -0.5
+        self.mvaCut = -0.5 # -0.8, -0.5
         self.isoCut = 0.4
 
         self.mh = 0
