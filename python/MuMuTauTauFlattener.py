@@ -512,10 +512,11 @@ class MuMuTauTauFlattener(NtupleFlattener):
                 fakeEff = fake[0]
                 if self.shift=='fakeUp': fakeEff = fake[0]+fake[1]
                 if self.shift=='fakeDown': fakeEff = fake[0]-fake[1]
+                if fakeEff<0: fakeEff = fake[0]
                 if fakeEff>0 and fakeEff<1:
                     weight *= fakeEff/(1-fakeEff)
                 else:
-                    logging.warning('invalid fake eff = {} for {} {} {}'.format(fakeeff,l,n,d))
+                    logging.warning('invalid fake eff = {} for {} {} {} - {} {} - {} +/- {}'.format(fakeEff,l,n,d,getattr(row,'{}_pt'.format(l)),getattr(row,'{}_eta'.format(l)),*fake))
 
 
         return weight
