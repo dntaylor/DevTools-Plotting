@@ -60,7 +60,7 @@ allsignals = []
 signame = 'HToAAH{h}A{a}'
 
 hmasses = [125,300,750]
-amasses = [5,7,9,11,13,15,17,19,21]
+amasses = ['3p6',4,5,6,7,9,11,13,15,17,19,21]
 amasses = [5,9,13,17,21]
 
 for h in hmasses:

@@ -325,8 +325,11 @@ xsecs = {
     # NOTE: just pulled using gen xsec analyzer... very wrong (probably)
     # instead: 125: 51.51, 300: 7.955, 750: 0.6909
     # BR (h to aa to mmtt) = 0.1%
+    'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-3p6_TuneCUETP8M1_13TeV_madgraph_pythia8'      :  51.51   * 0.001 * PB,
+    'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-4_TuneCUETP8M1_13TeV_madgraph_pythia8'        :  51.51   * 0.001 * PB,
     'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-5_TuneCUETP8M1_13TeV_madgraph_pythia8'        :  51.51   * 0.001 * PB, #1.323e+02 * PB,
-    'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-7_TuneCUETP8M1_13TeV_madgraph_pythia8'        :  51.51   * 0.001 * PB, #1. * PB,
+    'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-6_TuneCUETP8M1_13TeV_madgraph_pythia8'        :  51.51   * 0.001 * PB,
+    'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-7_TuneCUETP8M1_13TeV_madgraph_pythia8'        :  51.51   * 0.001 * PB,
     'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-9_TuneCUETP8M1_13TeV_madgraph_pythia8'        :  51.51   * 0.001 * PB, #5.560e+02 * PB,
     'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-11_TuneCUETP8M1_13TeV_madgraph_pythia8'       :  51.51   * 0.001 * PB, #8.514e+02 * PB,
     'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-13_TuneCUETP8M1_13TeV_madgraph_pythia8'       :  51.51   * 0.001 * PB, #1.201e+03 * PB,
@@ -348,7 +351,7 @@ xsecs = {
     'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-300_M-9_TuneCUETP8M1_13TeV_madgraph_pythia8'  :   7.955  * 0.001 * PB, #4.126e+01 * PB,
     'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-300_M-11_TuneCUETP8M1_13TeV_madgraph_pythia8' :   7.955  * 0.001 * PB, #6.348e+01 * PB,
     'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-300_M-13_TuneCUETP8M1_13TeV_madgraph_pythia8' :   7.955  * 0.001 * PB, #9.002e+01 * PB,
-    'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-300_M-15_TuneCUETP8M1_13TeV_madgraph_pythia8' :   7.955  * 0.001 * PB, #1. * PB,
+    'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-300_M-15_TuneCUETP8M1_13TeV_madgraph_pythia8' :   7.955  * 0.001 * PB,
     'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-300_M-17_TuneCUETP8M1_13TeV_madgraph_pythia8' :   7.955  * 0.001 * PB, #1.558e+02 * PB,
     'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-300_M-19_TuneCUETP8M1_13TeV_madgraph_pythia8' :   7.955  * 0.001 * PB, #1.958e+02 * PB,
     'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-300_M-21_TuneCUETP8M1_13TeV_madgraph_pythia8' :   7.955  * 0.001 * PB, #2.392e+02 * PB,
