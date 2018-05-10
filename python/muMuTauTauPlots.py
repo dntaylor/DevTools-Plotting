@@ -16,13 +16,14 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 version = getCMSSWVersion()
 
 blind = True
-doSignals = True
-doMC = True
-do2D = True
+doSignals = False
+doMC = False
+do2D = False
 doDM = True
-doAllSignals = True
+doAllSignals = False
 doDatadriven = True
-doLowmass = True
+doLowmass = False
+doChi2 = True
 doHighmass = False
 doDESY = False
 doSameSign = False
@@ -126,6 +127,14 @@ if doSameSign:
         subsels += ['samesigndm0','samesigndm1','samesigndm10']
         signalsubsels += ['samesigndm0','samesigndm1','samesigndm10']
         tags += ['samesigndm0','samesigndm1','samesigndm10']
+if doChi2: 
+    subsels += ['chi2']
+    signalsubsels += ['chi2']
+    tags += ['chi2']
+    if doDM: 
+        subsels += ['chi2dm0','chi2dm1','chi2dm10']
+        signalsubsels += ['chi2dm0','chi2dm1','chi2dm10']
+        tags += ['chi2dm0','chi2dm1','chi2dm10']
 signalsubsels += ['genMatch']
 if doDM:
     signalsubsels += ['genMatchdm0','genMatchdm1','genMatchdm10']
@@ -142,6 +151,7 @@ for sel in basesels:
 ########################
 plots = {
     # h
+    'kinFitChi2'            : {'xaxis': 'Kin. Fit #chi^{2}', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': [x*2 for x in range(50)], 'logy': False, 'overflow': True},
     'hMass'                 : {'xaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,500,10), 'logy': False, 'overflow': True},
     'hMassKinFit'           : {'xaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,500,10), 'logy': False, 'overflow': True},
     'hMt'                   : {'xaxis': 'm_{T}^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,650,10), 'logy': False, 'overflow': True},
@@ -367,7 +377,7 @@ if doDatadriven:
                 for s in []:
                     plotter.addHistogramToStack(s,sigMap[s])
                 
-                if tag=='':
+                if tag in ['','chi2']:
                     for signal in signals:
                         plotter.addHistogram(signal,sigMap[signal],signal=True)
                 
@@ -474,7 +484,7 @@ if doMatrix:
                 for s in []:
                     plotter.addHistogramToStack(s,sigMap[s])
                 
-                if tag=='':
+                if tag in ['','chi2']:
                     for signal in signals:
                         plotter.addHistogram(signal,sigMap[signal],signal=True)
                 
@@ -545,7 +555,7 @@ if doMatrix:
             for s in []:
                 plotter.addHistogramToStack(s,sigMap[s])
             
-            if tag=='':
+            if tag in ['','chi2']:
                 for signal in signals:
                     plotter.addHistogram(signal,sigMap[signal],signal=True)
             

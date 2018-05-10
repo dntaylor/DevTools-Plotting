@@ -73,8 +73,9 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.datadrivenRegular = False
         self.doLowMass = True
         self.doHighMass = False
-        self.doSameSign = True
-        self.doDESY = True
+        self.doSameSign = False
+        self.doDESY = False
+        self.doChi2 = True
         self.doBVeto = True
         self.doDM = True
         self.doPerDM = True
@@ -186,6 +187,16 @@ class MuMuTauTauFlattener(NtupleFlattener):
                 baseSels += ['desydm0']
                 baseSels += ['desydm1']
                 baseSels += ['desydm10']
+        if self.doChi2:
+            self.selectionMap['chi2/default'] = lambda row: row.kinFitChi2<100. and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            baseSels += ['chi2']
+            if self.doPerDM:
+                self.selectionMap['chi2dm0/default']  = lambda row: row.ath_decayMode==0  and row.kinFitChi2<100 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['chi2dm1/default']  = lambda row: row.ath_decayMode==1  and row.kinFitChi2<100 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['chi2dm10/default'] = lambda row: row.ath_decayMode==10 and row.kinFitChi2<100 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                baseSels += ['chi2dm0']
+                baseSels += ['chi2dm1']
+                baseSels += ['chi2dm10']
         if self.ma and self.mh:
             self.selectionMap['genMatch/default'] = lambda row: passGenMatch(row,'ath') and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
             baseSels += ['genMatch']
@@ -239,6 +250,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'count'                       : {'x': lambda row: 1,                                  'xBinning': [1,0,2],                 }, # just a count of events passing selection
             'genChannel'                  : {'x': lambda row: 'xxxx' if len(row.genChannel)<4 else ''.join(sorted(row.genChannel[:2])+sorted(row.genChannel[2:4])), 
                                              'xBinning': ['mmhm', 'mmem', 'mmmm','mmhh','mmeh','mmee','xxxx']},
+            'kinFitChi2'                  : {'x': lambda row: row.kinFitChi2,                     'xBinning': [1000,0,100],            },
             'numVertices'                 : {'x': lambda row: row.numVertices,                    'xBinning': [60,0,60],               },
             'met'                         : {'x': lambda row: row.met_pt,                         'xBinning': [500, 0, 500],           },
             'metPhi'                      : {'x': lambda row: row.met_phi,                        'xBinning': [50, -3.14159, 3.14159], },
