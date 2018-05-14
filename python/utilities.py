@@ -192,18 +192,18 @@ latestShifts['80X']['Hpp4l'] = {
 }
 latestShifts['80X']['MuMuTauTau'] = {
 # Moriond 2017
-    'ElectronEnUp'     : '2018-05-02_MuMuTauTauAnalysis_ElectronEnUp_80X_v1-merge',
-    'ElectronEnDown'   : '2018-05-02_MuMuTauTauAnalysis_ElectronEnDown_80X_v1-merge',
-    'MuonEnUp'         : '2018-05-02_MuMuTauTauAnalysis_MuonEnUp_80X_v1-merge',
-    'MuonEnDown'       : '2018-05-02_MuMuTauTauAnalysis_MuonEnDown_80X_v1-merge',
-    'TauEnUp'          : '2018-05-02_MuMuTauTauAnalysis_TauEnUp_80X_v1-merge',
-    'TauEnDown'        : '2018-05-02_MuMuTauTauAnalysis_TauEnDown_80X_v1-merge',
-    'JetEnUp'          : '2018-05-02_MuMuTauTauAnalysis_JetEnUp_80X_v1-merge',
-    'JetEnDown'        : '2018-05-02_MuMuTauTauAnalysis_JetEnDown_80X_v1-merge',
-    'JetResUp'         : '2018-05-02_MuMuTauTauAnalysis_JetResUp_80X_v1-merge',
-    'JetResDown'       : '2018-05-02_MuMuTauTauAnalysis_JetResDown_80X_v1-merge',
-    'UnclusteredEnUp'  : '2018-05-02_MuMuTauTauAnalysis_UnclusteredEnUp_80X_v1-merge',
-    'UnclusteredEnDown': '2018-05-02_MuMuTauTauAnalysis_UnclusteredEnDown_80X_v1-merge',
+    'ElectronEnUp'     : '2018-05-14_MuMuTauTauAnalysis_ElectronEnUp_80X_v1-merge',
+    'ElectronEnDown'   : '2018-05-14_MuMuTauTauAnalysis_ElectronEnDown_80X_v1-merge',
+    'MuonEnUp'         : '2018-05-14_MuMuTauTauAnalysis_MuonEnUp_80X_v1-merge',
+    'MuonEnDown'       : '2018-05-14_MuMuTauTauAnalysis_MuonEnDown_80X_v1-merge',
+    'TauEnUp'          : '2018-05-14_MuMuTauTauAnalysis_TauEnUp_80X_v1-merge',
+    'TauEnDown'        : '2018-05-14_MuMuTauTauAnalysis_TauEnDown_80X_v1-merge',
+    'JetEnUp'          : '2018-05-14_MuMuTauTauAnalysis_JetEnUp_80X_v1-merge',
+    'JetEnDown'        : '2018-05-14_MuMuTauTauAnalysis_JetEnDown_80X_v1-merge',
+    'JetResUp'         : '2018-05-14_MuMuTauTauAnalysis_JetResUp_80X_v1-merge',
+    'JetResDown'       : '2018-05-14_MuMuTauTauAnalysis_JetResDown_80X_v1-merge',
+    'UnclusteredEnUp'  : '2018-05-14_MuMuTauTauAnalysis_UnclusteredEnUp_80X_v1-merge',
+    'UnclusteredEnDown': '2018-05-14_MuMuTauTauAnalysis_UnclusteredEnDown_80X_v1-merge',
 }
 
 def getNtupleDirectory(analysis,local=False,version=getCMSSWVersion(),shift=''):
