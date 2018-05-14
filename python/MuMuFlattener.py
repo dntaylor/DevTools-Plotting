@@ -92,6 +92,10 @@ class MuMuFlattener(NtupleFlattener):
             'm2Iso'                      : {'x': lambda row: row.m2_isolation,                   'xBinning': [100, 0, 2],             },
         }
 
+        self.datasetParams = {
+            'mmMass_dataset'             : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.mm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   },
+        }
+
         # initialize flattener
         super(MuMuFlattener, self).__init__('MuMu',sample,**kwargs)
 
