@@ -1253,10 +1253,14 @@ class Plotter(PlotterBase):
                     sigErr2 += sig.GetBinError(j)**2
                     bgVal += bg.GetBinContent(j)
                     bgErr2 += bg.GetBinError(j)**2
-                sigErr = sigErr**0.5
-                bgErr = bgErr**0.5
+                sigErr = sigErr2**0.5
+                bgErr = bgErr2**0.5
+                # TEMP: use sqrt(N) for error on bg
+                # TODO: use poisson
+                bgErr = bgVal**0.5
                 #significanceVal = sigVal / (sigVal+bgVal) if sigVal+bgVal else 0.
-                significanceVal = asimovSignificance((sigVal,sigErr),(bgVal,bgErr))
+                #significanceVal = asimovSignificance((sigVal,sigErr),(bgVal,bgErr))
+                significanceVal = asimovSignificanceWithError((sigVal,sigErr),(bgVal,bgErr))
                 if significanceVal>0: thisMin = min(thisMin,significanceVal)
                 significance.SetBinContent(b+1,significanceVal)
                 significance.SetBinError(b+1,0.)

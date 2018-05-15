@@ -352,13 +352,13 @@ def getDatadrivenPlot(*plots,**kwargs):
     looseMVA = kwargs.pop('looseMVA',None)
     tag = kwargs.pop('tag',None)
     histMap = {}
-    for s in samples+signals+['data','datadriven']: histMap[s] = []
+    for s in samples+signals+allsignals+['data','datadriven']: histMap[s] = []
     for plot in plots:
         aplot = '{}region{}/{}'.format(tag+'/' if tag else '',region,plot)
         bplot = '{}region{}_fakeFor{}/{}'.format(tag+'/' if tag else '',source,region,plot)
         if looseMVA:
             bplot = '{}region{}_fakeFor{}{:.1f}/{}'.format(tag+'/' if tag else '',source,region,looseMVA,plot)
-        for s in samples+signals+['data']: histMap[s] += [aplot]
+        for s in samples+signals+allsignals+['data']: histMap[s] += [aplot]
         histMap['datadriven'] += [bplot]
     return histMap
 
@@ -399,6 +399,25 @@ if doDatadriven:
                         savename = '{}region{}/datadriven_from{}/{}_{}'.format(tag+'/' if tag else '',region,source,plot,s)
                         if looseMVA: savename = '{}region{}/datadriven_from{}{:.1f}/{}_{}'.format(tag+'/' if tag else '',region,source,looseMVA,plot,s)
                         plotter.plot(getDatadrivenPlot(plotname,region=region,source=source,looseMVA=looseMVA,tag=tag),savename,doGOF=True,**kwargs)
+
+                for h in hmasses:
+                    sigOrder = []
+                    bgOrder = []
+                    for a in amasses:
+                        name = signame.format(h=h,a=a)
+                        sigOrder += [name]
+                        bgOrder += ['datadriven']
+                        plotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': aColors[a]})
+
+                    for plot in ['kinFitChi2']:
+                        kwargs = deepcopy(plots[plot])
+                        kwargs['yaxis'] = 'Significance'
+                        kwargs['rebin'] = [x*0.2 for x in range(50)]
+                        plotname = '{}'.format(plot)
+                        savename = '{}region{}/datadriven_from{}/{}_significance_h{}'.format(tag+'/' if tag else '',region,source,plot,h)
+                        if looseMVA: savename = '{}region{}/datadriven_from{}{:.1f}/{}_significiance_h{}'.format(tag+'/' if tag else '',region,source,looseMVA,plot,h)
+                        plotter.plotSignificance(getDatadrivenPlot(plotname,region=region,source=source,looseMVA=looseMVA,tag=tag),sigOrder,bgOrder,savename,**kwargs)
+
 
 
 def getMatrixDatadrivenPlot(*plots,**kwargs):
@@ -703,9 +722,6 @@ if doNormalizations:
                 savename = 'highmass/regions_datadriven_normalized/{}_{}'.format(plot,s)
                 plotter.plotNormalized(plotname,savename,**kwargs)
                     
-
-    
-    
 
 ################
 ### 2D plots ###
