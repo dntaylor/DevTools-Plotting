@@ -1232,6 +1232,9 @@ class Plotter(PlotterBase):
         lowestMin = 999999.
         hists = OrderedDict()
 
+        eh =  [1.15, 1.36, 1.53, 1.73, 1.98, 2.21, 2.42, 2.61, 2.80, 3.00 ]
+        el =  [0.00, 1.00, 2.00, 2.14, 2.30, 2.49, 2.68, 2.86, 3.03, 3.19 ]
+
         for i,histNames in enumerate(zip(signals,backgrounds)):
             signal, background = histNames
             sig = self._getHistogram(signal,variable,nofill=True,**kwargs)
@@ -1255,9 +1258,7 @@ class Plotter(PlotterBase):
                     bgErr2 += bg.GetBinError(j)**2
                 sigErr = sigErr2**0.5
                 bgErr = bgErr2**0.5
-                # TEMP: use sqrt(N) for error on bg
-                # TODO: use poisson
-                bgErr = bgVal**0.5
+                bgErr = bgVal**0.5 if bgVal>9 else max(el[int(bgVal)],eh[int(bgVal)])
                 #significanceVal = sigVal / (sigVal+bgVal) if sigVal+bgVal else 0.
                 #significanceVal = asimovSignificance((sigVal,sigErr),(bgVal,bgErr))
                 significanceVal = asimovSignificanceWithError((sigVal,sigErr),(bgVal,bgErr))
