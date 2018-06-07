@@ -198,7 +198,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
                     baseSels += ['chi2_{}dm0'.format(h)]
                     baseSels += ['chi2_{}dm1'.format(h)]
                     baseSels += ['chi2_{}dm10'.format(h)]
-        if self.ma and self.mh:
+        if self.ma and self.mh and self.doGenMatch:
             self.selectionMap['genMatch/default'] = lambda row: passGenMatch(row,'ath') and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
             baseSels += ['genMatch']
             if self.doPerDM:
@@ -259,7 +259,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'hMass'                       : {'x': lambda row: row.h_mass,                         'xBinning': [1000, 0, 1000],         },
             'hMassKinFit'                 : {'x': lambda row: row.h_massKinFit,                   'xBinning': [1000, 0, 1000],         },
             'hMt'                         : {'x': lambda row: row.hmet_mt,                        'xBinning': [1000, 0, 1000],         },
-            'hMcat'                       : {'x': lambda row: row.hmet_mcat,                      'xBinning': [1000, 0, 1000],         },
+            #'hMcat'                       : {'x': lambda row: row.hmet_mcat,                      'xBinning': [1000, 0, 1000],         },
             'hDeltaMass'                  : {'x': lambda row: row.amm_mass-row.att_mass,          'xBinning': [1000, -500, 500],       },
             'hDeltaMt'                    : {'x': lambda row: row.amm_mass-row.attmet_mt,         'xBinning': [1000, -500, 500],       },
             # amm
@@ -279,7 +279,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'attMass'                     : {'x': lambda row: row.att_mass,                       'xBinning': [3000, 0, 60],           },
             'attMassKinFit'               : {'x': lambda row: row.att_massKinFit,                 'xBinning': [3000, 0, 60],           },
             'attMt'                       : {'x': lambda row: row.attmet_mt,                      'xBinning': [3000, 0, 60],           },
-            'attMcat'                     : {'x': lambda row: row.attmet_mcat,                    'xBinning': [3000, 0, 60],           },
+            #'attMcat'                     : {'x': lambda row: row.attmet_mcat,                    'xBinning': [3000, 0, 60],           },
             'attDeltaR'                   : {'x': lambda row: row.att_deltaR,                     'xBinning': [400, 0, 6.0],           },
             'atmPt'                       : {'x': lambda row: row.atm_pt,                         'xBinning': [500, 0, 500],           },
             'atmEta'                      : {'x': lambda row: row.atm_eta,                        'xBinning': [100, -2.5, 2.5],        },
@@ -295,7 +295,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'athJetCSV'                   : {'x': lambda row: row.athjet_CSVv2,                   'xBinning': [500, 0, 1],             },
             'attDeltaPhi'                 : {'x': lambda row: abs(row.att_deltaPhi),              'xBinning': [500, 0, 3.14159],       },
             'athIso'                      : {'x': lambda row: row.ath_byIsolationMVArun2v1DBoldDMwLTraw,        'xBinning': [100, -1, 1], },
-            'athIsoCB'                    : {'x': lambda row: row.ath_byCombinedIsolationDeltaBetaCorrRaw3Hits, 'xBinning': [10, 0, 10],  },
+            #'athIsoCB'                    : {'x': lambda row: row.ath_byCombinedIsolationDeltaBetaCorrRaw3Hits, 'xBinning': [10, 0, 10],  },
             'atmIso'                      : {'x': lambda row: row.atm_isolation,                  'xBinning': [100, 0, 2],             },
             #'athAgainstMuonLoose'         : {'x': lambda row: row.ath_againstMuonLoose3,          'xBinning': [2, -0.5, 1.5],          },
             #'athAgainstMuonTight'         : {'x': lambda row: row.ath_againstMuonTight3,          'xBinning': [2, -0.5, 1.5],          },
@@ -308,8 +308,8 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'ammMass_attMass'             : {'x': lambda row: row.amm_mass, 'y': lambda row: row.att_mass,     'xBinning': [60, 0, 30], 'yBinning': [60, 0, 60]   },
             'ammMass_hMass'               : {'x': lambda row: row.amm_mass, 'y': lambda row: row.h_mass,       'xBinning': [60, 0, 30], 'yBinning': [50, 0, 1000] },
             'ammMass_hMassKinFit'         : {'x': lambda row: row.amm_mass, 'y': lambda row: row.h_massKinFit, 'xBinning': [60, 0, 30], 'yBinning': [50, 0, 1000] },
-            'am2Iso_athIso'               : {'x': lambda row: row.am2_isolation, 'y': lambda row: row.ath_byIsolationMVArun2v1DBoldDMwLTraw,    'xBinning': [40,0,2], 'yBinning': [40,-1,1] },
-            'am2Iso_athPassIso'           : {'x': lambda row: row.am2_isolation, 'y': lambda row: row.ath_byMediumIsolationMVArun2v1DBoldDMwLT, 'xBinning': [40,0,2], 'yBinning': [2,-0.5,1.5] },
+            #'am2Iso_athIso'               : {'x': lambda row: row.am2_isolation, 'y': lambda row: row.ath_byIsolationMVArun2v1DBoldDMwLTraw,    'xBinning': [40,0,2], 'yBinning': [40,-1,1] },
+            #'am2Iso_athPassIso'           : {'x': lambda row: row.am2_isolation, 'y': lambda row: row.ath_byMediumIsolationMVArun2v1DBoldDMwLT, 'xBinning': [40,0,2], 'yBinning': [2,-0.5,1.5] },
             'genChannel_athDM'            : {'x': lambda row: 'xxxx' if len(row.genChannel)<4 else ''.join(sorted(row.genChannel[:2])+sorted(row.genChannel[2:4])), 
                                              'y': lambda row: str(int(row.ath_decayMode)),
                                              'xBinning': ['mmhm', 'mmem', 'mmmm','mmhh','mmeh','mmee','xxxx'], 'yBinning': ['0','1','5','6','10']},
@@ -317,9 +317,9 @@ class MuMuTauTauFlattener(NtupleFlattener):
 
         self.datasetParams = {
             'ammMass_dataset'             : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   },
-            'attMass_dataset'             : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.att_mass,     'xVar': ROOT.RooRealVar('x','x',0,60),   },
-            'hMass_dataset'               : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_mass,       'xVar': ROOT.RooRealVar('x','x',0,1200), },
-            'hMassKinFit_dataset'         : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_massKinFit, 'xVar': ROOT.RooRealVar('x','x',0,1200), },
+            #'attMass_dataset'             : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.att_mass,     'xVar': ROOT.RooRealVar('x','x',0,60),   },
+            #'hMass_dataset'               : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_mass,       'xVar': ROOT.RooRealVar('x','x',0,1200), },
+            #'hMassKinFit_dataset'         : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_massKinFit, 'xVar': ROOT.RooRealVar('x','x',0,1200), },
             'ammMass_attMass_dataset'     : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.att_mass,     'yVar': ROOT.RooRealVar('y','y',0,60),   },
             'ammMass_hMass_dataset'       : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.h_mass,       'yVar': ROOT.RooRealVar('y','y',0,1000), },
             'ammMass_hMassKinFit_dataset' : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.h_massKinFit, 'yVar': ROOT.RooRealVar('y','y',0,1000), },
