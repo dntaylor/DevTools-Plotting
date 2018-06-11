@@ -198,6 +198,31 @@ class MuMuTauTauFlattener(NtupleFlattener):
                     baseSels += ['chi2_{}dm0'.format(h)]
                     baseSels += ['chi2_{}dm1'.format(h)]
                     baseSels += ['chi2_{}dm10'.format(h)]
+            self.selectionMap['chi2_{}/default'.format(125)] = lambda row: row.kinFitChi2<10 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            self.selectionMap['chi2_{}/default'.format(300)] = lambda row: row.kinFitChi2<30 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            self.selectionMap['chi2_{}/default'.format(750)] = lambda row: row.kinFitChi2<200 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            baseSels += ['chi2_{}'.format(125)]
+            baseSels += ['chi2_{}'.format(300)]
+            baseSels += ['chi2_{}'.format(750)]
+            if self.doPerDM:
+                self.selectionMap['chi2_{}dm0/default'.format(125)]  = lambda row: row.ath_decayMode==0  and row.kinFitChi2<10 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['chi2_{}dm1/default'.format(125)]  = lambda row: row.ath_decayMode==1  and row.kinFitChi2<10 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['chi2_{}dm10/default'.format(125)] = lambda row: row.ath_decayMode==10 and row.kinFitChi2<10 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['chi2_{}dm0/default'.format(300)]  = lambda row: row.ath_decayMode==0  and row.kinFitChi2<30 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['chi2_{}dm1/default'.format(300)]  = lambda row: row.ath_decayMode==1  and row.kinFitChi2<30 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['chi2_{}dm10/default'.format(300)] = lambda row: row.ath_decayMode==10 and row.kinFitChi2<30 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['chi2_{}dm0/default'.format(750)]  = lambda row: row.ath_decayMode==0  and row.kinFitChi2<200 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['chi2_{}dm1/default'.format(750)]  = lambda row: row.ath_decayMode==1  and row.kinFitChi2<200 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                self.selectionMap['chi2_{}dm10/default'.format(750)] = lambda row: row.ath_decayMode==10 and row.kinFitChi2<200 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+                baseSels += ['chi2_{}dm0'.format(125)]
+                baseSels += ['chi2_{}dm1'.format(125)]
+                baseSels += ['chi2_{}dm10'.format(125)]
+                baseSels += ['chi2_{}dm0'.format(300)]
+                baseSels += ['chi2_{}dm1'.format(300)]
+                baseSels += ['chi2_{}dm10'.format(300)]
+                baseSels += ['chi2_{}dm0'.format(750)]
+                baseSels += ['chi2_{}dm1'.format(750)]
+                baseSels += ['chi2_{}dm10'.format(750)]
         if self.ma and self.mh and self.doGenMatch:
             self.selectionMap['genMatch/default'] = lambda row: passGenMatch(row,'ath') and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
             baseSels += ['genMatch']
