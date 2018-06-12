@@ -127,7 +127,7 @@ latestNtuples['80X'] = {
     'SingleJet'      : '2017-07-18_SingleJetAnalysis_80X_QCD_v1-merge',
 # MuMuTauTau
     'MuMu'           : '2018-05-10_MuMuAnalysis_80X_v1-merge',
-    'MuMuTauTau'     : '2018-05-08_MuMuTauTauAnalysis_80X_v1-merge',
+    'MuMuTauTau'     : '2018-06-11_MuMuTauTauAnalysis_80X_v2-merge', # nothing changed, but added a new variable
     'MuMuTauFakeRate': '2018-03-19_MuMuTauFakeRateAnalysis_80X_v2-merge',
     'MuMuMuFakeRate' : '2018-02-09_MuMuMuFakeRateAnalysis_80X_v1-merge',
 }

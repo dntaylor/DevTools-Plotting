@@ -7,6 +7,7 @@ import pickle
 import time
 from array import array
 import numbers
+from collections import OrderedDict
 
 sys.argv.append('-b')
 import ROOT
@@ -88,6 +89,8 @@ class NtupleFlattener(object):
         if not hasattr(self,'selections'): self.selections = ['default']
         if not hasattr(self,'selectionHists'): self.selectionHists = {}
         if not hasattr(self,'datasetParams'): self.datasetParams = {}
+        if not hasattr(self,'textSelections'): self.textSelections = []
+        if not hasattr(self,'textFields'): self.textFields = OrderedDict()
         for selection in self.selections:
             for hist in self.histParams:
                 if selection in self.selectionHists:
@@ -149,6 +152,13 @@ class NtupleFlattener(object):
                             self.datasets[histName] = ROOT.RooDataSet(histName,histName,ROOT.RooArgSet(x,y,w))#,w.GetName())
                         else:
                             self.datasets[histName] = ROOT.RooDataSet(histName,histName,ROOT.RooArgSet(x,w))#,w.GetName())
+        for selection in self.textSelections:
+            outdir = 'text/{}/{}/{}'.format(self.analysis,self.sample,selection)
+            python_mkdir(outdir)
+            outfile = '{}/events.csv'.format(outdir)
+            with open(outfile,'w') as f:
+                f.write(','.join(self.textFields.keys())+',weight\n')
+
 
     def getTree(self):
         if not self.initialized: self.__initializeNtuple()
@@ -311,4 +321,11 @@ class NtupleFlattener(object):
                 if genChan!='all':
                     histName = '{0}/{1}/gen_{2}/{3}'.format(selection,chan,genChan,hist)
                     if histName in self.datasets: self.datasets[histName].add(ROOT.RooArgSet(x,w))
+
+        if selection in self.textSelections:
+            outdir = 'text/{}/{}/{}'.format(self.analysis,self.sample,selection)
+            outfile = '{}/events.csv'.format(outdir)
+            with open(outfile,'a') as f:
+                f.write(','.join(['{}'.format(self.textFields[k](row)) for k in self.textFields.keys()])+',{}\n'.format(weight))
+
 

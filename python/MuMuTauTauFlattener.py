@@ -8,6 +8,7 @@ import operator
 from array import array
 import numpy as np
 from numpy.linalg import inv
+from collections import OrderedDict
 
 import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -84,6 +85,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.doMediumMuon = False
         self.doGenMatch = False
         self.doNewloose = True
+        self.doTextFiles = True
 
         self.btag_scales = BTagScales('80X')
 
@@ -188,16 +190,16 @@ class MuMuTauTauFlattener(NtupleFlattener):
                 baseSels += ['desydm1']
                 baseSels += ['desydm10']
         if self.doChi2:
-            for h,x in [(125,10),(300,30),(750,200)]:
-                self.selectionMap['chi2_{}/default'.format(h)] = lambda row: row.kinFitChi2<x and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
-                baseSels += ['chi2_{}'.format(h)]
-                if self.doPerDM:
-                    self.selectionMap['chi2_{}dm0/default'.format(h)]  = lambda row: row.ath_decayMode==0  and row.kinFitChi2<x and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
-                    self.selectionMap['chi2_{}dm1/default'.format(h)]  = lambda row: row.ath_decayMode==1  and row.kinFitChi2<x and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
-                    self.selectionMap['chi2_{}dm10/default'.format(h)] = lambda row: row.ath_decayMode==10 and row.kinFitChi2<x and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
-                    baseSels += ['chi2_{}dm0'.format(h)]
-                    baseSels += ['chi2_{}dm1'.format(h)]
-                    baseSels += ['chi2_{}dm10'.format(h)]
+            #for h,x in [(125,10),(300,30),(750,200)]:
+            #    self.selectionMap['chi2_{}/default'.format(h)] = lambda row: row.kinFitChi2<x and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            #    baseSels += ['chi2_{}'.format(h)]
+            #    if self.doPerDM:
+            #        self.selectionMap['chi2_{}dm0/default'.format(h)]  = lambda row: row.ath_decayMode==0  and row.kinFitChi2<x and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            #        self.selectionMap['chi2_{}dm1/default'.format(h)]  = lambda row: row.ath_decayMode==1  and row.kinFitChi2<x and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            #        self.selectionMap['chi2_{}dm10/default'.format(h)] = lambda row: row.ath_decayMode==10 and row.kinFitChi2<x and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
+            #        baseSels += ['chi2_{}dm0'.format(h)]
+            #        baseSels += ['chi2_{}dm1'.format(h)]
+            #        baseSels += ['chi2_{}dm10'.format(h)]
             self.selectionMap['chi2_{}/default'.format(125)] = lambda row: row.kinFitChi2<10 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
             self.selectionMap['chi2_{}/default'.format(300)] = lambda row: row.kinFitChi2<30 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
             self.selectionMap['chi2_{}/default'.format(750)] = lambda row: row.kinFitChi2<200 and all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
@@ -271,6 +273,61 @@ class MuMuTauTauFlattener(NtupleFlattener):
                 self.selections += ['matrixF/{}regionB_forB_fakeForA'.format(tag)]
                 self.selections += ['matrixF/{}regionD_forB_fakeForA'.format(tag)]
 
+        if self.doTextFiles:
+            self.textFields = OrderedDict()
+            self.textFields['run']           = lambda row: row.run
+            self.textFields['lumi']          = lambda row: row.lumi
+            self.textFields['event']         = lambda row: row.event
+            self.textFields['m1Pt']          = lambda row: row.am1_pt
+            self.textFields['m1Eta']         = lambda row: row.am1_eta
+            self.textFields['m1Phi']         = lambda row: row.am1_phi
+            self.textFields['m1Energy']      = lambda row: row.am1_energy
+            self.textFields['m1Iso']         = lambda row: row.am1_isolation
+            self.textFields['m2Pt']          = lambda row: row.am2_pt
+            self.textFields['m2Eta']         = lambda row: row.am2_eta
+            self.textFields['m2Phi']         = lambda row: row.am2_phi
+            self.textFields['m2Energy']      = lambda row: row.am2_energy
+            self.textFields['m2Iso']         = lambda row: row.am2_isolation
+            self.textFields['m3Pt']          = lambda row: row.atm_pt
+            self.textFields['m3Eta']         = lambda row: row.atm_eta
+            self.textFields['m3Phi']         = lambda row: row.atm_phi
+            self.textFields['m3Energy']      = lambda row: row.atm_energy
+            self.textFields['m3Iso']         = lambda row: row.atm_isolation
+            self.textFields['tPt']           = lambda row: row.ath_pt
+            self.textFields['tEta']          = lambda row: row.ath_eta
+            self.textFields['tPhi']          = lambda row: row.ath_phi
+            self.textFields['tEnergy']       = lambda row: row.ath_energy
+            self.textFields['tMVA']          = lambda row: row.ath_byIsolationMVArun2v1DBoldDMwLTraw
+            self.textFields['tPassID']       = lambda row: passTauIso(row,'ath')
+            self.textFields['tDM']           = lambda row: row.ath_decayMode
+            self.textFields['ammMass']       = lambda row: row.amm_mass
+            self.textFields['ammDeltaR']     = lambda row: row.amm_deltaR
+            self.textFields['attMass']       = lambda row: row.att_mass
+            self.textFields['attDeltaR']     = lambda row: row.att_deltaR
+            self.textFields['hMass']         = lambda row: row.h_mass
+            self.textFields['hMassKinFit']   = lambda row: row.h_massKinFit
+            self.textFields['kinFitChi2']    = lambda row: row.kinFitChi2
+            self.textFields['genWeight']     = lambda row: row.genWeight
+            self.textFields['pileupWeight']  = lambda row: row.pileupWeight
+            self.textFields['triggerWeight'] = lambda row: row.triggerEfficiency
+            self.textFields['m1IDWeight']    = lambda row: self.getMuonScaleFactor('LooseID',row.am1_pt,row.am1_eta)[0]
+            self.textFields['m1IsoWeight']   = lambda row: self.getMuonScaleFactor('LooseIsoFromLooseID',row.am1_pt,row.am1_eta)[0]
+            self.textFields['m2IDWeight']    = lambda row: self.getMuonScaleFactor('LooseID',row.am2_pt,row.am2_eta)[0]
+            self.textFields['m2IsoWeight']   = lambda row: self.getMuonScaleFactor('LooseIsoFromLooseID',row.am2_pt,row.am2_eta)[0]
+            self.textFields['m3IDWeight']    = lambda row: self.getMuonScaleFactor('LooseID',row.atm_pt,row.atm_eta)[0]
+            self.textFields['m1TrackWeight'] = lambda row: self.getTrackingScaleFactor(row.am1_eta)[0]
+            self.textFields['m2TrackWeight'] = lambda row: self.getTrackingScaleFactor(row.am2_eta)[0]
+            self.textFields['m3TrackWeight'] = lambda row: self.getTrackingScaleFactor(row.atm_eta)[0]
+            self.textFields['lumiWeight']    = lambda row: float(self.intLumi)/self.sampleLumi if self.sampleLumi else 0.
+            self.textFields['bVetoWeight']   = lambda row: self.getBTagWeight(row)
+
+            self.textSelections = [
+                'regionA',
+                'regionB',
+                'regionC',
+                'regionD',
+            ]
+
         # setup histogram parameters
         self.histParams = {
             'count'                       : {'x': lambda row: 1,                                  'xBinning': [1,0,2],                 }, # just a count of events passing selection
@@ -284,6 +341,9 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'hMass'                       : {'x': lambda row: row.h_mass,                         'xBinning': [1000, 0, 1000],         },
             'hMassKinFit'                 : {'x': lambda row: row.h_massKinFit,                   'xBinning': [1000, 0, 1000],         },
             'hMt'                         : {'x': lambda row: row.hmet_mt,                        'xBinning': [1000, 0, 1000],         },
+            # temp
+            #'mmmMass'                     : {'x': lambda row: row.mmm_mass,                       'xBinning': [10000, 0, 100],         },
+            #'mmtMass'                     : {'x': lambda row: row.mmt_mass,                       'xBinning': [10000, 0, 100],         },
             #'hMcat'                       : {'x': lambda row: row.hmet_mcat,                      'xBinning': [1000, 0, 1000],         },
             'hDeltaMass'                  : {'x': lambda row: row.amm_mass-row.att_mass,          'xBinning': [1000, -500, 500],       },
             'hDeltaMt'                    : {'x': lambda row: row.amm_mass-row.attmet_mt,         'xBinning': [1000, -500, 500],       },
@@ -346,8 +406,8 @@ class MuMuTauTauFlattener(NtupleFlattener):
             #'hMass_dataset'               : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_mass,       'xVar': ROOT.RooRealVar('x','x',0,1200), },
             #'hMassKinFit_dataset'         : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_massKinFit, 'xVar': ROOT.RooRealVar('x','x',0,1200), },
             'ammMass_attMass_dataset'     : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.att_mass,     'yVar': ROOT.RooRealVar('y','y',0,60),   },
-            'ammMass_hMass_dataset'       : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.h_mass,       'yVar': ROOT.RooRealVar('y','y',0,1000), },
-            'ammMass_hMassKinFit_dataset' : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.h_massKinFit, 'yVar': ROOT.RooRealVar('y','y',0,1000), },
+            'ammMass_hMass_dataset'       : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.h_mass,       'yVar': ROOT.RooRealVar('y','y',0,1200), },
+            'ammMass_hMassKinFit_dataset' : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.h_massKinFit, 'yVar': ROOT.RooRealVar('y','y',0,1200), },
             'ammMass_kinFitChi2_dataset'  : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.kinFitChi2,   'yVar': ROOT.RooRealVar('y','y',0,10000),},
         }
 
