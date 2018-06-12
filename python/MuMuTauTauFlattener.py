@@ -467,6 +467,12 @@ class MuMuTauTauFlattener(NtupleFlattener):
         for idName in ['LooseID','LooseIsoFromLooseID','MediumID','LooseIsoFromMediumID']:
             self.muon_scales[idName] = self.muon_rootfile.Get(idName)
 
+        # from kyle
+        path = '{0}/src/DevTools/Analyzer/data/TNP_LowMuPt_EFFICIENCIES.root'.format(os.environ['CMSSW_BASE'])
+        self.muon_rootfile_kyle = ROOT.TFile(path)
+        self.muon_scales['LooseIDKyle'] = self.muon_rootfile_kyle.Get('hist_EtavsPtLooseID_DatatoMC')
+        self.muon_scales['LooseIsoFromLooseIDKyle'] = self.muon_rootfile_kyle.Get('hist_EtavsPtLooseISO_DatatoMC')
+
         # tracking
         path = '{0}/src/DevTools/Analyzer/data/Tracking_EfficienciesAndSF_BCDEFGH.root'.format(os.environ['CMSSW_BASE'])
         rootfile = ROOT.TFile(path)
@@ -530,9 +536,13 @@ class MuMuTauTauFlattener(NtupleFlattener):
 
     def getMuonScaleFactor(self,id,pt,eta):
         if pt>200: pt = 199
-        if pt<10: pt = 11
-        hist = self.muon_scales[id]
-        b = hist.FindBin(pt,eta)
+        if pt<3: pt = 3.1
+        if pt<20:
+            hist = self.muon_scales[id+'Kyle']
+            b = hist.FindBin(abs(eta),pt) # Kyle and official
+        else:
+            hist = self.muon_scales[id]
+            b = hist.FindBin(pt,eta) # private devin
         val = hist.GetBinContent(b)
         err = hist.GetBinError(b)
         return val, err
