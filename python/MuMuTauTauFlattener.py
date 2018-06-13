@@ -117,6 +117,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'ammWindow'  : lambda row: row.amm_mass>1 and row.amm_mass<30,
             'attDR'      : lambda row: row.att_deltaR<0.8,
             'trigger'    : lambda row: row.am1_matches_IsoMu24 or row.am1_matches_IsoTkMu24,
+            'turnon'     : lambda row: row.am1_pt>26,
             'mmDR'       : lambda row: row.amm_deltaR<1,
             'm1tmDR'     : lambda row: deltaR_row(row,'am1','atm')>0.4,
             'm1thDR'     : lambda row: deltaR_row(row,'am1','ath')>0.8,

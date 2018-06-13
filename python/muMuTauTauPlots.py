@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 version = getCMSSWVersion()
 
 blind = True
-doSignals = False
+doSignals = True
 doMC = True
 do2D = False
 doDM = True
@@ -30,6 +30,7 @@ doSameSign = False
 doMatrix = True
 doNormalizations = False
 doSignficance = False
+doGenMatch = False
 #newloose = [-1,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4]
 #newloose = [-1,-0.2,0.0,0.2,0.4]
 newloose = []
@@ -135,9 +136,10 @@ if doChi2:
         subsels += ['chi2dm0','chi2dm1','chi2dm10']
         signalsubsels += ['chi2dm0','chi2dm1','chi2dm10']
         tags += ['chi2dm0','chi2dm1','chi2dm10']
-signalsubsels += ['genMatch']
-if doDM:
-    signalsubsels += ['genMatchdm0','genMatchdm1','genMatchdm10']
+if doGenMatch:
+    signalsubsels += ['genMatch']
+    if doDM:
+        signalsubsels += ['genMatchdm0','genMatchdm1','genMatchdm10']
 
 for sel in basesels:
     for subsel in subsels:
@@ -276,7 +278,7 @@ if doMC:
             for signal in signals:
                 plotter.addHistogram(signal,sigMap[signal],signal=True)
         
-        if not blind or 'regionD' in sel or 'lowmass' in sel or 'highmass' in sel: plotter.addHistogram('data',sigMap['data'])
+        if not blind or 'regionA' not in sel or 'lowmass' in sel or 'highmass' in sel: plotter.addHistogram('data',sigMap['data'])
         
         for plot in plots:
             kwargs = deepcopy(plots[plot])
@@ -284,7 +286,7 @@ if doMC:
             savename = '{0}/mc/{1}'.format(sel,plot)
             plotter.plot(plotname,savename,**kwargs)
         
-        if blind and 'regionD' not in sel and 'lowmass' not in sel and 'highmass' not in sel: plotter.addHistogram('data',sigMap['data'])
+        if blind and 'regionA' in sel and 'lowmass' not in sel and 'highmass' not in sel: plotter.addHistogram('data',sigMap['data'])
         
         for s in special:
             for plot in special[s]:
