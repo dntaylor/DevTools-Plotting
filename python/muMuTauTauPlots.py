@@ -22,8 +22,8 @@ do2D = False
 doDM = True
 doAllSignals = False
 doDatadriven = True
-doLowmass = False
-doChi2 = False
+doLowmass = True
+doChi2 = True
 doHighmass = False
 doDESY = False
 doSameSign = False
@@ -129,13 +129,13 @@ if doSameSign:
         signalsubsels += ['samesigndm0','samesigndm1','samesigndm10']
         tags += ['samesigndm0','samesigndm1','samesigndm10']
 if doChi2: 
-    subsels += ['chi2']
-    signalsubsels += ['chi2']
-    tags += ['chi2']
+    subsels += ['chi2_125']
+    signalsubsels += ['chi2_125']
+    tags += ['chi2_125']
     if doDM: 
-        subsels += ['chi2dm0','chi2dm1','chi2dm10']
-        signalsubsels += ['chi2dm0','chi2dm1','chi2dm10']
-        tags += ['chi2dm0','chi2dm1','chi2dm10']
+        subsels       += ['chi2_125dm0','chi2_125dm1','chi2_125dm10']
+        signalsubsels += ['chi2_125dm0','chi2_125dm1','chi2_125dm10']
+        tags          += ['chi2_125dm0','chi2_125dm1','chi2_125dm10']
 if doGenMatch:
     signalsubsels += ['genMatch']
     if doDM:
