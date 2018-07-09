@@ -384,7 +384,7 @@ if doDatadriven:
                 for s in []:
                     plotter.addHistogramToStack(s,sigMap[s])
                 
-                if tag in ['','chi2']:
+                if 'lowmass' not in tag and 'highmass' not in tag:
                     for signal in signals:
                         plotter.addHistogram(signal,sigMap[signal],signal=True)
                 
@@ -510,7 +510,7 @@ if doMatrix:
                 for s in []:
                     plotter.addHistogramToStack(s,sigMap[s])
                 
-                if tag in ['','chi2']:
+                if 'lowmass' not in tag and 'highmass' not in tag:
                     for signal in signals:
                         plotter.addHistogram(signal,sigMap[signal],signal=True)
                 
@@ -581,7 +581,7 @@ if doMatrix:
             for s in []:
                 plotter.addHistogramToStack(s,sigMap[s])
             
-            if tag in ['','chi2']:
+            if 'lowmass' not in tag and 'highmass' not in tag:
                 for signal in signals:
                     plotter.addHistogram(signal,sigMap[signal],signal=True)
             
