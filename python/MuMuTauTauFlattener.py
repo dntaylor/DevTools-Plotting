@@ -406,9 +406,9 @@ class MuMuTauTauFlattener(NtupleFlattener):
 
         self.datasetParams = {
             'ammMass_dataset'             : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   },
-            #'attMass_dataset'             : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.att_mass,     'xVar': ROOT.RooRealVar('x','x',0,60),   },
-            #'hMass_dataset'               : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_mass,       'xVar': ROOT.RooRealVar('x','x',0,1200), },
-            #'hMassKinFit_dataset'         : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_massKinFit, 'xVar': ROOT.RooRealVar('x','x',0,1200), },
+            'attMass_dataset'             : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.att_mass,     'xVar': ROOT.RooRealVar('x','x',0,60),   },
+            'hMass_dataset'               : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_mass,       'xVar': ROOT.RooRealVar('x','x',0,1200), },
+            'hMassKinFit_dataset'         : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_massKinFit, 'xVar': ROOT.RooRealVar('x','x',0,1200), },
             'ammMass_attMass_dataset'     : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.att_mass,     'yVar': ROOT.RooRealVar('y','y',0,60),   },
             'ammMass_hMass_dataset'       : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.h_mass,       'yVar': ROOT.RooRealVar('y','y',0,1200), },
             'ammMass_hMassKinFit_dataset' : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.h_massKinFit, 'yVar': ROOT.RooRealVar('y','y',0,1200), },
@@ -770,8 +770,8 @@ class MuMuTauTauFlattener(NtupleFlattener):
 def parse_command_line(argv):
     parser = argparse.ArgumentParser(description='Run Flattener')
 
-    #parser.add_argument('sample', type=str, default='SingleMuon', nargs='?', help='Sample to flatten')
-    parser.add_argument('sample', type=str, default='SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-15_TuneCUETP8M1_13TeV_madgraph_pythia8', nargs='?', help='Sample to flatten')
+    parser.add_argument('sample', type=str, default='SingleMuon', nargs='?', help='Sample to flatten')
+    #parser.add_argument('sample', type=str, default='SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-15_TuneCUETP8M1_13TeV_madgraph_pythia8', nargs='?', help='Sample to flatten')
     parser.add_argument('shift', type=str, default='', nargs='?', help='Shift to apply to scale factors')
     parser.add_argument('--skipHists', action='store_true',help='Skip histograms, only do datasets')
 

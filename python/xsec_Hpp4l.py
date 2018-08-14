@@ -323,6 +323,6 @@ xsecs_right = {}
 xsecs_right_NLO = {}
 xsecs_right_kfactor = {}
 for mass in rightHanded:
-    xsecs_right[mass] = rightHanded[mass][1]
-    xsecs_right_NLO[mass] = rightHanded[mass][0]
+    xsecs_right[mass] = rightHanded[mass][0]
+    xsecs_right_NLO[mass] = rightHanded[mass][1]
     xsecs_right_kfactor[mass] = rightHanded[mass][2]
