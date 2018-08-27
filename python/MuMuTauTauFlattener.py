@@ -78,6 +78,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.doDESY = False
         self.doChi2 = True
         self.doBVeto = True
+        self.doBScales = False
         self.doDM = True
         self.doPerDM = True
         self.doMedium = doMedium
@@ -552,6 +553,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
         return val, err
         
     def getTrackingScaleFactor(self,eta):
+        return 1., 0.
         etaName = 'TrackingEta'
         for valDict in self.tracking_pog_scales[etaName]:
             etaLow = valDict['x'] - valDict['errx_down']
@@ -610,7 +612,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
             weight *= float(self.intLumi)/self.sampleLumi if self.sampleLumi else 0.
             if hasattr(row,'qqZZkfactor'): weight *= row.qqZZkfactor/1.1 # ZZ variable k factor
             # b taggin (veto)
-            if self.doBVeto: weight *= self.getBTagWeight(row)
+            if self.doBVeto and self.doBScales: weight *= self.getBTagWeight(row)
         # fake scales
         if doFake:
             if not row.isData: weight *= -1
@@ -682,7 +684,10 @@ class MuMuTauTauFlattener(NtupleFlattener):
 
         # Don't do for MC, events that pass btag contribute a factor of 1-SF
         passbveto = row.athjet_passCSVv2M<0.5
-        if isData and not passbveto and self.doBVeto: return
+        if self.doBScales:
+            if isData and not passbveto and self.doBVeto: return
+        else:
+            if not passbveto and self.doBVeto: return
 
         # per sample cuts
         keep = True
@@ -770,8 +775,8 @@ class MuMuTauTauFlattener(NtupleFlattener):
 def parse_command_line(argv):
     parser = argparse.ArgumentParser(description='Run Flattener')
 
-    parser.add_argument('sample', type=str, default='SingleMuon', nargs='?', help='Sample to flatten')
-    #parser.add_argument('sample', type=str, default='SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-15_TuneCUETP8M1_13TeV_madgraph_pythia8', nargs='?', help='Sample to flatten')
+    #parser.add_argument('sample', type=str, default='SingleMuon', nargs='?', help='Sample to flatten')
+    parser.add_argument('sample', type=str, default='SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-15_TuneCUETP8M1_13TeV_madgraph_pythia8', nargs='?', help='Sample to flatten')
     parser.add_argument('shift', type=str, default='', nargs='?', help='Shift to apply to scale factors')
     parser.add_argument('--skipHists', action='store_true',help='Skip histograms, only do datasets')
 

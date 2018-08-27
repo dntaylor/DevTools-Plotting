@@ -572,7 +572,7 @@ class NtupleWrapper(object):
             hist = 0
         return hist
 
-    def __readSkim(self,directory):
+    def __readSkim(self,directory,full=False):
         '''Read a value from the skim file.'''
         if not self.skimInitialized:
             with open(self.pickle,'rb') as f:
@@ -583,9 +583,15 @@ class NtupleWrapper(object):
         # first try finding
         key = '/'.join(components)
         if key in self.skim:
-            return self.skim[key]['val'], self.skim[key]['err2']**0.5
+            if full:
+                return self.skim[key]['val'], self.skim[key]['err2']**0.5, self.skim[key]['count']
+            else:
+                return self.skim[key]['val'], self.skim[key]['err2']**0.5
         #logging.warning('Unrecognized selection {0}'.format(directory))
-        return 0.,0.
+        if full:
+            return 0.,0.,0
+        else:
+            return 0.,0.
 
     def getHist2D(self,variable):
         '''Get a histogram'''
@@ -612,9 +618,9 @@ class NtupleWrapper(object):
         ds = ROOT.RooDataSet(ds.GetName(),ds.GetTitle(),ds,args,selection,weight)
         return ds
 
-    def getCount(self,directory):
+    def getCount(self,directory,full=False):
         '''Get a count'''
-        count = self.__readSkim(directory)
+        count = self.__readSkim(directory,full=False)
         if count is not None: return count
         return self.__read('{0}/count'.format(directory))
 

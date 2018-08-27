@@ -13,7 +13,7 @@ import ROOT
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 blind = True
-smooth = True
+smooth = False
 #limitMode = 'fullCLs'
 limitMode = 'asymptotic'
 

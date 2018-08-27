@@ -294,7 +294,8 @@ sigMaps = {
                  #'ttWJets_13TeV_madgraphMLM',
                  'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
                  'ttZJets_13TeV_madgraphMLM-pythia8',
-                 'tZq_ll_4f_13TeV-amcatnlo-pythia8',
+                 # TODO add back
+                 #'tZq_ll_4f_13TeV-amcatnlo-pythia8',
                 ],
         'VVV' : [
                  'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
@@ -392,7 +393,8 @@ sigMaps = {
                  'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
                  #'ttWJets_13TeV_madgraphMLM',
                  'ttZJets_13TeV_madgraphMLM-pythia8',
-                 'tZq_ll_4f_13TeV-amcatnlo-pythia8',
+                 # TODO add back
+                 #'tZq_ll_4f_13TeV-amcatnlo-pythia8',
                 ],
         'VVV' : [
                  'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
@@ -423,7 +425,8 @@ sigMaps = {
                  'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
                  #'ttWJets_13TeV_madgraphMLM',
                  'ttZJets_13TeV_madgraphMLM-pythia8',
-                 'tZq_ll_4f_13TeV-amcatnlo-pythia8',
+                 # TODO add back
+                 #'tZq_ll_4f_13TeV-amcatnlo-pythia8',
                  #'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
                  #'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
                  #'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
@@ -595,31 +598,35 @@ def getSelectionMap(analysis,mass):
     if analysis=='Hpp3l':
         cutRegions = {
             0: {
-                'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hm1_pt)>1.38*mass-94,
+                #'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hm1_pt)>1.38*mass-94,
+                'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hm1_pt)>min([0.5*mass+100,500]),
                 'zveto': lambda row: abs(row.z_mass-ZMASS)>10,
                 'met'  : lambda row: True,
-                'dr'   : lambda row: row.hpp_deltaR<2.9,
+                'dr'   : lambda row: True, #row.hpp_deltaR<2.9,
                 'mass' : lambda row: row.hpp_mass>0.9*mass and row.hpp_mass<1.1*mass,
             },
             1: {
-                'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hm1_pt)>1.07*mass+36,
+                #'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hm1_pt)>1.07*mass+36,
+                'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hm1_pt)>min([mass+75,500]),
                 'zveto': lambda row: abs(row.z_mass-ZMASS)>10,
                 'met'  : lambda row: row.met_pt>80,
-                'dr'   : lambda row: row.hpp_deltaR<2.9,
+                'dr'   : lambda row: row.hpp_deltaR<3, #2.9,
                 'mass' : lambda row: row.hpp_mass>0.4*mass and row.hpp_mass<1.1*mass,
             },
             2: {
-                'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hm1_pt)>1.24*mass-14,
+                #'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hm1_pt)>1.24*mass-14,
+                'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hm1_pt)>min([0.8*mass+125,min]),
                 'zveto': lambda row: abs(row.z_mass-ZMASS)>10,
                 'met'  : lambda row: row.met_pt>80,
-                'dr'   : lambda row: row.hpp_deltaR<2.5,
+                'dr'   : lambda row: row.hpp_deltaR<3, #2.5,
                 'mass' : lambda row: row.hpp_mass>0.3*mass and row.hpp_mass<1.1*mass,
             },
         }
     elif analysis=='Hpp4l':
         cutRegions = {
             0: {
-                'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hmm1_pt+row.hmm2_pt)>1.23*mass+54,
+                #'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hmm1_pt+row.hmm2_pt)>1.23*mass+54,
+                'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hmm1_pt+row.hmm2_pt)>min([0.8*mass+75,500]),
                 'zveto': lambda row: abs(row.z_mass-ZMASS)>10,
                 'drpp' : lambda row: True,
                 'drmm' : lambda row: True,
@@ -627,18 +634,20 @@ def getSelectionMap(analysis,mass):
                 'hmm'  : lambda row: row.hmm_mass>0.9*mass and row.hmm_mass<1.1*mass,
             },
             1: {
-                'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hmm1_pt+row.hmm2_pt)>1.30*mass-34,
+                #'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hmm1_pt+row.hmm2_pt)>1.30*mass-34,
+                'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hmm1_pt+row.hmm2_pt)>min([0.3*mass+200,500]),
                 'zveto': lambda row: abs(row.z_mass-ZMASS)>10,
-                'drpp' : lambda row: row.hpp_deltaR<3.3,
-                'drmm' : lambda row: row.hmm_deltaR<3.3,
+                'drpp' : lambda row: True, #row.hpp_deltaR<3.3,
+                'drmm' : lambda row: True, #row.hmm_deltaR<3.3,
                 'hpp'  : lambda row: row.hpp_mass>0.4*mass and row.hpp_mass<1.1*mass,
                 'hmm'  : lambda row: row.hmm_mass>0.4*mass and row.hmm_mass<1.1*mass,
             },
             2: {
-                'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hmm1_pt+row.hmm2_pt)>0.56*mass+194,
+                #'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hmm1_pt+row.hmm2_pt)>0.56*mass+194,
+                'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hmm1_pt+row.hmm2_pt)>min([0.25*mass+200,500]),
                 'zveto': lambda row: abs(row.z_mass-ZMASS)>10,
-                'drpp' : lambda row: row.hpp_deltaR<2.5,
-                'drmm' : lambda row: row.hmm_deltaR<2.5,
+                'drpp' : lambda row: True, #row.hpp_deltaR<2.5,
+                'drmm' : lambda row: True, #row.hmm_deltaR<2.5,
                 'hpp'  : lambda row: row.hpp_mass>0.3*mass and row.hpp_mass<1.1*mass,
                 'hmm'  : lambda row: row.hmm_mass>0.3*mass and row.hmm_mass<1.1*mass,
             },

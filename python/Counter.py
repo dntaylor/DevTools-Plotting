@@ -70,31 +70,40 @@ class Counter(object):
     def _readSampleCount(self,sampleName,directory,**kwargs):
         '''Read the count from file'''
         analysis = kwargs.pop('analysis',self.analysis)
-        hist = self.sampleFiles[analysis][sampleName].getCount(directory)
+        poisson = kwargs.pop('poisson', self.poisson)
+        hist = self.sampleFiles[analysis][sampleName].getCount(directory,full=poisson)
         if isinstance(hist,list) or isinstance(hist,tuple):
             return hist
         if isinstance(hist,ROOT.TH1):
             val = hist.GetBinContent(1) if hist else 0.
             err = hist.GetBinError(1) if hist else 0.
-            return val,err
-        return 0.,0.
+            count = hist.GetEntires() if hist else 0
+            if poisson:
+                return val,err,count 
+            else:
+                return val,err
+        if poisson:
+            return 0.,0., 0 
+        else:
+            return 0.,0.
 
     def _getTempCount(self,sampleName,selection,scalefactor,**kwargs):
         '''Get a temporary count'''
         analysis = kwargs.pop('analysis',self.analysis)
+        poisson = kwargs.pop('poisson', self.poisson)
         hist = self.sampleFiles[analysis][sampleName].getTempCount(selection,scalefactor)
         val = hist.GetBinContent(1) if hist else 0.
         err = hist.GetBinError(1) if hist else 0.
-        return val,err
+        count = hist.GetEntries() if hist else 0
+        return (val,err,count) if poisson else (val,err)
 
-    def _getPoisson(self,count):
-        entries = count[0]
+    def _getPoisson(self,entries):
         if entries<0: entries = 0
         chisqr = ROOT.TMath.ChisquareQuantile
         ey_low = entries - 0.5 * chisqr(0.1586555, 2. * entries)
         ey_high = 0.5 * chisqr(
             1. - 0.1586555, 2. * (entries + 1)) - entries
-        return (entries, ey_high)
+        return ey_high
 
     def _getCount(self,processName,directory,**kwargs):
         '''Get count for process'''
@@ -104,6 +113,7 @@ class Counter(object):
         datascalefactor = kwargs.pop('datascalefactor','1')
         selection = kwargs.pop('selection','')
         mccut = kwargs.pop('mccut','')
+        poisson = kwargs.pop('poisson',self.poisson)
         # check if it is a map, list, or directory
         if isinstance(directory,dict):       # its a map
             directory = directory[processName]
@@ -128,27 +138,42 @@ class Counter(object):
                             for cut in self.scales[processName][sampleName]:
                                 thissf = '{0}*{1}'.format(sf,self.scales[processName][sampleName][cut])
                                 thisFullCut = '{0} && {1}'.format(fullcut, cut)
-                                count = self._getTempCount(sampleName,thisFullCut,thissf,analysis=analysis)
+                                count = self._getTempCount(sampleName,thisFullCut,thissf,analysis=analysis,poisson=poisson)
                                 logging.debug('Count: {0} +/- {1}'.format(*count))
                                 if count: counts += [count]
                         else:
-                            count = self._getTempCount(sampleName,fullcut,sf,analysis=analysis)
+                            count = self._getTempCount(sampleName,fullcut,sf,analysis=analysis,poisson=poisson)
                             logging.debug('Count: {0} +/- {1}'.format(*count))
                             if count: counts += [count]
                     else:
-                        count = self._readSampleCount(sampleName,dirName,analysis=analysis)
+                        count = self._readSampleCount(sampleName,dirName,analysis=analysis,poisson=poisson)
                         logging.debug('Count: {0} +/- {1}'.format(*count))
                         if count: counts += [count]
             if not counts:
                 logging.debug('No entries for {0}'.format(processName))
-                return self._getPoisson((0.,0.)) if self.poisson else (0.,0.)
+                return (0., self._getPoisson(0.)) if poisson else (0.,0.)
             if len(counts)==1:
-                if self.poisson: counts[0] = self._getPoisson(counts[0])
-                logging.debug('Total: {0} +/- {1}'.format(*counts[0]))
-                return counts[0]
+                if poisson: 
+                    perr = self._getPoisson(counts[0][2])
+                    w = float(counts[0][0])/counts[0][2]
+                    val = counts[0][0]
+                    err = perr * w
+                else:
+                    if len(counts[0])!=2: print counts
+                    val, err = counts[0]
+                logging.debug('Total: {0} +/- {1}'.format(val,err))
+                return val,err
             else:
+                if poisson:
+                    newcounts = []
+                    for count in counts:
+                        perr = self._getPoisson(count[2])
+                        w = float(count[0])/count[2]
+                        val = count[0]
+                        err = perr * w
+                        newcounts += [[val,err]]
+                    counts = newcounts
                 total = sumWithError(*counts)
-                if self.poisson: total = self._getPoisson(total)
                 logging.debug('Total: {0} +/- {1}'.format(*total))
                 return total
         else:
