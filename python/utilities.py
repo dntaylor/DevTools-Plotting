@@ -128,7 +128,7 @@ latestNtuples['80X'] = {
 # MuMuTauTau
     'MuMu'           : '2018-08-22_MuMuAnalysis_80X_v1-merge',
     #'MuMuTauTau'     : '2018-06-11_MuMuTauTauAnalysis_80X_v2-merge', # nothing changed, but added a new variable
-    'MuMuTauTau'     : '2018-07-06_MuMuTauTauAnalysis_80X_v1-merge', # modified kin fit (now with mm unc)
+    'MuMuTauTau'     : '2018-08-27_MuMuTauTauAnalysis_80X_v1-merge', # modified kin fit (now with mm unc)
     'MuMuTauFakeRate': '2018-03-19_MuMuTauFakeRateAnalysis_80X_v2-merge',
     'MuMuMuFakeRate' : '2018-02-09_MuMuMuFakeRateAnalysis_80X_v1-merge',
 }
@@ -206,18 +206,18 @@ latestShifts['80X']['MuMuTauTau'] = {
     #'UnclusteredEnUp'  : '2018-05-14_MuMuTauTauAnalysis_UnclusteredEnUp_80X_v1-merge',
     #'UnclusteredEnDown': '2018-05-14_MuMuTauTauAnalysis_UnclusteredEnDown_80X_v1-merge',
     # with modified kinfit
-    'ElectronEnUp'     : '2018-08-21_MuMuTauTauAnalysis_ElectronEnUp_80X_v1-merge',
-    'ElectronEnDown'   : '2018-08-21_MuMuTauTauAnalysis_ElectronEnDown_80X_v1-merge',
-    'MuonEnUp'         : '2018-08-21_MuMuTauTauAnalysis_MuonEnUp_80X_v1-merge',
-    'MuonEnDown'       : '2018-08-21_MuMuTauTauAnalysis_MuonEnDown_80X_v1-merge',
-    'TauEnUp'          : '2018-08-21_MuMuTauTauAnalysis_TauEnUp_80X_v1-merge',
-    'TauEnDown'        : '2018-08-21_MuMuTauTauAnalysis_TauEnDown_80X_v1-merge',
-    'JetEnUp'          : '2018-08-21_MuMuTauTauAnalysis_JetEnUp_80X_v1-merge',
-    'JetEnDown'        : '2018-08-21_MuMuTauTauAnalysis_JetEnDown_80X_v1-merge',
-    'JetResUp'         : '2018-08-21_MuMuTauTauAnalysis_JetResUp_80X_v1-merge',
-    'JetResDown'       : '2018-08-21_MuMuTauTauAnalysis_JetResDown_80X_v1-merge',
-    'UnclusteredEnUp'  : '2018-08-21_MuMuTauTauAnalysis_UnclusteredEnUp_80X_v1-merge',
-    'UnclusteredEnDown': '2018-08-21_MuMuTauTauAnalysis_UnclusteredEnDown_80X_v1-merge',
+    'ElectronEnUp'     : '2018-08-27_MuMuTauTauAnalysis_ElectronEnUp_80X_v1-merge',
+    'ElectronEnDown'   : '2018-08-27_MuMuTauTauAnalysis_ElectronEnDown_80X_v1-merge',
+    'MuonEnUp'         : '2018-08-27_MuMuTauTauAnalysis_MuonEnUp_80X_v1-merge',
+    'MuonEnDown'       : '2018-08-27_MuMuTauTauAnalysis_MuonEnDown_80X_v1-merge',
+    'TauEnUp'          : '2018-08-27_MuMuTauTauAnalysis_TauEnUp_80X_v1-merge',
+    'TauEnDown'        : '2018-08-27_MuMuTauTauAnalysis_TauEnDown_80X_v1-merge',
+    'JetEnUp'          : '2018-08-27_MuMuTauTauAnalysis_JetEnUp_80X_v1-merge',
+    'JetEnDown'        : '2018-08-27_MuMuTauTauAnalysis_JetEnDown_80X_v1-merge',
+    'JetResUp'         : '2018-08-27_MuMuTauTauAnalysis_JetResUp_80X_v1-merge',
+    'JetResDown'       : '2018-08-27_MuMuTauTauAnalysis_JetResDown_80X_v1-merge',
+    'UnclusteredEnUp'  : '2018-08-27_MuMuTauTauAnalysis_UnclusteredEnUp_80X_v1-merge',
+    'UnclusteredEnDown': '2018-08-27_MuMuTauTauAnalysis_UnclusteredEnDown_80X_v1-merge',
 }
 
 def getNtupleDirectory(analysis,local=False,version=getCMSSWVersion(),shift=''):

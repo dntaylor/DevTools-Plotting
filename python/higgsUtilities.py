@@ -615,7 +615,7 @@ def getSelectionMap(analysis,mass):
             },
             2: {
                 #'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hm1_pt)>1.24*mass-14,
-                'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hm1_pt)>min([0.8*mass+125,min]),
+                'st'   : lambda row: (row.hpp1_pt+row.hpp2_pt+row.hm1_pt)>min([0.8*mass+125,500]),
                 'zveto': lambda row: abs(row.z_mass-ZMASS)>10,
                 'met'  : lambda row: row.met_pt>80,
                 'dr'   : lambda row: row.hpp_deltaR<3, #2.5,
