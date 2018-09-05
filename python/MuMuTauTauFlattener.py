@@ -37,12 +37,23 @@ def passTauIso(row,lep):
     else:
         return getattr(row,'{}_byVLooseIsolationMVArun2v1DBoldDMwLT'.format(lep))>0.5
 
-def loadEvents(mh,ma):
-    fname = '{}/src/DevTools/Plotter/python/events_{}.out'.format(os.environ['CMSSW_BASE'],ma)
-    if not os.path.isfile(fname): return []
-    with open(fname) as f:
-        result = [l.strip() for l in f.readlines()]
-    return result
+#def loadEvents(mh,ma):
+#    fname = '{}/src/DevTools/Plotter/python/events_{}.out'.format(os.environ['CMSSW_BASE'],ma)
+#    if not os.path.isfile(fname): return []
+#    with open(fname) as f:
+#        result = [l.strip() for l in f.readlines()]
+#    return result
+
+def load_events(h,a):
+    events = []
+    try:
+        #with open('events_{h}_{a}_ktos.txt'.format(h=h,a=a)) as f:
+        with open('h{h}a{a}_Events_in_Kyle_Not_Devin.txt'.format(h=h,a=a)) as f:
+            for l in f.readlines():
+                events += [l.strip()]
+    except:
+        print 'Failed to load', h, a
+    return events
 
 def passGenMatch(row,lep):
     gm  = getattr(row,'{}_genMatch'.format(lep))    and getattr(row,'{}_genDeltaR'.format(lep))<0.4
@@ -52,8 +63,9 @@ def passGenMatch(row,lep):
 
 events = {}
 events[125] = {}
-events[125][7] = loadEvents(125,7)
-events[125][9] = loadEvents(125,9)
+#events[125][7] = loadEvents(125,7)
+#events[125][9] = loadEvents(125,9)
+events[125][15] = load_events(125,15)
 
 
 def desyEvent(row,mh,ma):
@@ -78,7 +90,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.doDESY = False
         self.doChi2 = True
         self.doBVeto = True
-        self.doBScales = False
+        self.doBScales = True
         self.doDM = True
         self.doPerDM = True
         self.doMedium = doMedium
@@ -682,8 +694,15 @@ class MuMuTauTauFlattener(NtupleFlattener):
     def perRowAction(self,row):
         isData = row.isData
 
+        event = '{}:{}:{}'.format(row.run,row.lumi,row.event)
+
+
         # Don't do for MC, events that pass btag contribute a factor of 1-SF
         passbveto = row.athjet_passCSVv2M<0.5
+
+        #if event in events[125][15]:
+        #    print event, 'passbveto', passbveto, ' '.join(['{} {}'.format(key,val(row)) for key,val in sorted(self.baseCutMap.iteritems())])
+
         if self.doBScales:
             if isData and not passbveto and self.doBVeto: return
         else:
