@@ -316,11 +316,11 @@ class Hpp4lSkimmer(NtupleSkimmer):
                         sides = []
                         windows = []
                         sides += [cutRegions[mass][nTaus]['st'](row)]
-                        if nTaus>0: sides += [cutRegions[mass][nTaus]['zveto'](row)]
-                        if pTaus>1: sides += [cutRegions[mass][pTaus]['drpp'](row)]
-                        if mTaus>1: sides += [cutRegions[mass][mTaus]['drmm'](row)]
+                        #if nTaus>0: sides += [cutRegions[mass][nTaus]['zveto'](row)]
+                        sides += [cutRegions[mass][pTaus]['drpp'](row)]
+                        sides += [cutRegions[mass][mTaus]['drmm'](row)]
                         windows += [cutRegions[mass][pTaus]['hpp'](row)]
-                        windows += [cutRegions[mass][mTaus]['hpp'](row)]
+                        windows += [cutRegions[mass][mTaus]['hmm'](row)]
                         massWindowOnly = all(windows)
                         sideband = not all(sides) and not all(windows)
                         massWindow = not all(sides) and all(windows)

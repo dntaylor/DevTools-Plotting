@@ -17,16 +17,16 @@ blind = True
 plotCount = True
 doCat = True
 plotMC = False
-plotDatadriven = True
+plotDatadriven = False
 plotLowmass = True
 plotZveto = False
 plotFakeRegions = False
-plotSignal = False
+plotSignal = True
 plotROC = False
 plotNormalization = False
 plotSOverB = False
 plotSignificance = False
-plotAllMasses = False
+plotAllMasses = True
 plotSig500 = True
 plotVariableLoose = False
 new = True
@@ -364,20 +364,20 @@ lowmass_cust = {
 
 norm_cust = {
     # hpp
-    'hppMass'               : {'yaxis': 'Unit normalized', 'logy':0,},
+    'hppMass'               : {'yaxis': 'Unit normalized', 'logy':0, 'logx':0, 'rebin': 1},
     #'hppMt'                 : {'yaxis': 'Unit normalized', 'logy':0,},
-    'hppPt'                 : {'yaxis': 'Unit normalized', 'numcol': 2},
+    'hppPt'                 : {'yaxis': 'Unit normalized', 'numcol': 2, 'rebin':5},
     'hppDeltaR'             : {'yaxis': 'Unit normalized',},
-    'hppLeadingLeptonPt'    : {'yaxis': 'Unit normalized',},
-    'hppSubLeadingLeptonPt' : {'yaxis': 'Unit normalized',},
+    'hppLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 5},
+    'hppSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 5},
     # z
     'zMass'                 : {'yaxis': 'Unit normalized','numcol': 2},
     #'mllMinusMZ'            : {'yaxis': 'Unit normalized',},
     # event
     'met'                   : {'yaxis': 'Unit normalized', },
     'numVertices'           : {'yaxis': 'Unit normalized'},
-    'mass'                  : {'yaxis': 'Unit normalized', },
-    'st'                    : {'yaxis': 'Unit normalized', },
+    'mass'                  : {'yaxis': 'Unit normalized', 'rebin': 1},
+    'st'                    : {'yaxis': 'Unit normalized', 'logy':0, 'logx':0, 'rebin': 5},
 }
 
 eff_cust = {
@@ -434,11 +434,11 @@ roc_cust = {
 
 envelope_cust = {
     # hpp
-    'hppMass'               : {'yaxis': 'm_{l^{#pm}l^{#pm}} (GeV)',     'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
-    'st'                    : {'yaxis': '#Sigma p_{T}^{l} (GeV)',       'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
-    'hppDeltaR'             : {'yaxis': '#DeltaR(l^{+}l^{+})',          'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
-    'met'                   : {'yaxis': 'E_{T}^{miss} (GeV)',           'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
-    #'mllMinusZ'             : {'yaxis': '|m_{l^{+}l^{-}}-m_{Z}| (GeV)', 'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
+    #'hppMass'               : {'yaxis': 'm_{l^{#pm}l^{#pm}} (GeV)',     'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
+    #'st'                    : {'yaxis': '#Sigma p_{T}^{l} (GeV)',       'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
+    #'hppDeltaR'             : {'yaxis': '#DeltaR(l^{+}l^{+})',          'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
+    #'met'                   : {'yaxis': 'E_{T}^{miss} (GeV)',           'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
+    ##'mllMinusZ'             : {'yaxis': '|m_{l^{+}l^{-}}-m_{Z}| (GeV)', 'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
 }
 
 ############################
@@ -817,7 +817,7 @@ if plotSignal:
         savename = 'signal/{0}'.format(plot)
         kwargs = deepcopy(plots[plot])
         if plot in norm_cust: kwargs.update(norm_cust[plot])
-        hpp3lPlotter.plotNormalized(plotname,savename,**kwargs)
+        hpp3lPlotter.plotNormalized(plotname,savename,plotratio=False,**kwargs)
         for cat in cats:
             plotnames = []
             for subcat in subCatChannels[cat]:
@@ -825,7 +825,7 @@ if plotSignal:
             savename = 'signal/{0}/{1}'.format(cat,plot)
             catkwargs = deepcopy(kwargs)
             if cat in catRebin and 'rebin' in catkwargs and plot in ['hppMass']: catkwargs['rebin'] = catkwargs['rebin'] * catRebin[cat]
-            if doCat: hpp3lPlotter.plotNormalized(plotnames,savename,**catkwargs)
+            if doCat: hpp3lPlotter.plotNormalized(plotnames,savename,plotratio=False,**catkwargs)
 
     #for plot in eff_cust:
     #    kwargs = deepcopy(plots[plot])

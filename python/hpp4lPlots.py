@@ -18,16 +18,16 @@ blind = True
 doCat = True
 plotCount = True
 plotMC = False
-plotDatadriven = True
+plotDatadriven = False
 plotLowmass = True
 plotZveto = False
 plotFakeRegions = False
-plotSignal = False
+plotSignal = True
 plotROC = False
 plotNormalization = False
 plotSOverB = False
 plotSignificance = False
-plotAllMasses = False
+plotAllMasses = True
 plotSig500 = True
 doUncertainties = True
 toPlot = []
@@ -49,8 +49,7 @@ sigMap = getSigMap('Hpp4l')
 sigMapDD = getSigMap('Hpp4l',datadriven=True)
 
 allmasses = [200,300,400,500,600,700,800,900,1000] if version=='76X' else [200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500]
-#masses = [200,400,600,800,1000]
-masses = [200,400,600,1000] # TODO go back
+masses = [200,400,600,800,1000]
 
 samples = ['TTV','VVV','ZZ']
 allsamples = ['TT','TTV','Z','WZ','VVV','ZZ']
@@ -355,12 +354,12 @@ lowmass_cust = {
 
 norm_cust = {
     # hpp
-    'hppMass'               : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
+    'hppMass'               : {'yaxis': 'Unit normalized', 'logy':0, 'logx':0, 'rebin': 1},
     'hppMt'                 : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
-    'hppPt'                 : {'yaxis': 'Unit normalized', 'rebin': 1, 'numcol': 2},
+    'hppPt'                 : {'yaxis': 'Unit normalized', 'rebin': 2, 'numcol': 2,},
     'hppDeltaR'             : {'yaxis': 'Unit normalized', 'rebin': 1},
-    'hppLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 1},
-    'hppSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 1},
+    'hppLeadingLeptonPt'    : {'yaxis': 'Unit normalized', 'rebin': 2},
+    'hppSubLeadingLeptonPt' : {'yaxis': 'Unit normalized', 'rebin': 2},
     # hmm
     'hmmMass'               : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
     #'hmmMt'                 : {'yaxis': 'Unit normalized', 'logy':0, 'rebin': 1},
@@ -375,7 +374,7 @@ norm_cust = {
     'met'                   : {'yaxis': 'Unit normalized', 'rebin': 1},
     'numVertices'           : {'yaxis': 'Unit normalized'},
     'mass'                  : {'yaxis': 'Unit normalized', 'rebin': 1},
-    'st'                    : {'yaxis': 'Unit normalized', 'rebin': 1},
+    'st'                    : {'yaxis': 'Unit normalized', 'rebin': 2, 'logx':0, 'logy': 0},
 }
 
 eff_cust = {
@@ -432,11 +431,11 @@ roc_cust = {
 
 envelope_cust = {
     # hpp
-    'hppMass'               : {'yaxis': 'm_{l^{#pm}l^{#pm}} (GeV)',     'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
-    'st'                    : {'yaxis': '#Sigma p_{T}^{l} (GeV)',       'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
-    'hppDeltaR'             : {'yaxis': '#DeltaR(l^{+}l^{+})',          'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
-    'met'                   : {'yaxis': 'E_{T}^{miss} (GeV)',           'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
-    'mllMinusZ'             : {'yaxis': '|m_{l^{+}l^{-}}-m_{Z}| (GeV)', 'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
+    #'hppMass'               : {'yaxis': 'm_{l^{#pm}l^{#pm}} (GeV)',     'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
+    #'st'                    : {'yaxis': '#Sigma p_{T}^{l} (GeV)',       'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
+    #'hppDeltaR'             : {'yaxis': '#DeltaR(l^{+}l^{+})',          'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
+    #'met'                   : {'yaxis': 'E_{T}^{miss} (GeV)',           'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
+    #'mllMinusZ'             : {'yaxis': '|m_{l^{+}l^{-}}-m_{Z}| (GeV)', 'xaxis': 'm_{#Phi^{#pm#pm}} (GeV)', 'legendpos':13, 'numcol': 1},
 }
 
 
@@ -829,7 +828,7 @@ if plotAllMasses:
 
 
 if plotSignal:
-    for righthanded in [True,False]:
+    for righthanded in [False,True]:
         hpp4lPlotter.clearHistograms()
         
         for mass in masses:
@@ -859,7 +858,7 @@ if plotSignal:
             savename = 'signal{0}/{1}'.format('-righthanded' if righthanded else '',plot)
             kwargs = deepcopy(plots[plot])
             if plot in norm_cust: kwargs.update(norm_cust[plot])
-            hpp4lPlotter.plotNormalized(plotname,savename,**kwargs)
+            hpp4lPlotter.plotNormalized(plotname,savename,plotratio=False,**kwargs)
             for cat in cats:
                 plotnames = []
                 for subcat in subCatChannels[cat]:
@@ -867,7 +866,7 @@ if plotSignal:
                 savename = 'signal{0}/{1}/{2}'.format('-righthanded' if righthanded else '',cat,plot)
                 catkwargs = deepcopy(kwargs)
                 if cat in catRebin and 'rebin' in catkwargs and plot in ['hppMass','hmmMass']: catkwargs['rebin'] = catkwargs['rebin'] * catRebin[cat]
-                if doCat: hpp4lPlotter.plotNormalized(plotnames,savename,**catkwargs)
+                if doCat: hpp4lPlotter.plotNormalized(plotnames,savename,plotratio=False,**catkwargs)
         #for plot in eff_cust:
         #    kwargs = deepcopy(plots[plot])
         #    if plot in norm_cust: kwargs.update(norm_cust[plot])
