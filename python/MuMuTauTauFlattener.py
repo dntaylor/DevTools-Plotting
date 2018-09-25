@@ -406,9 +406,9 @@ class MuMuTauTauFlattener(NtupleFlattener):
 
         self.datasetParams = {
             'ammMass_dataset'             : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   },
-            #'attMass_dataset'             : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.att_mass,     'xVar': ROOT.RooRealVar('x','x',0,60),   },
-            #'hMass_dataset'               : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_mass,       'xVar': ROOT.RooRealVar('x','x',0,1200), },
-            #'hMassKinFit_dataset'         : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_massKinFit, 'xVar': ROOT.RooRealVar('x','x',0,1200), },
+            'attMass_dataset'             : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.att_mass,     'xVar': ROOT.RooRealVar('x','x',0,60),   },
+            'hMass_dataset'               : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_mass,       'xVar': ROOT.RooRealVar('x','x',0,1200), },
+            'hMassKinFit_dataset'         : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_massKinFit, 'xVar': ROOT.RooRealVar('x','x',0,1200), },
             'ammMass_attMass_dataset'     : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.att_mass,     'yVar': ROOT.RooRealVar('y','y',0,60),   },
             'ammMass_hMass_dataset'       : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.h_mass,       'yVar': ROOT.RooRealVar('y','y',0,1200), },
             'ammMass_hMassKinFit_dataset' : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.h_massKinFit, 'yVar': ROOT.RooRealVar('y','y',0,1200), },
