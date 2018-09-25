@@ -330,7 +330,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
             self.textFields['m1IDWeight']    = lambda row: self.getMuonScaleFactor('LooseID',row.am1_pt,row.am1_eta)[0]
             self.textFields['m1IsoWeight']   = lambda row: self.getMuonScaleFactor('LooseIsoFromLooseID',row.am1_pt,row.am1_eta)[0]
             self.textFields['m2IDWeight']    = lambda row: self.getMuonScaleFactor('LooseID',row.am2_pt,row.am2_eta)[0]
-            self.textFields['m2IsoWeight']   = lambda row: self.getMuonScaleFactor('LooseIsoFromLooseID',row.am2_pt,row.am2_eta)[0]
+            self.textFields['m2IsoWeight']   = lambda row: self.getMuonScaleFactor('LooseIsoFromLooseID',row.am2_pt,row.am2_eta)[0] if row.amm_deltaR>0.4 else 1.0
             self.textFields['m3IDWeight']    = lambda row: self.getMuonScaleFactor('LooseID',row.atm_pt,row.atm_eta)[0]
             self.textFields['m1TrackWeight'] = lambda row: self.getTrackingScaleFactor(row.am1_eta)[0]
             self.textFields['m2TrackWeight'] = lambda row: self.getTrackingScaleFactor(row.am2_eta)[0]
@@ -589,34 +589,43 @@ class MuMuTauTauFlattener(NtupleFlattener):
             if self.shift=='puDown': base = ['genWeight','pileupWeightDown','triggerEfficiency']
             vals = [getattr(row,scale) for scale in base]
             # tau id: 0.99 for VL/L, 0.97 for M
-            vals += [0.99]
+            if row.ath_pt<20:
+                tid = [0.70, 0.7*0.1, 0.7*0.1]
+            else:
+                tid = [0.97, 0.97*0.05, 0.97*0.05]
+            if self.shift=='tauUp':
+                vals += [tid[0]+tid[1]]
+            elif self.shift=='tauDown':
+                vals += [tid[0]-tid[2]]
+            else:
+                vals += [tid[0]]
             # muon
             m1id = self.getMuonScaleFactor('LooseID',row.am1_pt,row.am1_eta)
             m1iso = self.getMuonScaleFactor('LooseIsoFromLooseID',row.am1_pt,row.am1_eta)
             m2id = self.getMuonScaleFactor('LooseID',row.am2_pt,row.am2_eta)
-            m2iso = self.getMuonScaleFactor('LooseIsoFromLooseID',row.am2_pt,row.am2_eta)
+            m2iso = self.getMuonScaleFactor('LooseIsoFromLooseID',row.am2_pt,row.am2_eta) if row.amm_deltaR>0.4 else [1.0, 0., 0.]
             m3id = self.getMuonScaleFactor('LooseID',row.atm_pt,row.atm_eta)
             if self.doMediumMuon:
                 m1id = self.getMuonScaleFactor('MediumID',row.am1_pt,row.am1_eta)
                 m1iso = self.getMuonScaleFactor('LooseIsoFromMediumID',row.am1_pt,row.am1_eta)
                 m2id = self.getMuonScaleFactor('MediumID',row.am2_pt,row.am2_eta)
-                m2iso = self.getMuonScaleFactor('LooseIsoFromMediumID',row.am2_pt,row.am2_eta)
+                m2iso = self.getMuonScaleFactor('LooseIsoFromMediumID',row.am2_pt,row.am2_eta) if row.amm_deltaR>0.4 else [1.0, 0., 0.]
                 m3id = self.getMuonScaleFactor('MediumID',row.atm_pt,row.atm_eta)
             m1tr = self.getTrackingScaleFactor(row.am1_eta)
             m2tr = self.getTrackingScaleFactor(row.am2_eta)
             m3tr = self.getTrackingScaleFactor(row.atm_eta)
             if self.shift=='lepUp':
-                vals += [m1tr[0]+m1tr[1], m1id[0]+m1id[1], m1iso[0]+m1iso[1]]
-                vals += [m2tr[0]+m2tr[1], m2id[0]+m2id[1], m2iso[0]+m2iso[1]]
-                vals += [m3tr[0]+m3tr[1], m3id[0]+m3id[1]]
+                vals += [m1id[0]+m1id[1], m1iso[0]+m1iso[1]]
+                vals += [m2id[0]+m2id[1], m2iso[0]+m2iso[1]]
+                vals += [m3id[0]+m3id[1]]
             elif self.shift=='lepDown':
-                vals += [m1tr[0]-m1tr[1], m1id[0]-m1id[1], m1iso[0]-m1iso[1]]
-                vals += [m2tr[0]-m2tr[1], m2id[0]-m2id[1], m2iso[0]-m2iso[1]]
-                vals += [m3tr[0]-m3tr[1], m3id[0]-m3id[1]]
+                vals += [m1id[0]-m1id[1], m1iso[0]-m1iso[1]]
+                vals += [m2id[0]-m2id[1], m2iso[0]-m2iso[1]]
+                vals += [m3id[0]-m3id[1]]
             else:
-                vals += [m1tr[0], m1id[0], m1iso[0]]
-                vals += [m2tr[0], m2id[0], m2iso[0]]
-                vals += [m3tr[0], m3id[0]]
+                vals += [m1id[0], m1iso[0]]
+                vals += [m2id[0], m2iso[0]]
+                vals += [m3id[0]]
             for scale,val in zip(base,vals):
                 if val != val: logging.warning('{0}: {1} is NaN'.format(row.channel,scale))
             weight = prod([val for val in vals if val==val])

@@ -42,7 +42,7 @@ def buildZTauFakeRate(selectionParams,sampleSelectionParams,projectionParams,sam
     frScaleFactorMedium = 'z1_mediumScale*z2_mediumScale*t_mediumScale*genWeight*pileupWeight*triggerEfficiency'
     frScaleFactorTight = 'z1_mediumScale*z2_mediumScale*t_tightScale*genWeight*pileupWeight*triggerEfficiency'
 
-    frNewBaseCut = 'z_deltaR>0.02 && z1_pt>25. && z2_pt>20. && z_mass>81 && z_mass<101'
+    frNewBaseCut = 'z_deltaR>0.02 && z1_pt>25. && z2_pt>20. && z_mass>81 && z_mass<101 && tjet_passCSVv2M<0.5'
     frNewBaseCutLoose = '{0}'.format(frNewBaseCut)
     selectionParams['ZTauFakeRate'] = {
         'loose'      : {'args': [frBaseCutLoose],                   'kwargs': {'mcscalefactor': frScaleFactorLoose, }},

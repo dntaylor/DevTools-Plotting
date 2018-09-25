@@ -16,8 +16,8 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 blind = True
 plotCount = True
 doCat = True
-plotMC = False
-plotDatadriven = False
+plotMC = True
+plotDatadriven = True
 plotLowmass = True
 plotZveto = False
 plotFakeRegions = False
@@ -31,6 +31,7 @@ plotSig500 = True
 plotVariableLoose = False
 new = True
 doUncertainties = True
+plotAllChannels = True
 
 hpp3lPlotter = Plotter('Hpp3l',new=True)
 
@@ -458,7 +459,7 @@ if plotMC:
     for plot in plots:
         kwargs = deepcopy(plots[plot])
         plotWithCategories(hpp3lPlotter,plot,saveDir='mc',baseDir='default',perCatBins=True,**kwargs)
-        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='mc',baseDir='default',**kwargs)
+        if plot=='hppMass' or plotAllChannels: plotChannels(hpp3lPlotter,plot,saveDir='mc',baseDir='default',**kwargs)
 
     # selection assuming mass 500
     if plotSig500:
@@ -467,7 +468,7 @@ if plotMC:
         for plot in plots:
             kwargs = deepcopy(plots[plot])
             plotWithCategories(hpp3lPlotter,plot,saveDir='sig500',baseDir='nMinusOne/massWindow/500/hpp2',perCatBins=True,**kwargs)
-            if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='sig500',baseDir='nMinusOne/massWindow/500/hpp2',**kwargs)
+            if plot=='hppMass' or plotAllChannels: plotChannels(hpp3lPlotter,plot,saveDir='sig500',baseDir='nMinusOne/massWindow/500/hpp2',**kwargs)
 
     # partially blinded plots
     if blind:
@@ -477,6 +478,7 @@ if plotMC:
             kwargs = deepcopy(plots[plot])
             kwargs.update(blind_cust[plot])
             plotWithCategories(hpp3lPlotter,plot,saveDir='mc',baseDir='default',postfix='blinder',perCatBins=True,**kwargs)
+            if plot=='hppMass' or plotAllChannels: plotChannels(hpp3lPlotter,plot,saveDir='mc',baseDir='default',postfix='blinder',**kwargs)
 
 
 ##############################
@@ -500,7 +502,7 @@ if plotDatadriven:
     for plot in plots:
         kwargs = deepcopy(plots[plot])
         plotWithCategories(hpp3lPlotter,plot,baseDir='default',saveDir='datadriven',datadriven=True,perCatBins=True,**kwargs)
-        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,baseDir='default',saveDir='datadriven',datadriven=True,**kwargs)
+        if plot=='hppMass' or plotAllChannels: plotChannels(hpp3lPlotter,plot,baseDir='default',saveDir='datadriven',datadriven=True,**kwargs)
 
     # selection assuming mass 500
     if plotSig500:
@@ -509,7 +511,7 @@ if plotDatadriven:
         for plot in plots:
             kwargs = deepcopy(plots[plot])
             plotWithCategories(hpp3lPlotter,plot,baseDir='nMinusOne/massWindow/500/hpp2',saveDir='sig500-datadriven',datadriven=True,perCatBins=True,**kwargs)
-            if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='sig500-datadriven',baseDir='nMinusOne/massWindow/500/hpp2',datadriven=True,**kwargs)
+            if plot=='hppMass' or plotAllChannels: plotChannels(hpp3lPlotter,plot,saveDir='sig500-datadriven',baseDir='nMinusOne/massWindow/500/hpp2',datadriven=True,**kwargs)
 
     # partially blinded plots
     if blind:
@@ -519,6 +521,7 @@ if plotDatadriven:
             kwargs = deepcopy(plots[plot])
             kwargs.update(blind_cust[plot])
             plotWithCategories(hpp3lPlotter,plot,baseDir='default',saveDir='datadriven',postfix='blinder',datadriven=True,perCatBins=True,**kwargs)
+            if plot=='hppMass' or plotAllChannels: plotChannels(hpp3lPlotter,plot,baseDir='default',saveDir='datadriven',postfix='blinder',datadriven=True,**kwargs)
 
 ########################
 ### z veto selection ###
@@ -536,7 +539,7 @@ if plotMC and plotZveto:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
         plotWithCategories(hpp3lPlotter,plot,baseDir='zveto',saveDir='zveto',skipVariable=True,**kwargs)
-        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='zveto',baseDir='zveto',**kwargs)
+        if plot=='hppMass' or plotAllChannels: plotChannels(hpp3lPlotter,plot,saveDir='zveto',baseDir='zveto',**kwargs)
 
 ####################################
 ### zveto datadriven backgrounds ###
@@ -557,7 +560,7 @@ if plotDatadriven and plotZveto:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
         plotWithCategories(hpp3lPlotter,plot,baseDir='zveto',saveDir='zveto-datadriven',datadriven=True,skipVariable=True,**kwargs)
-        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='zveto-datadriven',baseDir='zveto',datadriven=True,**kwargs)
+        if plot=='hppMass' or plotAllChannels: plotChannels(hpp3lPlotter,plot,saveDir='zveto-datadriven',baseDir='zveto',datadriven=True,**kwargs)
 
 ########################
 ### low mass control ###
@@ -575,7 +578,7 @@ if plotMC and plotLowmass:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
         plotWithCategories(hpp3lPlotter,plot,baseDir='lowmass',saveDir='lowmass',skipVariable=True,**kwargs)
-        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='lowmass',baseDir='lowmass',**kwargs)
+        if plot=='hppMass' or plotAllChannels: plotChannels(hpp3lPlotter,plot,saveDir='lowmass',baseDir='lowmass',**kwargs)
 
 ######################################
 ### lowmass datadriven backgrounds ###
@@ -596,7 +599,7 @@ if plotDatadriven and plotLowmass:
         kwargs = deepcopy(plots[plot])
         if plot in lowmass_cust: kwargs.update(lowmass_cust[plot])
         plotWithCategories(hpp3lPlotter,plot,baseDir='lowmass',saveDir='lowmass-datadriven',datadriven=True,skipVariable=True,**kwargs)
-        if plot=='hppMass': plotChannels(hpp3lPlotter,plot,saveDir='lowmass-datadriven',baseDir='lowmass',datadriven=True,**kwargs)
+        if plot=='hppMass' or plotAllChannels: plotChannels(hpp3lPlotter,plot,saveDir='lowmass-datadriven',baseDir='lowmass',datadriven=True,**kwargs)
 
     if plotVariableLoose:
         base = 'newloose_{cut}' if new else 'oldloose_{cut}'
@@ -627,7 +630,7 @@ if plotFakeRegions:
             kwargs = deepcopy(plots[plot])
             plotWithCategories(hpp3lPlotter,plot,baseDir='{0}_regular/default'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
             #if plot=='hppMass': plotChannels(hpp3lPlotter,plot,baseDir='{0}_regular/default'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
-            plotChannels(hpp3lPlotter,plot,baseDir='{0}_regular/default'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
+            if plot=='hppMass' or plotAllChannels: plotChannels(hpp3lPlotter,plot,baseDir='{0}_regular/default'.format(fr),saveDir='mc/{0}'.format(fr),**kwargs)
 
 ############################
 ### Fake Regions lowmass ###
@@ -646,7 +649,7 @@ if plotFakeRegions:
         for plot in plots:
             kwargs = deepcopy(plots[plot])
             plotWithCategories(hpp3lPlotter,plot,baseDir='{0}_regular/lowmass'.format(fr),saveDir='lowmass/{0}'.format(fr),**kwargs)
-            if plot=='hppMass': plotChannels(hpp3lPlotter,plot,baseDir='{0}_regular/lowmass'.format(fr),saveDir='lowmass/{0}'.format(fr),**kwargs)
+            if plot=='hppMass' or plotAllChannels: plotChannels(hpp3lPlotter,plot,baseDir='{0}_regular/lowmass'.format(fr),saveDir='lowmass/{0}'.format(fr),**kwargs)
 
 
 ########################

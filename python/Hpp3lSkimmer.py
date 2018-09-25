@@ -289,6 +289,7 @@ class Hpp3lSkimmer(NtupleSkimmer):
                 (getattr(row,'{0}_genJetMatch'.format(lep)) and getattr(row,'{0}_genJetDeltaR'.format(lep))<0.1)
                 for lep in self.leps
             ])
+            genCut = True # temp to test bug
 
         # cut map
         v = {
