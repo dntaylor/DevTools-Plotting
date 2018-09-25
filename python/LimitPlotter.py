@@ -573,7 +573,7 @@ class LimitPlotter(PlotterBase):
             oneSigma[prod].Draw('f')
             expected[prod].Draw('same')
             xsecGraph[prod].Draw('same')
-            #if prod=='PP': xsecGraph['PPR'].Draw('same')
+            if prod=='PP': xsecGraph['PPR'].Draw('same')
             ROOT.gPad.RedrawAxis()
             if not blind: observed[prod].Draw('same')
 
@@ -584,7 +584,7 @@ class LimitPlotter(PlotterBase):
         entries = [
             [xsecGraph['AP'],'#splitline{Assoc. Prod.}{Cross Section}','l'],
             [xsecGraph['PP'],'#splitline{Pair Prod.}{Cross Section}','l'],
-            #[xsecGraph['PPR'],'#splitline{Pair Prod. (RH)}{Cross Section}','l'],
+            [xsecGraph['PPR'],'#splitline{Pair Prod. (RH)}{Cross Section}','l'],
         ]
         legend = self._getLegend(entries=entries,numcol=2,position=legendpos)
         legend.Draw()

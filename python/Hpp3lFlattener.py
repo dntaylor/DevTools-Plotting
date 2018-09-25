@@ -34,6 +34,7 @@ class Hpp3lFlattener(NtupleFlattener):
         self.zveto = True
         self.doGen = True
         self.doBVeto = True
+        self.doBScales = False
         self.limitOnly = False
         self.mass = 500
         self.btag_scales = BTagScales('80X')
@@ -54,6 +55,7 @@ class Hpp3lFlattener(NtupleFlattener):
             #'bjetveto' : lambda row: row.numBjetsTight30==0,
             #'bjetveto' : lambda row: all([getattr(row,'{0}jet_passCSVv2M'.format(l))<0.5 for l in self.leps]),
         }
+        if self.zveto: self.baseCutMap['zveto'] = lambda row: abs(getattr(row,'z_mass')-ZMASS)>10
         self.lowmassCutMap = {
             'pt20'     : lambda row: all([getattr(row,'{0}_pt'.format(l))>20 for l in self.leps]),
             'hppVeto'  : lambda row: row.hpp_mass<100,
@@ -62,18 +64,19 @@ class Hpp3lFlattener(NtupleFlattener):
             #'bjetveto' : lambda row: row.numBjetsTight30==0,
             #'bjetveto' : lambda row: all([getattr(row,'{0}jet_passCSVv2M'.format(l))<0.5 for l in self.leps]),
         }
-        self.zvetoCutMap = {
-            'pt20'     : lambda row: all([getattr(row,'{0}_pt'.format(l))>20 for l in self.leps]),
-            '3lmassCut': lambda row: getattr(row,'3l_mass')>100,
-            'looseId'  : lambda row: all([getattr(row,'{0}_passLoose{1}'.format(l,'New' if self.new else ''))>0.5 for l in self.leps]),
-            'zVeto'    : lambda row: abs(getattr(row,'z_mass')-ZMASS)>10,
-            #'bjetveto' : lambda row: row.numBjetsTight30==0,
-            #'bjetveto' : lambda row: all([getattr(row,'{0}jet_passCSVv2M'.format(l))<0.5 for l in self.leps]),
-        }
+        if self.zveto: self.lowmassCutMap['zveto'] = lambda row: abs(getattr(row,'z_mass')-ZMASS)>10
+        #self.zvetoCutMap = {
+        #    'pt20'     : lambda row: all([getattr(row,'{0}_pt'.format(l))>20 for l in self.leps]),
+        #    '3lmassCut': lambda row: getattr(row,'3l_mass')>100,
+        #    'looseId'  : lambda row: all([getattr(row,'{0}_passLoose{1}'.format(l,'New' if self.new else ''))>0.5 for l in self.leps]),
+        #    'zVeto'    : lambda row: abs(getattr(row,'z_mass')-ZMASS)>10,
+        #    #'bjetveto' : lambda row: row.numBjetsTight30==0,
+        #    #'bjetveto' : lambda row: all([getattr(row,'{0}jet_passCSVv2M'.format(l))<0.5 for l in self.leps]),
+        #}
         self.selectionMap = {}
         self.selectionMap['default'] = lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
         if self.lowmass: self.selectionMap['lowmass'] = lambda row: all([self.lowmassCutMap[cut](row) for cut in self.lowmassCutMap])
-        if self.zveto: self.selectionMap['zveto'] = lambda row: all([self.zvetoCutMap[cut](row) for cut in self.zvetoCutMap])
+        #if self.zveto: self.selectionMap['zveto'] = lambda row: all([self.zvetoCutMap[cut](row) for cut in self.zvetoCutMap])
 
         # sample signal plot
         self.cutRegions = {}
@@ -246,6 +249,11 @@ class Hpp3lFlattener(NtupleFlattener):
         self.lepID = '{0}_passMedium'
         self.lepIDLoose = '{0}_passLooseNew' if self.new else '{0}_passLoose'
 
+        # charge
+        charge_path = '{0}/src/DevTools/Analyzer/data/scalefactors_charge_2016.root'.format(os.environ['CMSSW_BASE'])
+        self.charge_rootfile = ROOT.TFile(charge_path)
+        self.chargehists = {'electrons': {}}
+        self.chargehists['electrons']['OppositeSign'] = self.charge_rootfile.Get('OppositeSign')
 
     def getFakeRate(self,lep,pt,eta,num,denom,dm=None):
         if lep=='taus' and self.doDMFakes:
@@ -285,7 +293,22 @@ class Hpp3lFlattener(NtupleFlattener):
                 w *= 1-sf
         return w
 
+    def getCharge(self,lep,pt,eta):
+        if lep=='electrons':
+            hist = self.chargehists['electrons']['OppositeSign']
+            if pt > 500: pt = 499
+            b = hist.FindBin(pt,abs(eta))
+            val, err = hist.GetBinContent(b), hist.GetBinError(b)
+            result = val
+            if self.shift=='chargeUp': result = val + err
+            if self.shift=='chargeDown': resutl =  val - err
+            if result < 0: result = 0
+            return result
+        return 1
+
     def getWeight(self,row,doFake=False,fakeNum=None,fakeDenom=None):
+        chanMap = {'e': 'electrons', 'm': 'muons', 't': 'taus',}
+        chan = ''.join([x for x in row.channel if x in 'emt'])
         if not fakeNum: fakeNum = 'HppMedium'
         if not fakeDenom: fakeDenom = 'HppLoose{0}'.format('New' if self.new else '')
         passID = [getattr(row,self.lepID.format(l)) for l in self.leps]
@@ -311,11 +334,11 @@ class Hpp3lFlattener(NtupleFlattener):
             weight *= float(self.intLumi)/self.sampleLumi if self.sampleLumi else 0.
             if hasattr(row,'qqZZkfactor'): weight *= row.qqZZkfactor/1.1 # ZZ variable k factor
             # b taggin (veto)
-            if self.doBVeto: weight *= self.getBTagWeight(row)
+            if self.doBScales: weight *= self.getBTagWeight(row)
+            for l, lep in enumerate(self.leps):
+                weight *= self.getCharge(chanMap[chan[l]], getattr(row, '{}_pt'.format(lep)), getattr(row, '{}_eta'.format(lep)))
         # fake scales
         if doFake:
-            chanMap = {'e': 'electrons', 'm': 'muons', 't': 'taus',}
-            chan = ''.join([x for x in row.channel if x in 'emt'])
             pts = [getattr(row,'{0}_pt'.format(x)) for x in self.leps]
             etas = [getattr(row,'{0}_eta'.format(x)) for x in self.leps]
             region = ''.join(['P' if x else 'F' for x in passID])
@@ -350,7 +373,10 @@ class Hpp3lFlattener(NtupleFlattener):
         if not all(passPt): return # all leptons pt>20
         # Don't do for MC, events that pass btag contribute a factor of 1-SF
         passbveto = all([getattr(row,'{0}jet_passCSVv2M'.format(l))<0.5 for l in self.leps])
-        if isData and not passbveto and self.doBVeto: return
+        if self.doBScales:
+            if isData and not passbveto and self.doBVeto: return
+        else:
+            if not passbveto and self.doBVeto: return
 
         # per sample cuts
         keep = True
@@ -412,6 +438,7 @@ class Hpp3lFlattener(NtupleFlattener):
                 (getattr(row,'{0}_genJetMatch'.format(lep)) and getattr(row,'{0}_genJetDeltaR'.format(lep))<0.1)
                 for lep in self.leps
             ])
+            genCut = True # temp to test bug
 
         # define plot regions
         for sel in self.selectionMap:

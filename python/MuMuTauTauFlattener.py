@@ -37,12 +37,23 @@ def passTauIso(row,lep):
     else:
         return getattr(row,'{}_byVLooseIsolationMVArun2v1DBoldDMwLT'.format(lep))>0.5
 
-def loadEvents(mh,ma):
-    fname = '{}/src/DevTools/Plotter/python/events_{}.out'.format(os.environ['CMSSW_BASE'],ma)
-    if not os.path.isfile(fname): return []
-    with open(fname) as f:
-        result = [l.strip() for l in f.readlines()]
-    return result
+#def loadEvents(mh,ma):
+#    fname = '{}/src/DevTools/Plotter/python/events_{}.out'.format(os.environ['CMSSW_BASE'],ma)
+#    if not os.path.isfile(fname): return []
+#    with open(fname) as f:
+#        result = [l.strip() for l in f.readlines()]
+#    return result
+
+def load_events(h,a):
+    events = []
+    try:
+        #with open('events_{h}_{a}_ktos.txt'.format(h=h,a=a)) as f:
+        with open('h{h}a{a}_Events_in_Kyle_Not_Devin.txt'.format(h=h,a=a)) as f:
+            for l in f.readlines():
+                events += [l.strip()]
+    except:
+        print 'Failed to load', h, a
+    return events
 
 def passGenMatch(row,lep):
     gm  = getattr(row,'{}_genMatch'.format(lep))    and getattr(row,'{}_genDeltaR'.format(lep))<0.4
@@ -52,8 +63,9 @@ def passGenMatch(row,lep):
 
 events = {}
 events[125] = {}
-events[125][7] = loadEvents(125,7)
-events[125][9] = loadEvents(125,9)
+#events[125][7] = loadEvents(125,7)
+#events[125][9] = loadEvents(125,9)
+events[125][15] = load_events(125,15)
 
 
 def desyEvent(row,mh,ma):
@@ -78,6 +90,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.doDESY = False
         self.doChi2 = True
         self.doBVeto = True
+        self.doBScales = True
         self.doDM = True
         self.doPerDM = True
         self.doMedium = doMedium
@@ -317,7 +330,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
             self.textFields['m1IDWeight']    = lambda row: self.getMuonScaleFactor('LooseID',row.am1_pt,row.am1_eta)[0]
             self.textFields['m1IsoWeight']   = lambda row: self.getMuonScaleFactor('LooseIsoFromLooseID',row.am1_pt,row.am1_eta)[0]
             self.textFields['m2IDWeight']    = lambda row: self.getMuonScaleFactor('LooseID',row.am2_pt,row.am2_eta)[0]
-            self.textFields['m2IsoWeight']   = lambda row: self.getMuonScaleFactor('LooseIsoFromLooseID',row.am2_pt,row.am2_eta)[0]
+            self.textFields['m2IsoWeight']   = lambda row: self.getMuonScaleFactor('LooseIsoFromLooseID',row.am2_pt,row.am2_eta)[0] if row.amm_deltaR>0.4 else 1.0
             self.textFields['m3IDWeight']    = lambda row: self.getMuonScaleFactor('LooseID',row.atm_pt,row.atm_eta)[0]
             self.textFields['m1TrackWeight'] = lambda row: self.getTrackingScaleFactor(row.am1_eta)[0]
             self.textFields['m2TrackWeight'] = lambda row: self.getTrackingScaleFactor(row.am2_eta)[0]
@@ -552,6 +565,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
         return val, err
         
     def getTrackingScaleFactor(self,eta):
+        return 1., 0.
         etaName = 'TrackingEta'
         for valDict in self.tracking_pog_scales[etaName]:
             etaLow = valDict['x'] - valDict['errx_down']
@@ -575,34 +589,43 @@ class MuMuTauTauFlattener(NtupleFlattener):
             if self.shift=='puDown': base = ['genWeight','pileupWeightDown','triggerEfficiency']
             vals = [getattr(row,scale) for scale in base]
             # tau id: 0.99 for VL/L, 0.97 for M
-            vals += [0.99]
+            if row.ath_pt<20:
+                tid = [0.70, 0.7*0.1, 0.7*0.1]
+            else:
+                tid = [0.97, 0.97*0.05, 0.97*0.05]
+            if self.shift=='tauUp':
+                vals += [tid[0]+tid[1]]
+            elif self.shift=='tauDown':
+                vals += [tid[0]-tid[2]]
+            else:
+                vals += [tid[0]]
             # muon
             m1id = self.getMuonScaleFactor('LooseID',row.am1_pt,row.am1_eta)
             m1iso = self.getMuonScaleFactor('LooseIsoFromLooseID',row.am1_pt,row.am1_eta)
             m2id = self.getMuonScaleFactor('LooseID',row.am2_pt,row.am2_eta)
-            m2iso = self.getMuonScaleFactor('LooseIsoFromLooseID',row.am2_pt,row.am2_eta)
+            m2iso = self.getMuonScaleFactor('LooseIsoFromLooseID',row.am2_pt,row.am2_eta) if row.amm_deltaR>0.4 else [1.0, 0., 0.]
             m3id = self.getMuonScaleFactor('LooseID',row.atm_pt,row.atm_eta)
             if self.doMediumMuon:
                 m1id = self.getMuonScaleFactor('MediumID',row.am1_pt,row.am1_eta)
                 m1iso = self.getMuonScaleFactor('LooseIsoFromMediumID',row.am1_pt,row.am1_eta)
                 m2id = self.getMuonScaleFactor('MediumID',row.am2_pt,row.am2_eta)
-                m2iso = self.getMuonScaleFactor('LooseIsoFromMediumID',row.am2_pt,row.am2_eta)
+                m2iso = self.getMuonScaleFactor('LooseIsoFromMediumID',row.am2_pt,row.am2_eta) if row.amm_deltaR>0.4 else [1.0, 0., 0.]
                 m3id = self.getMuonScaleFactor('MediumID',row.atm_pt,row.atm_eta)
             m1tr = self.getTrackingScaleFactor(row.am1_eta)
             m2tr = self.getTrackingScaleFactor(row.am2_eta)
             m3tr = self.getTrackingScaleFactor(row.atm_eta)
             if self.shift=='lepUp':
-                vals += [m1tr[0]+m1tr[1], m1id[0]+m1id[1], m1iso[0]+m1iso[1]]
-                vals += [m2tr[0]+m2tr[1], m2id[0]+m2id[1], m2iso[0]+m2iso[1]]
-                vals += [m3tr[0]+m3tr[1], m3id[0]+m3id[1]]
+                vals += [m1id[0]+m1id[1], m1iso[0]+m1iso[1]]
+                vals += [m2id[0]+m2id[1], m2iso[0]+m2iso[1]]
+                vals += [m3id[0]+m3id[1]]
             elif self.shift=='lepDown':
-                vals += [m1tr[0]-m1tr[1], m1id[0]-m1id[1], m1iso[0]-m1iso[1]]
-                vals += [m2tr[0]-m2tr[1], m2id[0]-m2id[1], m2iso[0]-m2iso[1]]
-                vals += [m3tr[0]-m3tr[1], m3id[0]-m3id[1]]
+                vals += [m1id[0]-m1id[1], m1iso[0]-m1iso[1]]
+                vals += [m2id[0]-m2id[1], m2iso[0]-m2iso[1]]
+                vals += [m3id[0]-m3id[1]]
             else:
-                vals += [m1tr[0], m1id[0], m1iso[0]]
-                vals += [m2tr[0], m2id[0], m2iso[0]]
-                vals += [m3tr[0], m3id[0]]
+                vals += [m1id[0], m1iso[0]]
+                vals += [m2id[0], m2iso[0]]
+                vals += [m3id[0]]
             for scale,val in zip(base,vals):
                 if val != val: logging.warning('{0}: {1} is NaN'.format(row.channel,scale))
             weight = prod([val for val in vals if val==val])
@@ -610,7 +633,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
             weight *= float(self.intLumi)/self.sampleLumi if self.sampleLumi else 0.
             if hasattr(row,'qqZZkfactor'): weight *= row.qqZZkfactor/1.1 # ZZ variable k factor
             # b taggin (veto)
-            if self.doBVeto: weight *= self.getBTagWeight(row)
+            if self.doBVeto and self.doBScales: weight *= self.getBTagWeight(row)
         # fake scales
         if doFake:
             if not row.isData: weight *= -1
@@ -680,9 +703,19 @@ class MuMuTauTauFlattener(NtupleFlattener):
     def perRowAction(self,row):
         isData = row.isData
 
+        event = '{}:{}:{}'.format(row.run,row.lumi,row.event)
+
+
         # Don't do for MC, events that pass btag contribute a factor of 1-SF
         passbveto = row.athjet_passCSVv2M<0.5
-        if isData and not passbveto and self.doBVeto: return
+
+        #if event in events[125][15]:
+        #    print event, 'passbveto', passbveto, ' '.join(['{} {}'.format(key,val(row)) for key,val in sorted(self.baseCutMap.iteritems())])
+
+        if self.doBScales:
+            if isData and not passbveto and self.doBVeto: return
+        else:
+            if not passbveto and self.doBVeto: return
 
         # per sample cuts
         keep = True

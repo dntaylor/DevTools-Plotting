@@ -97,6 +97,8 @@ class NtupleSkimmer(object):
         if self.outputFile:
             # hack to copy them to hdfs
             os.system('touch {0}'.format(self.outputFile))
+            tfile = ROOT.TFile.Open(self.outputFile,'RECREATE')
+            tfile.Close()
             jfile = self.outputFile.replace('.root','.json.root')
             pfile = self.outputFile.replace('.root','.pkl.root')
         else:
