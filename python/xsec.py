@@ -72,6 +72,9 @@ xsecs = {
     'DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'      :  18610.       * PB,
     'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'          :   1921.8 * 3  * PB,
     'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'           :   1921.8 * 3  * PB,
+    # https://hypernews.cern.ch/HyperNews/CMS/get/generators/4072.html
+    #'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'          :   2063.13 * 3 * PB,
+    #'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'           :   2063.13 * 3 * PB,
 
     # DY jet binned
     'DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'     :    421.5      * PB,
@@ -120,6 +123,8 @@ xsecs = {
     'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'             :     87.31     * PB,
     'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'    :    114.5      * PB,
     'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8' :    114.6      * PB,
+    'TTJets_SingleLeptFromT_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8' :    114.5      * PB,
+    'TTJets_SingleLeptFromTbar_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8' : 114.6      * PB,
     'TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'                    :    502.2      * PB,
     'TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8'                 :    831.76     * PB,
 

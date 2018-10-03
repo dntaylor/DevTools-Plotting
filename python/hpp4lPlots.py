@@ -30,7 +30,7 @@ plotSignificance = False
 plotAllMasses = True
 plotSig500 = True
 doUncertainties = True
-plotAllChannels = False
+plotAllChannels = True
 toPlot = []
 
 hpp4lPlotter = Plotter('Hpp4l',new=True)
@@ -319,6 +319,7 @@ plots = {
     'st'                    : {'xaxis': '#Sigma p_{T}^{l} (GeV)', 'yaxis': 'Events / 100 GeV', 'rebin': range(100,2100,100), 'numcol': 2, 'logy': True, 'numcol': 2, 'legendpos': 34, 'overflow': False, 'logx': True, 'ymin': 1,},
     'nJets'                 : {'xaxis': 'Number of jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'numcol': 2, 'rebin': [-0.5,0.5,1.5,2.5,3.5,4.5], 'overflow': True, 'binlabels': ['0','1','2','3','4','#geq5']},
     'nBJets'                : {'xaxis': 'Number of b jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'numcol': 2, 'rebin': [-0.5,0.5,1.5,2.5,3.5,4.5], 'overflow': True, 'binlabels': ['0','1','2','3','4','#geq5']},
+    'runPeriod'             : {'xaxis': 'Run Period', 'yaxis': 'Events', 'numcol': 2, 'rebin': [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5], 'binlabels': ['B','C','D','E','F','G','H'], },
 }
 
 for p in plots.keys():

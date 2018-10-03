@@ -321,6 +321,7 @@ plots = {
     'nJets'                 : {'xaxis': 'Number of jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'numcol': 2, 'rebin': [-0.5,0.5,1.5,2.5,3.5,4.5], 'overflow': True, 'binlabels': ['0','1','2','3','4','#geq5']},
     'nBJets'                : {'xaxis': 'Number of b jets (p_{T} > 30 GeV)', 'yaxis': 'Events', 'numcol': 2, 'rebin': [-0.5,0.5,1.5,2.5,3.5,4.5], 'overflow': True, 'binlabels': ['0','1','2','3','4','#geq5']},
     #'pileupWeight'          : {'xaxis': 'Pileup Weight', 'yaxis': 'Events'},
+    'runPeriod'             : {'xaxis': 'Run Period', 'yaxis': 'Events', 'numcol': 2, 'rebin': [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5], 'binlabels': ['B','C','D','E','F','G','H'], },
 }
 
 plotsFake = {

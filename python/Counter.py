@@ -22,6 +22,7 @@ class Counter(object):
     def __init__(self,analysis,**kwargs):
         '''Initialize the counter'''
         self.analysis = analysis
+        self.new = kwargs.pop('new',False)
 
         # empty initialization
         self.processDict = {}
@@ -39,7 +40,7 @@ class Counter(object):
         analysis = kwargs.pop('analysis',self.analysis)
         if analysis not in self.sampleFiles: self.sampleFiles[analysis] = {}
         if sampleName not in self.sampleFiles[analysis]:
-            self.sampleFiles[analysis][sampleName] = NtupleWrapper(analysis,sampleName,**kwargs)
+            self.sampleFiles[analysis][sampleName] = NtupleWrapper(analysis,sampleName,new=self.new,**kwargs)
             ROOT.gROOT.cd()
 
     def addProcess(self,processName,processSamples,signal=False,**kwargs):
@@ -77,7 +78,7 @@ class Counter(object):
         if isinstance(hist,ROOT.TH1):
             val = hist.GetBinContent(1) if hist else 0.
             err = hist.GetBinError(1) if hist else 0.
-            count = hist.GetEntires() if hist else 0
+            count = hist.GetEntries() if hist else 0
             if poisson:
                 return val,err,count 
             else:

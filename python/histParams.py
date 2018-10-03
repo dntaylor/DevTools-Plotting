@@ -15,6 +15,7 @@ from dijetFakeRateHistParams import buildDijetFakeRate
 from tauChargeHistParams import buildTauCharge
 from chargeHistParams import buildCharge
 from dyHistParams import buildDY
+from modDYHistParams import buildModDY
 from wzHistParams import buildWZ
 from zzHistParams import buildZZ
 from hpp4lHistParams import buildHpp4l
@@ -70,6 +71,7 @@ def buildHistParams(analysis,**kwargs):
     if analysis=='TauCharge':       buildTauCharge(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='Charge':          buildCharge(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='DY':              buildDY(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
+    if analysis=='ModDY':           buildModDY(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='WZ':              buildWZ(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='ZZ':              buildZZ(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams)
     if analysis=='Hpp4l':           buildHpp4l(selectionParams,sampleSelectionParams,projectionParams,sampleProjectionParams,histParams,sampleHistParams,**kwargs)

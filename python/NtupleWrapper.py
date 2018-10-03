@@ -228,7 +228,6 @@ class NtupleWrapper(object):
         if 'datacut' in params and isData(self.sample): selection += ' && {0}'.format(params['datacut'])
         if 'mccut' in params and not isData(self.sample): selection += ' && {0}'.format(params['mccut'])
         if 'selection' in params: selection += ' && {0}'.format(params['selection'])
-        #print selection
         # scalefactor
         scalefactor = kwargs.pop('scalefactor','1')
         mcscalefactor = kwargs.pop('mcscalefactor','')
@@ -574,6 +573,7 @@ class NtupleWrapper(object):
 
     def __readSkim(self,directory,full=False):
         '''Read a value from the skim file.'''
+        if not os.path.isfile(self.pickle): return
         if not self.skimInitialized:
             with open(self.pickle,'rb') as f:
                 self.skim = pickle.load(f)

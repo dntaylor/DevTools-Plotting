@@ -108,6 +108,7 @@ latestNtuples['80X'] = {
     'Tau'            : '2017-03-30_TauAnalysis_80X_Moriond_v1-merge',
     'Charge'         : '2018-08-22_ChargeAnalysis_80X_Moriond_v1-merge',
     'DY'             : '2018-01-09_DYAnalysis_80X_Moriond_v1-merge', # fix metFilter
+    'ModDY'          : '2018-10-03_ModDYAnalysis_80X_Moriond_v2-merge',
     'DijetFakeRate'  : '2018-01-09_DijetFakeRateAnalysis_80X_Moriond_v1-merge', # fix metFilter
     'ZFakeRate'      : '2017-03-21_ZFakeRateAnalysis_80X_Moriond_v1-merge',
     'WFakeRate'      : '2017-03-24_WFakeRateAnalysis_80X_Moriond_v1-merge',
@@ -453,6 +454,7 @@ treeMap = {
     'SingleElectron' : 'ETree',
     'SingleMuon'     : 'MTree',
     'Tau'            : 'TTree',
+    'ModDY'          : 'DYTree',
 }
 
 def getTreeName(analysis):
