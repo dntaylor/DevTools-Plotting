@@ -14,6 +14,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 from DevTools.Plotter.histParams import getHistParams, getHistSelections, getProjectionParams
 from DevTools.Plotter.utilities import getNtupleDirectory, getTreeName
 from DevTools.Plotter.FlattenTree import FlattenTree
+from DevTools.Plotter.utilities import getLumi
 
 try:
     from DevTools.Utilities.MultiProgress import MultiProgress
@@ -35,6 +36,7 @@ def flatten(analysis,sample,**kwargs):
     job = kwargs.pop('job',0)
     multi = kwargs.pop('multi',False)
     useProof = kwargs.pop('useProof',False)
+    intLumi = kwargs.pop('intLumi',float(getLumi()))
     if hasProgress and multi:
         pbar = kwargs.pop('progressbar',ProgressBar(widgets=['{0}: '.format(sample),' ',SimpleProgress(),' histograms ',Percentage(),' ',Bar(),' ',ETA()]))
     else:
@@ -43,9 +45,9 @@ def flatten(analysis,sample,**kwargs):
     if outputFile:
         flat = outputFile
         proj = outputFile.replace('.root','_projection.root')
-        flattener = FlattenTree(analysis,sample,inputFileList=inputFileList,flat=flat,proj=proj,shift=shift,countOnly=countOnly,useProof=useProof)
+        flattener = FlattenTree(analysis,sample,inputFileList=inputFileList,flat=flat,proj=proj,shift=shift,countOnly=countOnly,useProof=useProof,intLumi=intLumi)
     else:
-        flattener = FlattenTree(analysis,sample,inputFileList=inputFileList,shift=shift,countOnly=countOnly,useProof=useProof)
+        flattener = FlattenTree(analysis,sample,inputFileList=inputFileList,shift=shift,countOnly=countOnly,useProof=useProof,intLumi=intLumi)
 
     for histName, params in histParams.iteritems():
         flattener.addHistogram(histName,**params)
@@ -100,6 +102,7 @@ def parse_command_line(argv):
     parser.add_argument('--selections', nargs='+', type=str, default=['all'], help='Selections to flatten.')
     parser.add_argument('--channels', nargs='+', type=str, default=['all'], help='Channels to project.')
     parser.add_argument('--skipProjection', action='store_true', help='Skip projecting')
+    parser.add_argument('--intLumi', type=float, default=float(getLumi()), nargs='?', help='Override luminosity from full run')
     #parser.add_argument('--useProof', action='store_true', help='Use PROOF')
     parser.add_argument('-j',type=int,default=1,help='Number of cores to use')
 
@@ -148,6 +151,7 @@ def main(argv=None):
                 countOnly=args.countOnly,
                 njobs=njobs,
                 job=job,
+                intLumi=args.intLumi,
                 )
     elif args.j>1 and hasProgress:
         multi = MultiProgress(args.j)
@@ -156,7 +160,7 @@ def main(argv=None):
             if sample.endswith('.root'): sample = sample[:-5]
             histParams = getSelectedHistParams(args.analysis,args.hists,sample,shift=args.shift,countOnly=args.countOnly)
             histSelections = getSelectedHistSelections(args.analysis,args.selections,sample,shift=args.shift,countOnly=args.countOnly)
-            multi.addJob(sample,flatten,args=(args.analysis,sample,),kwargs={'histParams':histParams,'histSelections':histSelections,'shift':args.shift,'countOnly':args.countOnly,'multi':True,})
+            multi.addJob(sample,flatten,args=(args.analysis,sample,),kwargs={'histParams':histParams,'histSelections':histSelections,'shift':args.shift,'countOnly':args.countOnly,'multi':True,'intLumi':args.intLumi,})
         multi.retrieve()
     else:
         for directory in directories:
@@ -172,6 +176,7 @@ def main(argv=None):
                     countOnly=args.countOnly,
                     multi=False,
                     #useProof=args.useProof,
+                    intLumi=args.intLumi,
                     )
 
     logging.info('Finished')

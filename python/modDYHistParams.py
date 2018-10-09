@@ -23,7 +23,7 @@ def buildModDY(selectionParams,sampleSelectionParams,projectionParams,sampleProj
         'zSubLeadingLeptonEta'        : {'xVariable': 'z2_eta',                         'xBinning': [500, -2.5, 2.5],        },
     }
 
-    dyBaseCut = 'z1_passMedium==1 && z2_passMedium==1 && z_deltaR>0.02 && z_mass>60. && z1_pt>26. && z2_pt>20. && z_mass<120.'
+    dyBaseCut = 'z1_passMedium==1 && z2_passMedium==1 && z_deltaR>0.02 && z_mass>60. && z1_pt>26. && z2_pt>20. && z_mass<120. && 1'
     dyScaleFactor = 'z1_mediumScale*z2_mediumScale*genWeight*pileupWeight*triggerEfficiency'
     
     selectionParams['ModDY'] = {

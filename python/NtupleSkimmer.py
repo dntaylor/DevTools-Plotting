@@ -33,6 +33,7 @@ class NtupleSkimmer(object):
         self.analysis = analysis
         self.sample = sample
         self.shift = kwargs.pop('shift','')
+        self.intLumi = kwargs.get('intLumi',float(getLumi()))
         logging.debug('Initializing {0} {1} {2}'.format(self.analysis,self.sample,self.shift))
         # backup passing custom parameters
         self.ntupleDirectory = kwargs.pop('ntupleDirectory','{0}/{1}'.format(getNtupleDirectory(self.analysis,shift=self.shift),self.sample))
@@ -68,7 +69,6 @@ class NtupleSkimmer(object):
             tfile.Close()
             tchain.Add(f)
         if not summedWeights and not isData(self.sample): logging.warning('No events for sample {0}'.format(self.sample))
-        self.intLumi = float(getLumi())
         self.xsec = getXsec(self.sample)
         if not self.xsec: logging.error('No xsec for sample {0}'.format(self.sample))
         self.sampleLumi = float(summedWeights)/self.xsec if self.xsec else 0.

@@ -37,6 +37,7 @@ class NtupleFlattener(object):
         self.shift = kwargs.pop('shift','')
         self.skipHists = kwargs.pop('skipHists',False)
         self.isData = isData(self.sample)
+        self.intLumi = kwargs.get('intLumi',float(getLumi()))
         logging.debug('Initializing {0} {1} {2}'.format(self.analysis,self.sample,self.shift))
         # backup passing custom parameters
         self.ntupleDirectory = kwargs.pop('ntupleDirectory','{0}/{1}'.format(getNtupleDirectory(self.analysis,shift=self.shift),self.sample))
@@ -72,7 +73,6 @@ class NtupleFlattener(object):
             tfile.Close()
             tchain.Add(f)
         if not summedWeights and not isData(self.sample): logging.warning('No events for sample {0}'.format(self.sample))
-        self.intLumi = float(getLumi())
         self.xsec = getXsec(self.sample)
         self.sampleLumi = float(summedWeights)/self.xsec if self.xsec else 0.
         self.sampleTree = tchain

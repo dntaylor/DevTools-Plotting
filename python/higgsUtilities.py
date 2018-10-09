@@ -295,8 +295,7 @@ sigMaps = {
                  #'ttWJets_13TeV_madgraphMLM',
                  'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
                  'ttZJets_13TeV_madgraphMLM-pythia8',
-                 # TODO add back
-                 #'tZq_ll_4f_13TeV-amcatnlo-pythia8',
+                 'tZq_ll_4f_13TeV-amcatnlo-pythia8',
                 ],
         'VVV' : [
                  'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
@@ -321,7 +320,7 @@ sigMaps = {
         'TTV' : [
                  #'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
                  'ttZJets_13TeV_madgraphMLM-pythia8',
-                 #'tZq_ll_4f_13TeV-amcatnlo-pythia8',
+                 'tZq_ll_4f_13TeV-amcatnlo-pythia8',
                  #'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
                  #'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
                  #'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
@@ -396,8 +395,7 @@ sigMaps = {
                  'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
                  #'ttWJets_13TeV_madgraphMLM',
                  'ttZJets_13TeV_madgraphMLM-pythia8',
-                 # TODO add back
-                 #'tZq_ll_4f_13TeV-amcatnlo-pythia8',
+                 'tZq_ll_4f_13TeV-amcatnlo-pythia8',
                 ],
         'VVV' : [
                  'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8',
@@ -429,8 +427,7 @@ sigMaps = {
                  'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8',
                  #'ttWJets_13TeV_madgraphMLM',
                  'ttZJets_13TeV_madgraphMLM-pythia8',
-                 # TODO add back
-                 #'tZq_ll_4f_13TeV-amcatnlo-pythia8',
+                 'tZq_ll_4f_13TeV-amcatnlo-pythia8',
                  #'TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
                  #'TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',
                  #'TTJets_SingleLeptFromTbar_TuneCUETP8M1_13TeV-madgraphMLM-pythia8',

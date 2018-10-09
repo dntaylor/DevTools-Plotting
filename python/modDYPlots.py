@@ -7,7 +7,9 @@ from copy import deepcopy
 
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-dyPlotter = Plotter('ModDY')
+dyPlotter = Plotter('ModDY',
+    intLumi = 34867, # z skim lumi
+)
 
 sigMap = {
     'Z'   : [

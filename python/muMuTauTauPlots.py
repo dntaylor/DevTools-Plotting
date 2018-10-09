@@ -154,8 +154,8 @@ for sel in basesels:
 plots = {
     # h
     'kinFitChi2'            : {'xaxis': 'Kin. Fit #chi^{2}', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': [x*2 for x in range(50)], 'logy': False, 'overflow': True},
-    'hMass'                 : {'xaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,500,10), 'logy': False, 'overflow': True},
-    'hMassKinFit'           : {'xaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,500,10), 'logy': False, 'overflow': True},
+    'hMass'                 : {'xaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 20 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,1000,20), 'logy': False, 'overflow': True},
+    'hMassKinFit'           : {'xaxis': 'm^{#mu#mu#tau_{#mu}#tau_{h}} Kin. Fit (GeV)', 'yaxis': 'Events / 20 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,1000,20), 'logy': False, 'overflow': True},
     #'hMt'                   : {'xaxis': 'm_{T}^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,650,10), 'logy': False, 'overflow': True},
     #'hMcat'                 : {'xaxis': 'm_{CA}^{#mu#mu#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,650,10), 'logy': True, 'overflow': True},
     'hDeltaMass'            : {'xaxis': 'm^{#mu#mu}-m^{#tau_{#mu}#tau_{h}} (GeV)', 'yaxis': 'Events / 10 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(-250,250,10), 'logy': True, 'overflow': True},
@@ -405,7 +405,7 @@ if doDatadriven:
                         plotname = '{}'.format(plot)
                         savename = '{}region{}/datadriven_from{}/{}_{}'.format(tag+'/' if tag else '',region,source,plot,s)
                         if looseMVA: savename = '{}region{}/datadriven_from{}{:.1f}/{}_{}'.format(tag+'/' if tag else '',region,source,looseMVA,plot,s)
-                        plotter.plot(getDatadrivenPlot(plotname,region=region,source=source,looseMVA=looseMVA,tag=tag),savename,doGOF=True,**kwargs)
+                        plotter.plot(getDatadrivenPlot(plotname,region=region,source=source,looseMVA=looseMVA,tag=tag),savename,doGOF=False,**kwargs)
 
                 for h in hmasses:
                     sigOrder = []
@@ -533,7 +533,7 @@ if doMatrix:
                         savename = '{}region{}/matrix/{}_{}'.format(tag+'/' if tag else '',region,plot,s)
                         if doPrompt and not doFake: savename = '{}region{}/matrix_prompt/{}_{}'.format(tag+'/' if tag else '',region,plot,s)
                         if not doPrompt and doFake: savename = '{}region{}/matrix_fake/{}_{}'.format(tag+'/' if tag else '',region,plot,s)
-                        plotter.plot(getMatrixPlot(plotname,region=region,sources=sources,tag=tag,doPrompt=doPrompt,doFake=doFake),savename,doGOF=True,**kwargs)
+                        plotter.plot(getMatrixPlot(plotname,region=region,sources=sources,tag=tag,doPrompt=doPrompt,doFake=doFake),savename,doGOF=False,**kwargs)
 
 
         for region, sources in [('B',['B','D']),('A',['A','C'])]:
@@ -564,7 +564,7 @@ if doMatrix:
                     kwargs = deepcopy(special[s][plot])
                     plotname = '{}'.format(plot)
                     savename = '{}region{}/matrix_prediction/{}_{}'.format(tag+'/' if tag else '',region,plot,s)
-                    plotter.plot(getMatrixPredictionPlot(plotname,region=region,sources=sources,tag=tag),savename,doGOF=True,**kwargs)
+                    plotter.plot(getMatrixPredictionPlot(plotname,region=region,sources=sources,tag=tag),savename,doGOF=False,**kwargs)
 
         for doPrompt, doFake in [(1,1),(1,0),(0,1)]:
 
@@ -604,7 +604,7 @@ if doMatrix:
                     savename = '{}region{}/matrixDatadriven/{}_{}'.format(tag+'/' if tag else '',region,plot,s)
                     if doPrompt and not doFake: savename = '{}region{}/matrixDatadriven_prompt/{}_{}'.format(tag+'/' if tag else '',region,plot,s)
                     if not doPrompt and doFake: savename = '{}region{}/matrixDatadriven_fake/{}_{}'.format(tag+'/' if tag else '',region,plot,s)
-                    plotter.plot(getMatrixDatadrivenPlot(plotname,region=region,sources=sources,fakeRegions=fakeRegion,fakeSources=fakeSources,tag=tag,doFake=doFake,doPrompt=doPrompt),savename,doGOF=True,**kwargs)
+                    plotter.plot(getMatrixDatadrivenPlot(plotname,region=region,sources=sources,fakeRegions=fakeRegion,fakeSources=fakeSources,tag=tag,doFake=doFake,doPrompt=doPrompt),savename,doGOF=False,**kwargs)
 
 
 if doNormalizations:

@@ -29,6 +29,7 @@ class NtupleWrapper(object):
         self.sample = sample
         self.shift = kwargs.pop('shift','')
         self.useProof = kwargs.pop('useProof',False)
+        self.intLumi = kwargs.pop('intLumi',float(getLumi()))
         logging.debug('Initializing {0} {1} {2}'.format(self.analysis,self.sample,self.shift))
         # backup passing custom parameters
         #self.ntuple = kwargs.pop('ntuple','{0}/src/ntuples/{1}/{2}.root'.format(CMSSW_BASE,self.analysis,self.sample))
@@ -91,7 +92,6 @@ class NtupleWrapper(object):
             tfile.Close()
             tchain.Add(f)
         if not summedWeights and not isData(self.sample): logging.warning('No events for sample {0}'.format(self.sample))
-        self.intLumi = float(getLumi())
         self.xsec = getXsec(self.sample)
         if not self.xsec: logging.error('No xsec for sample {0}'.format(self.sample))
         self.sampleLumi = float(summedWeights)/self.xsec if self.xsec else 0.

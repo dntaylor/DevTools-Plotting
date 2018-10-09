@@ -4,6 +4,8 @@ import logging
 import os
 import sys
 import itertools
+import json
+import pickle
 import operator
 from array import array
 import numpy as np
@@ -74,6 +76,15 @@ def desyEvent(row,mh,ma):
     rle = '{run}:{lumi}:{event}'.format(run=row.run,lumi=row.lumi,event=row.event)
     return rle in events[mh][ma]
 
+def readSummedWeights(sample):
+    fname = '{}/src/DevTools/Plotter/data/MuMuTauTau/{}/summedWeights.pkl'.format(os.environ['CMSSW_BASE'],sample)
+    if os.path.exists(fname):
+        with open(fname,'rb') as f:
+            results = pickle.load(f)
+    else:
+        results = {}
+    return results
+
 class MuMuTauTauFlattener(NtupleFlattener):
     '''
     MuMuTauTau flattener
@@ -83,6 +94,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
 
         # controls
         self.doDatadriven = True
+        self.doMatrix = False
         self.datadrivenRegular = False
         self.doLowMass = True
         self.doHighMass = False
@@ -106,6 +118,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
             logging.error('Cannot use medium muon yet')
             raise
 
+        self.summedWeightsMap = readSummedWeights(sample)
 
         self.mvaCut = -0.5 # -0.8, -0.5
         self.isoCut = 0.4
@@ -269,26 +282,27 @@ class MuMuTauTauFlattener(NtupleFlattener):
                 self.selections += ['{}regionD_fakeForA'.format(tag)]
                 self.selections += ['{}regionD_fakeForB'.format(tag)]
                 self.selections += ['{}regionD_fakeForC'.format(tag)]
-                self.selections += ['matrixP/{}regionA_forA'.format(tag)]
-                self.selections += ['matrixP/{}regionC_forA'.format(tag)]
-                self.selections += ['matrixF/{}regionA_forA'.format(tag)]
-                self.selections += ['matrixF/{}regionC_forA'.format(tag)]
-                self.selections += ['matrixP/{}regionA_forA_p'.format(tag)]
-                self.selections += ['matrixP/{}regionC_forA_p'.format(tag)]
-                self.selections += ['matrixF/{}regionA_forA_f'.format(tag)]
-                self.selections += ['matrixF/{}regionC_forA_f'.format(tag)]
-                self.selections += ['matrixP/{}regionB_forB'.format(tag)]
-                self.selections += ['matrixP/{}regionD_forB'.format(tag)]
-                self.selections += ['matrixF/{}regionB_forB'.format(tag)]
-                self.selections += ['matrixF/{}regionD_forB'.format(tag)]
-                self.selections += ['matrixP/{}regionB_forB_p'.format(tag)]
-                self.selections += ['matrixP/{}regionD_forB_p'.format(tag)]
-                self.selections += ['matrixF/{}regionB_forB_f'.format(tag)]
-                self.selections += ['matrixF/{}regionD_forB_f'.format(tag)]
-                self.selections += ['matrixP/{}regionB_forB_fakeForA'.format(tag)]
-                self.selections += ['matrixP/{}regionD_forB_fakeForA'.format(tag)]
-                self.selections += ['matrixF/{}regionB_forB_fakeForA'.format(tag)]
-                self.selections += ['matrixF/{}regionD_forB_fakeForA'.format(tag)]
+                if self.doMatrix:
+                    self.selections += ['matrixP/{}regionA_forA'.format(tag)]
+                    self.selections += ['matrixP/{}regionC_forA'.format(tag)]
+                    self.selections += ['matrixF/{}regionA_forA'.format(tag)]
+                    self.selections += ['matrixF/{}regionC_forA'.format(tag)]
+                    self.selections += ['matrixP/{}regionA_forA_p'.format(tag)]
+                    self.selections += ['matrixP/{}regionC_forA_p'.format(tag)]
+                    self.selections += ['matrixF/{}regionA_forA_f'.format(tag)]
+                    self.selections += ['matrixF/{}regionC_forA_f'.format(tag)]
+                    self.selections += ['matrixP/{}regionB_forB'.format(tag)]
+                    self.selections += ['matrixP/{}regionD_forB'.format(tag)]
+                    self.selections += ['matrixF/{}regionB_forB'.format(tag)]
+                    self.selections += ['matrixF/{}regionD_forB'.format(tag)]
+                    self.selections += ['matrixP/{}regionB_forB_p'.format(tag)]
+                    self.selections += ['matrixP/{}regionD_forB_p'.format(tag)]
+                    self.selections += ['matrixF/{}regionB_forB_f'.format(tag)]
+                    self.selections += ['matrixF/{}regionD_forB_f'.format(tag)]
+                    self.selections += ['matrixP/{}regionB_forB_fakeForA'.format(tag)]
+                    self.selections += ['matrixP/{}regionD_forB_fakeForA'.format(tag)]
+                    self.selections += ['matrixF/{}regionB_forB_fakeForA'.format(tag)]
+                    self.selections += ['matrixF/{}regionD_forB_fakeForA'.format(tag)]
 
         if self.doTextFiles:
             self.textFields = OrderedDict()
@@ -514,6 +528,9 @@ class MuMuTauTauFlattener(NtupleFlattener):
             vals += [val]
         return vals
 
+    def getSummedWeights(self,w):
+        return self.summedWeightsMap[w]
+
     def getBTagWeight(self,row):
         op = 1 # medium
         s = 'central'
@@ -587,6 +604,11 @@ class MuMuTauTauFlattener(NtupleFlattener):
             if self.shift=='trigDown': base = ['genWeight','pileupWeight','triggerEfficiencyDown']
             if self.shift=='puUp': base = ['genWeight','pileupWeightUp','triggerEfficiency']
             if self.shift=='puDown': base = ['genWeight','pileupWeightDown','triggerEfficiency']
+            if self.summedWeightsMap:
+                for muR in [0.5,1.0,2.0]:
+                    for muF in [0.5,1.0,2.0]:
+                        if self.shift=='muR{muR:3.1f}muF{muF:3.1f}'.format(muR=muR,muF=muF): 
+                            base = ['genWeight_muR{muR:3.1f}_muF{muF:3.1f}'.format(muR=muR,muF=muF),'pileupWeight','triggerEfficiency']
             vals = [getattr(row,scale) for scale in base]
             # tau id: 0.99 for VL/L, 0.97 for M
             if row.ath_pt<20:
@@ -631,6 +653,22 @@ class MuMuTauTauFlattener(NtupleFlattener):
             weight = prod([val for val in vals if val==val])
             # scale to lumi/xsec
             weight *= float(self.intLumi)/self.sampleLumi if self.sampleLumi else 0.
+            if self.summedWeightsMap:
+                weightMap = {
+                    (1.0,1.0) : 0,
+                    (1.0,2.0) : 1,
+                    (1.0,0.5) : 2,
+                    (2.0,1.0) : 3,
+                    (2.0,2.0) : 4,
+                    (2.0,0.5) : 5,
+                    (0.5,1.0) : 6,
+                    (0.5,2.0) : 7,
+                    (0.5,0.5) : 8,
+                }
+                for muR in [0.5,1.0,2.0]:
+                    for muF in [0.5,1.0,2.0]:
+                        if self.shift=='muR{muR:3.1f}muF{muF:3.1f}'.format(muR=muR,muF=muF): 
+                            weight *= self.getSummedWeights(-1) / self.getSummedWeights(weightMap[(muR,muF)])
             if hasattr(row,'qqZZkfactor'): weight *= row.qqZZkfactor/1.1 # ZZ variable k factor
             # b taggin (veto)
             if self.doBVeto and self.doBScales: weight *= self.getBTagWeight(row)
@@ -770,34 +808,38 @@ class MuMuTauTauFlattener(NtupleFlattener):
                     if passRegion[r]: self.fill(row,sel.replace('default',r),w)
                 if not self.doDatadriven: continue
                 if passRegion['regionA']:
-                    self.fill(row,'matrixP/'+sel.replace('default','regionA')+'_forA',w*mat_bd.item(0,0))
-                    self.fill(row,'matrixF/'+sel.replace('default','regionA')+'_forA',w*mat_bd.item(1,0))
-                    self.fill(row,'matrixP/'+sel.replace('default','regionA')+'_forA_p',w*mat_bd.item(0,0)*p_bd['am2'])
-                    self.fill(row,'matrixF/'+sel.replace('default','regionA')+'_forA_f',w*mat_bd.item(1,0)*f_bd['am2'])
+                    if self.doMatrix:
+                        self.fill(row,'matrixP/'+sel.replace('default','regionA')+'_forA',w*mat_bd.item(0,0))
+                        self.fill(row,'matrixF/'+sel.replace('default','regionA')+'_forA',w*mat_bd.item(1,0))
+                        self.fill(row,'matrixP/'+sel.replace('default','regionA')+'_forA_p',w*mat_bd.item(0,0)*p_bd['am2'])
+                        self.fill(row,'matrixF/'+sel.replace('default','regionA')+'_forA_f',w*mat_bd.item(1,0)*f_bd['am2'])
                 if passRegion['regionB']:
                     self.fill(row,sel.replace('default','regionB')+'_fakeForA',wb)
-                    self.fill(row,'matrixP/'+sel.replace('default','regionB')+'_forB',w*mat_bd.item(0,0))
-                    self.fill(row,'matrixF/'+sel.replace('default','regionB')+'_forB',w*mat_bd.item(1,0))
-                    self.fill(row,'matrixP/'+sel.replace('default','regionB')+'_forB_p',w*mat_bd.item(0,0)*p_bd['am2'])
-                    self.fill(row,'matrixF/'+sel.replace('default','regionB')+'_forB_f',w*mat_bd.item(1,0)*f_bd['am2'])
-                    self.fill(row,'matrixP/'+sel.replace('default','regionB')+'_forB_fakeForA',wb*mat_bd.item(0,0))
-                    self.fill(row,'matrixF/'+sel.replace('default','regionB')+'_forB_fakeForA',wb*mat_bd.item(1,0))
+                    if self.doMatrix:
+                        self.fill(row,'matrixP/'+sel.replace('default','regionB')+'_forB',w*mat_bd.item(0,0))
+                        self.fill(row,'matrixF/'+sel.replace('default','regionB')+'_forB',w*mat_bd.item(1,0))
+                        self.fill(row,'matrixP/'+sel.replace('default','regionB')+'_forB_p',w*mat_bd.item(0,0)*p_bd['am2'])
+                        self.fill(row,'matrixF/'+sel.replace('default','regionB')+'_forB_f',w*mat_bd.item(1,0)*f_bd['am2'])
+                        self.fill(row,'matrixP/'+sel.replace('default','regionB')+'_forB_fakeForA',wb*mat_bd.item(0,0))
+                        self.fill(row,'matrixF/'+sel.replace('default','regionB')+'_forB_fakeForA',wb*mat_bd.item(1,0))
                 if passRegion['regionC']:
                     self.fill(row,sel.replace('default','regionC')+'_fakeForA',wc)
-                    self.fill(row,'matrixP/'+sel.replace('default','regionC')+'_forA',w*mat_bd.item(0,1))
-                    self.fill(row,'matrixF/'+sel.replace('default','regionC')+'_forA',w*mat_bd.item(1,1))
-                    self.fill(row,'matrixP/'+sel.replace('default','regionC')+'_forA_p',w*mat_bd.item(0,1)*p_bd['am2'])
-                    self.fill(row,'matrixF/'+sel.replace('default','regionC')+'_forA_f',w*mat_bd.item(1,1)*f_bd['am2'])
+                    if self.doMatrix:
+                        self.fill(row,'matrixP/'+sel.replace('default','regionC')+'_forA',w*mat_bd.item(0,1))
+                        self.fill(row,'matrixF/'+sel.replace('default','regionC')+'_forA',w*mat_bd.item(1,1))
+                        self.fill(row,'matrixP/'+sel.replace('default','regionC')+'_forA_p',w*mat_bd.item(0,1)*p_bd['am2'])
+                        self.fill(row,'matrixF/'+sel.replace('default','regionC')+'_forA_f',w*mat_bd.item(1,1)*f_bd['am2'])
                 if passRegion['regionD']:
                     self.fill(row,sel.replace('default','regionD')+'_fakeForA',wd)
                     self.fill(row,sel.replace('default','regionD')+'_fakeForB',wc)
                     self.fill(row,sel.replace('default','regionD')+'_fakeForC',wb)
-                    self.fill(row,'matrixP/'+sel.replace('default','regionD')+'_forB',w*mat_bd.item(0,1))
-                    self.fill(row,'matrixF/'+sel.replace('default','regionD')+'_forB',w*mat_bd.item(1,1))
-                    self.fill(row,'matrixP/'+sel.replace('default','regionD')+'_forB_p',w*mat_bd.item(0,1)*p_bd['am2'])
-                    self.fill(row,'matrixF/'+sel.replace('default','regionD')+'_forB_f',w*mat_bd.item(1,1)*f_bd['am2'])
-                    self.fill(row,'matrixP/'+sel.replace('default','regionD')+'_forB_fakeForA',wb*mat_bd.item(0,1))
-                    self.fill(row,'matrixF/'+sel.replace('default','regionD')+'_forB_fakeForA',wb*mat_bd.item(1,1))
+                    if self.doMatrix:
+                        self.fill(row,'matrixP/'+sel.replace('default','regionD')+'_forB',w*mat_bd.item(0,1))
+                        self.fill(row,'matrixF/'+sel.replace('default','regionD')+'_forB',w*mat_bd.item(1,1))
+                        self.fill(row,'matrixP/'+sel.replace('default','regionD')+'_forB_p',w*mat_bd.item(0,1)*p_bd['am2'])
+                        self.fill(row,'matrixF/'+sel.replace('default','regionD')+'_forB_f',w*mat_bd.item(1,1)*f_bd['am2'])
+                        self.fill(row,'matrixP/'+sel.replace('default','regionD')+'_forB_fakeForA',wb*mat_bd.item(0,1))
+                        self.fill(row,'matrixF/'+sel.replace('default','regionD')+'_forB_fakeForA',wb*mat_bd.item(1,1))
 
 
 def parse_command_line(argv):

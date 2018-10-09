@@ -3,6 +3,7 @@ import os
 import sys
 import hashlib
 import glob
+import logging
 
 from DevTools.Utilities.utilities import python_mkdir, ZMASS, getCMSSWVersion
 from DevTools.Utilities.hdfsUtils import get_hdfs_root_files
@@ -108,7 +109,8 @@ latestNtuples['80X'] = {
     'Tau'            : '2017-03-30_TauAnalysis_80X_Moriond_v1-merge',
     'Charge'         : '2018-08-22_ChargeAnalysis_80X_Moriond_v1-merge',
     'DY'             : '2018-01-09_DYAnalysis_80X_Moriond_v1-merge', # fix metFilter
-    'ModDY'          : '2018-10-03_ModDYAnalysis_80X_Moriond_v2-merge',
+    #'ModDY'          : '2018-10-03_ModDYAnalysis_80X_Moriond_v2-merge', # miniaod
+    'ModDY'          : '2018-10-03_ModDYAnalysis_80X_ZSkim_v1-merge', # zskim
     'DijetFakeRate'  : '2018-01-09_DijetFakeRateAnalysis_80X_Moriond_v1-merge', # fix metFilter
     'ZFakeRate'      : '2017-03-21_ZFakeRateAnalysis_80X_Moriond_v1-merge',
     'WFakeRate'      : '2017-03-24_WFakeRateAnalysis_80X_Moriond_v1-merge',
@@ -256,28 +258,37 @@ def getTestFiles(analysis,sample,n=1,version=None):
 latestHistograms = {'80X':{}}
 
 latestHistograms['80X']['MuMuTauTau'] = {
-    'MuonEnUp'         : '2018-09-24_MuMuTauTauHistogramsNew_MuonEnUp_80X_Moriond_v1',
-    'MuonEnDown'       : '2018-09-24_MuMuTauTauHistogramsNew_MuonEnDown_80X_Moriond_v1',
-    'TauEnUp'          : '2018-09-24_MuMuTauTauHistogramsNew_TauEnUp_80X_Moriond_v1',
-    'TauEnDown'        : '2018-09-24_MuMuTauTauHistogramsNew_TauEnDown_80X_Moriond_v1',
-    'JetEnUp'          : '2018-09-24_MuMuTauTauHistogramsNew_JetEnUp_80X_Moriond_v1',
-    'JetEnDown'        : '2018-09-24_MuMuTauTauHistogramsNew_JetEnDown_80X_Moriond_v1',
-    'JetResUp'         : '2018-09-24_MuMuTauTauHistogramsNew_JetResUp_80X_Moriond_v1',
-    'JetResDown'       : '2018-09-24_MuMuTauTauHistogramsNew_JetResDown_80X_Moriond_v1',
-    'UnclusteredEnUp'  : '2018-09-24_MuMuTauTauHistogramsNew_UnclusteredEnUp_80X_Moriond_v1',
-    'UnclusteredEnDown': '2018-09-24_MuMuTauTauHistogramsNew_UnclusteredEnDown_80X_Moriond_v1',
-    'lepUp'            : '2018-09-24_MuMuTauTauHistogramsNew_lepUp_80X_Moriond_v1',
-    'lepDown'          : '2018-09-24_MuMuTauTauHistogramsNew_lepDown_80X_Moriond_v1',
-    'trigUp'           : '2018-09-24_MuMuTauTauHistogramsNew_trigUp_80X_Moriond_v1',
-    'trigDown'         : '2018-09-24_MuMuTauTauHistogramsNew_trigDown_80X_Moriond_v1',
-    'puUp'             : '2018-09-24_MuMuTauTauHistogramsNew_puUp_80X_Moriond_v1',
-    'puDown'           : '2018-09-24_MuMuTauTauHistogramsNew_puDown_80X_Moriond_v1',
-    'fakeUp'           : '2018-09-24_MuMuTauTauHistogramsNew_fakeUp_80X_Moriond_v1',
-    'fakeDown'         : '2018-09-24_MuMuTauTauHistogramsNew_fakeDown_80X_Moriond_v1',
-    'btagUp'           : '2018-09-24_MuMuTauTauHistogramsNew_btagUp_80X_Moriond_v1',
-    'btagDown'         : '2018-09-24_MuMuTauTauHistogramsNew_btagDown_80X_Moriond_v1',
-    'tauUp'            : '2018-09-24_MuMuTauTauHistogramsNew_tauUp_80X_Moriond_v1',
-    'tauDown'          : '2018-09-24_MuMuTauTauHistogramsNew_tauDown_80X_Moriond_v1',
+    'MuonEnUp'         : '2018-10-09_MuMuTauTauHistogramsNew_MuonEnUp_80X_Moriond_v1',
+    'MuonEnDown'       : '2018-10-09_MuMuTauTauHistogramsNew_MuonEnDown_80X_Moriond_v1',
+    'TauEnUp'          : '2018-10-09_MuMuTauTauHistogramsNew_TauEnUp_80X_Moriond_v1',
+    'TauEnDown'        : '2018-10-09_MuMuTauTauHistogramsNew_TauEnDown_80X_Moriond_v1',
+    'JetEnUp'          : '2018-10-09_MuMuTauTauHistogramsNew_JetEnUp_80X_Moriond_v1',
+    'JetEnDown'        : '2018-10-09_MuMuTauTauHistogramsNew_JetEnDown_80X_Moriond_v1',
+    'JetResUp'         : '2018-10-09_MuMuTauTauHistogramsNew_JetResUp_80X_Moriond_v1',
+    'JetResDown'       : '2018-10-09_MuMuTauTauHistogramsNew_JetResDown_80X_Moriond_v1',
+    'UnclusteredEnUp'  : '2018-10-09_MuMuTauTauHistogramsNew_UnclusteredEnUp_80X_Moriond_v1',
+    'UnclusteredEnDown': '2018-10-09_MuMuTauTauHistogramsNew_UnclusteredEnDown_80X_Moriond_v1',
+    'lepUp'            : '2018-10-09_MuMuTauTauHistogramsNew_lepUp_80X_Moriond_v1',
+    'lepDown'          : '2018-10-09_MuMuTauTauHistogramsNew_lepDown_80X_Moriond_v1',
+    'trigUp'           : '2018-10-09_MuMuTauTauHistogramsNew_trigUp_80X_Moriond_v1',
+    'trigDown'         : '2018-10-09_MuMuTauTauHistogramsNew_trigDown_80X_Moriond_v1',
+    'puUp'             : '2018-10-09_MuMuTauTauHistogramsNew_puUp_80X_Moriond_v1',
+    'puDown'           : '2018-10-09_MuMuTauTauHistogramsNew_puDown_80X_Moriond_v1',
+    'fakeUp'           : '2018-10-09_MuMuTauTauHistogramsNew_fakeUp_80X_Moriond_v1',
+    'fakeDown'         : '2018-10-09_MuMuTauTauHistogramsNew_fakeDown_80X_Moriond_v1',
+    'btagUp'           : '2018-10-09_MuMuTauTauHistogramsNew_btagUp_80X_Moriond_v1',
+    'btagDown'         : '2018-10-09_MuMuTauTauHistogramsNew_btagDown_80X_Moriond_v1',
+    'tauUp'            : '2018-10-09_MuMuTauTauHistogramsNew_tauUp_80X_Moriond_v1',
+    'tauDown'          : '2018-10-09_MuMuTauTauHistogramsNew_tauDown_80X_Moriond_v1',
+    'muR1.0muF1.0'     : '2018-10-09_MuMuTauTauHistogramsNew_muR1.0muF1.0_80X_Moriond_v1',
+    'muR1.0muF2.0'     : '2018-10-09_MuMuTauTauHistogramsNew_muR1.0muF2.0_80X_Moriond_v1',
+    'muR1.0muF0.5'     : '2018-10-09_MuMuTauTauHistogramsNew_muR1.0muF0.5_80X_Moriond_v1',
+    'muR2.0muF1.0'     : '2018-10-09_MuMuTauTauHistogramsNew_muR2.0muF1.0_80X_Moriond_v1',
+    'muR2.0muF2.0'     : '2018-10-09_MuMuTauTauHistogramsNew_muR2.0muF2.0_80X_Moriond_v1',
+    'muR2.0muF0.5'     : '2018-10-09_MuMuTauTauHistogramsNew_muR2.0muF0.5_80X_Moriond_v1',
+    'muR0.5muF1.0'     : '2018-10-09_MuMuTauTauHistogramsNew_muR0.5muF1.0_80X_Moriond_v1',
+    'muR0.5muF2.0'     : '2018-10-09_MuMuTauTauHistogramsNew_muR0.5muF2.0_80X_Moriond_v1',
+    'muR0.5muF0.5'     : '2018-10-09_MuMuTauTauHistogramsNew_muR0.5muF0.5_80X_Moriond_v1',
 }
 
 def getNewFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
@@ -426,7 +437,8 @@ def getSkimJson(analysis,sample,version=getCMSSWVersion(),shift=''):
         jpath = os.path.join(baseDir,latestSkims[version][analysis][shift],sample)
         fnames = glob.glob('{0}/*.root'.format(jpath))
         if len(fnames)==0:
-            raise Exception('No such path {0}'.format(jpath))
+            #raise Exception('No such path {0}'.format(jpath))
+            logging.warning('No such path {0}'.format(jpath))
         for fname in fnames:
             if 'json' in fname: jfile = fname
     #else:
@@ -440,7 +452,8 @@ def getSkimPickle(analysis,sample,version=getCMSSWVersion(),shift=''):
         ppath = os.path.join(baseDir,latestSkims[version][analysis][shift],sample)
         fnames = glob.glob('{0}/*.root'.format(ppath))
         if len(fnames)==0:
-            raise Exception('No such path {0}'.format(ppath))
+            #raise Exception('No such path {0}'.format(ppath))
+            logging.warning('No such path {0}'.format(ppath))
         for fname in fnames:
             if 'pkl' in fname: pfile = fname
     #else:
