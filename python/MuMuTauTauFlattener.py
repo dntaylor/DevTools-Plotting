@@ -559,7 +559,14 @@ class MuMuTauTauFlattener(NtupleFlattener):
         hist = self.fakehists[lep][key]
         if pt > 100.: pt = 99.
         b = hist.FindBin(pt,abs(eta))
-        return hist.GetBinContent(b), hist.GetBinError(b)
+        val, err = hist.GetBinContent(b), hist.GetBinError(b)
+        #if val<0:
+        #    print 'Negative fake rate:',dm,pt,abs(eta),val,err
+        #if val+err<0:
+        #    print 'Negative high fake rate:',dm,pt,abs(eta),val,err
+        #if val-err<0:
+        #    print 'Negative low fake rate:',dm,pt,abs(eta),val,err
+        return val, err
 
     def getEfficiency(self,lep,pt,eta,num,denom,dm=None):
         key = self.effkey.format(num=num,denom=denom)
@@ -686,7 +693,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
                 fakeEff = fake[0]
                 if self.shift=='fakeUp': fakeEff = fake[0]+fake[1]
                 if self.shift=='fakeDown': fakeEff = fake[0]-fake[1]
-                if fakeEff<0: fakeEff = fake[0]
+                if fakeEff<0: fakeEff = 0
                 if fakeEff>0 and fakeEff<1:
                     weight *= fakeEff/(1-fakeEff)
                 else:
