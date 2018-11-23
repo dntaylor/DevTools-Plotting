@@ -33,6 +33,7 @@ colorMap = {
     'JPsi'      : 'Gold',
     'Upsilon'   : 'Gold',
     'datadriven': 'Gray',
+    'nonprompt' : 'Gray',
     'ZZ'        : 'Blue',
     'ZG'        : 'Red',
     'WZ'        : 'LightBlue',
@@ -60,6 +61,8 @@ colorMap = {
     'HppHm'     : 'Orange',
     'HToAG'     : 'Orange',
     'HToAA'     : 'Orange',
+    'ggHToAA'   : 'DarkRed',
+    'vbfHToAA'  : 'Navy',
     'POWHEG'    : 'LightBlue',
     'AMCATNLO'  : 'Red',
     'SHERPA'    : 'Green',
@@ -75,7 +78,8 @@ labelMap = {
     'QCD'       : 'QCD',
     'JPsi'      : 'J/#Psi',
     'Upsilon'   : '#upsilon',
-    'datadriven': 'Nonprompt',
+    'datadriven': 'Datadriven',
+    'nonprompt' : 'Nonprompt',
     'ZZ'        : 'ZZ',
     'ZG'        : 'Z#gamma',
     'WZ'        : 'WZ',
@@ -102,7 +106,9 @@ labelMap = {
     'HppHmmR'   : '#Phi_{R}^{++}#Phi_{R}^{#font[122]{\55}#font[122]{\55}}',
     'HppHm'     : '#Phi^{#pm#pm}#Phi^{#mp}',
     'HToAG'     : 'H#rightarrow A#gamma #rightarrow #gamma#gamma#gamma',
-    'HToAA'     : 'H#rightarrow a_{1}a_{1}',
+    'HToAA'     : 'H#rightarrow aa',
+    'ggHToAA'   : 'gg #rightarrow H #rightarrow aa',
+    'vbfHToAA'  : 'VBF H #rightarrow aa',
     'AMCATNLO'  : 'amc@NLO',
     'SHERPA'    : 'Sherpa',
     'PYTHIA'    : 'Pythia',
@@ -122,11 +128,19 @@ for sig in ['HToAG']:
         labelMap[key] = '#splitline{{{0}}}{{({1} GeV, {2} GeV)}}'.format(labelMap[sig],*masses)
 
 for h in [125, 300, 750]:
-    for a in [5,7,9,11,13,15,17,19,21]:
+    for a in ['3p6',4,5,6,7,8,9,10,11,13,15,17,19,21]:
         key = 'HToAAH{0}A{1}'.format(h,a)
         colorMap[key] = colorMap['HToAA']
-        #labelMap[key] = 'H({0})#rightarrow a_{{1}}a_{{1}}, a_{{1}}={1} GeV'.format(h,a)
-        labelMap[key] = '#splitline{{H({0})#rightarrow a_{{1}}a_{{1}}}}{{a_{{1}}={1} GeV}}'.format(h,a)
+        #labelMap[key] = 'H({0})#rightarrow aa, a={1} GeV'.format(h,a)
+        labelMap[key] = '#splitline{{H({0})#rightarrow aa}}{{a={1} GeV}}'.format(h,a)
+
+        key = 'ggHToAAH{0}A{1}'.format(h,a)
+        colorMap[key] = colorMap['ggHToAA']
+        labelMap[key] = '#splitline{{gg #rightarrow H({0}) #rightarrow aa}}{{a={1} GeV}}'.format(h,a)
+
+        key = 'vbfHToAAH{0}A{1}'.format(h,a)
+        colorMap[key] = colorMap['vbfHToAA']
+        labelMap[key] = '#splitline{{VBF H({0}) #rightarrow aa}}{{a={1} GeV}}'.format(h,a)
 
 
 def getStyle(sample):

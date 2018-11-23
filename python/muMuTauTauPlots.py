@@ -17,17 +17,20 @@ version = getCMSSWVersion()
 
 blind = True
 doSignals = True
-doMC = True
+doSignalAs = False
+doSignalHs = False
+doSignalHAs = True
+doMC = False
 do2D = False
-doDM = True
+doDM = False
 doAllSignals = False
-doDatadriven = True
+doDatadriven = False
 doLowmass = True
 doChi2 = False
 doHighmass = False
 doDESY = False
 doSameSign = False
-doMatrix = True
+doMatrix = False
 doNormalizations = False
 doSignficance = False
 doGenMatch = False
@@ -60,10 +63,15 @@ signals = ['HToAAH125A15']
 allsignals = []
 
 signame = 'HToAAH{h}A{a}'
+ggsigname = 'ggHToAAH{h}A{a}'
+vbfsigname = 'vbfHToAAH{h}A{a}'
 
 hmasses = [125,300,750]
 amasses = ['3p6',4,5,6,7,8,9,10,11,12,13,14,15,17,19,21]
-amasses = [5,9,13,17,21]
+#amasses = [5,9,13,17,21]
+amasses = [5,9,15]
+
+vbfmasses = [5,9,15]
 
 for h in hmasses:
     for a in amasses:
@@ -92,6 +100,7 @@ aColors = {
     7 : ROOT.TColor.GetColor('#330000'),
     9 : ROOT.TColor.GetColor('#660000'),
     13: ROOT.TColor.GetColor('#800000'),
+    15: ROOT.TColor.GetColor('#800000'),
     17: ROOT.TColor.GetColor('#B20000'),
     21: ROOT.TColor.GetColor('#FF6666'),
 }
@@ -316,38 +325,60 @@ if doDESY:
     
 
 if doSignals:
-    for h in hmasses:
-        plotter.clearHistograms()
-    
-        for a in amasses:
-            name = signame.format(h=h,a=a)
-            plotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': aColors[a]})
-    
-        for plot in plots:
-            for sel in signalsels:
-                if 'lowmass' in sel or 'highmass' in sel: continue
-                kwargs = deepcopy(plots[plot])
-                if plot in plotsSignal: kwargs.update(deepcopy(plotsSignal[plot]))
-                plotname = '{0}/{1}'.format(sel,plot)
-                savename = '{0}/h{h}/{1}'.format(sel,plot,h=h)
-                plotter.plot(plotname,savename,plotratio=False,**kwargs)
-        
-    
-    for a in [5,19]:
-        plotter.clearHistograms()
-        
+    if doSignalHs:
         for h in hmasses:
-            name = signame.format(h=h,a=a)
-            plotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': hColors[h]})
-    
-        for plot in plots:
-            for sel in signalsels:
-                if 'lowmass' in sel or 'highmass' in sel: continue
-                kwargs = deepcopy(plots[plot])
-                if plot in plotsSignal: kwargs.update(deepcopy(plotsSignal[plot]))
-                plotname = '{0}/{1}'.format(sel,plot)
-                savename = '{0}/a{a}/{1}'.format(sel,plot,a=a)
-                plotter.plot(plotname,savename,plotratio=False,**kwargs)
+            plotter.clearHistograms()
+        
+            for a in amasses:
+                name = signame.format(h=h,a=a)
+                plotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': aColors[a]})
+        
+            for plot in plots:
+                for sel in signalsels:
+                    if 'lowmass' in sel or 'highmass' in sel: continue
+                    kwargs = deepcopy(plots[plot])
+                    if plot in plotsSignal: kwargs.update(deepcopy(plotsSignal[plot]))
+                    plotname = '{0}/{1}'.format(sel,plot)
+                    savename = '{0}/h{h}/{1}'.format(sel,plot,h=h)
+                    plotter.plot(plotname,savename,plotratio=False,**kwargs)
+            
+        
+    if doSignalAs:
+        for a in [5,15]:
+            plotter.clearHistograms()
+            
+            for h in hmasses:
+                name = signame.format(h=h,a=a)
+                plotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': hColors[h]})
+        
+            for plot in plots:
+                for sel in signalsels:
+                    if 'lowmass' in sel or 'highmass' in sel: continue
+                    kwargs = deepcopy(plots[plot])
+                    if plot in plotsSignal: kwargs.update(deepcopy(plotsSignal[plot]))
+                    plotname = '{0}/{1}'.format(sel,plot)
+                    savename = '{0}/a{a}/{1}'.format(sel,plot,a=a)
+                    plotter.plot(plotname,savename,plotratio=False,**kwargs)
+        
+    if doSignalHAs:
+        for a in vbfmasses:
+            for h in hmasses:
+                plotter.clearHistograms()
+
+                name = signame.format(h=h,a=a)
+                ggname = ggsigname.format(h=h,a=a)
+                vbfname = vbfsigname.format(h=h,a=a)
+                plotter.addHistogram(ggname,sigMap[ggname],signal=True)
+                plotter.addHistogram(vbfname,sigMap[vbfname],signal=True)
+        
+                for plot in plots:
+                    for sel in signalsels:
+                        if 'lowmass' in sel or 'highmass' in sel: continue
+                        kwargs = deepcopy(plots[plot])
+                        if plot in plotsSignal: kwargs.update(deepcopy(plotsSignal[plot]))
+                        plotname = '{0}/{1}'.format(sel,plot)
+                        savename = '{0}/h{h}a{a}/{1}'.format(sel,plot,a=a,h=h)
+                        plotter.plotNormalized(plotname,savename,plotratio=False,**kwargs)
     
 ##################
 ### Datadriven ###
