@@ -619,7 +619,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
             vals = [getattr(row,scale) for scale in base]
             # tau id: 0.99 for VL/L, 0.97 for M
             if row.ath_pt<20:
-                tid = [0.70, 0.7*0.1, 0.7*0.1]
+                tid = [0.83, 0.06, 0.06]
             else:
                 tid = [0.97, 0.97*0.05, 0.97*0.05]
             if self.shift=='tauUp':
