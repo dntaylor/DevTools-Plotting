@@ -19,11 +19,11 @@ blind = True
 doSignals = True
 doSignalAs = False
 doSignalHs = False
-doSignalHAs = True
+doSignalHAs = False
 doMC = False
-do2D = False
+do2D = True
 doDM = False
-doAllSignals = False
+doAllSignals = True
 doDatadriven = False
 doLowmass = True
 doChi2 = False
@@ -765,9 +765,9 @@ if doNormalizations:
 ### 2D plots ###
 ################
 if do2D:
-    allsamples = samples+signals+['data']
+    allsamples = signals+['data']
     if doAllSignals:
-        allsamples = samples+allsignals+['data']
+        allsamples = allsignals+['data']
     for sample in allsamples:
         plotter.clearHistograms()
         plotter.addHistogram(sample,sigMap[sample])
