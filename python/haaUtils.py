@@ -51,6 +51,7 @@ sampleMap = {
 
 amasses = ['3p6',4,5,6,7,8,9,10,11,13,15,17,19,21]
 hmasses = [125,200,250,300,400,500,750,1000]
+vbfmasses = [5,9,15,21]
 
 for h in hmasses:
     if h==125:
@@ -63,7 +64,8 @@ for h in hmasses:
     ggSigName = 'ggHToAAH{h}A{a}'
     vbfSigName = 'vbfHToAAH{h}A{a}'
     for a in amasses:
-        sampleMap[sigName.format(h=h,a=a)] = [ggName.format(h=h,a=a), vbfName.format(h=h,a=a)]
+        sampleMap[sigName.format(h=h,a=a)] = [ggName.format(h=h,a=a)]
+        if a in vbfmasses: sampleMap[sigName.format(h=h,a=a)] += [vbfName.format(h=h,a=a)]
         sampleMap[ggSigName.format(h=h,a=a)] = [ggName.format(h=h,a=a)]
         sampleMap[vbfSigName.format(h=h,a=a)] = [vbfName.format(h=h,a=a)]
 
