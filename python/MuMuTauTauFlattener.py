@@ -100,7 +100,7 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.doHighMass = False
         self.doSameSign = False
         self.doDESY = False
-        self.doChi2 = True
+        self.doChi2 = False
         self.doBVeto = True
         self.doBScales = True
         self.doDM = True
@@ -125,14 +125,13 @@ class MuMuTauTauFlattener(NtupleFlattener):
 
         self.mh = 0
         self.ma = 0
+        hmasses = [1000,750,500,400,300,250,200]
+        amasses = ['3p6',4,5,6,7,8,9,10,11,13,15,17,19,21]
         if 'SUSY' in sample:
-            if 'M-300_' in sample:
-                self.mh = 300
-            elif 'M-750_' in sample:
-                self.mh = 750
-            else:
-                self.mh = 125
-            for a in [5, 7, 9, 11, 13, 15, 17, 19, 21]:
+            self.mh = 125
+            for h in hmasses:
+                if 'M-{}_'.format(h) in sample: self.mh = h
+            for a in amasses:
                 if 'M-{}_'.format(a) in sample: self.ma = a
         if self.mh not in [125]: self.doDESY = False
         if self.ma not in [7,9]: self.doDESY = False
@@ -422,8 +421,8 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'am2athDeltaR'                : {'x': lambda row: deltaR_row(row,'am2','ath'),        'xBinning': [400, 0, 6.0],           },
             # 2D
             'ammMass_attMass'             : {'x': lambda row: row.amm_mass, 'y': lambda row: row.att_mass,     'xBinning': [60, 0, 30], 'yBinning': [60, 0, 60]   },
-            'ammMass_hMass'               : {'x': lambda row: row.amm_mass, 'y': lambda row: row.h_mass,       'xBinning': [60, 0, 30], 'yBinning': [50, 0, 1000] },
-            'ammMass_hMassKinFit'         : {'x': lambda row: row.amm_mass, 'y': lambda row: row.h_massKinFit, 'xBinning': [60, 0, 30], 'yBinning': [50, 0, 1000] },
+            'ammMass_hMass'               : {'x': lambda row: row.amm_mass, 'y': lambda row: row.h_mass,       'xBinning': [60, 0, 30], 'yBinning': [50, 0, 1500] },
+            'ammMass_hMassKinFit'         : {'x': lambda row: row.amm_mass, 'y': lambda row: row.h_massKinFit, 'xBinning': [60, 0, 30], 'yBinning': [50, 0, 1500] },
             #'am2Iso_athIso'               : {'x': lambda row: row.am2_isolation, 'y': lambda row: row.ath_byIsolationMVArun2v1DBoldDMwLTraw,    'xBinning': [40,0,2], 'yBinning': [40,-1,1] },
             #'am2Iso_athPassIso'           : {'x': lambda row: row.am2_isolation, 'y': lambda row: row.ath_byMediumIsolationMVArun2v1DBoldDMwLT, 'xBinning': [40,0,2], 'yBinning': [2,-0.5,1.5] },
             'genChannel_athDM'            : {'x': lambda row: 'xxxx' if len(row.genChannel)<4 else ''.join(sorted(row.genChannel[:2])+sorted(row.genChannel[2:4])), 
@@ -434,12 +433,12 @@ class MuMuTauTauFlattener(NtupleFlattener):
         self.datasetParams = {
             'ammMass_dataset'             : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   },
             'attMass_dataset'             : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.att_mass,     'xVar': ROOT.RooRealVar('x','x',0,60),   },
-            'hMass_dataset'               : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_mass,       'xVar': ROOT.RooRealVar('x','x',0,1200), },
-            'hMassKinFit_dataset'         : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_massKinFit, 'xVar': ROOT.RooRealVar('x','x',0,1200), },
+            'hMass_dataset'               : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_mass,       'xVar': ROOT.RooRealVar('x','x',0,1500), },
+            'hMassKinFit_dataset'         : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.h_massKinFit, 'xVar': ROOT.RooRealVar('x','x',0,1500), },
             'ammMass_attMass_dataset'     : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.att_mass,     'yVar': ROOT.RooRealVar('y','y',0,60),   },
-            'ammMass_hMass_dataset'       : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.h_mass,       'yVar': ROOT.RooRealVar('y','y',0,1200), },
-            'ammMass_hMassKinFit_dataset' : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.h_massKinFit, 'yVar': ROOT.RooRealVar('y','y',0,1200), },
-            'ammMass_kinFitChi2_dataset'  : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.kinFitChi2,   'yVar': ROOT.RooRealVar('y','y',0,10000),},
+            'ammMass_hMass_dataset'       : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.h_mass,       'yVar': ROOT.RooRealVar('y','y',0,1500), },
+            'ammMass_hMassKinFit_dataset' : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.h_massKinFit, 'yVar': ROOT.RooRealVar('y','y',0,1500), },
+            #'ammMass_kinFitChi2_dataset'  : {'wVar': ROOT.RooRealVar('w','w',-999999,999999), 'x': lambda row: row.amm_mass,     'xVar': ROOT.RooRealVar('x','x',0,30),   'y': lambda row: row.kinFitChi2,   'yVar': ROOT.RooRealVar('y','y',0,10000),},
         }
 
         # initialize flattener
@@ -853,7 +852,8 @@ def parse_command_line(argv):
     parser = argparse.ArgumentParser(description='Run Flattener')
 
     #parser.add_argument('sample', type=str, default='SingleMuon', nargs='?', help='Sample to flatten')
-    parser.add_argument('sample', type=str, default='SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-15_TuneCUETP8M1_13TeV_madgraph_pythia8', nargs='?', help='Sample to flatten')
+    #parser.add_argument('sample', type=str, default='SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-15_TuneCUETP8M1_13TeV_madgraph_pythia8', nargs='?', help='Sample to flatten')
+    parser.add_argument('sample', type=str, default='SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-200_M-5_TuneCUETP8M1_13TeV_madgraph_pythia8', nargs='?', help='Sample to flatten')
     parser.add_argument('shift', type=str, default='', nargs='?', help='Shift to apply to scale factors')
     parser.add_argument('--skipHists', action='store_true',help='Skip histograms, only do datasets')
 
