@@ -35,6 +35,7 @@ flatteners = {
     'WTauFakeRate': WTauFakeRateFlattener,
     'ZTauFakeRate': ZTauFakeRateFlattener,
     'MuMuTauTau': MuMuTauTauFlattener,
+    'ModDY': ModDYFlattener,
 }
 
 def flatten(analysis,sample,**kwargs):

@@ -24,10 +24,14 @@ def buildModDY(selectionParams,sampleSelectionParams,projectionParams,sampleProj
     }
 
     dyBaseCut = 'z1_passMedium==1 && z2_passMedium==1 && z_deltaR>0.02 && z_mass>60. && z1_pt>26. && z2_pt>20. && z_mass<120. && 1'
+    dyBaseAllCut = 'z1_passMedium==1 && z2_passMedium==1 && z_deltaR>0.02 && z_mass>60. && z1_pt>26. && z2_pt>3. && z_mass<120. && 1'
+    dyBaseLowCut = 'z1_passMedium==1 && z2_passMedium==1 && z_deltaR>0.02 && z_mass>60. && z1_pt>26. && z2_pt>3. && z2_pt<20. && z_mass<120. && 1'
     dyScaleFactor = 'z1_mediumScale*z2_mediumScale*genWeight*pileupWeight*triggerEfficiency'
     
     selectionParams['ModDY'] = {
         'default' : {'args': [dyBaseCut],              'kwargs': {'mcscalefactor': dyScaleFactor}},
+        'all'     : {'args': [dyBaseAllCut],           'kwargs': {'mcscalefactor': dyScaleFactor}},
+        'low'     : {'args': [dyBaseLowCut],           'kwargs': {'mcscalefactor': dyScaleFactor}},
     }
     
 
