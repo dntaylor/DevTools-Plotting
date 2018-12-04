@@ -110,7 +110,7 @@ latestNtuples['80X'] = {
     'Charge'         : '2018-08-22_ChargeAnalysis_80X_Moriond_v1-merge',
     'DY'             : '2018-01-09_DYAnalysis_80X_Moriond_v1-merge', # fix metFilter
     #'ModDY'          : '2018-10-03_ModDYAnalysis_80X_Moriond_v2-merge', # miniaod
-    'ModDY'          : '2018-10-03_ModDYAnalysis_80X_ZSkim_v1-merge', # zskim
+    'ModDY'          : '2018-12-03_ModDYAnalysis_80X_ZSkim_v1-merge', # zskim
     'DijetFakeRate'  : '2018-01-09_DijetFakeRateAnalysis_80X_Moriond_v1-merge', # fix metFilter
     'ZFakeRate'      : '2017-03-21_ZFakeRateAnalysis_80X_Moriond_v1-merge',
     'WFakeRate'      : '2017-03-24_WFakeRateAnalysis_80X_Moriond_v1-merge',
@@ -133,6 +133,8 @@ latestNtuples['80X'] = {
     'MuMu'           : '2018-08-22_MuMuAnalysis_80X_v1-merge',
     #'MuMuTauTau'     : '2018-10-10_MuMuTauTauAnalysis_80X_v1-merge',
     'MuMuTauTau'     : '2018-11-28_MuMuTauTauAnalysis_80X_v1-merge',
+    'MuMuTauTauMod'  : '2018-12-03_MuMuTauTauModAnalysis_80X_trigOnly_v1-merge',
+    'MuMuTauTauModMC': '2018-12-03_MuMuTauTauModAnalysis_80X_trigOnlyMC_v1-merge',
     'MuMuTauFakeRate': '2018-03-19_MuMuTauFakeRateAnalysis_80X_v2-merge',
     'MuMuMuFakeRate' : '2018-02-09_MuMuMuFakeRateAnalysis_80X_v1-merge',
 }

@@ -75,7 +75,7 @@ fakeratePlotter.addHistogram('data_uncorrected',sigMap['data'],style={'linecolor
 
 etaBins = [0.,1.479,2.3]
 #ptBins = [10,15,20,25,30,50,100]
-ptBins = [10,20,50,100]
+ptBins = [10,20,30,50,100]
 
 numDenoms = []
 numDenoms_base = [
