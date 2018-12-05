@@ -69,8 +69,9 @@ class ModDYFlattener(NtupleFlattener):
             'met'                         : {'x': lambda row: row.met_pt,                         'xBinning': [500, 0, 500],           },
             'metPhi'                      : {'x': lambda row: row.met_phi,                        'xBinning': [50, -3.14159, 3.14159], },
             # z
-            'zMass'                      : {'x': lambda row: row.z_mass,                        'xBinning': [3000, 0, 30],           },
-            'zDeltaR'                    : {'x': lambda row: row.z_deltaR,                      'xBinning': [100, 0, 1.5],           },
+            'zMass'                      : {'x': lambda row: row.z_mass,                        'xBinning': [2000, 0, 200],           },
+            'zPt'                        : {'x': lambda row: row.z_pt,                          'xBinning': [1000, 0, 1000],           },
+            'zDeltaR'                    : {'x': lambda row: row.z_deltaR,                      'xBinning': [600, 0, 6],           },
             'zDeltaPhi'                  : {'x': lambda row: abs(row.z_deltaPhi),               'xBinning': [500, 0, 3.14159],       },
             'z1Pt'                       : {'x': lambda row: row.z1_pt,                         'xBinning': [500, 0, 500],           },
             'z2Pt'                       : {'x': lambda row: row.z2_pt,                         'xBinning': [500, 0, 500],           },

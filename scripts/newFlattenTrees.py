@@ -18,6 +18,7 @@ from DevTools.Plotter.Hpp4lFlattener import Hpp4lFlattener
 from DevTools.Plotter.WTauFakeRateFlattener import WTauFakeRateFlattener
 from DevTools.Plotter.ZTauFakeRateFlattener import ZTauFakeRateFlattener
 from DevTools.Plotter.MuMuTauTauFlattener import MuMuTauTauFlattener
+from DevTools.Plotter.ModDYFlattener import ModDYFlattener
 
 try:
     from DevTools.Utilities.MultiProgress import MultiProgress

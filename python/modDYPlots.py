@@ -9,6 +9,7 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 
 dyPlotter = Plotter('ModDY',
     intLumi = 34867, # z skim lumi
+    new = True,
 )
 
 sigMap = {
@@ -61,19 +62,22 @@ dyPlotter.addHistogram('data',sigMap['data'])
 # plot definitions
 plots = {
     # z cand
-    'zMass'                 : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 2 GeV', 'rebin': range(61,121,2), 'logy':1, 'ymin':1000, 'ymax': 1e9, 'legendpos': 34, 'numcol': 3,},
-    'zPt'                   : {'xaxis': 'p_{T}^{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(0,155,5), },
-    'zLeadingLeptonPt'      : {'xaxis': 'p_{T}^{Z_{lead}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(25,150,5),},
-    'zSubLeadingLeptonPt'   : {'xaxis': 'p_{T}^{Z_{sublead}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(20,150,5),},
-    'zLeadingLeptonEta'     : {'xaxis': '#eta^{Z_{lead}} (GeV)', 'yaxis': 'Events', 'rebin':10, 'legendpos': 34, 'numcol': 3, 'yscale':1.4, },
-    'zSubLeadingLeptonEta'  : {'xaxis': '#eta^{Z_{sublead}} (GeV)', 'yaxis': 'Events', 'rebin':10, 'legendpos': 34, 'numcol': 3, 'yscale':1.4, }, 
+    'zMass'   : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 2 GeV', 'rebin': range(61,121,2), 'logy':1, 'ymin':1000, 'ymax': 1e9, 'legendpos': 34, 'numcol': 3,},
+    'zPt'     : {'xaxis': 'p_{T}^{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(0,155,5), },
+    'z1Pt'    : {'xaxis': 'p_{T}^{Z_{lead}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(25,150,5),},
+    'z2Pt'    : {'xaxis': 'p_{T}^{Z_{sublead}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(20,150,5),},
+    'z1Eta'   : {'xaxis': '#eta^{Z_{lead}} (GeV)', 'yaxis': 'Events', 'rebin':1, 'legendpos': 34, 'numcol': 3, 'yscale':1.4, },
+    'z2Eta'   : {'xaxis': '#eta^{Z_{sublead}} (GeV)', 'yaxis': 'Events', 'rebin':1, 'legendpos': 34, 'numcol': 3, 'yscale':1.4, }, 
+    'z1Iso'   : {'xaxis': 'I_{rel.}^{Z_{lead}} (GeV)', 'yaxis': 'Events', 'rebin':1, 'legendpos': 34, 'numcol': 3, 'yscale':1.4, },
+    'z2Iso'   : {'xaxis': 'I_{rel.}^{Z_{sublead}} (GeV)', 'yaxis': 'Events', 'rebin':1, 'legendpos': 34, 'numcol': 3, 'yscale':1.4, }, 
     # event
-    'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(0,200,5),},
-    'metPhi'                : {'xaxis': '#phi_{E_{T}^{miss}}', 'yaxis': 'Events', 'rebin': 10, 'numcol': 3, 'legendpos': 34, 'yscale': 1.4, },
+    'met'     : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(0,200,5),},
+    'metPhi'  : {'xaxis': '#phi_{E_{T}^{miss}}', 'yaxis': 'Events', 'rebin': 10, 'numcol': 3, 'legendpos': 34, 'yscale': 1.4, },
 }
 
 # signal region
-for plot in plots:
-    plotname = 'default/{0}'.format(plot)
-    dyPlotter.plot(plotname,plotname,ratiomin=0.9,ratiomax=1.1,**plots[plot])
+for region in ['default','high','low']:
+    for plot in plots:
+        plotname = '{}/{}'.format(region,plot)
+        dyPlotter.plot(plotname,plotname,ratiomin=0.9,ratiomax=1.1,**plots[plot])
 
