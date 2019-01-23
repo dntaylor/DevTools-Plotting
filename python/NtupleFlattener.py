@@ -1,5 +1,6 @@
 import logging
 import os
+import fnmatch
 import sys
 import glob
 import json
@@ -64,7 +65,12 @@ class NtupleFlattener(object):
                 for line in f.readlines():
                    allFiles += [line.strip()]
         else: # reading from an input directory (all files in directory will be processed)
-            allFiles = glob.glob('{0}/*.root'.format(self.ntupleDirectory))
+            #allFiles = glob.glob('{0}/*.root'.format(self.ntupleDirectory))
+            allFiles = []
+            for root, dirnames, fnames in os.walk(self.ntupleDirectory):
+                if 'failed' in root: continue
+                for fname in fnmatch.filter(fnames, '*.root'):
+                    allFiles.append(os.path.join(root,fname))
         if len(allFiles)==0: logging.error('No files found for sample {0}'.format(self.sample))
         summedWeights = 0.
         for f in allFiles:

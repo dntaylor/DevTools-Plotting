@@ -61,10 +61,13 @@ def getLumi(version=getCMSSWVersion(),run=''):
     if version=='76X':
         #return 2263 # december jamboree golden json
         return 2318 # moriond golden json
-    else:
-        #return 4336.100 # previous "frozen"
+    elif version=='80X':
         #return 12892.762 # ichep dataset golden json
         return 35867.060 # full 2016 for moriond
+    elif version=='94X':
+        return 41370
+    else:
+        return 0
 
 def getRunRange(version=getCMSSWVersion(),run=''):
     if run in runRange:
@@ -134,6 +137,9 @@ latestNtuples['80X'] = {
     'MuMuTauTau'     : '2018-10-10_MuMuTauTauAnalysis_80X_v1-merge',
     'MuMuTauFakeRate': '2018-03-19_MuMuTauFakeRateAnalysis_80X_v2-merge',
     'MuMuMuFakeRate' : '2018-02-09_MuMuMuFakeRateAnalysis_80X_v1-merge',
+}
+latestNtuples['94X'] = {
+    'MonoHZZ'        : '2019-01-22_MonoHZZAnalysis_94X_v1',
 }
 
 latestShifts = {}
