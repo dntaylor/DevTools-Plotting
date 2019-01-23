@@ -113,7 +113,7 @@ latestNtuples['80X'] = {
     'Charge'         : '2018-08-22_ChargeAnalysis_80X_Moriond_v1-merge',
     'DY'             : '2018-01-09_DYAnalysis_80X_Moriond_v1-merge', # fix metFilter
     #'ModDY'          : '2018-10-03_ModDYAnalysis_80X_Moriond_v2-merge', # miniaod
-    'ModDY'          : '2018-10-03_ModDYAnalysis_80X_ZSkim_v1-merge', # zskim
+    'ModDY'          : '2018-12-03_ModDYAnalysis_80X_ZSkim_v1-merge', # zskim
     'DijetFakeRate'  : '2018-01-09_DijetFakeRateAnalysis_80X_Moriond_v1-merge', # fix metFilter
     'ZFakeRate'      : '2017-03-21_ZFakeRateAnalysis_80X_Moriond_v1-merge',
     'WFakeRate'      : '2017-03-24_WFakeRateAnalysis_80X_Moriond_v1-merge',
@@ -134,7 +134,10 @@ latestNtuples['80X'] = {
     'SingleJet'      : '2017-07-18_SingleJetAnalysis_80X_QCD_v1-merge',
 # MuMuTauTau
     'MuMu'           : '2018-08-22_MuMuAnalysis_80X_v1-merge',
-    'MuMuTauTau'     : '2018-10-10_MuMuTauTauAnalysis_80X_v1-merge',
+    #'MuMuTauTau'     : '2018-10-10_MuMuTauTauAnalysis_80X_v1-merge',
+    'MuMuTauTau'     : '2018-11-28_MuMuTauTauAnalysis_80X_v1-merge',
+    'MuMuTauTauMod'  : '2018-12-03_MuMuTauTauModAnalysis_80X_trigOnly_v1-merge',
+    'MuMuTauTauModMC': '2018-12-03_MuMuTauTauModAnalysis_80X_trigOnlyMC_v1-merge',
     'MuMuTauFakeRate': '2018-03-19_MuMuTauFakeRateAnalysis_80X_v2-merge',
     'MuMuMuFakeRate' : '2018-02-09_MuMuMuFakeRateAnalysis_80X_v1-merge',
 }
@@ -204,10 +207,10 @@ latestShifts['80X']['MuMuTauTau'] = {
 # Moriond 2017
     #'ElectronEnUp'     : '2018-09-04_MuMuTauTauAnalysis_ElectronEnUp_80X_v1-merge',
     #'ElectronEnDown'   : '2018-09-04_MuMuTauTauAnalysis_ElectronEnDown_80X_v1-merge',
-    'MuonEnUp'         : '2018-10-10_MuMuTauTauAnalysis_MuonEnUp_80X_v1-merge',
-    'MuonEnDown'       : '2018-10-10_MuMuTauTauAnalysis_MuonEnDown_80X_v1-merge',
-    'TauEnUp'          : '2018-10-10_MuMuTauTauAnalysis_TauEnUp_80X_v1-merge',
-    'TauEnDown'        : '2018-10-10_MuMuTauTauAnalysis_TauEnDown_80X_v1-merge',
+    'MuonEnUp'         : '2018-11-28_MuMuTauTauAnalysis_MuonEnUp_80X_v1-merge',
+    'MuonEnDown'       : '2018-11-28_MuMuTauTauAnalysis_MuonEnDown_80X_v1-merge',
+    'TauEnUp'          : '2018-11-28_MuMuTauTauAnalysis_TauEnUp_80X_v1-merge',
+    'TauEnDown'        : '2018-11-28_MuMuTauTauAnalysis_TauEnDown_80X_v1-merge',
     #'JetEnUp'          : '2018-09-04_MuMuTauTauAnalysis_JetEnUp_80X_v1-merge',
     #'JetEnDown'        : '2018-09-04_MuMuTauTauAnalysis_JetEnDown_80X_v1-merge',
     #'JetResUp'         : '2018-09-04_MuMuTauTauAnalysis_JetResUp_80X_v1-merge',
@@ -263,31 +266,31 @@ def getTestFiles(analysis,sample,n=1,version=None):
 latestHistograms = {'80X':{}}
 
 latestHistograms['80X']['MuMuTauTau'] = {
-    'MuonEnUp'         : '2018-10-11_MuMuTauTauHistogramsNew_MuonEnUp_80X_Moriond_v1',
-    'MuonEnDown'       : '2018-10-11_MuMuTauTauHistogramsNew_MuonEnDown_80X_Moriond_v1',
-    'TauEnUp'          : '2018-10-11_MuMuTauTauHistogramsNew_TauEnUp_80X_Moriond_v1',
-    'TauEnDown'        : '2018-10-11_MuMuTauTauHistogramsNew_TauEnDown_80X_Moriond_v1',
-    'lepUp'            : '2018-10-11_MuMuTauTauHistogramsNew_lepUp_80X_Moriond_v1',
-    'lepDown'          : '2018-10-11_MuMuTauTauHistogramsNew_lepDown_80X_Moriond_v1',
-    'trigUp'           : '2018-10-11_MuMuTauTauHistogramsNew_trigUp_80X_Moriond_v1',
-    'trigDown'         : '2018-10-11_MuMuTauTauHistogramsNew_trigDown_80X_Moriond_v1',
-    'puUp'             : '2018-10-11_MuMuTauTauHistogramsNew_puUp_80X_Moriond_v1',
-    'puDown'           : '2018-10-11_MuMuTauTauHistogramsNew_puDown_80X_Moriond_v1',
-    'fakeUp'           : '2018-10-11_MuMuTauTauHistogramsNew_fakeUp_80X_Moriond_v1',
-    'fakeDown'         : '2018-10-11_MuMuTauTauHistogramsNew_fakeDown_80X_Moriond_v1',
-    'btagUp'           : '2018-10-11_MuMuTauTauHistogramsNew_btagUp_80X_Moriond_v1',
-    'btagDown'         : '2018-10-11_MuMuTauTauHistogramsNew_btagDown_80X_Moriond_v1',
-    'tauUp'            : '2018-10-11_MuMuTauTauHistogramsNew_tauUp_80X_Moriond_v1',
-    'tauDown'          : '2018-10-11_MuMuTauTauHistogramsNew_tauDown_80X_Moriond_v1',
-    'muR1.0muF1.0'     : '2018-10-11_MuMuTauTauHistogramsNew_muR1.0muF1.0_80X_Moriond_v1',
-    'muR1.0muF2.0'     : '2018-10-11_MuMuTauTauHistogramsNew_muR1.0muF2.0_80X_Moriond_v1',
-    'muR1.0muF0.5'     : '2018-10-11_MuMuTauTauHistogramsNew_muR1.0muF0.5_80X_Moriond_v1',
-    'muR2.0muF1.0'     : '2018-10-11_MuMuTauTauHistogramsNew_muR2.0muF1.0_80X_Moriond_v1',
-    'muR2.0muF2.0'     : '2018-10-11_MuMuTauTauHistogramsNew_muR2.0muF2.0_80X_Moriond_v1',
-    'muR2.0muF0.5'     : '2018-10-11_MuMuTauTauHistogramsNew_muR2.0muF0.5_80X_Moriond_v1',
-    'muR0.5muF1.0'     : '2018-10-11_MuMuTauTauHistogramsNew_muR0.5muF1.0_80X_Moriond_v1',
-    'muR0.5muF2.0'     : '2018-10-11_MuMuTauTauHistogramsNew_muR0.5muF2.0_80X_Moriond_v1',
-    'muR0.5muF0.5'     : '2018-10-11_MuMuTauTauHistogramsNew_muR0.5muF0.5_80X_Moriond_v1',
+    'MuonEnUp'         : '2018-12-05_MuMuTauTauHistogramsNew_MuonEnUp_80X_Moriond_v1',
+    'MuonEnDown'       : '2018-12-05_MuMuTauTauHistogramsNew_MuonEnDown_80X_Moriond_v1',
+    'TauEnUp'          : '2018-12-05_MuMuTauTauHistogramsNew_TauEnUp_80X_Moriond_v1',
+    'TauEnDown'        : '2018-12-05_MuMuTauTauHistogramsNew_TauEnDown_80X_Moriond_v1',
+    'lepUp'            : '2018-12-05_MuMuTauTauHistogramsNew_lepUp_80X_Moriond_v1',
+    'lepDown'          : '2018-12-05_MuMuTauTauHistogramsNew_lepDown_80X_Moriond_v1',
+    'trigUp'           : '2018-12-05_MuMuTauTauHistogramsNew_trigUp_80X_Moriond_v1',
+    'trigDown'         : '2018-12-05_MuMuTauTauHistogramsNew_trigDown_80X_Moriond_v1',
+    'puUp'             : '2018-12-05_MuMuTauTauHistogramsNew_puUp_80X_Moriond_v1',
+    'puDown'           : '2018-12-05_MuMuTauTauHistogramsNew_puDown_80X_Moriond_v1',
+    'fakeUp'           : '2018-12-05_MuMuTauTauHistogramsNew_fakeUp_80X_Moriond_v1',
+    'fakeDown'         : '2018-12-05_MuMuTauTauHistogramsNew_fakeDown_80X_Moriond_v1',
+    'btagUp'           : '2018-12-05_MuMuTauTauHistogramsNew_btagUp_80X_Moriond_v1',
+    'btagDown'         : '2018-12-05_MuMuTauTauHistogramsNew_btagDown_80X_Moriond_v1',
+    'tauUp'            : '2018-12-05_MuMuTauTauHistogramsNew_tauUp_80X_Moriond_v1',
+    'tauDown'          : '2018-12-05_MuMuTauTauHistogramsNew_tauDown_80X_Moriond_v1',
+    'muR1.0muF1.0'     : '2018-12-05_MuMuTauTauHistogramsNew_muR1.0muF1.0_80X_Moriond_v1',
+    'muR1.0muF2.0'     : '2018-12-05_MuMuTauTauHistogramsNew_muR1.0muF2.0_80X_Moriond_v1',
+    'muR1.0muF0.5'     : '2018-12-05_MuMuTauTauHistogramsNew_muR1.0muF0.5_80X_Moriond_v1',
+    'muR2.0muF1.0'     : '2018-12-05_MuMuTauTauHistogramsNew_muR2.0muF1.0_80X_Moriond_v1',
+    'muR2.0muF2.0'     : '2018-12-05_MuMuTauTauHistogramsNew_muR2.0muF2.0_80X_Moriond_v1',
+    'muR2.0muF0.5'     : '2018-12-05_MuMuTauTauHistogramsNew_muR2.0muF0.5_80X_Moriond_v1',
+    'muR0.5muF1.0'     : '2018-12-05_MuMuTauTauHistogramsNew_muR0.5muF1.0_80X_Moriond_v1',
+    'muR0.5muF2.0'     : '2018-12-05_MuMuTauTauHistogramsNew_muR0.5muF2.0_80X_Moriond_v1',
+    'muR0.5muF0.5'     : '2018-12-05_MuMuTauTauHistogramsNew_muR0.5muF0.5_80X_Moriond_v1',
 }
 
 def getNewFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):

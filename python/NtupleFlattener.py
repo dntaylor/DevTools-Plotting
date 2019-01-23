@@ -302,6 +302,8 @@ class NtupleFlattener(object):
 
         for hist in self.datasetParams:
             wval = weight*self.datasetParams[hist]['mcscale'](row) if 'mcscale' in self.datasetParams[hist] and self.isData else weight
+            if not wval:
+                continue
             w = self.datasetParams[hist]['wVar']
             w.setVal(wval)
             histName = '{0}/{1}'.format(selection,hist)

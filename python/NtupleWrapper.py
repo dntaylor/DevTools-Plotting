@@ -107,6 +107,10 @@ class NtupleWrapper(object):
         if self.useProof: self.sampleTree.SetProof()
         logging.debug('Initialized {0}: summedWeights = {1}; xsec = {2}; sampleLumi = {3}; intLumi = {4}'.format(self.sample,summedWeights,self.xsec,self.sampleLumi,self.intLumi))
 
+    def getXsec(self):
+        if not self.initialized: self.__initializeNtuple()
+        return self.xsec
+
     def getTree(self):
         if not self.initialized: self.__initializeNtuple()
         return self.sampleTree

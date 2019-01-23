@@ -125,7 +125,7 @@ plotter.addHistogram('Z',sigMap['Z'])
 plotter.addHistogram('data',sigMap['data'],style={'linecolor':ROOT.kBlack,'name':'Data'})
 plotter.addHistogram('data_uncorrected',sigMap['data'],style={'linecolor':ROOT.kRed,'name':'Uncorrected'})
 
-ptbins = [10,15,20,25,30,50,100]
+ptbins = [10,20,30,50,100]
 etabins = [-2.3,-1.479,0.,1.479,2.3]
 
 cust = {

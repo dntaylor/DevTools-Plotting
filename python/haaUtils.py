@@ -44,44 +44,30 @@ sampleMap = {
         'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
         'ZZTo4L_13TeV-amcatnloFXFX-pythia8',
     ],
-    'HToAAH125A3p6': ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-3p6_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH125A4'  : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-4_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH125A5'  : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-5_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH125A6'  : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-6_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH125A7'  : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-7_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH125A8'  : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-8_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH125A9'  : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-9_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH125A10' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-10_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH125A11' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-11_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH125A12' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-12_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH125A13' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-13_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH125A14' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-14_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH125A15' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-15_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH125A17' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-17_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH125A19' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-19_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH125A21' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-21_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH300A5'  : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-300_M-5_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH300A7'  : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-300_M-7_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH300A9'  : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-300_M-9_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH300A11' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-300_M-11_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH300A13' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-300_M-13_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH300A15' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-300_M-15_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH300A17' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-300_M-17_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH300A19' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-300_M-19_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH300A21' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-300_M-21_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH750A5'  : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-750_M-5_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH750A7'  : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-750_M-7_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH750A9'  : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-750_M-9_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH750A11' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-750_M-11_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH750A13' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-750_M-13_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH750A15' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-750_M-15_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH750A17' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-750_M-17_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH750A19' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-750_M-19_TuneCUETP8M1_13TeV_madgraph_pythia8'],
-    'HToAAH750A21' : ['SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-750_M-21_TuneCUETP8M1_13TeV_madgraph_pythia8'],
     'data' : [
         'SingleMuon',
     ],
 }
+
+amasses = ['3p6',4,5,6,7,8,9,10,11,13,15,17,19,21]
+hmasses = [125,200,250,300,400,500,750,1000]
+vbfmasses = [5,9,15,21]
+
+for h in hmasses:
+    if h==125:
+        ggName = 'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-{a}_TuneCUETP8M1_13TeV_madgraph_pythia8'
+        vbfName = 'SUSYVBFToHToAA_AToMuMu_AToTauTau_M-{a}_TuneCUETP8M1_13TeV_madgraph_pythia8'
+    else:
+        ggName = 'SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-{h}_M-{a}_TuneCUETP8M1_13TeV_madgraph_pythia8'
+        vbfName = 'SUSYVBFToHToAA_AToMuMu_AToTauTau_M-{h}_M-{a}_TuneCUETP8M1_13TeV_madgraph_pythia8'
+    sigName = 'HToAAH{h}A{a}'
+    ggSigName = 'ggHToAAH{h}A{a}'
+    vbfSigName = 'vbfHToAAH{h}A{a}'
+    for a in amasses:
+        sampleMap[sigName.format(h=h,a=a)] = [ggName.format(h=h,a=a)]
+        if a in vbfmasses: sampleMap[sigName.format(h=h,a=a)] += [vbfName.format(h=h,a=a)]
+        sampleMap[ggSigName.format(h=h,a=a)] = [ggName.format(h=h,a=a)]
+        sampleMap[vbfSigName.format(h=h,a=a)] = [vbfName.format(h=h,a=a)]
 
 def getSampleMap():
     return sampleMap
