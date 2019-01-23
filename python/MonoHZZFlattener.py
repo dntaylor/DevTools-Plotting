@@ -42,14 +42,20 @@ class MonoHZZFlattener(NtupleFlattener):
 
         # setup properties
         self.leps = ['z11','z12','z21','z22']
-        self.baseCutMap = {
-            'pass'  : lambda row: True,
-        }
 
         self.selectionMap = {}
         baseSels = []
-        self.selectionMap['default'] = lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
-        baseSels += ['default']
+
+        self.regions = {
+            'default': lambda row: True,
+            'full'   : lambda row: row.z11_passTight and row.z12_passTight and row.z21_passTight and row.z22_passsTight and row.z21_charge!=row.z22_charge,
+            'CR_SS'  : lambda row: row.z11_passTight and row.z12_passTight and row.z21_charge==row.z22_charge,
+            '3P1F'   : lambda row: row.z11_passTight and row.z12_passTight and ((row.z21_passTight and not row.z22_passsTight) or (not row.z21_passTight and row.z22_passsTight)) and row.z21_charge!=row.z22_charge,
+            '2P2F'   : lambda row: row.z11_passTight and row.z12_passTight and not row.z21_passTight and not row.z22_passsTight and row.z21_charge!=row.z22_charge,
+        }
+        for region in self.regions:
+            self.selectionMap[region] = self.regions[region]
+            baseSels += [region]
 
         # setup histogram parameters
         self.histParams = {
@@ -72,6 +78,17 @@ class MonoHZZFlattener(NtupleFlattener):
         # initialize flattener
         super(MonoHZZFlattener, self).__init__('MonoHZZ',sample,**kwargs)
 
+        self.scalefactors = {}
+        muon_path = '{}/src/DevTools/Plotter/data/ScaleFactors_mu_Moriond2018_final.root'.format(os.environ['CMSSW_BASE'])
+        electron_path = '{}/src/DevTools/Plotter/data/egammaEffi.txt_EGM2D_Moriond2018v1.root'.format(os.environ['CMSSW_BASE'])
+        self.muon_file = ROOT.TFile.Open(muon_path)
+        self.electron_file = ROOT.TFile.Open(electron_path)
+        self.scalefactors['muon'] = self.muon_file.Get('FINAL')
+        self.scalefactors['electron'] = self.electron_file.Get('EGamma_SF2D')
+
+        pileup_path = '{}/src/DevTools/Analyzer/data/pileup_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14.root'.format(os.environ['CMSSW_BASE'])
+        self.pileup_file = ROOT.TFile.Open(pileup_path)
+        self.pileup = self.pileup_file.Get('pileup_scale')
 
     def __parseAsymmErrors(self,graph):
         vals = []
@@ -89,13 +106,35 @@ class MonoHZZFlattener(NtupleFlattener):
             vals += [val]
         return vals
 
+    def getScalefactor(self,flavor,pt,eta):
+        flavors = {
+            'e': 'electron',
+            'm': 'muon',
+        }
+        hist = self.scalefactors[flavors[flavor]]
+        if flavor=='e' and pt>=500: pt = 499
+        if flavor=='m' and pt>=200: pt = 199
+        val = hist.GetBinContent(hist.FindBin(eta,pt))
+        err = hist.GetBinErr(hist.FindBin(eta,pt))
+        return val, err
+
     def getWeight(self,row):
         if row.isData:
             weight = 1.
         else:
-            # per event weights
+            # gen weight
             base = ['genWeight']
             vals = [getattr(row,scale) for scale in base]
+            # trigger efficiency: TODO
+            # pileup weight
+            vals += [self.pileup[int(floor(row.numTrueVertices))]]
+            # lepton efficiency
+            for l,lep in self.leps:
+                pt = getattr(row,'{}_pt'.format(lep))
+                eta = getattr(row,'{}_eta'.format(lep))
+                f = row.channel[l]
+                val,err = self.getScaleFactor(f,pt,eta)
+                vals += [val]
             weight = prod([val for val in vals if val==val])
             # scale to lumi/xsec
             weight *= float(self.intLumi)/self.sampleLumi if self.sampleLumi else 0.

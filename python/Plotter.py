@@ -719,7 +719,9 @@ class Plotter(PlotterBase):
             stack.SetMaximum(yscale*highestMax)
             stack.GetYaxis().SetLabelSize(0.05)
             if len(rangex)==2: stack.GetXaxis().SetRangeUser(*rangex)
-            if logx: stack.GetXaxis().SetMoreLogLabels()
+            if logx:
+                stack.GetXaxis().SetMoreLogLabels()
+                stack.GetXaxis().SetNoExponent()
             if binlabels:
                 for b,label in enumerate(binlabels):
                     stack.GetXaxis().SetBinLabel(b+1,label)
@@ -805,7 +807,9 @@ class Plotter(PlotterBase):
             #ratiopad.cd()
             ratiostaterr.Draw("e2")
             if len(rangex)==2: ratiostaterr.GetXaxis().SetRangeUser(*rangex)
-            if logx: ratiostaterr.GetXaxis().SetMoreLogLabels()
+            if logx:
+                ratiostaterr.GetXaxis().SetMoreLogLabels()
+                ratiostaterr.GetXaxis().SetNoExponent()
             if binlabels:
                 for b,label in enumerate(binlabels):
                     ratiostaterr.GetXaxis().SetBinLabel(b+1,label)
