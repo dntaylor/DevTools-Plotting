@@ -7,6 +7,7 @@ import itertools
 import json
 import pickle
 import operator
+import math
 from array import array
 import numpy as np
 from numpy.linalg import inv
@@ -45,17 +46,21 @@ class MonoHZZFlattener(NtupleFlattener):
 
         self.selectionMap = {}
         baseSels = []
+        self.selections = []
 
         self.regions = {
             'default': lambda row: True,
-            'full'   : lambda row: row.z11_passTight and row.z12_passTight and row.z21_passTight and row.z22_passsTight and row.z21_charge!=row.z22_charge,
+            'full'   : lambda row: row.z11_passTight and row.z12_passTight and row.z21_passTight and row.z22_passTight and row.z21_charge!=row.z22_charge,
             'CR_SS'  : lambda row: row.z11_passTight and row.z12_passTight and row.z21_charge==row.z22_charge,
-            '3P1F'   : lambda row: row.z11_passTight and row.z12_passTight and ((row.z21_passTight and not row.z22_passsTight) or (not row.z21_passTight and row.z22_passsTight)) and row.z21_charge!=row.z22_charge,
-            '2P2F'   : lambda row: row.z11_passTight and row.z12_passTight and not row.z21_passTight and not row.z22_passsTight and row.z21_charge!=row.z22_charge,
+            '3P1F'   : lambda row: row.z11_passTight and row.z12_passTight and ((row.z21_passTight and not row.z22_passTight) or (not row.z21_passTight and row.z22_passTight)) and row.z21_charge!=row.z22_charge,
+            '2P2F'   : lambda row: row.z11_passTight and row.z12_passTight and not row.z21_passTight and not row.z22_passTight and row.z21_charge!=row.z22_charge,
         }
         for region in self.regions:
             self.selectionMap[region] = self.regions[region]
             baseSels += [region]
+
+        for sel in baseSels:
+            self.selections += [sel]
 
         # setup histogram parameters
         self.histParams = {
@@ -64,7 +69,7 @@ class MonoHZZFlattener(NtupleFlattener):
             'met'                         : {'x': lambda row: row.met_pt,                         'xBinning': [500, 0, 500],           },
             'metPhi'                      : {'x': lambda row: row.met_phi,                        'xBinning': [50, -3.14159, 3.14159], },
             # h
-            'hMass'                       : {'x': lambda row: getattr(row,'4l_mass'),             'xBinning': [1000, 0, 1000],         },
+            'hMass'                       : {'x': lambda row: row.h_mass,                         'xBinning': [1000, 0, 1000],         },
             # z1
             'z1Mass'                      : {'x': lambda row: row.z1_mass,                        'xBinning': [120, 0, 120],           },
             'z11Pt'                       : {'x': lambda row: row.z11_pt,                         'xBinning': [500, 0, 500],           },
@@ -115,7 +120,7 @@ class MonoHZZFlattener(NtupleFlattener):
         if flavor=='e' and pt>=500: pt = 499
         if flavor=='m' and pt>=200: pt = 199
         val = hist.GetBinContent(hist.FindBin(eta,pt))
-        err = hist.GetBinErr(hist.FindBin(eta,pt))
+        err = hist.GetBinError(hist.FindBin(eta,pt))
         return val, err
 
     def getWeight(self,row):
@@ -127,13 +132,13 @@ class MonoHZZFlattener(NtupleFlattener):
             vals = [getattr(row,scale) for scale in base]
             # trigger efficiency: TODO
             # pileup weight
-            vals += [self.pileup[int(floor(row.numTrueVertices))]]
+            vals += [self.pileup[int(math.floor(row.numTrueVertices))]]
             # lepton efficiency
-            for l,lep in self.leps:
+            for l,lep in enumerate(self.leps):
                 pt = getattr(row,'{}_pt'.format(lep))
                 eta = getattr(row,'{}_eta'.format(lep))
                 f = row.channel[l]
-                val,err = self.getScaleFactor(f,pt,eta)
+                val,err = self.getScalefactor(f,pt,eta)
                 vals += [val]
             weight = prod([val for val in vals if val==val])
             # scale to lumi/xsec
@@ -159,7 +164,8 @@ class MonoHZZFlattener(NtupleFlattener):
 def parse_command_line(argv):
     parser = argparse.ArgumentParser(description='Run Flattener')
 
-    parser.add_argument('sample', type=str, default='DoubleMuon', nargs='?', help='Sample to flatten')
+    #parser.add_argument('sample', type=str, default='DoubleMuon', nargs='?', help='Sample to flatten')
+    parser.add_argument('sample', type=str, default='ZZTo4L_13TeV_powheg_pythia8', nargs='?', help='Sample to flatten')
     parser.add_argument('shift', type=str, default='', nargs='?', help='Shift to apply to scale factors')
     parser.add_argument('--skipHists', action='store_true',help='Skip histograms, only do datasets')
 
