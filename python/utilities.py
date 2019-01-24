@@ -152,7 +152,8 @@ latestNtuples['80X'] = {
     'MuMuMuFakeRate' : '2018-02-09_MuMuMuFakeRateAnalysis_80X_v1-merge',
 }
 latestNtuples['94X'] = {
-    'MonoHZZ'        : '2019-01-22_MonoHZZAnalysis_94X_v1',
+    'MonoHZZ'        : '2019-01-23_MonoHZZAnalysis_94X_v2',
+    'MonoHZZFakeRate': '2019-01-23_MonoHZZFakeRateAnalysis_94X_v2',
 }
 
 latestShifts = {}
