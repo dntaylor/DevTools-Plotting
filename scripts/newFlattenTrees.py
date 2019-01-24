@@ -19,6 +19,7 @@ from DevTools.Plotter.WTauFakeRateFlattener import WTauFakeRateFlattener
 from DevTools.Plotter.ZTauFakeRateFlattener import ZTauFakeRateFlattener
 from DevTools.Plotter.MuMuTauTauFlattener import MuMuTauTauFlattener
 from DevTools.Plotter.MonoHZZFlattener import MonoHZZFlattener
+from DevTools.Plotter.MonoHZZFakeRateFlattener import MonoHZZFakeRateFlattener
 from DevTools.Plotter.ModDYFlattener import ModDYFlattener
 
 try:
@@ -38,6 +39,7 @@ flatteners = {
     'ZTauFakeRate': ZTauFakeRateFlattener,
     'MuMuTauTau': MuMuTauTauFlattener,
     'MonoHZZ': MonoHZZFlattener,
+    'MonoHZZFakeRate': MonoHZZFakeRateFlattener,
     'ModDY': ModDYFlattener,
 }
 

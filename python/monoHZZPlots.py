@@ -22,6 +22,22 @@ plotter = Plotter('MonoHZZ',new=True)
 #########################
 
 sigMap = {
+    'ZX'  : [
+            'DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8',
+            'DYJetsToLL_M-10to50_TuneCP5_13TeV-amcatnloFXFX-pythia8',
+            'ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8',
+            'ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8',
+            'TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8',
+            'WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8',
+            'WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8',
+            'WZG_TuneCP5_13TeV-amcatnlo-pythia8',
+            'WZZ_TuneCP5_13TeV-amcatnlo-pythia8',
+            'ZZZ_TuneCP5_13TeV-amcatnlo-pythia8',
+            'WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8',
+            #'WZTo3LNu_13TeV-powheg-pythia8',
+            'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
+            'WWTo2L2Nu_NNPDF31_TuneCP5_13TeV-powheg-pythia8',
+            ],
     'Z'   : [
             'DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8',
             'DYJetsToLL_M-10to50_TuneCP5_13TeV-amcatnloFXFX-pythia8',
@@ -52,6 +68,20 @@ sigMap = {
             'GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8',
             'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8',
             ],
+    'qqZZ' : [
+            'ZZTo4L_13TeV_powheg_pythia8',
+            'ZZTo2L2Nu_13TeV_powheg_pythia8',
+            #'ZZTo2L2Q_13TeV_powheg_pythia8',
+            'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
+            ],
+    'ggZZ' : [
+            'GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8',
+            'GluGluToContinToZZTo2mu2tau_13TeV_MCFM701_pythia8',
+            'GluGluToContinToZZTo2e2tau_13TeV_MCFM701_pythia8',
+            'GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8',
+            'GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8',
+            'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8',
+            ],
     'TTV' : [
             'ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8',
             'ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8',
@@ -63,7 +93,7 @@ sigMap = {
             'WZZ_TuneCP5_13TeV-amcatnlo-pythia8',
             'ZZZ_TuneCP5_13TeV-amcatnlo-pythia8',
             ],
-    'HZZ' : [
+    'H'   : [
             'GluGluHToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8',
             'VBF_HToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8',
             'WminusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUGenV7011_pythia8',
@@ -80,22 +110,26 @@ sigMap = {
             ],
 }
 
-samples = ['TT','TTV','Z','WZ','VVV','ZZ','HZZ']
+#samples = ['TT','TTV','Z','WZ','VVV','ggZZ','qqZZ','H']
+samples = ['ZX','ggZZ','qqZZ','H']
 
+selections = ['default','full','CR_SS','3P1F','2P2F']
 
+channels = ['eeee','eemm','mmmm']
+channelMap = {'eeee': ['eeee'], 'eemm': ['eemm','mmee'], 'mmmm': ['mmmm']}
 
 ########################
 ### plot definitions ###
 ########################
 plots = {
     # h
-    'hMass'                 : {'xaxis': 'm_{4l} (GeV)', 'yaxis': 'Events / 2 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(70,172,2),},# 'logx': True,},
+    'hMass'                 : {'xaxis': 'm_{4l} (GeV)', 'yaxis': 'Events / 2 GeV', 'numcol': 1, 'lumipos': 11, 'legendpos':23, 'rebin': range(70,172,2),},# 'logx': True,},
     # z cand
-    'z1Mass'                : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 2 GeV', 'rebin': range(40,122,2), 'numcol': 3, 'legendpos':34, 'yscale': 1.5,},
-    'z2Mass'                : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 2 GeV', 'rebin': range(12,122,2), 'numcol': 3, 'legendpos':34, 'yscale': 1.5,},
+    'z1Mass'                : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 2 GeV', 'rebin': range(40,122,2), 'numcol': 1, 'legendpos':13,},# 'yscale': 1.5,},
+    'z2Mass'                : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 2 GeV', 'rebin': range(12,122,2), 'numcol': 1, 'legendpos':13,},# 'yscale': 1.5,},
     # event
     #'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
-    'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(0,300,5), 'numcol': 2, 'legendpos':34,  'logy': True, 'overflow': True, 'ymin': 1e-2,},
+    'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(0,300,5), 'numcol': 1, 'legendpos':34,  'logy': True, 'overflow': True, 'ymin': 1e-2,},
 }
 
 alt_plots = {
@@ -111,40 +145,58 @@ blind_cust = {
 }
 
 
+###############
+### Helpers ###
+###############
+def plotChannels(plotter,plotname,savename,**kwargs):
+    kwargs = deepcopy(kwargs)
+    plotter.plot(plotname,savename,**kwargs)
+    plotsplit = plotname.split('/')
+    savesplit = savename.split('/')
+    for chan in channels:
+        plotnames = ['/'.join(plotsplit[:-1]+[c]+[plotsplit[-1]]) for c in channelMap[chan]]
+        savename = '/'.join(savesplit[:-1]+[chan]+[savesplit[-1]])
+        plotter.plot(plotnames,savename,**kwargs)
+
 ############################
 ### MC based BG estimate ###
 ############################
-for s in samples:
-    plotter.addHistogramToStack(s,sigMap[s])
+for sel in selections:
+    plotter.clearHistograms()
 
-if not blind: plotter.addHistogram('data',sigMap['data'])
+    thisblind = blind and sel in ['full']
 
-for plot in plots:
-    kwargs = deepcopy(plots[plot])
-    plotname = '{0}/{1}'.format('default',plot)
-    savename = '{0}/mc/{1}'.format('default',plot)
-    plotter.plot(plotname,savename,**kwargs)
-
-    for alt in alt_plots.get(plot,[]):
-        kwargs = deepcopy(plots[plot])
-        kwargs.update(alt_plots[plot][alt])
-        savename = '{0}/mc/{1}'.format('default',alt)
-        plotter.plot(plotname,savename,**kwargs)
+    for s in samples:
+        plotter.addHistogramToStack(s,sigMap[s])
     
-if blind:
-    plotter.addHistogram('data',sigMap['data'])
+    if not thisblind: plotter.addHistogram('data',sigMap['data'])
 
-    for plot in blind_cust:
+    for plot in plots:
         kwargs = deepcopy(plots[plot])
-        kwargs.update(blind_cust[plot])
-        plotname = '{0}/{1}'.format('default',plot)
-        savename = '{0}/mc/{1}_blinder'.format('default',plot)
-        plotter.plot(plotname,savename,**kwargs)
+        plotname = '{0}/{1}'.format(sel,plot)
+        savename = '{0}/mc/{1}'.format(sel,plot)
+        plotChannels(plotter,plotname,savename,**kwargs)
     
         for alt in alt_plots.get(plot,[]):
             kwargs = deepcopy(plots[plot])
             kwargs.update(alt_plots[plot][alt])
+            savename = '{0}/mc/{1}'.format(sel,alt)
+            plotChannels(plotter,plotname,savename,**kwargs)
+    
+    if thisblind:
+        plotter.addHistogram('data',sigMap['data'])
+
+        for plot in blind_cust:
+            kwargs = deepcopy(plots[plot])
             kwargs.update(blind_cust[plot])
-            savename = '{0}/mc/{1}_blinder'.format('default',alt)
-            plotter.plot(plotname,savename,**kwargs)
+            plotname = '{0}/{1}'.format(sel,plot)
+            savename = '{0}/mc/{1}_blinder'.format(sel,plot)
+            plotChannels(plotter,plotname,savename,**kwargs)
+        
+            for alt in alt_plots.get(plot,[]):
+                kwargs = deepcopy(plots[plot])
+                kwargs.update(alt_plots[plot][alt])
+                kwargs.update(blind_cust[plot])
+                savename = '{0}/mc/{1}_blinder'.format(sel,alt)
+                plotChannels(plotter,plotname,savename,**kwargs)
     

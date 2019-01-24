@@ -12,6 +12,8 @@ FB = 1.e-3
 fb = FB
 
 # where possible, taken from https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns
+# NOTE: TuneCUETP8M1 is here by default, TuneCP5 is set to same cross section at end
+# if you add a TuneCP5, it will not be overridden
 xsecs = {
     'DoubleMuon'                                                       : 1.,
     'DoubleEG'                                                         : 1.,
@@ -75,8 +77,6 @@ xsecs = {
     # https://hypernews.cern.ch/HyperNews/CMS/get/generators/4072.html
     #'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'          :   2063.13 * 3 * PB,
     #'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'           :   2063.13 * 3 * PB,
-    'DYJetsToLL_M-10to50_TuneCP5_13TeV-amcatnloFXFX-pythia8'           :  18610.       * PB,
-    'DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8'               :   1921.8 * 3  * PB,
 
 
     # DY jet binned
@@ -90,16 +90,6 @@ xsecs = {
     'DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          :    331.4      * PB * 1.216,
     'DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          :     96.36     * PB * 1.216,
     'DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'          :     51.4      * PB * 1.216,
-    'DY1JetsToLL_M-10to50_TuneCP5_13TeV-amcatnloFXFX-pythia8'          :    421.5      * PB,
-    'DY2JetsToLL_M-10to50_TuneCP5_13TeV-amcatnloFXFX-pythia8'          :    184.3      * PB,
-    'DY1JetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8'           :    725.       * PB * 1.216 * 0.256, # match efficiency 0.256
-    'DY2JetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8'           :    394.5      * PB * 1.216 * 0.188, # match efficiency 0.188
-    'DY3JetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8'           :     96.47     * PB * 1.216 * 0.0722, # match efficiency 0.0722
-    'DY4JetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8'           :     34.84     * PB * 1.216 * 0.0388, # match efficiency 0.0388
-    'DY1JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8'               :   1016.       * PB * 1.216,
-    'DY2JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8'               :    331.4      * PB * 1.216,
-    'DY3JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8'               :     96.36     * PB * 1.216,
-    'DY4JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8'               :     51.4      * PB * 1.216,
 
 
     # DY pt binned
@@ -142,10 +132,6 @@ xsecs = {
     'TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8'                    :    502.2      * PB,
     'TTJets_TuneCUETP8M2T4_13TeV-amcatnloFXFX-pythia8'                 :    831.76     * PB,
     'TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8'                        :    831.76     * PB,
-    'TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8'             :     87.31     * PB,
-    'TTJets_SingleLeptFromT_TuneCP5_13TeV-madgraphMLM-pythia8'    :    114.5      * PB,
-    'TTJets_SingleLeptFromTbar_TuneCP5_13TeV-madgraphMLM-pythia8' :    114.6      * PB,
-    'TTJets_TuneCP5_13TeV-madgraphMLM-pythia8'                    :    502.2      * PB,
 
     # TTV
     'TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8'          :      3.697    * PB,
@@ -246,7 +232,6 @@ xsecs = {
     'WZ_TuneCUETP8M1_13TeV-pythia8'                                    :     47.13     * PB,
     'WZJToLLLNu_TuneCUETP8M1_13TeV-amcnlo-pythia8'                     :      4.715    * PB,
     'WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'                 :      4.712    * PB,
-    'WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8'                      :      4.712    * PB,
 
     'WLLJJ_WToLNu_EWK_TuneCUETP8M1_13TeV_madgraph-madspin-pythia8'           :  0.01763  * PB,
     'WLLJJ_WToLNu_EWK_aQGC-FM_TuneCUETP8M1_13TeV_madgraph-madspin-pythia8'   :  0.01412  * PB,
@@ -524,6 +509,12 @@ for mass in xsecs_4l_NLO:
     xsecs['HPlusPlusHMinusMinusHRTo4L_M-{0}_TuneCUETP8M1_13TeV_pythia8'.format(mass)] = xsecs_r4l_NLO[mass]
     xsecs['HPlusPlusHMinusMinusHRTo4L_M-{0}_TuneCUETP8M1_13TeV-pythia8'.format(mass)] = xsecs_r4l_NLO[mass]
     xsecs['HPlusPlusHMinusMinusHRTo4L_M-{0}_13TeV-pythia8'.format(mass)] = xsecs_r4l_NLO[mass]
+
+for sample in xsecs.keys():
+    if 'TuneCUETP8M1' in sample:
+        newsample = sample.replace('TuneCUETP8M1','TuneCP5')
+        if newsample not in xsecs: xsecs[newsample] = xsecs[sample]
+
 
 # N3LO Higgs
 def getHAA(h,a,mode='ggF',BR=''):
