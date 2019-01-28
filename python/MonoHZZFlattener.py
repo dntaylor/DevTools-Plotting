@@ -49,22 +49,30 @@ class MonoHZZFlattener(NtupleFlattener):
         baseSels = []
         self.selections = []
 
-        self.regions = {
+        self.baseSelections = {
             'default': lambda row: True,
-            'full'   : lambda row: row.z11_passTight and row.z12_passTight and row.z21_passTight and row.z22_passTight and row.z21_charge!=row.z22_charge,
+            '4P0F'   : lambda row: row.z11_passTight and row.z12_passTight and row.z21_passTight and row.z22_passTight and row.z21_charge!=row.z22_charge,
             'CR_SS'  : lambda row: row.z11_passTight and row.z12_passTight and row.z21_charge==row.z22_charge,
             '3P1F'   : lambda row: row.z11_passTight and row.z12_passTight and ((row.z21_passTight and not row.z22_passTight) or (not row.z21_passTight and row.z22_passTight)) and row.z21_charge!=row.z22_charge,
             '2P2F'   : lambda row: row.z11_passTight and row.z12_passTight and not row.z21_passTight and not row.z22_passTight and row.z21_charge!=row.z22_charge,
         }
-        for region in self.regions:
-            self.selectionMap[region] = self.regions[region]
-            baseSels += [region]
+        for sel in self.baseSelections:
+            self.selectionMap[sel] = self.baseSelections[sel]
+            baseSels += [sel]
+        baseSels += ['for4P0F/3P1F']
+        baseSels += ['for4P0F/2P2F']
+        baseSels += ['for3P1F/2P2F']
+
+        self.regions = {
+            'hzz4l' : lambda row: row.h_mass>115 and row.h_mass<135,
+            'z4l'   : lambda row: row.h_mass>81 and row.h_mass<101,
+            'zz4l'  : lambda row: row.h_mass>170,
+        }
 
         for sel in baseSels:
             self.selections += [sel]
-        self.selections += ['for4P/3P1F']
-        self.selections += ['for4P/2P2F']
-        self.selections += ['for3P1F/2P2F']
+            for region in self.regions:
+                self.selections += ['{}/{}'.format(sel,region)]
 
 
         # setup histogram parameters
@@ -75,14 +83,21 @@ class MonoHZZFlattener(NtupleFlattener):
             'metPhi'                      : {'x': lambda row: row.met_phi,                        'xBinning': [50, -3.14159, 3.14159], },
             # h
             'hMass'                       : {'x': lambda row: row.h_mass,                         'xBinning': [1000, 0, 1000],         },
+            'hPt'                         : {'x': lambda row: row.h_pt,                           'xBinning': [500, 0, 500],           },
             # z1
             'z1Mass'                      : {'x': lambda row: row.z1_mass,                        'xBinning': [120, 0, 120],           },
+            'z1Pt'                        : {'x': lambda row: row.z1_pt,                          'xBinning': [500, 0, 500],           },
             'z11Pt'                       : {'x': lambda row: row.z11_pt,                         'xBinning': [500, 0, 500],           },
+            'z11Eta'                      : {'x': lambda row: row.z11_eta,                        'xBinning': [500, -2.5, 2.5],        },
             'z12Pt'                       : {'x': lambda row: row.z12_pt,                         'xBinning': [500, 0, 500],           },
+            'z12Eta'                      : {'x': lambda row: row.z12_eta,                        'xBinning': [500, -2.5, 2.5],        },
             # z2
             'z2Mass'                      : {'x': lambda row: row.z2_mass,                        'xBinning': [120, 0, 120],           },
+            'z2Pt'                        : {'x': lambda row: row.z2_pt,                          'xBinning': [500, 0, 500],           },
             'z21Pt'                       : {'x': lambda row: row.z21_pt,                         'xBinning': [500, 0, 500],           },
+            'z21Eta'                      : {'x': lambda row: row.z21_eta,                        'xBinning': [500, -2.5, 2.5],        },
             'z22Pt'                       : {'x': lambda row: row.z22_pt,                         'xBinning': [500, 0, 500],           },
+            'z22Eta'                      : {'x': lambda row: row.z22_eta,                        'xBinning': [500, -2.5, 2.5],        },
         }
 
         # initialize flattener
@@ -169,12 +184,12 @@ class MonoHZZFlattener(NtupleFlattener):
             weight = prod([val for val in vals if val==val])
             # scale to lumi/xsec
             weight *= float(self.intLumi)/self.sampleLumi if self.sampleLumi else 0.
-            for lep in fakeLeps:
-                pt = getattr(row,'{}_pt'.format(lep))
-                eta = getattr(row,'{}_eta'.format(lep))
-                f = row.channel[l]
-                val,err = self.getFakeRate(f,pt,eta)
-                weight *= val/(1-val)
+        for lep in fakeLeps:
+            pt = getattr(row,'{}_pt'.format(lep))
+            eta = getattr(row,'{}_eta'.format(lep))
+            f = row.channel[self.leps.index(lep)]
+            val,err = self.getFakeRate(f,pt,eta)
+            weight *= val/(1-val)
 
         return weight
 
@@ -191,22 +206,38 @@ class MonoHZZFlattener(NtupleFlattener):
 
         recoChan = ''.join([x for x in row.channel if x in ['e','m']])
 
+        def fill(row,sel):
+            self.fill(row,sel,w,recoChan)
+            if '3P1F' in sel:
+                # 3P1F contribution to 4P
+                w3P1F = wFP if not row.z21_passTight else wPF
+                if not isData: w3P1F = -1*w3P1F
+                self.fill(row,'for4P0F/{}'.format(sel),w3P1F,recoChan)
+            if '2P2F' in sel:
+                # 2P2F contribution to 4P
+                w2P2F = wFF
+                if isData: w2P2F = -1*w2P2F
+                self.fill(row,'for4P0F/{}'.format(sel),w2P2F,recoChan)
+                # 2P2F contribution to 3P1F
+                w2P2F = wFP
+                if not isData: w2P2F = -1*w2P2F
+                self.fill(row,'for3P1F/{}'.format(sel),w2P2F,recoChan)
+                w2P2F = wPF
+                if not isData: w2P2F = -1*w2P2F
+                self.fill(row,'for3P1F/{}'.format(sel),w2P2F,recoChan)
+
+        regionResults = {}
+        for region in self.regions:
+            regionResults[region] = self.regions[region](row)
+
         # define plot regions
         for sel in self.selectionMap:
             result = self.selectionMap[sel](row)
             if result:
-                self.fill(row,sel,w,recoChan)
-                if sel=='3P1F':
-                    w3P1F = wFP if not row.z21_passTight else wPF
-                    if not isData: w3P1F *= -1
-                    self.fill(row,'for4P/3P1F',w3P1F)
-                if sel=='2P2F':
-                    w2P2F = wFF
-                    if isData: w2P2F *= -1
-                    self.fill(row,'for4P/2P2F',w2P2F)
-                    w2P2F = wFP if not row.z21_passTight else wPF
-                    if not isData: w2P2F *= -1
-                    self.fill(row,'for3P1F/2P2F',w2P2F)
+                fill(row,sel)
+                for region in self.regions:
+                    if regionResults[region]:
+                        fill(row,'{}/{}'.format(sel,region))
 
 
 def parse_command_line(argv):

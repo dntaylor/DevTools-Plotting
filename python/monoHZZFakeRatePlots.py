@@ -84,7 +84,7 @@ for s in ['WZ','ZZ','VVV','TTV']:
 
 samples = ['TT','TTV','WZ','VVV','ZZ','Z']
 
-selections = ['default','tight']
+selections = ['default','looseNoIso','loose','tight']
 
 channels = ['e','m','eee','eem','mme','mmm']
 channelMap = {'e': ['eee','mme'], 'm': ['eem','mmmm'],'eee':['eee'],'eem':['eem'],'mme':['mme'],'mmm':['mmm'],}
@@ -108,8 +108,14 @@ def plotChannels(plotter,plotname,savename,**kwargs):
 plots = {
     # z cand
     'zMass'                : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 1 GeV', 'rebin': range(81,102,1), 'numcol': 3, 'legendpos':34, 'yscale': 1.5,},
+    'zPt'                  : {'xaxis': 'Z p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(0,105,5), 'numcol': 3, 'legendpos':34, 'yscale': 1.5,},
+    'z1Pt'                 : {'xaxis': 'Z1 p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(0,105,5), },
+    'z1Eta'                : {'xaxis': 'Z1 #eta (GeV)', 'yaxis': 'Events', 'rebin': [(x-25)*0.1 for x in range(0,52,2)], },
+    'z2Pt'                 : {'xaxis': 'Z2 p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(0,105,5), },
+    'z2Eta'                : {'xaxis': 'Z2 #eta (GeV)', 'yaxis': 'Events', 'rebin': [(x-25)*0.1 for x in range(0,52,2)], },
     # l
     'lPt'                  : {'xaxis': 'p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(0,105,5), },
+    'lEta'                 : {'xaxis': '#eta (GeV)', 'yaxis': 'Events', 'rebin': [(x-25)*0.1 for x in range(0,52,2)], },
     # event
     'met'                  : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 1 GeV', 'rebin': range(0,30,1), 'numcol': 2, 'legendpos':34},
 }
@@ -141,7 +147,7 @@ plotter.addHistogram('Z',sigMap['Z'])
 plotter.addHistogram('data',sigMap['data'],style={'linecolor':ROOT.kBlack,'name':'Data'})
 plotter.addHistogram('data_uncorrected',sigMap['data'],style={'linecolor':ROOT.kRed,'name':'Uncorrected'})
 
-denom = 'default'
+denom = 'looseNoIso'
 num = 'tight'
 
 ptbins = [5,7,10,15,20,30,50,100]

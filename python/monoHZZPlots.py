@@ -14,6 +14,10 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 version = getCMSSWVersion()
 
 blind = True
+doMC = False
+doRegions = True
+doDatadriven = True
+do3P1F = True
 
 plotter = Plotter('MonoHZZ',new=True)
 
@@ -110,10 +114,17 @@ sigMap = {
             ],
 }
 
-#samples = ['TT','TTV','Z','WZ','VVV','ggZZ','qqZZ','H']
-samples = ['ZX','ggZZ','qqZZ','H']
+samples = ['ggZZ','qqZZ','H']
+samples3P1F = ['WZ','ggZZ','qqZZ','H']
+allsamples = ['TT','TTV','Z','WZ','VVV','ggZZ','qqZZ','H']
+#allsamples = ['ZX','ggZZ','qqZZ','H']
+ddsamples = ['data'] + samples
+sigMap['datadriven'] = []
+for s in ddsamples: sigMap['datadriven'] += sigMap[s]
 
-selections = ['default','full','CR_SS','3P1F','2P2F']
+selections = ['default','4P0F','CR_SS','3P1F','2P2F']
+regions = ['']
+if doRegions: regions += ['hzz4l','z4l','zz4l']
 
 channels = ['eeee','eemm','mmmm']
 channelMap = {'eeee': ['eeee'], 'eemm': ['eemm','mmee'], 'mmmm': ['mmmm']}
@@ -151,52 +162,150 @@ blind_cust = {
 def plotChannels(plotter,plotname,savename,**kwargs):
     kwargs = deepcopy(kwargs)
     plotter.plot(plotname,savename,**kwargs)
-    plotsplit = plotname.split('/')
+    if isinstance(plotname,basestring): plotname = [plotname]
     savesplit = savename.split('/')
     for chan in channels:
-        plotnames = ['/'.join(plotsplit[:-1]+[c]+[plotsplit[-1]]) for c in channelMap[chan]]
+        if isinstance(plotname,dict):
+            plotnames = {}
+            for s in plotname:
+                plotnames[s] = []
+                for p in plotname[s]:
+                    ps = p.split('/')
+                    plotnames[s] += ['/'.join(ps[:-1]+[c]+[ps[-1]]) for c in channelMap[chan]]
+        else:
+            plotnames = []
+            for p in plotname:
+                ps = p.split('/')
+                plotnames += ['/'.join(ps[:-1]+[c]+[ps[-1]]) for c in channelMap[chan]]
         savename = '/'.join(savesplit[:-1]+[chan]+[savesplit[-1]])
         plotter.plot(plotnames,savename,**kwargs)
+
+def getDatadrivenPlot(*plotnames):
+    histMap = {}
+    for s in samples + ['data','ZX']: histMap[s] = []
+    for plot in plotnames:
+        plotdirs = plot.split('/')
+        for s in samples + ['data']: histMap[s] += ['/'.join(['4P0F']+plotdirs)]
+        histMap['ZX'] += ['/'.join(['for4P0F',reg]+plotdirs) for reg in ['3P1F','2P2F']]
+    return histMap
+
+def get3P1FPlot(*plotnames):
+    histMap = {}
+    for s in samples3P1F + ['data','ZX']: histMap[s] = []
+    for plot in plotnames:
+        plotdirs = plot.split('/')
+        for s in samples3P1F + ['data']: histMap[s] += ['/'.join(['3P1F']+plotdirs)]
+        histMap['ZX'] += ['/'.join(['for3P1F','2P2F']+plotdirs)]
+    return histMap
 
 ############################
 ### MC based BG estimate ###
 ############################
-for sel in selections:
-    plotter.clearHistograms()
-
-    thisblind = blind and sel in ['full']
-
-    for s in samples:
-        plotter.addHistogramToStack(s,sigMap[s])
+if doMC:
+    for sel in selections:
+        for region in regions:
+            plotter.clearHistograms()
     
-    if not thisblind: plotter.addHistogram('data',sigMap['data'])
-
-    for plot in plots:
-        kwargs = deepcopy(plots[plot])
-        plotname = '{0}/{1}'.format(sel,plot)
-        savename = '{0}/mc/{1}'.format(sel,plot)
-        plotChannels(plotter,plotname,savename,**kwargs)
+            thisblind = blind and sel in ['4P0F'] and region in ['','hzz4l']
     
-        for alt in alt_plots.get(plot,[]):
+            for s in ['ZX']+samples:
+                plotter.addHistogramToStack(s,sigMap[s])
+            
+            if not thisblind: plotter.addHistogram('data',sigMap['data'])
+    
+            for plot in plots:
+                kwargs = deepcopy(plots[plot])
+                plotname = '{}/{}/{}'.format(sel,region,plot) if region else '{}/{}'.format(sel,plot)
+                savename = '{}/{}/mc/{}'.format(sel,region,plot) if region else '{}/mc/{}'.format(sel,plot)
+                plotChannels(plotter,plotname,savename,**kwargs)
+            
+                for alt in alt_plots.get(plot,[]):
+                    kwargs = deepcopy(plots[plot])
+                    kwargs.update(alt_plots[plot][alt])
+                    savename = '{}/{}/mc/{}'.format(sel,region,alt) if region else '{}/mc/{}'.format(sel,alt)
+                    plotChannels(plotter,plotname,savename,**kwargs)
+            
+            if thisblind:
+                plotter.addHistogram('data',sigMap['data'])
+    
+                for plot in blind_cust:
+                    kwargs = deepcopy(plots[plot])
+                    kwargs.update(blind_cust[plot])
+                    plotname = '{}/{}/{}'.format(sel,region,plot) if region else '{}/{}'.format(sel,plot)
+                    savename = '{}/{}/mc/{}_blinder'.format(sel,region,plot) if region else '{}/mc/{}_blinder'.format(sel,plot)
+                    plotChannels(plotter,plotname,savename,**kwargs)
+                
+                    for alt in alt_plots.get(plot,[]):
+                        kwargs = deepcopy(plots[plot])
+                        kwargs.update(alt_plots[plot][alt])
+                        kwargs.update(blind_cust[plot])
+                        savename = '{}/{}/mc/{}_blinder'.format(sel,region,alt) if region else '{}/mc/{}_blinder'.format(sel,alt)
+                        plotChannels(plotter,plotname,savename,**kwargs)
+            
+
+if doDatadriven:
+    for region in regions:
+        plotter.clearHistograms()
+        
+        thisblind = blind and region in ['','hzz4l']
+
+        plotter.addHistogramToStack('ZX',sigMap['datadriven'])
+        
+        for s in samples:
+            plotter.addHistogramToStack(s,sigMap[s])
+        
+        if not thisblind: plotter.addHistogram('data',sigMap['data'])
+        
+        for plot in plots:
             kwargs = deepcopy(plots[plot])
-            kwargs.update(alt_plots[plot][alt])
-            savename = '{0}/mc/{1}'.format(sel,alt)
-            plotChannels(plotter,plotname,savename,**kwargs)
-    
-    if thisblind:
-        plotter.addHistogram('data',sigMap['data'])
-
-        for plot in blind_cust:
-            kwargs = deepcopy(plots[plot])
-            kwargs.update(blind_cust[plot])
-            plotname = '{0}/{1}'.format(sel,plot)
-            savename = '{0}/mc/{1}_blinder'.format(sel,plot)
-            plotChannels(plotter,plotname,savename,**kwargs)
+            plotnames = getDatadrivenPlot('{}/{}'.format(region,plot) if region else plot)
+            savename = '{}/{}/datadriven/{}'.format('4P0F',region,plot) if region else '{}/datadriven/{}'.format('4P0F',plot)
+            plotChannels(plotter,plotnames,savename,**kwargs)
         
             for alt in alt_plots.get(plot,[]):
                 kwargs = deepcopy(plots[plot])
                 kwargs.update(alt_plots[plot][alt])
+                savename = '{}/{}/datadriven/{}'.format('4P0F',region,alt) if region else '{}/datadriven/{}'.format('4P0F',alt)
+                plotChannels(plotter,plotnames,savename,**kwargs)
+        
+        if thisblind:
+            plotter.addHistogram('data',sigMap['data'])
+        
+            for plot in blind_cust:
+                kwargs = deepcopy(plots[plot])
                 kwargs.update(blind_cust[plot])
-                savename = '{0}/mc/{1}_blinder'.format(sel,alt)
-                plotChannels(plotter,plotname,savename,**kwargs)
+                plotnames = getDatadrivenPlot('{}/{}'.format(region,plot) if region else plot)
+                savename = '{}/{}/datadriven/{}_blinder'.format('4P0F',region,plot) if region else '{}/datadriven/{}_blinder'.format('4P0F',plot)
+                plotChannels(plotter,plotnames,savename,**kwargs)
+            
+                for alt in alt_plots.get(plot,[]):
+                    kwargs = deepcopy(plots[plot])
+                    kwargs.update(alt_plots[plot][alt])
+                    kwargs.update(blind_cust[plot])
+                    savename = '{}/{}/datadriven/{}_blinder'.format('4P0F',region,alt) if region else '{}/datadriven/{}_blinder'.format('4P0F',alt)
+                    plotChannels(plotter,plotnames,savename,**kwargs)
     
+
+if do3P1F:
+    for region in regions:
+        plotter.clearHistograms()
+        
+        plotter.addHistogramToStack('ZX',sigMap['datadriven'])
+        
+        for s in samples3P1F:
+            plotter.addHistogramToStack(s,sigMap[s])
+        
+        plotter.addHistogram('data',sigMap['data'])
+        
+        for plot in plots:
+            kwargs = deepcopy(plots[plot])
+            plotnames = get3P1FPlot('{}/{}'.format(region,plot) if region else plot)
+            savename = '{}/{}/datadriven/{}'.format('3P1F',region,plot) if region else '{}/datadriven/{}'.format('3P1F',plot)
+            plotChannels(plotter,plotnames,savename,**kwargs)
+        
+            for alt in alt_plots.get(plot,[]):
+                kwargs = deepcopy(plots[plot])
+                kwargs.update(alt_plots[plot][alt])
+                savename = '{}/{}/datadriven/{}'.format('3P1F',region,alt) if region else '{}/datadriven/{}'.format('3P1F',alt)
+                plotChannels(plotter,plotnames,savename,**kwargs)
+        

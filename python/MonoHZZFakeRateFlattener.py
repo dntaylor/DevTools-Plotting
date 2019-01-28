@@ -42,7 +42,7 @@ class MonoHZZFakeRateFlattener(NtupleFlattener):
         # controls
 
         # setup properties
-        self.leps = ['z1','z2']
+        self.leps = ['z1','z2','l']
         self.channels = ['eee','eem','mme','mmm']
 
         self.selectionMap = {}
@@ -55,8 +55,10 @@ class MonoHZZFakeRateFlattener(NtupleFlattener):
         }
 
         self.regions = {
-            'default': lambda row: row.z_mass>81 and row.z_mass<101 and row.met_pt<30,
-            'tight'  : lambda row: row.z_mass>81 and row.z_mass<101 and row.met_pt<30 and row.l_passTight,
+            'default'    : lambda row: row.z_mass>84 and row.z_mass<98 and row.met_pt<25 and row.z1_passTight and row.z2_passTight,
+            'looseNoIso' : lambda row: row.z_mass>84 and row.z_mass<98 and row.met_pt<25 and row.z1_passTight and row.z2_passTight and row.l_passLooseNoIso,
+            'loose'      : lambda row: row.z_mass>84 and row.z_mass<98 and row.met_pt<25 and row.z1_passTight and row.z2_passTight and row.l_passLoose,
+            'tight'      : lambda row: row.z_mass>84 and row.z_mass<98 and row.met_pt<25 and row.z1_passTight and row.z2_passTight and row.l_passTight,
         }
         for region in self.regions:
             self.selectionMap[region] = self.regions[region]
@@ -70,15 +72,19 @@ class MonoHZZFakeRateFlattener(NtupleFlattener):
         # setup histogram parameters
         self.histParams = {
             'count'                       : {'x': lambda row: 1,                                  'xBinning': [1,0,2],                 }, # just a count of events passing selection
-            'numVertices'                 : {'x': lambda row: row.numVertices,                    'xBinning': [60,0,60],               },
+            'numVertices'                 : {'x': lambda row: row.numVertices,                    'xBinning': [80,0,80],               },
             'met'                         : {'x': lambda row: row.met_pt,                         'xBinning': [500, 0, 500],           },
             'metPhi'                      : {'x': lambda row: row.met_phi,                        'xBinning': [50, -3.14159, 3.14159], },
             # z1
-            'zMass'                       : {'x': lambda row: row.z_mass,                         'xBinning': [120, 0, 120],           },
+            'zMass'                       : {'x': lambda row: row.z_mass,                         'xBinning': [600, 60, 120],          },
+            'zPt'                         : {'x': lambda row: row.z_pt,                           'xBinning': [500, 0, 500],           },
             'z1Pt'                        : {'x': lambda row: row.z1_pt,                          'xBinning': [500, 0, 500],           },
+            'z1Eta'                       : {'x': lambda row: row.z1_eta,                         'xBinning': [500, -2.5, 2.5],        },
             'z2Pt'                        : {'x': lambda row: row.z2_pt,                          'xBinning': [500, 0, 500],           },
+            'z2Eta'                       : {'x': lambda row: row.z2_eta,                         'xBinning': [500, -2.5, 2.5],        },
             # l
             'lPt'                         : {'x': lambda row: row.l_pt,                           'xBinning': [500, 0, 500],           },
+            'lEta'                        : {'x': lambda row: row.l_eta,                          'xBinning': [500, -2.5, 2.5],        },
         }
 
         # initialize flattener
