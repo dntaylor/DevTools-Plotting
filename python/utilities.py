@@ -304,17 +304,14 @@ latestHistograms['80X']['MuMuTauTau'] = {
     'muR0.5muF0.5'     : '2018-12-05_MuMuTauTauHistogramsNew_muR0.5muF0.5_80X_Moriond_v1',
 }
 
-def getNewFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
-    flat = 'newflat/{0}/{1}.root'.format(analysis,sample)
-    if shift in latestHistograms.get(version,{}).get(analysis,{}):
-        baseDir = '/hdfs/store/user/dntaylor'
-        flatpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],sample)
-        for fname in glob.glob('{0}/*.root'.format(flatpath)):
-            if 'projection' not in fname: flat = fname
-    return flat
+def getNewFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift='',base='newflat'):
+    return getFlatHistograms(analysis,sample,version,shift,base)
 
-def getNewProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
-    flat = 'newflat/{0}/{1}.root'.format(analysis,sample)
+def getNewProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift='',base='newflat'):
+    return getProjectionHistograms(analysis,sample,version,shift,base)
+        
+def getFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift='',base='flat'):
+    flat = '{}/{}/{}.root'.format(base,analysis,sample)
     if shift in latestHistograms.get(version,{}).get(analysis,{}):
         baseDir = '/hdfs/store/user/dntaylor'
         flatpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],sample)
@@ -322,17 +319,8 @@ def getNewProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift='
             if 'projection' not in fname: flat = fname
     return flat
         
-def getFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
-    flat = 'flat/{0}/{1}.root'.format(analysis,sample)
-    if shift in latestHistograms.get(version,{}).get(analysis,{}):
-        baseDir = '/hdfs/store/user/dntaylor'
-        flatpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],sample)
-        for fname in glob.glob('{0}/*.root'.format(flatpath)):
-            if 'projection' not in fname: flat = fname
-    return flat
-        
-def getProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
-    proj = 'projections/{0}/{1}.root'.format(analysis,sample)
+def getProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift='',base='projections'):
+    proj = '{}/{}/{}.root'.format(base,analysis,sample)
     if shift in latestHistograms.get(version,{}).get(analysis,{}):
         baseDir = '/hdfs/store/user/dntaylor'
         projpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],sample)
