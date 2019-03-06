@@ -30,21 +30,26 @@ sigMap = {
         'WWTo2L2Nu_13TeV-powheg',
     ],
     'WZ' : [
-        'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
-        'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-        'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8',
-        'WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8',
+        'WZTo3LNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8',
+        #'WZTo3LNu_TuneCUETP8M1_13TeV-powheg-pythia8',
+        #'WZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
+        #'WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8',
+        #'WZTo1L3Nu_13TeV_amcatnloFXFX_madspin_pythia8',
     ],
     'ZZ' : [
-        'ZZTo4L_13TeV_powheg_pythia8',
-        'ZZTo2L2Q_13TeV_powheg_pythia8',
+        'ZZTo4L_13TeV-amcatnloFXFX-pythia8',
+        'ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8',
         'ZZTo2L2Nu_13TeV_powheg_pythia8',
-        'GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8',
-        'GluGluToContinToZZTo2e2tau_13TeV_MCFM701_pythia8',
-        'GluGluToContinToZZTo2mu2tau_13TeV_MCFM701_pythia8',
-        'GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8',
-        'GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8',
-        'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8',
+
+        #'ZZTo4L_13TeV_powheg_pythia8',
+        #'ZZTo2L2Q_13TeV_powheg_pythia8',
+        #'ZZTo2L2Nu_13TeV_powheg_pythia8',
+        #'GluGluToContinToZZTo2e2mu_13TeV_MCFM701_pythia8',
+        #'GluGluToContinToZZTo2e2tau_13TeV_MCFM701_pythia8',
+        #'GluGluToContinToZZTo2mu2tau_13TeV_MCFM701_pythia8',
+        #'GluGluToContinToZZTo4e_13TeV_MCFM701_pythia8',
+        #'GluGluToContinToZZTo4mu_13TeV_MCFM701_pythia8',
+        #'GluGluToContinToZZTo4tau_13TeV_MCFM701_pythia8',
     ],
     'data': [
              'SingleMuon',
@@ -65,19 +70,20 @@ plots = {
     'zMass'   : {'xaxis': 'm_{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 2 GeV', 'rebin': range(61,121,2), 'logy':1, 'ymin':1000, 'ymax': 1e9, 'legendpos': 34, 'numcol': 3,},
     'zPt'     : {'xaxis': 'p_{T}^{l^{+}l^{-}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(0,155,5), },
     'z1Pt'    : {'xaxis': 'p_{T}^{Z_{lead}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(25,150,5),},
-    'z2Pt'    : {'xaxis': 'p_{T}^{Z_{sublead}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(20,150,5),},
+    'z2Pt'    : {'xaxis': 'p_{T}^{Z_{sublead}} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(0,150,5),},
     'z1Eta'   : {'xaxis': '#eta^{Z_{lead}} (GeV)', 'yaxis': 'Events', 'rebin':1, 'legendpos': 34, 'numcol': 3, 'yscale':1.4, },
     'z2Eta'   : {'xaxis': '#eta^{Z_{sublead}} (GeV)', 'yaxis': 'Events', 'rebin':1, 'legendpos': 34, 'numcol': 3, 'yscale':1.4, }, 
     'z1Iso'   : {'xaxis': 'I_{rel.}^{Z_{lead}} (GeV)', 'yaxis': 'Events', 'rebin':1, 'legendpos': 34, 'numcol': 3, 'yscale':1.4, },
     'z2Iso'   : {'xaxis': 'I_{rel.}^{Z_{sublead}} (GeV)', 'yaxis': 'Events', 'rebin':1, 'legendpos': 34, 'numcol': 3, 'yscale':1.4, }, 
     # event
     'met'     : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 5 GeV', 'rebin': range(0,200,5),},
-    'metPhi'  : {'xaxis': '#phi_{E_{T}^{miss}}', 'yaxis': 'Events', 'rebin': 10, 'numcol': 3, 'legendpos': 34, 'yscale': 1.4, },
+    'metPhi'  : {'xaxis': '#phi_{E_{T}^{miss}}', 'yaxis': 'Events', 'rebin': 1, 'numcol': 3, 'legendpos': 34, 'yscale': 1.4, },
 }
 
 # signal region
 for region in ['default','high','low']:
     for plot in plots:
         plotname = '{}/{}'.format(region,plot)
-        dyPlotter.plot(plotname,plotname,ratiomin=0.9,ratiomax=1.1,**plots[plot])
+        kwargs = deepcopy(plots[plot])
+        dyPlotter.plot(plotname,plotname,ratiomin=0.9,ratiomax=1.1,**kwargs)
 
