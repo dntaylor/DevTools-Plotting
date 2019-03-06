@@ -42,6 +42,11 @@ runMap = {
     'Run2016F': 3102.,
     'Run2016G': 7540.,
     'Run2016H': 8606.,
+    'Run2017B': 4792.,
+    'Run2017C': 9755.,
+    'Run2017D': 4319.,
+    'Run2017E': 9424.,
+    'Run2017F':13500.,
 }
 
 runRange = {
@@ -52,6 +57,11 @@ runRange = {
     'Run2016F': [277932,278808],
     'Run2016G': [278820,280385],
     'Run2016H': [281613,284044],
+    'Run2017B': [297046,299329],
+    'Run2017C': [299368,300676],
+    'Run2017D': [302030,303434],
+    'Run2017E': [303824,304797],
+    'Run2017F': [305040,306462],
 }
 
 def getLumi(version=getCMSSWVersion(),run=''):
@@ -61,10 +71,13 @@ def getLumi(version=getCMSSWVersion(),run=''):
     if version=='76X':
         #return 2263 # december jamboree golden json
         return 2318 # moriond golden json
-    else:
-        #return 4336.100 # previous "frozen"
+    elif version=='80X':
         #return 12892.762 # ichep dataset golden json
         return 35867.060 # full 2016 for moriond
+    elif version=='94X':
+        return 41370
+    else:
+        return 0
 
 def getRunRange(version=getCMSSWVersion(),run=''):
     if run in runRange:
@@ -138,6 +151,10 @@ latestNtuples['80X'] = {
     #'MuMuTauFakeRate': '2018-03-19_MuMuTauFakeRateAnalysis_80X_v2-merge',
     'MuMuTauFakeRate': '2019-01-02_MuMuTauFakeRateAnalysis_80X_v1-merge', # for use with tau eff
     'MuMuMuFakeRate' : '2018-02-09_MuMuMuFakeRateAnalysis_80X_v1-merge',
+}
+latestNtuples['94X'] = {
+    'MonoHZZ'        : '2019-01-23_MonoHZZAnalysis_94X_v2',
+    'MonoHZZFakeRate': '2019-01-23_MonoHZZFakeRateAnalysis_94X_v2',
 }
 
 latestShifts = {}
@@ -288,17 +305,14 @@ latestHistograms['80X']['MuMuTauTau'] = {
     'muR0.5muF0.5'     : '2019-03-05_MuMuTauTauHistogramsNew_muR0.5muF0.5_80X_Moriond_v1',
 }
 
-def getNewFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
-    flat = 'newflat/{0}/{1}.root'.format(analysis,sample)
-    if shift in latestHistograms.get(version,{}).get(analysis,{}):
-        baseDir = '/hdfs/store/user/dntaylor'
-        flatpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],sample)
-        for fname in glob.glob('{0}/*.root'.format(flatpath)):
-            if 'projection' not in fname: flat = fname
-    return flat
+def getNewFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift='',base='newflat'):
+    return getFlatHistograms(analysis,sample,version,shift,base)
 
-def getNewProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
-    flat = 'newflat/{0}/{1}.root'.format(analysis,sample)
+def getNewProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift='',base='newflat'):
+    return getProjectionHistograms(analysis,sample,version,shift,base)
+        
+def getFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift='',base='flat'):
+    flat = '{}/{}/{}.root'.format(base,analysis,sample)
     if shift in latestHistograms.get(version,{}).get(analysis,{}):
         baseDir = '/hdfs/store/user/dntaylor'
         flatpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],sample)
@@ -306,17 +320,8 @@ def getNewProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift='
             if 'projection' not in fname: flat = fname
     return flat
         
-def getFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
-    flat = 'flat/{0}/{1}.root'.format(analysis,sample)
-    if shift in latestHistograms.get(version,{}).get(analysis,{}):
-        baseDir = '/hdfs/store/user/dntaylor'
-        flatpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],sample)
-        for fname in glob.glob('{0}/*.root'.format(flatpath)):
-            if 'projection' not in fname: flat = fname
-    return flat
-        
-def getProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift=''):
-    proj = 'projections/{0}/{1}.root'.format(analysis,sample)
+def getProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift='',base='projections'):
+    proj = '{}/{}/{}.root'.format(base,analysis,sample)
     if shift in latestHistograms.get(version,{}).get(analysis,{}):
         baseDir = '/hdfs/store/user/dntaylor'
         projpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],sample)

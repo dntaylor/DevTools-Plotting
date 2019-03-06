@@ -30,6 +30,8 @@ class NtupleWrapper(object):
         self.shift = kwargs.pop('shift','')
         self.useProof = kwargs.pop('useProof',False)
         self.intLumi = kwargs.pop('intLumi',float(getLumi()))
+        self.baseDirFlat = kwargs.pop('baseDirFlat','newflat' if self.new else 'flat')
+        self.baseDirProj = kwargs.pop('baseDirProj','newflat' if self.new else 'projections')
         logging.debug('Initializing {0} {1} {2}'.format(self.analysis,self.sample,self.shift))
         # backup passing custom parameters
         #self.ntuple = kwargs.pop('ntuple','{0}/src/ntuples/{1}/{2}.root'.format(CMSSW_BASE,self.analysis,self.sample))
@@ -40,8 +42,8 @@ class NtupleWrapper(object):
         #self.flat = kwargs.pop('flat','flat/{0}/{1}.root'.format(self.analysis,self.sample))
         flat = getNewFlatHistograms if self.new else getFlatHistograms
         proj = getNewProjectionHistograms if self.new else getProjectionHistograms
-        self.flat = kwargs.pop('flat',flat(self.analysis,self.sample,shift=self.shift,version=self.version))
-        self.proj = kwargs.pop('proj',proj(self.analysis,self.sample,shift=self.shift,version=self.version))
+        self.flat = kwargs.pop('flat',flat(self.analysis,self.sample,shift=self.shift,version=self.version,base=self.baseDirFlat))
+        self.proj = kwargs.pop('proj',proj(self.analysis,self.sample,shift=self.shift,version=self.version,base=self.baseDirProj))
         self.json = kwargs.pop('json',getSkimJson(self.analysis,self.sample,shift=self.shift,version=self.version))
         self.pickle = kwargs.pop('pickle',getSkimPickle(self.analysis,self.sample,shift=self.shift,version=self.version))
         self.skimInitialized = False
