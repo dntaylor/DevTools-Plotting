@@ -308,7 +308,8 @@ def getNewFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift='',base
     return getFlatHistograms(analysis,sample,version,shift,base)
 
 def getNewProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift='',base='newflat'):
-    return getProjectionHistograms(analysis,sample,version,shift,base)
+    #return getProjectionHistograms(analysis,sample,version,shift,base)
+    return 'dummy.root'
         
 def getFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift='',base='flat'):
     flat = '{}/{}/{}.root'.format(base,analysis,sample)
@@ -317,6 +318,9 @@ def getFlatHistograms(analysis,sample,version=getCMSSWVersion(),shift='',base='f
         flatpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],sample)
         for fname in glob.glob('{0}/*.root'.format(flatpath)):
             if 'projection' not in fname: flat = fname
+    elif shift:
+        logging.warning('Shift {} provided but not found'.format(shift))
+        flat = 'dummy.root'
     return flat
         
 def getProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift='',base='projections'):
@@ -326,6 +330,9 @@ def getProjectionHistograms(analysis,sample,version=getCMSSWVersion(),shift='',b
         projpath = os.path.join(baseDir,latestHistograms[version][analysis][shift],sample)
         for fname in glob.glob('{0}/*.root'.format(projpath)):
             if 'projection' in fname: proj = fname
+    elif shift:
+        logging.warning('Shift {} provided but not found'.format(shift))
+        proj = 'dummy.root'
     return proj
         
 latestSkims = {}

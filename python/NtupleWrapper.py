@@ -59,9 +59,12 @@ class NtupleWrapper(object):
         if self.useProof:
             self.proof = ROOT.TProof.Open('')
         # verify output file directory exists
-        os.system('mkdir -p {0}'.format(os.path.dirname(self.flat)))
-        os.system('mkdir -p {0}'.format(os.path.dirname(self.proj)))
+        if os.path.dirname(self.flat) and not self.flat.startswith('/hdfs'): os.system('mkdir -p {0}'.format(os.path.dirname(self.flat)))
+        if os.path.dirname(self.proj) and not self.proj.startswith('/hdfs'): os.system('mkdir -p {0}'.format(os.path.dirname(self.proj)))
         self.entryListMap = {}
+        #logging.debug('Initialized with')
+        #logging.debug('  flat: {}'.format(self.flat))
+        #logging.debug('  proj: {}'.format(self.proj))
 
     def __exit__(self, type, value, traceback):
         self.__finish()
@@ -145,6 +148,7 @@ class NtupleWrapper(object):
         '''Read the histogram from file'''
         # attempt to read
         if os.path.isfile(self.proj):
+            logging.debug('Reading {} from proj {}'.format(variable,self.proj))
             infile = ROOT.TFile(self.proj,'read')
             hist = infile.Get(variable)
             if hist:
@@ -154,13 +158,14 @@ class NtupleWrapper(object):
                 hist.SetDirectory(0)
                 return hist
         if os.path.isfile(self.flat):
+            logging.debug('Reading {} from flat {}'.format(variable,self.flat))
             infile = ROOT.TFile(self.flat,'read')
             hist = infile.Get(variable)
             if hist:
                 self.j += 1
                 hist = hist.Clone('h_{0}_{1}_{2}'.format(self.sample,variable.replace('/','_'),self.j))
-                hist.SetDirectory(0)
                 if hist.InheritsFrom('RooDataSet'): return hist
+                hist.SetDirectory(0)
                 return hist
             # attempt to project
             #hist = self.__projectChannel(variable,temp=True)
@@ -614,13 +619,15 @@ class NtupleWrapper(object):
         else:
             return hist
 
-    def getDataset(self,variable,weight='w',selection='1',xRange=[],yRange=[],project=''):
+    def getDataset(self,variable,weight='w',selection='1',xRange=[],yRange=[],project='',xVar='x',yVar='y'):
         '''Get a RooDataSet'''
         ds = self.__read(variable)
         # recreate ds with weights
         args = ds.get()
         if xRange: args.find('x').setRange(*xRange)
         if yRange: args.find('y').setRange(*yRange)
+        if xVar!='x': args.find('x').SetName(xVar)
+        if yVar!='y': args.find('y').SetName(yVar)
         ds = ROOT.RooDataSet(ds.GetName(),ds.GetTitle(),ds,args,selection,weight)
         if project: ds = getattr(ds,'reduce')(ROOT.RooArgSet(ds.get().find(project)))
         return ds
