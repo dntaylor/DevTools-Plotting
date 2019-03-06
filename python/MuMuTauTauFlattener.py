@@ -149,8 +149,6 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'm2tmDR'     : lambda row: deltaR_row(row,'am2','atm')>0.4,
             'm2thDR'     : lambda row: deltaR_row(row,'am2','ath')>0.8,
             #'tPt'        : lambda row: row.ath_pt>20,
-            #'muonIso'    : lambda row: row.am1_isolation<self.isoCut and row.am2_isolation<self.isoCut,
-            #'tauMVA'     : lambda row: row.ath_byIsolationMVArun2v1DBoldDMwLTraw>self.mvaCut,
         }
         #if self.doBVeto: # do via scale factor method
         #    self.baseCutMap['taubveto'] = lambda row: row.athjet_passCSVv2M<0.5
@@ -618,7 +616,8 @@ class MuMuTauTauFlattener(NtupleFlattener):
             vals = [getattr(row,scale) for scale in base]
             # tau id: 0.99 for VL/L, 0.97 for M
             if row.ath_pt<20:
-                tid = [0.83, 0.06, 0.06]
+                #tid = [0.83, 0.06, 0.06]
+                tid = [0.597, 0.11, 0.11] # Tau POG greenlit
             else:
                 tid = [0.97, 0.97*0.05, 0.97*0.05]
             if self.shift=='tauUp':

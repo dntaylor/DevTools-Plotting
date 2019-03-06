@@ -58,7 +58,7 @@ sigMap = {
         'ZZTo4L_13TeV-amcatnloFXFX-pythia8',
     ],
     'data' : [
-        'DoubleMuon',
+        'SingleMuon',
     ],
 }
 
@@ -70,7 +70,7 @@ for s in ['WZ','ZZ']:
 
 sels = []
 etaBins = [0,1.479,2.3]
-base_sels = ['nearMuon','nearMuonVLoose','nearMuonMedium']
+base_sels = ['nearMuon','nearMuonMedium']
 for sel in base_sels:
     sels += [sel]
     sels += ['noBVeto/{}'.format(sel)]
@@ -84,19 +84,28 @@ for sel in base_sels:
             sels += ['{}/dm{}/etaBin{}'.format(sel,dm,eb)]
             sels += ['noBVeto/{}/dm{}/etaBin{}'.format(sel,dm,eb)]
 
+alt_sels = ['default','medium','notMedium']
+alt_sels += ['noBVeto/default','noBVeto/medium','noBVeto/notMedium']
+pt_sels = ['pt10to20','pt20']
+sels2 = []
+for sel in alt_sels:
+    sels2 += [sel]
+    for s in pt_sels:
+        sels2 += ['{}/{}'.format(sel,s)]
 
 ########################
 ### plot definitions ###
 ########################
 plots = {
     # z
-    'zMass'                 : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'Events / 0.5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.5, range(120,240,1)), 'logy': False, 'overflow': True},
-    'z1Pt'                  : {'xaxis': 'm^{#mu#mu} #mu_{1} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
-    'z2Pt'                  : {'xaxis': 'm^{#mu#mu} #mu_{2} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
+    'zMass'                 : {'xaxis': 'm^{#mu#mu} (GeV)', 'yaxis': 'Events / 0.5 GeV', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'rebin': map(lambda x: x*0.5, range(162,202,1)), 'logy': False, 'overflow': True, 'yscale':1.6},
+    'z1Pt'                  : {'xaxis': 'm^{#mu#mu} #mu_{1} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(25,150,5), 'logy': False, 'overflow': True},
+    'z2Pt'                  : {'xaxis': 'm^{#mu#mu} #mu_{2} p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(10,150,5), 'logy': False, 'overflow': True},
     # t
-    'tPt'                   : {'xaxis': '#tau p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(0,150,5), 'logy': False, 'overflow': True},
-    'tDM'                   : {'xaxis': '#tau Decay Mode', 'yaxis': 'Events', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'logy': False, 'yscale': 1.5,},
+    'tPt'                   : {'xaxis': '#tau p_{T} (GeV)', 'yaxis': 'Events / 5 GeV', 'numcol': 2, 'lumipos': 11, 'legendpos':34, 'rebin': range(10,150,5), 'logy': False, 'overflow': True},
+    'tDM'                   : {'xaxis': '#tau Decay Mode', 'yaxis': 'Events', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'logy': False, 'yscale': 1.5,},
     # event
+    'count'                 : {'xaxis': '', 'yaxis': 'Events', 'numcol': 3, 'lumipos': 11, 'legendpos':34, 'logy': False, 'yscale': 1.5,'binlabels': ['']},
     #'numVertices'           : {'xaxis': 'Reconstructed Vertices', 'yaxis': 'Events'},
     #'met'                   : {'xaxis': 'E_{T}^{miss} (GeV)', 'yaxis': 'Events / 20 GeV', 'rebin': range(0,320,20), 'numcol': 2, 'logy': False, 'overflow': True},
 }
@@ -117,6 +126,36 @@ for plot in plots:
         savename = '{0}/mc/{1}'.format(sel,plot)
         plotter.plot(plotname,savename,**kwargs)
 
+plotter.clearHistograms()
+plotter.addHistogramToStack('W',sigMap['W'])
+plotter.addHistogramToStack('TT',sigMap['TT'])
+plotter.addHistogramToStack('VV',sigMap['WW']+sigMap['WZ']+sigMap['ZZ'])
+plotter.addHistogramToStack('DYB',sigMap['Z'])
+plotter.addHistogramToStack('DYJ',sigMap['Z'])
+#plotter.addHistogramToStack('DYS',sigMap['Z'])
+
+if not blind: plotter.addHistogram('data',sigMap['data'])
+
+realmcs = ['W','TT','VV']
+zllfakes = ['DYJ']
+zlllight = ['DYB']
+zlltau = ['DYS']
+
+for plot in plots:
+    for sel in sels2:
+        kwargs = deepcopy(plots[plot])
+        plotnames = {}
+        for bg in realmcs+['data']:
+            plotnames[bg] = '{0}/{1}'.format(sel,plot)
+        for bg in zllfakes:
+            plotnames[bg] = 'fakeTau/{0}/{1}'.format(sel,plot)
+        for bg in zlllight:
+            plotnames[bg] = 'leptonicTau/{0}/{1}'.format(sel,plot)
+        for bg in zlltau:
+            plotnames[bg] = 'hadronicTau/{0}/{1}'.format(sel,plot)
+        savename = '{0}/mc/{1}'.format(sel,plot)
+        plotter.plot(plotnames,savename,**kwargs)
+
 
 # ratios of tight/loose as func of pt/eta
 plotter.clearHistograms()
@@ -135,13 +174,13 @@ cust = {
 
 numDenoms = []
 numDenoms_base = [
-    ('nearMuonVLoose','nearMuon'),
-    ('nearMuonLoose','nearMuon'),
+    #('nearMuonVLoose','nearMuon'),
+    #('nearMuonLoose','nearMuon'),
     ('nearMuonMedium','nearMuon'),
-    ('nearMuonTight','nearMuon'),
-    ('cutbased/nearMuonLoose','nearMuon'),
-    ('cutbased/nearMuonMedium','nearMuon'),
-    ('cutbased/nearMuonTight','nearMuon'),
+    #('nearMuonTight','nearMuon'),
+    #('cutbased/nearMuonLoose','nearMuon'),
+    #('cutbased/nearMuonMedium','nearMuon'),
+    #('cutbased/nearMuonTight','nearMuon'),
 ]
 for n, d in numDenoms_base:
     numDenoms += [(n,d)]
@@ -149,7 +188,7 @@ for n, d in numDenoms_base:
     for dm in [0,1,10]:
         numDenoms += [('{}/dm{}'.format(n,dm), '{}/dm{}'.format(d,dm))]
         numDenoms += [('noBVeto/{}/dm{}'.format(n,dm), 'noBVeto/{}/dm{}'.format(d,dm))]
-for newloose in [-0.8,-0.5]:
+for newloose in [-0.5]:
     numDenoms += [('nearMuonMedium','nearMuonWithMVA{:0.1f}'.format(newloose))]
     for dm in [0,1,10]:
         numDenoms += [('nearMuonMedium/dm{}'.format(dm),'nearMuonWithMVA{:0.1f}/dm{}'.format(newloose,dm))]

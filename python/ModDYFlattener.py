@@ -44,6 +44,7 @@ class ModDYFlattener(NtupleFlattener):
             'z1iso'      : lambda row: row.z1_isolation<0.25,
             'z2iso'      : lambda row: row.z2_isolation<0.25,
         }
+        self.noisoMap = {sel: self.baseCutMap[sel] for sel in self.baseCutMap if 'iso' not in sel}
 
         self.regionMap = {
             'high' : lambda row: row.z2_pt>20.,
@@ -54,6 +55,8 @@ class ModDYFlattener(NtupleFlattener):
         baseSels = []
         self.selectionMap['default'] = lambda row: all([self.baseCutMap[cut](row) for cut in self.baseCutMap])
         baseSels += ['default']
+        self.selectionMap['default/noiso'] = lambda row: all([self.noisoMap[cut](row) for cut in self.noisoMap])
+        baseSels += ['default/noiso']
 
         self.selections = []
         self.selectionHists = {}
@@ -61,6 +64,7 @@ class ModDYFlattener(NtupleFlattener):
             self.selections += [sel]
             self.selections += [sel.replace('default','high')]
             self.selections += [sel.replace('default','low')]
+
 
         # setup histogram parameters
         self.histParams = {
@@ -178,6 +182,7 @@ class ModDYFlattener(NtupleFlattener):
             # scale to lumi/xsec
             weight *= float(self.intLumi)/self.sampleLumi if self.sampleLumi else 0.
             if hasattr(row,'qqZZkfactor'): weight *= row.qqZZkfactor/1.1 # ZZ variable k factor
+            if hasattr(row,'zPtWeight'): weight *= row.zPtWeight # Z pt scale factor
 
         return weight
 

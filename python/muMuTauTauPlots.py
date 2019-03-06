@@ -15,16 +15,16 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%
 
 version = getCMSSWVersion()
 
-blind = True
+blind = False
 doSignals = True
 doSignalAs = False
 doSignalHs = False
 doSignalHAs = False
-doMC = False
+doMC = True
 do2D = True
 doDM = False
-doAllSignals = True
-doDatadriven = False
+doAllSignals = False
+doDatadriven = True
 doLowmass = True
 doChi2 = False
 doHighmass = False
