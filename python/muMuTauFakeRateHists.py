@@ -8,7 +8,9 @@ from copy import deepcopy
 
 import ROOT
 
-logging.basicConfig(level=logging.INFO, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+logging.basicConfig(level=logging.DEBUG, stream=sys.stderr, format='%(asctime)s.%(msecs)03d %(levelname)s %(name)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+
+doEtaBinning = False
 
 fakeratePlotter = Plotter(
     'MuMuTauFakeRate',
@@ -56,7 +58,7 @@ sigMap = {
         'ZZTo4L_13TeV-amcatnloFXFX-pythia8',
     ],
     'data' : [
-        'DoubleMuon',
+        'SingleMuon',
     ],
 }
 
@@ -73,28 +75,36 @@ fakeratePlotter.addHistogram('Z',sigMap['Z'])
 fakeratePlotter.addHistogram('data',sigMap['data'],style={'linecolor':ROOT.kBlack,'name':'Corrected'})
 fakeratePlotter.addHistogram('data_uncorrected',sigMap['data'],style={'linecolor':ROOT.kRed,'name':'Uncorrected'})
 
-etaBins = [0.,1.479,2.3]
+if doEtaBinning:
+    etaBins = [0.,1.479,2.3]
+else:
+    etaBins = [0.,2.3]
 #ptBins = [10,15,20,25,30,50,100]
 ptBins = [10,20,30,50,100]
 
 numDenoms = []
 numDenoms_base = [
-    ('nearMuonVLoose','nearMuon'),
-    ('nearMuonLoose','nearMuon'),
-    ('nearMuonMedium','nearMuon'),
-    ('nearMuonTight','nearMuon'),
-    ('cutbased/nearMuonLoose','nearMuon'),
-    ('cutbased/nearMuonMedium','nearMuon'),
-    ('cutbased/nearMuonTight','nearMuon'),
+    #('nearMuonVLoose','nearMuon'),
+    #('nearMuonLoose','nearMuon'),
+    #('nearMuonMedium','nearMuon'),
+    #('nearMuonTight','nearMuon'),
+    #('cutbased/nearMuonLoose','nearMuon'),
+    #('cutbased/nearMuonMedium','nearMuon'),
+    #('cutbased/nearMuonTight','nearMuon'),
 ]
 for n, d in numDenoms_base:
     numDenoms += [(n,d)]
     numDenoms += [('noBVeto/{}'.format(n), 'noBVeto/{}'.format(d))]
-for newloose in [-0.8,-0.5]:
+#for newloose in [-0.8,-0.5]:
+for newloose in [-0.5]:
     numDenoms += [('nearMuonMedium','nearMuonWithMVA{:0.1f}'.format(newloose))]
 
-name = '{0}/etaBin{1}/tPt'
-dmname = '{0}/dm{1}/etaBin{2}/tPt'
+if doEtaBinning:
+    name = '{0}/etaBin{1}/tPt'
+    dmname = '{0}/dm{1}/etaBin{2}/tPt'
+else:
+    name = '{0}/tPt'
+    dmname = '{0}/dm{1}/tPt'
 
 for num,denom in numDenoms:
     xaxis = 'p_{T}^{#tau}'
@@ -106,8 +116,12 @@ for num,denom in numDenoms:
     # get the values
     for e in range(len(etaBins)-1):
         # get the histogram
-        numname = name.format(num,e)
-        denomname = name.format(denom,e)
+        if doEtaBinning:
+            numname = name.format(num,e)
+            denomname = name.format(denom,e)
+        else:
+            numname = name.format(num)
+            denomname = name.format(denom)
         savename = '{0}_{1}'.format(num,denom)
         if '/' in denom:
             savename = '{0}_{1}'.format(num,denom.split('/')[-1])
@@ -149,8 +163,12 @@ for num,denom in numDenoms:
         # get the values
         for e in range(len(etaBins)-1):
             # get the histogram
-            numname = dmname.format(num,dm,e)
-            denomname = dmname.format(denom,dm,e)
+            if doEtaBinning:
+                numname = dmname.format(num,dm,e)
+                denomname = dmname.format(denom,dm,e)
+            else:
+                numname = dmname.format(num,dm)
+                denomname = dmname.format(denom,dm)
             savename = '{0}_{1}_{2}'.format(num,denom,dm)
             if '/' in denom:
                 savename = '{0}_{1}_{2}'.format(num,denom.split('/')[-1],dm)

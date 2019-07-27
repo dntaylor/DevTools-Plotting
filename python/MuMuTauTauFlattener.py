@@ -385,6 +385,10 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'am2Eta'                      : {'x': lambda row: row.am2_eta,                        'xBinning': [100, -2.5, 2.5],        },
             'am1Iso'                      : {'x': lambda row: row.am1_isolation,                  'xBinning': [100, 0, 2],             },
             'am2Iso'                      : {'x': lambda row: row.am2_isolation,                  'xBinning': [100, 0, 2],             },
+            'am1Dxy'                      : {'x': lambda row: abs(row.am1_dxy),                   'xBinning': [100, 0, 1.0],           },
+            'am1Dz'                       : {'x': lambda row: abs(row.am1_dz),                    'xBinning': [100, 0, 1.0],           },
+            'am2Dxy'                      : {'x': lambda row: abs(row.am2_dxy),                   'xBinning': [100, 0, 1.0],           },
+            'am2Dz'                       : {'x': lambda row: abs(row.am2_dz),                    'xBinning': [100, 0, 1.0],           },
             #'am1MatchesTrigger'           : {'x': lambda row: row.am1_matches_IsoMu24 or row.am1_matches_IsoTkMu24, 'xBinning': [2, -0.5, 1.5],},
             #'am1PassMedium'               : {'x': lambda row: row.am1_isMediumMuonICHEP,          'xBinning': [2, -0.5, 1.5],          },
             #'am2PassMedium'               : {'x': lambda row: row.am2_isMediumMuonICHEP,          'xBinning': [2, -0.5, 1.5],          },
@@ -396,13 +400,13 @@ class MuMuTauTauFlattener(NtupleFlattener):
             'attDeltaR'                   : {'x': lambda row: row.att_deltaR,                     'xBinning': [400, 0, 6.0],           },
             'atmPt'                       : {'x': lambda row: row.atm_pt,                         'xBinning': [500, 0, 500],           },
             'atmEta'                      : {'x': lambda row: row.atm_eta,                        'xBinning': [100, -2.5, 2.5],        },
-            #'atmDxy'                      : {'x': lambda row: abs(row.atm_dxy),                   'xBinning': [100, 0, 2.5],           },
-            #'atmDz'                       : {'x': lambda row: abs(row.atm_dz),                    'xBinning': [100, 0, 2.5],           },
+            'atmDxy'                      : {'x': lambda row: abs(row.atm_dxy),                   'xBinning': [100, 0, 1.0],           },
+            'atmDz'                       : {'x': lambda row: abs(row.atm_dz),                    'xBinning': [100, 0, 1.0],           },
             'atmMetDeltaPhi'              : {'x': lambda row: abs(row.atmmet_deltaPhi),           'xBinning': [500, 0, 3.14159],       },
             'athPt'                       : {'x': lambda row: row.ath_pt,                         'xBinning': [500, 0, 500],           },
             'athEta'                      : {'x': lambda row: row.ath_eta,                        'xBinning': [100, -2.5, 2.5],        },
-            #'athDxy'                      : {'x': lambda row: abs(row.ath_dxy),                   'xBinning': [100, 0, 2.5],           },
-            #'athDz'                       : {'x': lambda row: abs(row.ath_dz),                    'xBinning': [100, 0, 2.5],           },
+            'athDxy'                      : {'x': lambda row: abs(row.ath_dxy),                   'xBinning': [100, 0, 1.0],           },
+            'athDz'                       : {'x': lambda row: abs(row.ath_dz),                    'xBinning': [100, 0, 1.0],           },
             'athDM'                       : {'x': lambda row: row.ath_decayMode,                  'xBinning': [15, 0, 15],             },
             'athMetDeltaPhi'              : {'x': lambda row: abs(row.athmet_deltaPhi),           'xBinning': [500, 0, 3.14159],       },
             'athJetCSV'                   : {'x': lambda row: row.athjet_CSVv2,                   'xBinning': [500, 0, 1],             },
@@ -689,8 +693,11 @@ class MuMuTauTauFlattener(NtupleFlattener):
                 else:
                     fake = self.getFakeRate(coll, getattr(row,'{}_pt'.format(l)), getattr(row,'{}_eta'.format(l)), n, d)
                 fakeEff = fake[0]
-                if self.shift=='fakeUp': fakeEff = fake[0]+fake[1]
-                if self.shift=='fakeDown': fakeEff = fake[0]-fake[1]
+                # take altetnative 15% uncertainty
+                #if self.shift=='fakeUp': fakeEff = fake[0]+fake[1]
+                #if self.shift=='fakeDown': fakeEff = fake[0]-fake[1]
+                if self.shift=='fakeUp': fakeEff = fake[0]*1.15
+                if self.shift=='fakeDown': fakeEff = fake[0]*0.85
                 if fakeEff<0: fakeEff = 0
                 if fakeEff>0 and fakeEff<1:
                     weight *= fakeEff/(1-fakeEff)
@@ -711,8 +718,11 @@ class MuMuTauTauFlattener(NtupleFlattener):
             coll = 'taus' if l in ['ath'] else 'muons'
             fake = self.getFakeRate(  coll, getattr(row,'{}_pt'.format(l)), getattr(row,'{}_eta'.format(l)), n, d)
             f[l] = fake[0]
-            if self.shift=='fakeUp': f[l] = fake[0]+fake[1]
-            if self.shift=='fakeDown': f[l] = fake[0]-fake[1]
+            # take altetnative 15% uncertainty
+            #if self.shift=='fakeUp': f[l] = fake[0]+fake[1]
+            #if self.shift=='fakeDown': f[l] = fake[0]-fake[1]
+            if self.shift=='fakeUp': f[l] = fake[0]*1.15
+            if self.shift=='fakeDown': f[l] = fake[0]*0.85
             prompt = self.getEfficiency(coll, getattr(row,'{}_pt'.format(l)), getattr(row,'{}_eta'.format(l)), n, d)
             p[l] = prompt[0]
             if self.shift=='lepUp': p[l] = prompt[0]+prompt[1]
