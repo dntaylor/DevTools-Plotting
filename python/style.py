@@ -150,6 +150,10 @@ for h in [125, 300, 750]:
         #labelMap[key] = 'H({0})#rightarrow aa, a={1} GeV'.format(h,a)
         labelMap[key] = '#splitline{{H({0})#rightarrow aa}}{{a={1} GeV}}'.format(h,a)
 
+        key = 'HToAAH{0}A{1}4Tau'.format(h,a)
+        colorMap[key] = colorMap['HToAA']
+        labelMap[key] = '#splitline{{H({0})#rightarrow aa #rightarrow 4#tau}}{{a={1} GeV}}'.format(h,a)
+
         key = 'ggHToAAH{0}A{1}'.format(h,a)
         colorMap[key] = colorMap['ggHToAA']
         labelMap[key] = '#splitline{{gg #rightarrow H({0}) #rightarrow aa}}{{a={1} GeV}}'.format(h,a)

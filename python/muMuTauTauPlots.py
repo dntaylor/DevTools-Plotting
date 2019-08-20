@@ -363,6 +363,23 @@ if doSignals:
                     plotname = '{0}/{1}'.format(sel,plot)
                     savename = '{0}/a{a}/{1}'.format(sel,plot,a=a)
                     plotter.plot(plotname,savename,plotratio=False,**kwargs)
+
+        for a in [5,7,9,15]:
+            plotter.clearHistograms()
+        
+            h = 125
+            name = signame.format(h=h,a=a)
+            plotter.addHistogram(name,sigMap[name],signal=True,style={'linecolor': ROOT.kBlue})
+            plotter.addHistogram(name+'4Tau',sigMap[name+'4Tau'],signal=True,style={'linecolor': ROOT.kBlack})
+        
+            for plot in plots:
+                for sel in signalsels:
+                    if 'lowmass' in sel or 'highmass' in sel: continue
+                    kwargs = deepcopy(plots[plot])
+                    if plot in plotsSignal: kwargs.update(deepcopy(plotsSignal[plot]))
+                    plotname = '{0}/{1}'.format(sel,plot)
+                    savename = '{0}/4tau/a{a}/{1}'.format(sel,plot,a=a)
+                    plotter.plot(plotname,savename,plotratio=False,**kwargs)
         
     if doSignalHAs:
         for a in vbfmasses:

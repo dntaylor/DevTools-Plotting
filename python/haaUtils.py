@@ -53,6 +53,8 @@ amasses = ['3p6',4,5,6,7,8,9,10,11,13,15,17,19,21]
 hmasses = [125,200,250,300,400,500,750,1000]
 vbfhmasses = [125,300,750]
 vbfamasses = [5,9,15,21]
+tttthmasses = [125]
+ttttamasses = [5,6,7,8,9,15]
 
 for h in hmasses:
     if h==125:
@@ -64,11 +66,15 @@ for h in hmasses:
     sigName = 'HToAAH{h}A{a}'
     ggSigName = 'ggHToAAH{h}A{a}'
     vbfSigName = 'vbfHToAAH{h}A{a}'
+    ttttSigName = 'HToAAH{h}A{a}4Tau'
     for a in amasses:
         sampleMap[sigName.format(h=h,a=a)] = [ggName.format(h=h,a=a)]
         if a in vbfamasses and h in vbfhmasses: sampleMap[sigName.format(h=h,a=a)] += [vbfName.format(h=h,a=a)]
         sampleMap[ggSigName.format(h=h,a=a)] = [ggName.format(h=h,a=a)]
         sampleMap[vbfSigName.format(h=h,a=a)] = [vbfName.format(h=h,a=a)]
+        if h in tttthmasses and a in ttttamasses:
+            ttttName = 'SUSYGluGluToHToAA_AToTauTau_M-{a}_TuneCUETP8M1_13TeV_pythia8'.format(a=a)
+            sampleMap[ttttSigName.format(h=h,a=a)] = [ttttName.format(h=h,a=a)]
 
 def getSampleMap():
     return sampleMap

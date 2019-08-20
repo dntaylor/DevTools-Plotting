@@ -182,11 +182,11 @@ class Counter(object):
 
     def printHeader(self,label=''):
         '''Print a header'''
-        print '{0:20} | {1} |'.format(label,' | '.join(['{0:10}'.format(name) for name in self.processOrder + ['All BG']]))
+        print '{0:20} | {1} |'.format(label,' | '.join(['{0:16}'.format(name) for name in self.processOrder + ['All BG']]))
 
     def printDivider(self):
         '''Print a divider'''
-        print '{0:20}-|-{1}-|'.format('-'*20,'-|-'.join(['{0:10}'.format('-'*10) for name in self.processOrder + ['All BG']]))
+        print '{0:20}-|-{1}-|'.format('-'*20,'-|-'.join(['{0:16}'.format('-'*16) for name in self.processOrder + ['All BG']]))
 
     def getCount(self,processName,directory,**kwargs):
         '''Get a single count'''
@@ -212,5 +212,5 @@ class Counter(object):
         nsig = len(self.signals)
         vals += [sum(vals[:-1*(nsig+1)])]
         errs += [sum([x**2 for x in errs[:-1*(nsig+1)]])**0.5]
-        print '{0:20} | {1} |'.format(label,' | '.join(['{0:>10.4f}'.format(v) for v in vals]))
-        if doError: print '{0:20} | {1} |'.format('',' | '.join(['{0:>10.4f}'.format(e) for e in errs]))
+        print '{0:20} | {1} |'.format(label,' | '.join(['{0:>16.4f}'.format(v) for v in vals]))
+        if doError: print '{0:20} | {1} |'.format('',' | '.join(['{0:>16.4f}'.format(e) for e in errs]))

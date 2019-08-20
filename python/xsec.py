@@ -11,6 +11,13 @@ pb = PB
 FB = 1.e-3
 fb = FB
 
+MMUON = 0.105658
+MTAU = 1.77686
+def MMTT_to_TTTT(MA):
+    AMM_ATT = MMUON**2 / ( MTAU**2 * (1 - (2*MTAU/MA)**2)**0.5 )
+    B_MMTT_TTTT = 2 * AMM_ATT
+    return 1./(2*B_MMTT_TTTT)
+
 # where possible, taken from https://twiki.cern.ch/twiki/bin/viewauth/CMS/SummaryTable1G25ns
 # NOTE: TuneCUETP8M1 is here by default, TuneCP5 is set to same cross section at end
 # if you add a TuneCP5, it will not be overridden
@@ -500,6 +507,32 @@ xsecs = {
     'SUSYVBFToHToAA_AToMuMu_AToTauTau_M-750_M-17_TuneCUETP8M1_13TeV_madgraph_pythia8'    :   0.1915 * 0.001 * PB, 
     'SUSYVBFToHToAA_AToMuMu_AToTauTau_M-750_M-19_TuneCUETP8M1_13TeV_madgraph_pythia8'    :   0.1915 * 0.001 * PB, 
     'SUSYVBFToHToAA_AToMuMu_AToTauTau_M-750_M-21_TuneCUETP8M1_13TeV_madgraph_pythia8'    :   0.1915 * 0.001 * PB, 
+    # 4 Tau
+    'SUSYGluGluToHToAA_AToTauTau_M-3p6_TuneCUETP8M1_13TeV_pythia8'                       :  48.52   * 0.001 * PB * MMTT_to_TTTT(3.6),
+    'SUSYGluGluToHToAA_AToTauTau_M-4_TuneCUETP8M1_13TeV_pythia8'                         :  48.52   * 0.001 * PB * MMTT_to_TTTT(4),
+    'SUSYGluGluToHToAA_AToTauTau_M-5_TuneCUETP8M1_13TeV_pythia8'                         :  48.52   * 0.001 * PB * MMTT_to_TTTT(5),
+    'SUSYGluGluToHToAA_AToTauTau_M-6_TuneCUETP8M1_13TeV_pythia8'                         :  48.52   * 0.001 * PB * MMTT_to_TTTT(6),
+    'SUSYGluGluToHToAA_AToTauTau_M-7_TuneCUETP8M1_13TeV_pythia8'                         :  48.52   * 0.001 * PB * MMTT_to_TTTT(7),
+    'SUSYGluGluToHToAA_AToTauTau_M-8_TuneCUETP8M1_13TeV_pythia8'                         :  48.52   * 0.001 * PB * MMTT_to_TTTT(8),
+    'SUSYGluGluToHToAA_AToTauTau_M-9_TuneCUETP8M1_13TeV_pythia8'                         :  48.52   * 0.001 * PB * MMTT_to_TTTT(9),
+    'SUSYGluGluToHToAA_AToTauTau_M-10_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(10),
+    'SUSYGluGluToHToAA_AToTauTau_M-11_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(11),
+    'SUSYGluGluToHToAA_AToTauTau_M-12_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(12),
+    'SUSYGluGluToHToAA_AToTauTau_M-13_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(13),
+    'SUSYGluGluToHToAA_AToTauTau_M-14_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(14),
+    'SUSYGluGluToHToAA_AToTauTau_M-15_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(15),
+    'SUSYGluGluToHToAA_AToTauTau_M-17_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(17),
+    'SUSYGluGluToHToAA_AToTauTau_M-19_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(19),
+    'SUSYGluGluToHToAA_AToTauTau_M-20_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(20),
+    'SUSYGluGluToHToAA_AToTauTau_M-21_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(21),
+    'SUSYGluGluToHToAA_AToTauTau_M-25_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(25),
+    'SUSYGluGluToHToAA_AToTauTau_M-30_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(30),
+    'SUSYGluGluToHToAA_AToTauTau_M-35_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(35),
+    'SUSYGluGluToHToAA_AToTauTau_M-40_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(40),
+    'SUSYGluGluToHToAA_AToTauTau_M-45_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(45),
+    'SUSYGluGluToHToAA_AToTauTau_M-50_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(50),
+    'SUSYGluGluToHToAA_AToTauTau_M-55_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(55),
+    'SUSYGluGluToHToAA_AToTauTau_M-60_TuneCUETP8M1_13TeV_pythia8'                        :  48.52   * 0.001 * PB * MMTT_to_TTTT(60),
 
 }
 

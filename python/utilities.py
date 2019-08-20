@@ -147,6 +147,7 @@ latestNtuples['80X'] = {
     #'MuMuTauTau'     : '2018-10-10_MuMuTauTauAnalysis_80X_v1-merge',
     #'MuMuTauTau'     : '2019-04-18_MuMuTauTauAnalysis_80X_v1-merge',
     'MuMuTauTau'     : '2019-07-29_MuMuTauTauAnalysis_80X_v1-merge',
+    'MuMuTauTau4Tau' : '2019-08-20_MuMuTauTauAnalysis_80X_v2',
     'MuMuTauTauMod'  : '2018-12-03_MuMuTauTauModAnalysis_80X_trigOnly_v1-merge',
     'MuMuTauTauModMC': '2018-12-03_MuMuTauTauModAnalysis_80X_trigOnlyMC_v1-merge',
     #'MuMuTauFakeRate': '2018-03-19_MuMuTauFakeRateAnalysis_80X_v2-merge',
